@@ -1,6 +1,6 @@
 ***NoMAD***
 
-Get all of AD, with none of the bind!
+Get all of AD, with none of the bind! From now on you'll have no mo' need of AD.
 
 NoMAD allows for all of the functionality you would want from a Mac bound to
 Active Directory without having to actually bind to AD.
