@@ -1,4 +1,4 @@
-NoMAD
+***NoMAD***
 
 Get all of AD, with none of the bind!
 
@@ -28,6 +28,10 @@ Coming in future versions:
 Sample screen shot:
 
 ![NoMad Screen Shot](https://gitlab.com/Mactroll/NoMAD/raw/master/screen-shot "NoMAD Screen Shot")
+
+***Current Version***
+
+v. .9 Public Beta - Most things work, but we need some testing.
 
 ***Thanks!***
 
