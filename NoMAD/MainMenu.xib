@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15G31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
+            <connections>
+                <outlet property="delegate" destination="3MP-7Q-tZN" id="TAq-GT-f4D"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
+        <menu id="eKu-sI-x3b">
+            <items>
+                <menuItem title="user" id="uQI-ol-UUw" userLabel="NoMADMenuUserName">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+                <menuItem title="password expires" id="CUr-ED-n29" userLabel="NoMADMenuPasswordExpires">
+                    <attributedString key="attributedTitle"/>
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+                <menuItem title="ticket life" alternate="YES" id="QYf-mL-9ta">
+                    <modifierMask key="keyEquivalentModifierMask" option="YES"/>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="7uv-39-xiX"/>
+                <menuItem title="Log In 2" id="XL2-b8-IwM">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="NoMADMenuClickLogIn:" target="Gp4-Xp-pEc" id="wVm-5I-piH"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Log In" alternate="YES" id="Wa6-S1-lXm">
+                    <modifierMask key="keyEquivalentModifierMask" control="YES" option="YES"/>
+                    <connections>
+                        <action selector="NoMADMenuClickLogInAlternate:" target="Gp4-Xp-pEc" id="Ght-9J-Q4Q"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Change Password" id="0IM-ZO-KLA">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="NoMADMenuClickChangePassword:" target="Gp4-Xp-pEc" id="lgn-ZO-gUO"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Log Out" id="w1A-iF-wAU">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="NoMADMenuClickLogOut:" target="Gp4-Xp-pEc" id="DXe-en-Xqw"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Lock Screen" id="3Pf-2O-qR7">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="NoMADMenuClickLockScreen:" target="Gp4-Xp-pEc" id="1Up-40-AIC"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Get Certificate" id="AlW-9M-CK2">
+                    <attributedString key="attributedTitle"/>
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="NoMADMenuClickGetCertificate:" target="Gp4-Xp-pEc" id="Ux3-1h-v3f"/>
+                    </connections>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="wcV-DA-kNE"/>
+                <menuItem title="Get Software" id="fuo-5h-NuR">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="NoMADMenuClickGetSoftware:" target="Gp4-Xp-pEc" id="VfV-nL-NtE"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Get Help" id="rbx-v6-fJx">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="NoMADMenuClickGetHelp:" target="Gp4-Xp-pEc" id="RtH-lc-6IH"/>
+                    </connections>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="vag-tC-mEc"/>
+                <menuItem title="Hidden Item 1" id="kql-Bl-QJE">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="NoMADMenuClickHiddenItem1:" target="Gp4-Xp-pEc" id="lJW-OQ-96U"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Preferences" id="3yQ-ft-CVW">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="NoMADMenuClickPreferences:" target="Gp4-Xp-pEc" id="JtX-Sp-fgv"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Spew Logs" hidden="YES" alternate="YES" id="pC8-5a-Aec">
+                    <modifierMask key="keyEquivalentModifierMask" control="YES" option="YES"/>
+                    <connections>
+                        <action selector="NoMADMenuClickSpewLogs:" target="Gp4-Xp-pEc" id="aX2-5X-Gjx"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Quit" id="gM7-FQ-f0l">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="NoMADMenuClickQuit:" target="Gp4-Xp-pEc" id="Umd-FA-AwC"/>
+                    </connections>
+                </menuItem>
+            </items>
+            <point key="canvasLocation" x="190.5" y="587.5"/>
+        </menu>
+        <customObject id="Gp4-Xp-pEc" userLabel="NoMADMenuController" customClass="NoMADMenuController" customModule="NoMAD" customModuleProvider="target">
+            <connections>
+                <outlet property="NoMADMenu" destination="eKu-sI-x3b" id="Wyg-fq-yBG"/>
+                <outlet property="NoMADMenuChangePassword" destination="0IM-ZO-KLA" id="iVk-Xe-XSm"/>
+                <outlet property="NoMADMenuGetCertificate" destination="AlW-9M-CK2" id="3Dc-Wx-115"/>
+                <outlet property="NoMADMenuGetHelp" destination="rbx-v6-fJx" id="1bd-6M-fUQ"/>
+                <outlet property="NoMADMenuGetSoftware" destination="fuo-5h-NuR" id="rPu-zt-iBj"/>
+                <outlet property="NoMADMenuHiddenItem1" destination="kql-Bl-QJE" id="ehL-Ac-Qlb"/>
+                <outlet property="NoMADMenuLockScreen" destination="3Pf-2O-qR7" id="gaI-5v-fzs"/>
+                <outlet property="NoMADMenuLogIn" destination="XL2-b8-IwM" id="t0s-gW-68X"/>
+                <outlet property="NoMADMenuLogInAlternate" destination="Wa6-S1-lXm" id="hAz-nN-kun"/>
+                <outlet property="NoMADMenuLogOut" destination="w1A-iF-wAU" id="SR8-ZH-087"/>
+                <outlet property="NoMADMenuPasswordExpires" destination="CUr-ED-n29" id="n6a-qc-0L0"/>
+                <outlet property="NoMADMenuPreferences" destination="3yQ-ft-CVW" id="iix-dH-1bd"/>
+                <outlet property="NoMADMenuQuit" destination="gM7-FQ-f0l" id="N9U-ev-u6J"/>
+                <outlet property="NoMADMenuSpewLogs" destination="pC8-5a-Aec" id="trl-C0-H9J"/>
+                <outlet property="NoMADMenuTicketLife" destination="QYf-mL-9ta" id="o7R-O3-Ea9"/>
+                <outlet property="NoMADMenuUserName" destination="uQI-ol-UUw" id="yMX-60-SOW"/>
+            </connections>
+        </customObject>
+        <customObject id="3MP-7Q-tZN" userLabel="Delegate" customClass="AppDelegate" customModule="NoMAD" customModuleProvider="target"/>
+    </objects>
+</document>

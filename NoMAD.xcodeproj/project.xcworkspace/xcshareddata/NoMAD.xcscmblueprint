@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "D0AF3D9E124D14282B7260A206DACDDCEA74A037",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "0A20840E087131F7172A765548C479B7EFE0AC0D" : 0,
+    "D0AF3D9E124D14282B7260A206DACDDCEA74A037" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "EA3A9B19-4450-49FE-882D-D2B2B56C3E95",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "0A20840E087131F7172A765548C479B7EFE0AC0D" : "NoAD\/",
+    "D0AF3D9E124D14282B7260A206DACDDCEA74A037" : "NoMAD\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "NoMAD",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "NoMAD.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/bitbucket.org\/trusourcelabs\/noad.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "0A20840E087131F7172A765548C479B7EFE0AC0D"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/gitlab.com\/Mactroll\/NoMAD-Private.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "D0AF3D9E124D14282B7260A206DACDDCEA74A037"
+    }
+  ]
+}
