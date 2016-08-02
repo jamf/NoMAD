@@ -14,14 +14,14 @@ Active Directory without having to actually bind to AD.
 - One click access to Casper self-service if installed.
 - One click access to creating a Bomgar chat session with a help desk operative.
 - Admins can push one-line CLI commands to show up as a menu item in NoMAD.
-- Admins can specify specific LDAP servers to use instead of looking them up via SRV records.
-- Synch your AD password to your local account.
-- Users are warned about impending password exirations.
+- Admins can specify LDAP servers to use instead of looking them up via SRV records.
+- Sync your AD password to your local account.
+- Users are warned about impending password expirations.
 - Customize user's help options between a Bomgar URL, web URL or local application path.
 
 Coming in future versions:
 
-- VPN connection managament for built-in VPN types.
+- VPN connection management for built-in VPN types.
 - Mounting of arbitrary shares based upon configured values.
 - Put x509 certificate into an 802.1x profile for use with wireless networks.
 
