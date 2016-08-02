@@ -46,7 +46,7 @@ class GetHelp {
             cliTask("/usr/bin/open " + getHelpOptions.stringByReplacingOccurrencesOfString(" ", withString: "\\ ") )
         
         default:
-        cliTask("curl -o /tmp/BomgarClient https://bomgar.trusourcelabs.com/api/start_session -A \"Mozilla/5.0\\ (Macintosh;\\ Intel\\ Mac\\ OS\\ X\\ 10_11_4)\\ AppleWebKit/601.5.17\\ (KHTML,\\ like\\ Gecko)\\ Version/9.1\\ Safari/601.5.17\" -d issue_menu=1 -d session.custom.external_key=NoMAD -d session.custom.full_name=" + String(defaults.stringForKey("displayName")!.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())) + " -d session.custom.serial_number=" + getSerial() + " -d customer.company=" + defaults.stringForKey("ADDomain")! )
+        cliTask("curl -o /tmp/BomgarClient https://bomgar.bomgar.com/api/start_session -A \"Mozilla/5.0\\ (Macintosh;\\ Intel\\ Mac\\ OS\\ X\\ 10_11_4)\\ AppleWebKit/601.5.17\\ (KHTML,\\ like\\ Gecko)\\ Version/9.1\\ Safari/601.5.17\" -d issue_menu=1 -d session.custom.external_key=NoMAD -d session.custom.full_name=" + String(defaults.stringForKey("displayName")!.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())) + " -d session.custom.serial_number=" + getSerial() + " -d customer.company=" + defaults.stringForKey("ADDomain")! )
         cliTaskNoTerm("/usr/bin/unzip -o -d /tmp /tmp/BomgarClient")
         cliTask("/usr/bin/open /tmp/Bomgar/Double-Click\\ To\\ Start\\ Support\\ Session.app")
         }

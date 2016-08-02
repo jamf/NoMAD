@@ -85,7 +85,6 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
             } else {
                 let alertController = NSAlert()
                 alertController.messageText = "Password changed successfully. Note: it may take up to an hour for your password expiration time to be updated."
-              //  alertController.beginSheetModalForWindow(self.window!, completionHandler: self.close())
                 
                 alertController.beginSheetModalForWindow(self.window!, completionHandler: {( response ) in
                     if ( response == 0 ) {
@@ -94,7 +93,6 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
                         self.close()
                     }
                 })
-                //self.close()
             }
             NSLog(myError)
         } else {

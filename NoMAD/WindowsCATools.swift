@@ -174,7 +174,7 @@ class WindowsCATools {
     
     // TODO: remove the use of certtool and use CommonCrypto instead
     
-    // TODO: change the private key lable for keys created this way
+    // TODO: change the private key label for keys created this way
     
     // TODO: inspect the existing identities for ones matching our AD name, then alert on expiration
     

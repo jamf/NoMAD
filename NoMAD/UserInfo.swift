@@ -37,7 +37,6 @@ struct UserInfo: CustomStringConvertible {
     var userHome: String
     var userCertDate = NSDate()
     var userTicketExpireTime = NSDate()
-    //    var userInfoLastChecked = NSDate()
     
     var description: String {
         return "\(userPrincipalShort), \(ldapServer), \(realm), \(userPasswordExpireDate) "

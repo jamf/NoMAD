@@ -46,7 +46,6 @@ class NoMADApplication: NSApplication {
                 }
             }
         }
-        //return super.performKeyEquivalent(event)
         super.sendEvent(event)
     }
     
