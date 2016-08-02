@@ -6,8 +6,7 @@ NoMAD allows for all of the functionality you would want from a Mac bound to
 Active Directory without having to actually bind to AD.
 
 - NoMAD allows you to get Kerberos credentials from AD to use for single sign
-on to all services using Windows Authentication. This is primarily web sites
-and SMB/CIFS shares, but other services may be functional as well.
+on to all services using Windows Authentication.
 - Automatically renew your Kerberos tickets based upon your desires.
 - Handy place to have a lock screen menu item.
 - Get an X509 identity from your Windows CA.
