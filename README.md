@@ -32,3 +32,5 @@ Sample screen shot:
 ***Thanks!***
 
 Thanks to a number of people for helping me out on this. Including those of you in the secret channel!
+
+Also a big thanks to @owen.pragel for testing and pontificating.
