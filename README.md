@@ -37,6 +37,8 @@ Sample screen shot:
 
 v. .9 Public Beta - Most things work, but we need some testing.
 
+[NoMADv.9PB1.zip](/uploads/2fa70aed3fd6149ac46f9ca0c7bf04c4/NoMADv.9PB1.zip)
+
 ***Thanks!***
 
 Thanks to a number of people for helping me out on this. Including those of you in the secret channel!
