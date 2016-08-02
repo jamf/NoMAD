@@ -31,7 +31,7 @@ Sample screen shot:
 
 ***Documentation***
 
-![NoMAD Wiki](https://gitlab.com/Mactroll/NoMAD/wikis/home "NoMAD Wiki")
+[Wiki](https://gitlab.com/Mactroll/NoMAD/wikis/home "NoMAD Wiki")
 
 ***Current Version***
 
