@@ -27,7 +27,7 @@ Coming in future versions:
 
 Sample screen shot:
 
-![NoMad Screen Shot](https://gitlab.com/Mactroll/NoMAD-Private/raw/master/screen-shot "NoMAD Screen Shot")
+![NoMad Screen Shot](https://gitlab.com/Mactroll/NoMAD/raw/master/screen-shot "NoMAD Screen Shot")
 
 ***Thanks!***
 
