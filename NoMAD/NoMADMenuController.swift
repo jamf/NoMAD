@@ -127,7 +127,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             if defaults.integerForKey("Verbose") >= 1 {
                 NSLog("Starting up NoMAD")
             }
-            
+            userInfoAPI.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!)
             return
         }
         
@@ -353,6 +353,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     
     func doTheNeedfull() {
         if ( userInfoAPI.myLDAPServers.getDomain() == "not set" ) {
+            userInfoAPI.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!)
             userInfoAPI.myTickets.getDetails()
         }
         userInfoAPI.myLDAPServers.check()
