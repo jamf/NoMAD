@@ -28,3 +28,7 @@ Coming in future versions:
 Sample screen shot:
 
 ![NoMad Screen Shot](https://gitlab.com/Mactroll/NoMAD-Private/raw/master/screen-shot "NoMAD Screen Shot")
+
+***Thanks!***
+
+Thanks to a number of people for helping me out on this. Including those of you in the secret channel!
