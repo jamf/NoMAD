@@ -29,6 +29,10 @@ Sample screen shot:
 
 ![NoMad Screen Shot](https://gitlab.com/Mactroll/NoMAD/raw/master/screen-shot "NoMAD Screen Shot")
 
+***Documentation***
+
+![NoMAD Wiki](https://gitlab.com/Mactroll/NoMAD/wikis/home "NoMAD Wiki")
+
 ***Current Version***
 
 v. .9 Public Beta - Most things work, but we need some testing.
