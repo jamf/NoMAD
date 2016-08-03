@@ -45,6 +45,10 @@ v. .9 Public Beta - Most things work, but we need some testing.
 
 While not always tested on Sierra, it should work fine. Currently the project is in Swift 2.2. It almost nearly compiles in Swift 3.
 
+***Experimental Branch***
+
+New features in development, or otherwise risky and irresponsible behavior goes into this branch first.
+
 ***Thanks!***
 
 Thanks to a number of people for helping me out on this. Including those of you in the secret channel!
