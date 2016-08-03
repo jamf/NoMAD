@@ -95,13 +95,19 @@ private func addToLoginItems() {
     
     if ( myFileManager.fileExistsAtPath( myLaunchAgentFolder, isDirectory: nil)) {
         
-    } else {
+    }
+    
+    else {
         do {
             NSLog("Creating LaunchAgent folder.")
-        try myFileManager.createDirectoryAtPath(myLaunchAgentFolder, withIntermediateDirectories: true, attributes: nil)
-        } catch {
+            
+            try myFileManager.createDirectoryAtPath(myLaunchAgentFolder, withIntermediateDirectories: true, attributes: nil)
+        }
+        
+        catch {
             NSLog("Can't create LaunchAgent folder.")
-    }
+            return
+        }
     }
     
     // find the current app path and create a launch agent
