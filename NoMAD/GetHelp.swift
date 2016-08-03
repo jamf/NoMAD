@@ -20,13 +20,24 @@ class GetHelp {
     var enabled: Bool
     
     init() {
-        getHelpType = defaults.stringForKey("GetHelpType") ?? ""
-        getHelpOptions = defaults.stringForKey("GetHelpOptions") ?? ""
+        getHelpType = ""
+        getHelpOptions = ""
+        enabled = false
         
-        if ( getHelpType == "" ) {
-            enabled = false
-        } else {
-            enabled = true
+        if let getHelpType = defaults.stringForKey("GetHelpType") {
+            if let getHelpOptions = defaults.stringForKey("GetHelpOptions") {
+                self.getHelpOptions = getHelpOptions
+                self.getHelpType = getHelpType
+
+                enabled = true;
+            }
+            
+            else  {
+                print("Missing getHelpOptions key")
+                self.getHelpType = ""
+                self.getHelpOptions = ""
+                enabled = false
+            }
         }
     }
     
