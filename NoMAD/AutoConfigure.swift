@@ -62,22 +62,20 @@ private func getADSettings() {
     let myADConfig = cliTask("/usr/sbin/dsconfigad -show").componentsSeparatedByString("\n")
     
     if myADConfig.count > 0 {
-        if myADConfig[0] != "" {
-            for line in myADConfig {
-                if line.containsString("Active Directory Domain") {
-                    let myDomain = (line as NSString).substringFromIndex(35)
-                    defaults.setObject(myDomain, forKey: "ADDomain")
-                    defaults.setObject(myDomain.uppercaseString, forKey: "KerberosRealm")
-                    defaults.setObject("", forKey: "InternalSite")
-                    defaults.setObject("", forKey: "InternalSiteIP")
-                    defaults.setObject(0, forKey: "Verbose")
-                    defaults.setObject("", forKey: "userCommandHotKey1")
-                    defaults.setObject("", forKey: "userCommandName1")
-                    defaults.setObject("", forKey: "userCommandTask1")
-                    defaults.setObject(7200, forKey: "secondsToRenew")
-                    defaults.setObject(1, forKey: "RenewTickets")
-                    break
-                }
+        for line in myADConfig {
+            if line.containsString("Active Directory Domain") {
+                let myDomain = (line as NSString).substringFromIndex(35)
+                defaults.setObject(myDomain, forKey: "ADDomain")
+                defaults.setObject(myDomain.uppercaseString, forKey: "KerberosRealm")
+                defaults.setObject("", forKey: "InternalSite")
+                defaults.setObject("", forKey: "InternalSiteIP")
+                defaults.setObject(0, forKey: "Verbose")
+                defaults.setObject("", forKey: "userCommandHotKey1")
+                defaults.setObject("", forKey: "userCommandName1")
+                defaults.setObject("", forKey: "userCommandTask1")
+                defaults.setObject(7200, forKey: "secondsToRenew")
+                defaults.setObject(1, forKey: "RenewTickets")
+                break
             }
         }
     }
