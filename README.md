@@ -22,7 +22,9 @@ Active Directory without having to actually bind to AD.
 Coming in future versions:
 
 - VPN connection management for built-in VPN types.
+- Getting a Kerberos ticket as a side effect of a succesful VPN connection.
 - Mounting of arbitrary shares based upon configured values.
+- DFS resolution without needing to be bound.
 - Put x509 certificate into an 802.1x profile for use with wireless networks.
 
 Sample screen shot:
@@ -38,6 +40,10 @@ Sample screen shot:
 v. .9 Public Beta - Most things work, but we need some testing.
 
 [NoMADv.9PB1.zip](/uploads/2fa70aed3fd6149ac46f9ca0c7bf04c4/NoMADv.9PB1.zip)
+
+***Sierra Support***
+
+While not always tested on Sierra, it should work fine. Currently the project is in Swift 2.2. It almost nearly compiles in Swift 3.
 
 ***Thanks!***
 
