@@ -356,6 +356,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             userInfoAPI.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!)
             userInfoAPI.myTickets.getDetails()
         }
+
         userInfoAPI.myLDAPServers.check()
         updateUserInfo()
     }
@@ -426,7 +427,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     if userinfo!.passwordAging {
                         
                         statusItem.toolTip = self.dateFormatter.stringFromDate(userinfo!.userPasswordExpireDate)
-                        self.NoMADMenuTicketLife.title = self.dateFormatter.stringFromDate(self.userInfoAPI.myTickets.expire) 
+                        self.NoMADMenuTicketLife.title = self.dateFormatter.stringFromDate(self.userInfoAPI.myTickets.expire) + " " + self.userInfoAPI.myLDAPServers.currentServer
                         
                         let daysToGo = Int(abs(userinfo!.userPasswordExpireDate.timeIntervalSinceNow)/86400)
                         // we do this twice b/c doing it only once seems to make it less than full width
@@ -445,7 +446,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         // we do this twice b/c doing it only once seems to make it less than full width
                         statusItem.title = ""
                         statusItem.title = ""
-                         self.NoMADMenuTicketLife.title = self.dateFormatter.stringFromDate(self.userInfoAPI.myTickets.expire)
+                         self.NoMADMenuTicketLife.title = self.dateFormatter.stringFromDate(self.userInfoAPI.myTickets.expire) + " " + self.userInfoAPI.myLDAPServers.currentServer
                     }
                 } else {
                     statusItem.image = self.iconOffOff
@@ -504,16 +505,17 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     if ( userinfo!.userHome != "" && self.NoMADMenu.itemArray.contains(self.NoMADMenuHome) == false ) {
                         let homeComponents = userinfo!.userHome.componentsSeparatedByString("/")
                         let homeShare = homeComponents[homeComponents.count-2]
-                        self.NoMADMenuHome.title = homeShare
+                        self.NoMADMenuHome.title = "Home Sharepoint"
                         self.NoMADMenuHome.action = #selector(self.homeClicked)
                         self.NoMADMenuHome.target = self.NoMADMenuLogOut.target
                         self.NoMADMenuHome.enabled = true
-                        
-                        self.NoMADMenu.addItem(self.NoMADMenuHome)
+                        // should key this off of the position of the Preferences menu
+                        let prefIndex = self.NoMADMenu.indexOfItem(self.NoMADMenuPreferences)
+                        self.NoMADMenu.insertItem(self.NoMADMenuHome, atIndex: (prefIndex - 1 ))
                     } else if userinfo!.userHome != "" && self.NoMADMenu.itemArray.contains(self.NoMADMenuHome) {
                         let homeComponents = userinfo!.userHome.componentsSeparatedByString("/")
                         let homeShare = homeComponents[homeComponents.count-2]
-                        self.NoMADMenuHome.title = homeShare
+                        self.NoMADMenuHome.title = "Home Sharepoint"
                         self.NoMADMenuHome.action = #selector(self.homeClicked)
                         self.NoMADMenuHome.target = self.NoMADMenuLogOut.target
                         self.NoMADMenuHome.enabled = true
