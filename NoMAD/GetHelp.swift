@@ -46,14 +46,16 @@ class GetHelp {
         if getHelpType != "" && getHelpOptions != "" {
             switch getHelpType {
             case "Bomgar":
-                let myURL = subVariables(getHelpOptions)
-                cliTask("curl -o /tmp/BomgarClient " + myURL )
-                cliTaskNoTerm("/usr/bin/unzip -o -d /tmp /tmp/BomgarClient")
-                cliTask("/usr/bin/open /tmp/Bomgar/Double-Click\\ To\\ Start\\ Support\\ Session.app")
+                if let myURL = subVariables(getHelpOptions) {
+                    cliTask("curl -o /tmp/BomgarClient " + myURL )
+                    cliTaskNoTerm("/usr/bin/unzip -o -d /tmp /tmp/BomgarClient")
+                    cliTask("/usr/bin/open /tmp/Bomgar/Double-Click\\ To\\ Start\\ Support\\ Session.app")
+                }
                 
             case "URL":
-                let myURL = subVariables(getHelpOptions)
-                cliTask("/usr/bin/open " + myURL )
+                if let myURL = subVariables(getHelpOptions) {
+                    cliTask("/usr/bin/open " + myURL )
+                }
                 
             case "App":
                 cliTask("/usr/bin/open " + getHelpOptions.stringByReplacingOccurrencesOfString(" ", withString: "\\ ") )
@@ -82,16 +84,30 @@ class GetHelp {
         }
     }
     
-    private func subVariables( url: String ) -> String {
+    private func subVariables( url: String ) -> String? {
         //let email = UserInfoAPI.getLDAPInfo(<#T##UserInfoAPI#>)
-        let domain = defaults.stringForKey("ADDomain")!
-        let fullName = defaults.stringForKey("displayName")!.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())
-        //let shortName = userInfoAPI.connectionData["userPrincipal"]!
-        let serial = getSerial()
         
-        let subURL = url.stringByReplacingOccurrencesOfString("<<domain>>", withString: domain)
-        let subURL1 = subURL.stringByReplacingOccurrencesOfString("<<fullname>>", withString: fullName!)
-        let subURL2 = subURL1.stringByReplacingOccurrencesOfString("<<serial>>", withString: serial)
-        return subURL2
+        if let domain = defaults.stringForKey("ADDomain") {
+            if let fullName = defaults.stringForKey("displayName")!.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet()) {
+                //let shortName = userInfoAPI.connectionData["userPrincipal"]!
+                let serial = getSerial()
+                
+                let subURL = url.stringByReplacingOccurrencesOfString("<<domain>>", withString: domain)
+                let subURL1 = subURL.stringByReplacingOccurrencesOfString("<<fullname>>", withString: fullName)
+                let subURL2 = subURL1.stringByReplacingOccurrencesOfString("<<serial>>", withString: serial)
+
+                return subURL2
+            }
+            
+            else {
+                print ("displayName key failure")
+
+                return ""
+            }
+        }
+        
+        print("ADDomain key failure")
+        
+        return ""
     }
 }
