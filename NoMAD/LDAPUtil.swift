@@ -259,7 +259,7 @@ class LDAPServers {
                     print("Trying host: " + hosts[i].host)
                     
                     // socket test first - this could be falsely negative
-                    // also note that this needs to return sdterr
+                    // also note that this needs to return stderr
                     
                     let myPingResult = cliTask("/usr/bin/nc -G 5 -z " + hosts[i].host + " 389")
                     
@@ -289,9 +289,11 @@ class LDAPServers {
                 }
             }
         }
+        
         guard ( hosts.count > 0 ) else {
             return
         }
+        
         if hosts.last!.status == "dead" {
             self.currentState = false
         } else {

@@ -71,7 +71,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             }
         }
         
-        if ( myError == nil  && defaults.integerForKey("LocalPasswordSynch") == 1 ) {
+        if ( myError == nil  && defaults.integerForKey("LocalPasswordSync") == 1 ) {
             do { try testLocalPassword( Password.stringValue) }
                 catch {
                     myError = "Attempting local password sync."
@@ -180,7 +180,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                 }
             }
             
-            if (defaults.integerForKey("LocalPasswordSynch") == 1 ) && myError == "" {
+            if (defaults.integerForKey("LocalPasswordSync") == 1 ) && myError == "" {
                 
                 // synch local passwords
                 

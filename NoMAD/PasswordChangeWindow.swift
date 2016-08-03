@@ -69,7 +69,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
                 }
             }
             
-            if (defaults.stringForKey("LocalPasswordSynch") != "" ) && myError == "" {
+            if (defaults.stringForKey("LocalPasswordSync") != "" ) && myError == "" {
                 // synch local passwords
                 do { try changeLocalPassword( oldPassword.stringValue, newPassword: newPassword.stringValue) }
                 catch {
