@@ -112,18 +112,19 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         setDefaults()
         
         // if no preferences are set, we show the preferences pane
-        
-        if ( defaults.stringForKey("ADDomain") ?? "" == "" ) {
+        //TODO: Test this to make sure it does what's expected. It's checking for nil values, but not empty strings
+        if ( defaults.stringForKey("ADDomain") == nil ) {
              preferencesWindow.showWindow(nil)
         } else {
             
-            if  ( defaults.stringForKey("LastPasswordWaring") ?? "" == "" ) {
+            if  ( defaults.stringForKey("LastPasswordWaring") == nil ) {
                 defaults.setObject(172800, forKey: "LastPasswordWarning")
             }
             
-            if ( defaults.stringForKey("Verbose") ?? "" == "" ) {
+            if ( defaults.stringForKey("Verbose") == nil ) {
                 defaults.setObject(0, forKey: "Verbose")
             }
+            
             doTheNeedfull()
         }
         
