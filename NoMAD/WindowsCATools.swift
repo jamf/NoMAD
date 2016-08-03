@@ -30,7 +30,7 @@ class WindowsCATools {
         
         // TODO: Don't use certtool for this, but SecTransform to create the CSR
         
-        let myCLIError = cliTask("/usr/bin/certtool r " + directoryURL.URLByAppendingPathComponent("new.csr").path! + " Z")
+        cliTask("/usr/bin/certtool r " + directoryURL.URLByAppendingPathComponent("new.csr").path! + " Z")
         
         let path = directoryURL.URLByAppendingPathComponent("new.csr")
         

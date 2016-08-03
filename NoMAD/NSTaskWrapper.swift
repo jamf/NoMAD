@@ -46,7 +46,6 @@ public func cliTask( command: String) -> String {
     
     let myTask = NSTask()
     let myPipe = NSPipe()
-    let myInputPipe = NSPipe()
     let myErrorPipe = NSPipe()
     
     // Setup and Launch!

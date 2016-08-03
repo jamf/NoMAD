@@ -96,7 +96,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         let selfServiceFileManager = NSFileManager.defaultManager()
         selfServiceExists = selfServiceFileManager.fileExistsAtPath("/Applications/Self Service.app")
         
-        if selfServiceExists {} else {
+        if !selfServiceExists {
             if NoMADMenu.itemArray.contains(NoMADMenuGetSoftware) {
                 NoMADMenuGetSoftware.enabled = false
                 NoMADMenu.removeItem(NoMADMenuGetSoftware)
@@ -111,50 +111,27 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         setDefaults()
         
-        // if no preferences are set, we should show the preferences pane
-        // TODO: while guard is the "right" way to do this, we should maybe just set all of these using ?? "" if they're not found
-        // flow would work easier that way
+        // if no preferences are set, we show the preferences pane
         
-        guard (( defaults.stringForKey("ADDomain") ) != nil) else {
-           
-            preferencesWindow.showWindow(nil)
-
-            guard (( defaults.stringForKey("Verbose") ) != nil ) else {
-                defaults.setObject(0, forKey: "Verbose")
-                return
+        if ( defaults.stringForKey("ADDomain") ?? "" == "" ) {
+             preferencesWindow.showWindow(nil)
+        } else {
+            
+            if  ( defaults.stringForKey("LastPasswordWaring") ?? "" == "" ) {
+                defaults.setObject(172800, forKey: "LastPasswordWarning")
             }
             
-            if defaults.integerForKey("Verbose") >= 1 {
-                NSLog("Starting up NoMAD")
+            if ( defaults.stringForKey("Verbose") ?? "" == "" ) {
+                defaults.setObject(0, forKey: "Verbose")
             }
-            userInfoAPI.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!)
-            return
-        }
-        
-        guard (( defaults.stringForKey("Verbose") ) != nil ) else {
-            defaults.setObject(0, forKey: "Verbose")
-            return
-        }
-        
-        guard (( defaults.stringForKey("LastPasswordWaring")) != nil ) else {
-            defaults.setObject(172800, forKey: "LastPasswordWarning")
-            userInfoAPI.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!)
-            updateUserInfo()
-            return
+            doTheNeedfull()
         }
         
         if defaults.integerForKey("Verbose") >= 1 {
             NSLog("Starting up NoMAD")
         }
         
-        // now to get the user info
-        
-        userInfoAPI.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!)
-        updateUserInfo()
-        
-        
     }
-    
     
     // actions for the menu items
     
@@ -377,10 +354,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         NSLog("Updating User Info")
         
-        if ( userInfoAPI.myLDAPServers.getDomain() == "not set" ) {
-            userInfoAPI.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!)
-        }
-        
         // make sure the domain we're using is the domain we should be using
         
         if ( userInfoAPI.myLDAPServers.getDomain() != defaults.stringForKey("ADDomain")!) {
@@ -483,7 +456,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 if ( defaults.stringForKey("userCommandName1") != "" ) {
               
                     guard (self.NoMADMenuHiddenItem1 != nil) else {
-                        let NoMadMenuHiddenItem1 = NSMenuItem()
+                        let NoMADMenuHiddenItem1 = NSMenuItem()
                         self.NoMADMenu.addItem(self.NoMADMenuHiddenItem1)
                         return
                     }
@@ -503,8 +476,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 if userinfo!.isConnected && defaults.integerForKey("ShowHome") == 1 {
                     
                     if ( userinfo!.userHome != "" && self.NoMADMenu.itemArray.contains(self.NoMADMenuHome) == false ) {
-                        let homeComponents = userinfo!.userHome.componentsSeparatedByString("/")
-                        let homeShare = homeComponents[homeComponents.count-2]
                         self.NoMADMenuHome.title = "Home Sharepoint"
                         self.NoMADMenuHome.action = #selector(self.homeClicked)
                         self.NoMADMenuHome.target = self.NoMADMenuLogOut.target
@@ -513,8 +484,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         let prefIndex = self.NoMADMenu.indexOfItem(self.NoMADMenuPreferences)
                         self.NoMADMenu.insertItem(self.NoMADMenuHome, atIndex: (prefIndex - 1 ))
                     } else if userinfo!.userHome != "" && self.NoMADMenu.itemArray.contains(self.NoMADMenuHome) {
-                        let homeComponents = userinfo!.userHome.componentsSeparatedByString("/")
-                        let homeShare = homeComponents[homeComponents.count-2]
                         self.NoMADMenuHome.title = "Home Sharepoint"
                         self.NoMADMenuHome.action = #selector(self.homeClicked)
                         self.NoMADMenuHome.target = self.NoMADMenuLogOut.target

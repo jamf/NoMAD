@@ -9,7 +9,7 @@
 import Cocoa
 
 protocol PreferencesWindowDelegate {
-    func updateUserInfo()
+    func doTheNeedfull()
 }
 
 class PreferencesWindow: NSWindowController, NSWindowDelegate {
@@ -78,7 +78,30 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
         
     }
     
+    func windowShouldClose(sender: AnyObject) -> Bool {
+        
+        // make sure we have an AD Domain
+        
+        if ADDomainTextField.stringValue == "" {
+            let alertController = NSAlert()
+            alertController.messageText = "The AD Domain needs to be filled out."
+            alertController.beginSheetModalForWindow(self.window!, completionHandler: nil)
+            return false
+        } else {
+            return true
+        }
+    }
+    
     func windowWillClose(notification: NSNotification) {
+        
+        // make sure we have an AD Domain
+        
+        if ADDomainTextField.stringValue == "" {
+            let alertController = NSAlert()
+            alertController.messageText = "The AD Domain needs to be filled out."
+            alertController.beginSheetModalForWindow(self.window!, completionHandler: nil)
+            EXIT_FAILURE
+        }
         
         // turn the fields into app defaults
         

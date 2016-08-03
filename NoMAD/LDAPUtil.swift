@@ -289,6 +289,9 @@ class LDAPServers {
                 }
             }
         }
+        guard ( hosts.count > 0 ) else {
+            return
+        }
         if hosts.last!.status == "dead" {
             self.currentState = false
         } else {
