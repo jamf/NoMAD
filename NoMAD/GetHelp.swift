@@ -42,24 +42,43 @@ class GetHelp {
     }
     
     func getHelp() {
-        switch getHelpType {
-        case "Bomgar":
-            let myURL = subVariables(getHelpOptions)
-            cliTask("curl -o /tmp/BomgarClient " + myURL )
-            cliTaskNoTerm("/usr/bin/unzip -o -d /tmp /tmp/BomgarClient")
-            cliTask("/usr/bin/open /tmp/Bomgar/Double-Click\\ To\\ Start\\ Support\\ Session.app")
-            
-        case "URL":
-            let myURL = subVariables(getHelpOptions)
-            cliTask("/usr/bin/open " + myURL )
-            
-        case "App":
-            cliTask("/usr/bin/open " + getHelpOptions.stringByReplacingOccurrencesOfString(" ", withString: "\\ ") )
         
-        default:
-        cliTask("curl -o /tmp/BomgarClient https://bomgar.bomgar.com/api/start_session -A \"Mozilla/5.0\\ (Macintosh;\\ Intel\\ Mac\\ OS\\ X\\ 10_11_4)\\ AppleWebKit/601.5.17\\ (KHTML,\\ like\\ Gecko)\\ Version/9.1\\ Safari/601.5.17\" -d issue_menu=1 -d session.custom.external_key=NoMAD -d session.custom.full_name=" + String(defaults.stringForKey("displayName")!.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())) + " -d session.custom.serial_number=" + getSerial() + " -d customer.company=" + defaults.stringForKey("ADDomain")! )
-        cliTaskNoTerm("/usr/bin/unzip -o -d /tmp /tmp/BomgarClient")
-        cliTask("/usr/bin/open /tmp/Bomgar/Double-Click\\ To\\ Start\\ Support\\ Session.app")
+        if getHelpType != "" && getHelpOptions != "" {
+            switch getHelpType {
+            case "Bomgar":
+                let myURL = subVariables(getHelpOptions)
+                cliTask("curl -o /tmp/BomgarClient " + myURL )
+                cliTaskNoTerm("/usr/bin/unzip -o -d /tmp /tmp/BomgarClient")
+                cliTask("/usr/bin/open /tmp/Bomgar/Double-Click\\ To\\ Start\\ Support\\ Session.app")
+                
+            case "URL":
+                let myURL = subVariables(getHelpOptions)
+                cliTask("/usr/bin/open " + myURL )
+                
+            case "App":
+                cliTask("/usr/bin/open " + getHelpOptions.stringByReplacingOccurrencesOfString(" ", withString: "\\ ") )
+            
+            default:
+                
+                if let displayNameKey: String = defaults.stringForKey("displayName") {
+                    if let domain = defaults.stringForKey("ADDomain") {
+                        
+                        let displayName: String = displayNameKey.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
+                        
+                        let curl = "curl -o /tmp/BomgarClient https://bomgar.bomgar.com/api/start_session -A \"Mozilla/5.0\\ (Macintosh;\\ Intel\\ Mac\\ OS\\ X\\ 10_11_4)\\ AppleWebKit/601.5.17\\ (KHTML,\\ like\\ Gecko)\\ Version/9.1\\ Safari/601.5.17\" -d issue_menu=1 -d session.custom.external_key=NoMAD -d session.custom.full_name="
+                        
+                        let serial = " -d session.custom.serial_number=" + getSerial()
+                        
+                        cliTask(curl + displayName + serial + " -d customer.company=" + domain)
+                        cliTaskNoTerm("/usr/bin/unzip -o -d /tmp /tmp/BomgarClient")
+                        cliTask("/usr/bin/open /tmp/Bomgar/Double-Click\\ To\\ Start\\ Support\\ Session.app")
+                    }
+                }
+            }
+        }
+        
+        else {
+            print("Invalid getHelpType or getHelpOptions")
         }
     }
     
