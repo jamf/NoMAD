@@ -394,8 +394,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     
                     // if we're logged in we enable some options
                     
-                    self.NoMADMenuLogOut.enabled = true
-                    self.NoMADMenuChangePassword.enabled = true
+                   // self.NoMADMenuLogOut.enabled = true
+                   // self.NoMADMenuChangePassword.enabled = true
                     
                     if userinfo!.passwordAging {
                         
