@@ -90,7 +90,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                                     NSLog("Error changing local keychain")
                                     myError = "Could not change your local keychain password."
                                 }
-                                do { try self.changeLocalPassword( self.Password.stringValue, NewPassword: localPassword.stringValue) }
+                                do { try self.changeLocalPassword( self.Password.stringValue, newPassword: localPassword.stringValue) }
                                 catch {
                                     NSLog("Local password change failed")
                                     myError = "Local password change failed"
@@ -145,13 +145,29 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         }
         
     }
+	
     @IBAction func changePasswordButtonClick(sender: AnyObject) {
-        
+		let userPrincipal: String
+		if userName.stringValue.containsString("@") {
+			userPrincipal = userName.stringValue
+		} else {
+			userPrincipal = userName.stringValue + "@" + defaults.stringForKey("KerberosRealm")!
+		}
+		let currentPassword = Password.stringValue
+		let newPassword1 = changePasswordField1.stringValue
+		let newPassword2 = changePasswordField2.stringValue
+		
+		// If the user entered the same value for both password fields.
+		if ( newPassword1 == newPassword2) {
+			var myError = ""
+			myError = performPasswordChange(userPrincipal, currentPassword: currentPassword, newPassword1: newPassword1, newPassword2: newPassword2)
+		
+		/*
         var myError = ""
         var myUser = ""
         
         if ( changePasswordField1.stringValue == changePasswordField2.stringValue) {
-            
+			
             if userName.stringValue.containsString("@") {
                 myUser = userName.stringValue
             } else {
@@ -159,6 +175,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             }
             
             let ChangePassword: KerbUtil = KerbUtil()
+			//let localPasswordSync: Bool = defaults.integerForKey("LocalPasswordSync")
             print(defaults.stringForKey("userPrincipal")!)
             myError = ChangePassword.changeKerbPassword(Password.stringValue, changePasswordField1.stringValue, myUser)
             
@@ -190,7 +207,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                     myError = "Local password change failed"
                 }
             }
-            
+            */
             if myError != "" {
                 let alertController = NSAlert()
                 alertController.messageText = myError
@@ -222,16 +239,6 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             EXIT_FAILURE
             
         }
-    }
-    
-    private func testLocalPassword(password: String) throws {
-        let myUser = NSUserName()
-        let session = ODSession.defaultSession()
-        let node = try ODNode.init(session: session, type: UInt32(kODNodeTypeAuthentication))
-        let query = try ODQuery.init(node: node, forRecordTypes: kODRecordTypeUsers, attribute: kODAttributeTypeRecordName, matchType: UInt32(kODMatchEqualTo), queryValues: myUser, returnAttributes: kODAttributeTypeNativeOnly, maximumResults: 0)
-        let result = try query.resultsAllowingPartial(false)
-        let record: ODRecord = result[0] as! ODRecord
-        try record.verifyPassword(password)
     }
     
     private func setWindowToLogin() {
@@ -292,15 +299,75 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         self.window?.setContentSize(changeSize)
         
     }
-    
-    private func changeLocalPassword(OldPassword: String, NewPassword: String) throws -> Bool {
+	
+	// username must be of the format username@kerberosRealm
+	func performPasswordChange(username: String, currentPassword: String, newPassword1: String, newPassword2: String) -> String {
+		let localPasswordSync = defaults.integerForKey("LocalPasswordSync")
+		var myError: String = ""
+		
+		if (currentPassword.isEmpty || newPassword1.isEmpty || newPassword2.isEmpty) {
+			NSLog ("Some of the fields are empty")
+			myError = "All fields must be filled in"
+			return myError
+		} else {
+			NSLog("All fields are filled in, continuing")
+		}
+		// If the user entered the same value for both password fields.
+		if ( newPassword1 == newPassword2) {
+			let ChangePassword: KerbUtil = KerbUtil()
+			print(username)
+			myError = ChangePassword.changeKerbPassword(currentPassword, newPassword1, username)
+			// If there wasn't an error and Sync Local Password is set
+			// Check if the old password entered matches the current local password
+			if (localPasswordSync == 1 ) && myError == "" {
+				do { try testLocalPassword(currentPassword) }
+				catch {
+					NSLog("Local password check Swift = no")
+					myError = "Your current local password does not match your AD password."
+				}
+			}
+			
+			// If there wasn't an error and Sync Local Password is set
+			// Update the keychain password
+			if (localPasswordSync == 1 ) && myError == "" {
+				if (ChangePassword.changeKeychainPassword(currentPassword, newPassword1) == 0) {
+					NSLog("Error changing local keychain")
+					myError = "Could not change your local keychain password."
+				}
+			}
+			
+			// If there wasn't an error and Sync Local Password is set
+			// Update the local password
+			if (localPasswordSync == 1 ) && myError == "" {
+				do { try changeLocalPassword( currentPassword, newPassword: newPassword1) }
+				catch {
+					NSLog("Local password change failed")
+					myError = "Local password change failed"
+				}
+			}
+		}
+		return myError
+	}
+	
+	private func testLocalPassword(password: String) throws {
+		let myUser = NSUserName()
+		let session = ODSession.defaultSession()
+		let node = try ODNode.init(session: session, type: UInt32(kODNodeTypeAuthentication))
+		let query = try ODQuery.init(node: node, forRecordTypes: kODRecordTypeUsers, attribute: kODAttributeTypeRecordName, matchType: UInt32(kODMatchEqualTo), queryValues: myUser, returnAttributes: kODAttributeTypeNativeOnly, maximumResults: 0)
+		let result = try query.resultsAllowingPartial(false)
+		let record: ODRecord = result[0] as! ODRecord
+		try record.verifyPassword(password)
+	}
+	
+    // Needed to attempt to sync local password with AD on login.
+    private func changeLocalPassword(oldPassword: String, newPassword: String) throws -> Bool {
         let myUser = NSUserName()
         let session = ODSession.defaultSession()
         let node = try ODNode.init(session: session, type: UInt32(kODNodeTypeAuthentication))
         let query = try ODQuery.init(node: node, forRecordTypes: kODRecordTypeUsers, attribute: kODAttributeTypeRecordName, matchType: UInt32(kODMatchEqualTo), queryValues: myUser, returnAttributes: kODAttributeTypeNativeOnly, maximumResults: 0)
         let result = try query.resultsAllowingPartial(false)
         let recordRef: ODRecordRef = result[0] as! ODRecordRef
-        if ODRecordChangePassword(recordRef, OldPassword, NewPassword, nil) {
+        if ODRecordChangePassword(recordRef, oldPassword, newPassword, nil) {
             print("Password changed!")
             return true
         } else {
