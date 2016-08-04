@@ -457,7 +457,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 if ( defaults.stringForKey("userCommandName1") != "" ) {
               
                     guard (self.NoMADMenuHiddenItem1 != nil) else {
-                        //let NoMADMenuHiddenItem1 = NSMenuItem()
+                        let NoMADMenuHiddenItem1 = NSMenuItem()
                         self.NoMADMenu.addItem(self.NoMADMenuHiddenItem1)
                         return
                     }
