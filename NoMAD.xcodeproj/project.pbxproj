@@ -27,7 +27,18 @@
 		84CC67EC1D30A1A500115C76 /* GSS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84CC67EB1D30A1A500115C76 /* GSS.framework */; };
 		84CC68051D30A25500115C76 /* NoMADMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CC68041D30A25500115C76 /* NoMADMenuController.swift */; };
 		84F93A2B1D3886FA00ED2070 /* AutoConfigure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F93A2A1D3886FA00ED2070 /* AutoConfigure.swift */; };
+		BF34324D1D52844300CE8F89 /* NoMADTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF34324C1D52844300CE8F89 /* NoMADTests.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		BF34324F1D52844300CE8F89 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84CC67D31D30A18A00115C76 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 84CC67DA1D30A18A00115C76;
+			remoteInfo = NoMAD;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		1A08F1EA1D36CDC200FA68C4 /* LoginWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoginWindow.xib; sourceTree = "<group>"; };
@@ -55,6 +66,9 @@
 		84CC67EE1D30A24000115C76 /* NoMAD-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NoMAD-Bridging-Header.h"; sourceTree = "<group>"; };
 		84CC68041D30A25500115C76 /* NoMADMenuController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NoMADMenuController.swift; sourceTree = "<group>"; };
 		84F93A2A1D3886FA00ED2070 /* AutoConfigure.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoConfigure.swift; sourceTree = "<group>"; };
+		BF34324A1D52844300CE8F89 /* NoMADTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NoMADTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF34324C1D52844300CE8F89 /* NoMADTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoMADTests.swift; sourceTree = "<group>"; };
+		BF34324E1D52844300CE8F89 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +80,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BF3432471D52844300CE8F89 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -74,6 +95,7 @@
 			children = (
 				84CC67EB1D30A1A500115C76 /* GSS.framework */,
 				84CC67DD1D30A18A00115C76 /* NoMAD */,
+				BF34324B1D52844300CE8F89 /* NoMADTests */,
 				84CC67DC1D30A18A00115C76 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -82,6 +104,7 @@
 			isa = PBXGroup;
 			children = (
 				84CC67DB1D30A18A00115C76 /* NoMAD.app */,
+				BF34324A1D52844300CE8F89 /* NoMADTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -116,6 +139,15 @@
 			path = NoMAD;
 			sourceTree = "<group>";
 		};
+		BF34324B1D52844300CE8F89 /* NoMADTests */ = {
+			isa = PBXGroup;
+			children = (
+				BF34324C1D52844300CE8F89 /* NoMADTests.swift */,
+				BF34324E1D52844300CE8F89 /* Info.plist */,
+			);
+			path = NoMADTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -136,6 +168,24 @@
 			productReference = 84CC67DB1D30A18A00115C76 /* NoMAD.app */;
 			productType = "com.apple.product-type.application";
 		};
+		BF3432491D52844300CE8F89 /* NoMADTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BF3432531D52844300CE8F89 /* Build configuration list for PBXNativeTarget "NoMADTests" */;
+			buildPhases = (
+				BF3432461D52844300CE8F89 /* Sources */,
+				BF3432471D52844300CE8F89 /* Frameworks */,
+				BF3432481D52844300CE8F89 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				BF3432501D52844300CE8F89 /* PBXTargetDependency */,
+			);
+			name = NoMADTests;
+			productName = NoMADTests;
+			productReference = BF34324A1D52844300CE8F89 /* NoMADTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -155,6 +205,10 @@
 							};
 						};
 					};
+					BF3432491D52844300CE8F89 = {
+						CreatedOnToolsVersion = 7.3.1;
+						TestTargetID = 84CC67DA1D30A18A00115C76;
+					};
 				};
 			};
 			buildConfigurationList = 84CC67D61D30A18A00115C76 /* Build configuration list for PBXProject "NoMAD" */;
@@ -171,6 +225,7 @@
 			projectRoot = "";
 			targets = (
 				84CC67DA1D30A18A00115C76 /* NoMAD */,
+				BF3432491D52844300CE8F89 /* NoMADTests */,
 			);
 		};
 /* End PBXProject section */
@@ -185,6 +240,13 @@
 				1A08F1EF1D36CE0C00FA68C4 /* PreferencesWindow.xib in Resources */,
 				1A08F1EB1D36CDC200FA68C4 /* LoginWindow.xib in Resources */,
 				1A08F1ED1D36CDF700FA68C4 /* PasswordChangeWindow.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BF3432481D52844300CE8F89 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -212,7 +274,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BF3432461D52844300CE8F89 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF34324D1D52844300CE8F89 /* NoMADTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		BF3432501D52844300CE8F89 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 84CC67DA1D30A18A00115C76 /* NoMAD */;
+			targetProxy = BF34324F1D52844300CE8F89 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		84CC67E61D30A18A00115C76 /* Debug */ = {
@@ -332,6 +410,32 @@
 			};
 			name = Release;
 		};
+		BF3432511D52844300CE8F89 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = NoMADTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.trusourcelabs.NoMADTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NoMAD.app/Contents/MacOS/NoMAD";
+			};
+			name = Debug;
+		};
+		BF3432521D52844300CE8F89 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = NoMADTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.trusourcelabs.NoMADTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NoMAD.app/Contents/MacOS/NoMAD";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -349,6 +453,15 @@
 			buildConfigurations = (
 				84CC67E91D30A18A00115C76 /* Debug */,
 				84CC67EA1D30A18A00115C76 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BF3432531D52844300CE8F89 /* Build configuration list for PBXNativeTarget "NoMADTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BF3432511D52844300CE8F89 /* Debug */,
+				BF3432521D52844300CE8F89 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

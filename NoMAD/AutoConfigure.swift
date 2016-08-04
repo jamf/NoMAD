@@ -14,53 +14,57 @@ import Foundation
     
     // do we have an AutoConfigure setting?
         
-    let autoConfigure = defaults.stringForKey("AutoConfigure") ?? ""
-    
-    switch autoConfigure {
-        case "TSL":
-            defaults.setObject("trusourcelabs.com", forKey: "ADDomain")
-            defaults.setObject("TRUSOURCELABS.COM", forKey: "KerberosRealm")
-            defaults.setObject("jupiter.trusourcelabs.com", forKey: "InternalSite")
-            defaults.setObject("192.168.32.43", forKey: "InternalSiteIP")
-            defaults.setObject(3, forKey: "Verbose")
-            defaults.setObject("", forKey: "userCommandHotKey1")
-            defaults.setObject("", forKey: "userCommandName1")
-            defaults.setObject("", forKey: "userCommandTask1")
-            defaults.setObject(7200, forKey: "secondsToRenew")
-            defaults.setObject(1, forKey: "RenewTickets")
-            defaults.setObject("", forKey: "AutoConfigure")
-        case "JODA":
-            defaults.setObject("jodapro.com", forKey: "ADDomain")
-            defaults.setObject("JODAPRO.COM", forKey: "KerberosRealm")
-            defaults.setObject("in-or-out.jodapro.com", forKey: "InternalSite")
-            defaults.setObject("1.1.1.1", forKey: "InternalSiteIP")
-            defaults.setObject("2k12.jodapro.com", forKey: "x509CA")
-            defaults.setObject("User Auth", forKey: "Template")
-            defaults.setObject(3, forKey: "Verbose")
-            defaults.setObject("", forKey: "userCommandHotKey1")
-            defaults.setObject("", forKey: "userCommandName1")
-            defaults.setObject("", forKey: "userCommandTask1")
-            defaults.setObject(7200, forKey: "secondsToRenew")
-            defaults.setObject(1, forKey: "RenewTickets")
-            defaults.setObject("", forKey: "AutoConfigure")
-        default:
-            // see if we're on AD
-            getADSettings()
-            break
+    if let autoConfigure = defaults.stringForKey("AutoConfigure") {
+        switch autoConfigure {
+            case "TSL":
+                defaults.setObject("trusourcelabs.com", forKey: "ADDomain")
+                defaults.setObject("TRUSOURCELABS.COM", forKey: "KerberosRealm")
+                defaults.setObject("jupiter.trusourcelabs.com", forKey: "InternalSite")
+                defaults.setObject("192.168.32.43", forKey: "InternalSiteIP")
+                defaults.setObject(3, forKey: "Verbose")
+                defaults.setObject("", forKey: "userCommandHotKey1")
+                defaults.setObject("", forKey: "userCommandName1")
+                defaults.setObject("", forKey: "userCommandTask1")
+                defaults.setObject(7200, forKey: "secondsToRenew")
+                defaults.setObject(1, forKey: "RenewTickets")
+                defaults.setObject("", forKey: "AutoConfigure")
+           
+            case "JODA":
+                defaults.setObject("jodapro.com", forKey: "ADDomain")
+                defaults.setObject("JODAPRO.COM", forKey: "KerberosRealm")
+                defaults.setObject("in-or-out.jodapro.com", forKey: "InternalSite")
+                defaults.setObject("1.1.1.1", forKey: "InternalSiteIP")
+                defaults.setObject("2k12.jodapro.com", forKey: "x509CA")
+                defaults.setObject("User Auth", forKey: "Template")
+                defaults.setObject(3, forKey: "Verbose")
+                defaults.setObject("", forKey: "userCommandHotKey1")
+                defaults.setObject("", forKey: "userCommandName1")
+                defaults.setObject("", forKey: "userCommandTask1")
+                defaults.setObject(7200, forKey: "secondsToRenew")
+                defaults.setObject(1, forKey: "RenewTickets")
+                defaults.setObject("", forKey: "AutoConfigure")
+            
+            default:
+                // see if we're on AD
+                getADSettings()
+                break
+            }
         }
-        let makeLoginItem = defaults.boolForKey("LoginItem") ?? false
-        if makeLoginItem {
-            addToLoginItems()
+        
+        if defaults.boolForKey("LoginItem") {
+            //TODO: Test this to make sure it actually does what I think it will. This should return the value of the key if found, otherwise false.
+                addToLoginItems()
         }
     }
 
 private func getADSettings() {
     
     let myADConfig = cliTask("/usr/sbin/dsconfigad -show").componentsSeparatedByString("\n")
-    if myADConfig[0] != "" {
+    
+    if myADConfig.count > 0 {
         for line in myADConfig {
             if line.containsString("Active Directory Domain") {
-                let myDomain = line.stringByReplacingOccurrencesOfString("Active Directory Domain          = ", withString: "")
+                let myDomain = (line as NSString).substringFromIndex(35)
                 defaults.setObject(myDomain, forKey: "ADDomain")
                 defaults.setObject(myDomain.uppercaseString, forKey: "KerberosRealm")
                 defaults.setObject("", forKey: "InternalSite")
@@ -89,13 +93,19 @@ private func addToLoginItems() {
     
     if ( myFileManager.fileExistsAtPath( myLaunchAgentFolder, isDirectory: nil)) {
         
-    } else {
+    }
+    
+    else {
         do {
             NSLog("Creating LaunchAgent folder.")
-        try myFileManager.createDirectoryAtPath(myLaunchAgentFolder, withIntermediateDirectories: true, attributes: nil)
-        } catch {
+            
+            try myFileManager.createDirectoryAtPath(myLaunchAgentFolder, withIntermediateDirectories: true, attributes: nil)
+        }
+        
+        catch {
             NSLog("Can't create LaunchAgent folder.")
-    }
+            return
+        }
     }
     
     // find the current app path and create a launch agent
