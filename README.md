@@ -43,9 +43,9 @@ v. .9 Public Beta - Most things work, but we need some testing.
 
 ***Have Questions?***
 
-Feel free to report any issues that you're having or feature requests into the Issues section of the project page.
+Feel free to report any issues that you're having or feature requests in the Issues section of the project page.
 
-Also you can find some of the team in #nomad on the Mac Admins Slack. If you're not already a member you can [here](http://macadmins.org).
+Also you can find some of the team in #nomad on the Mac Admins Slack. If you're not already a member you can join [here](http://macadmins.org).
 
 ***Sierra Support***
 
