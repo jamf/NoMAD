@@ -41,6 +41,12 @@ v. .9 Public Beta - Most things work, but we need some testing.
 
 [NoMADv.9PB1.zip](/uploads/2fa70aed3fd6149ac46f9ca0c7bf04c4/NoMADv.9PB1.zip)
 
+***Have Questions?***
+
+Feel free to report any issues that you're having or feature requests into the Issues section of the project page.
+
+Also you can find some of the team in #nomad on the Mac Admins Slack. If you're not already a member you can [here](http://macadmins.org).
+
 ***Sierra Support***
 
 While not always tested on Sierra, it should work fine. Currently the project is in Swift 2.2. It almost nearly compiles in Swift 3.
