@@ -203,4 +203,22 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 
     }
     
+    // write out local krb5.conf file to ensure password change happens to the same kdc as we're using for LDAP
+    
+    private func checkKpasswdServer(writePref: Bool ) -> Bool {
+        let myKpasswdServers = cliTask("/usr/bin/dig +short -t SRV _kdpasswd._tcp." + defaults.stringForKey("ADDomain")!)
+        
+        if myKpasswdServers.containsString(defaults.stringForKey("CurrentLDAPServer")!) {
+            
+            if writePref {
+                // check to see if a file exists already
+                
+                // write out the file
+            }
+            return true
+        } else {
+            return false
+        }
+    }
+    
 }

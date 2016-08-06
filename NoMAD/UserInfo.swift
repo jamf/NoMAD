@@ -330,6 +330,7 @@ class UserInfoAPI {
     func getLDAPInfo ( domain: String ) throws {
         
         connectionData["ldapServer"] = myLDAPServers.currentServer
+        defaults.setObject(myLDAPServers.currentServer, forKey: "CurrentLDAPServer")
         connectionData["ldapServerNamingContext"] = myLDAPServers.defaultNamingContext
         
         // Now get default password expiration time - this may not be set for environments with no password cycling requirements
