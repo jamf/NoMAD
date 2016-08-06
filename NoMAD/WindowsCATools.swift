@@ -70,7 +70,7 @@ class WindowsCATools {
         
         var myReqID = 0
         
-       submitCert("User Auth", completionHandler: {(data, response, error) in
+       submitCert(certTemplate, completionHandler: {(data, response, error) in
             if (response != nil) {
 
                 let httpResponse = response as! NSHTTPURLResponse

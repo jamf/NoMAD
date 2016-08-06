@@ -292,7 +292,7 @@ class UserInfoAPI {
                     connectionData["status"] = "Expired Login"
                     connectionData["userPrincipalShort"] = (connectionData["userPrincipal"]!).stringByReplacingOccurrencesOfString("@" + connectionData["realm"]!, withString: "").stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
                     connectionFlags["isLoggedIn"] = false as Bool
-                    connectionFlags["isLoggedIn"] = false
+                    //connectionFlags["isLoggedIn"] = false
                     connectionData["userPrincipal"] = "No User"
                     connectionData["userPrincipalShort"] = "No User"
                     connectionData["ldapServer"] = ""

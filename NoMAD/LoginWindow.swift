@@ -222,6 +222,17 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                         
                         // login via kinit here with the new password
                         
+                        let GetCredentials: KerbUtil = KerbUtil()
+                        var myError: String? = ""
+                        
+                        if myError == "" {
+                            if userPrincipal.containsString("@") {
+                                myError = GetCredentials.getKerbCredentials( newPassword1, userPrincipal );
+                            } else {
+                                myError = GetCredentials.getKerbCredentials( newPassword1, (userPrincipal + "@" + defaults.stringForKey("KerberosRealm")!))
+                            }
+                        }
+                        
                         self.setWindowToLogin()
                         self.close()
                     } else {
