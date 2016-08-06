@@ -84,10 +84,9 @@ class KlistUtil {
                     }
                 }
             }
-            getExpiration()
-            print(expire)
         } catch {
             state = false        }
+             getExpiration()
     }
     
     func getPrincipal() -> String {

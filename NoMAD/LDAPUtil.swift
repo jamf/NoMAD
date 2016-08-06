@@ -256,7 +256,7 @@ class LDAPServers {
         if self.currentState == true {
             for i in 0...( hosts.count - 1) {
                 if hosts[i].status != "dead" {
-                    print("Trying host: " + hosts[i].host)
+                    NSLog("Trying host: " + hosts[i].host)
                     
                     // socket test first - this could be falsely negative
                     // also note that this needs to return stderr
@@ -276,13 +276,13 @@ class LDAPServers {
                             current = i
                             break
                         } else {
-                            print("Server is dead by way of ldap test: " + hosts[i].host)
+                            NSLog("Server is dead by way of ldap test: " + hosts[i].host)
                             hosts[i].status = "dead"
                             hosts[i].timeStamp = NSDate()
                             break
                         }
                     } else {
-                        print("Server is dead by way of socket test: " + hosts[i].host)
+                        NSLog("Server is dead by way of socket test: " + hosts[i].host)
                         hosts[i].status = "dead"
                         hosts[i].timeStamp = NSDate()
                     }
