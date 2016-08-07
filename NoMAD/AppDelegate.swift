@@ -35,6 +35,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
             
             NSLog("State change, checking things.")
             notificationQueue.enqueueNotification(notificationKey, postingStyle: .PostNow, coalesceMask: .CoalescingOnName, forModes: nil)
+            
+            if  ( defaults.stringForKey("StateChangeAction") != nil ) {
+                NSLog("Firing State Change Action")
+                cliTask(defaults.stringForKey("StateChangeAction")! + " &")
+            }
         }
         
         var dynamicContext = SCDynamicStoreContext(version: 0, info: nil, retain: nil, release: nil, copyDescription: nil)
