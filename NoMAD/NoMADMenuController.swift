@@ -113,6 +113,25 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         setDefaults()
         
+        // Autologin if you can
+        
+        if ( defaults.boolForKey("UseKeychain")) {
+            var myPass: String = ""
+            
+            // check if there's a last user
+            
+            if ( (defaults.stringForKey("LastUser") ?? "") != "" ) {
+                
+                let myKeychainUtil = KeychainUtil()
+                do { myPass = try myKeychainUtil.findPassword(defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!) } catch {
+                    loginWindow.showWindow(nil)
+                }
+                let GetCredentials: KerbUtil = KerbUtil()
+                GetCredentials.getKerbCredentials( myPass, defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!)
+                NSLog("Automatically logging in.")
+            }
+        }
+        
         // if no preferences are set, we show the preferences pane
         //TODO: Test this to make sure it does what's expected. It's checking for nil values, but not empty strings
         if ( defaults.stringForKey("ADDomain") == nil ) {
@@ -155,6 +174,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 }
                 let GetCredentials: KerbUtil = KerbUtil()
                 GetCredentials.getKerbCredentials( myPass, defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!)
+                NSLog("Automatically logging in.")
             }
         } else {
             loginWindow.showWindow(nil)
@@ -171,6 +191,30 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // kill the Kerb ticket when clicked
 
     @IBAction func NoMADMenuClickLogOut(sender: NSMenuItem) {
+        
+        // remove their password from the keychain if they're logging out
+        
+        if ( defaults.boolForKey("UseKeychain")) {
+            var myKeychainItem: SecKeychainItem?
+            
+            if ( (defaults.stringForKey("LastUser") ?? "") != "" ) {
+                
+                var myErr: OSStatus
+                let serviceName = "NoMAD"
+                var passLength: UInt32 = 0
+                var passPtr: UnsafeMutablePointer<Void> = nil
+                let name = defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!
+                
+                myErr = SecKeychainFindGenericPassword(nil, UInt32(serviceName.characters.count), serviceName, UInt32(name.characters.count), name, &passLength, &passPtr, &myKeychainItem)
+                
+               if ( myErr == 0 )
+               { SecKeychainItemDelete(myKeychainItem!) } else {
+                NSLog("Error deleting Keychain entry.")
+                }
+            }
+        } else {
+            loginWindow.showWindow(nil)
+        }
         cliTask("/usr/bin/kdestroy")
         updateUserInfo()
     }
