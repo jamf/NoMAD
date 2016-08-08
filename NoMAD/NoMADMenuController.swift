@@ -141,7 +141,24 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // show the login window when the menu item is clicked
     
     @IBAction func NoMADMenuClickLogIn(sender: NSMenuItem) {
-                loginWindow.showWindow(nil)
+        
+        if ( defaults.boolForKey("UseKeychain")) {
+            var myPass: String = ""
+            
+            // check if there's a last user
+            
+            if ( (defaults.stringForKey("LastUser") ?? "") != "" ) {
+                
+                let myKeychainUtil = KeychainUtil()
+                do { myPass = try myKeychainUtil.findPassword(defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!) } catch {
+                    loginWindow.showWindow(nil)
+                }
+                let GetCredentials: KerbUtil = KerbUtil()
+                GetCredentials.getKerbCredentials( myPass, defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!)
+            }
+        } else {
+            loginWindow.showWindow(nil)
+        }
     }
     
     // show the password change window when the menu item is clicked

@@ -27,7 +27,7 @@ class KeychainUtil {
 
         if myErr == OSStatus(errSecSuccess) {
             let password = NSString(bytes: passPtr, length: Int(passLength), encoding: NSUTF8StringEncoding)
-            return String(password)
+            return password as! String
         } else {
             throw NoADError.NoStoredPassword
         }

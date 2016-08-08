@@ -71,6 +71,19 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             }
         }
         
+        // put password in keychain
+        
+        if ( defaults.boolForKey("UseKeychain") ) {
+            // check if keychain item exists
+            
+            let myKeychainUtil = KeychainUtil()
+            
+            do { try myKeychainUtil.findPassword(userName.stringValue + "@" + defaults.stringForKey("KerberosRealm")!) } catch {
+                myKeychainUtil.setPassword(userName.stringValue + "@" + defaults.stringForKey("KerberosRealm")!, pass: Password.stringValue)
+            }
+        
+        }
+        
         if ( myError == nil  && defaults.integerForKey("LocalPasswordSync") == 1 ) {
             do { try testLocalPassword( Password.stringValue) }
                 catch {
@@ -161,53 +174,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 		if ( newPassword1 == newPassword2) {
 			var myError = ""
 			myError = performPasswordChange(userPrincipal, currentPassword: currentPassword, newPassword1: newPassword1, newPassword2: newPassword2)
-		
-		/*
-        var myError = ""
-        var myUser = ""
-        
-        if ( changePasswordField1.stringValue == changePasswordField2.stringValue) {
-			
-            if userName.stringValue.containsString("@") {
-                myUser = userName.stringValue
-            } else {
-                myUser = userName.stringValue + "@" + defaults.stringForKey("KerberosRealm")!
-            }
-            
-            let ChangePassword: KerbUtil = KerbUtil()
-			//let localPasswordSync: Bool = defaults.integerForKey("LocalPasswordSync")
-            print(defaults.stringForKey("userPrincipal")!)
-            myError = ChangePassword.changeKerbPassword(Password.stringValue, changePasswordField1.stringValue, myUser)
-            
-            if (defaults.integerForKey("LocalPasswordSync") == 1 ) && myError == "" {
-                do { try testLocalPassword(Password.stringValue) }
-                catch {
-                    NSLog("Local password check Swift = no")
-                    myError = "Your current local password does not match your AD password."
-                }
-            }
-            
-            if (defaults.integerForKey("LocalPasswordSync") == 1 ) && myError == "" {
-                
-                // synch keychain
-                
-                if (ChangePassword.changeKeychainPassword(Password.stringValue, changePasswordField1.stringValue) == 0) {
-                    NSLog("Error changing local keychain")
-                    myError = "Could not change your local keychain password."
-                }
-            }
-            
-            if (defaults.integerForKey("LocalPasswordSync") == 1 ) && myError == "" {
-                
-                // synch local passwords
-                
-                do { try changeLocalPassword( Password.stringValue, NewPassword: changePasswordField1.stringValue) }
-                catch {
-                    NSLog("Local password change failed")
-                    myError = "Local password change failed"
-                }
-            }
-            */
+
             if myError != "" {
                 let alertController = NSAlert()
                 alertController.messageText = myError
