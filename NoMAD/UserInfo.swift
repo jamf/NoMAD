@@ -260,14 +260,6 @@ class UserInfoAPI {
     
     func TGTPrincpalName ( realm : String ) throws {
         
-        
-        // TODO: use klist --json and then parse that
-        /*
- let klistResult = cliTask("/usr/bin/klist --json")
- let kslitResultJSON: NSData = klistResult.dataUsingEncoding(NSUTF8StringEncoding)!
- let klistResultDict = try NSJSONSerialization.JSONObjectWithData(klistResultJSON, options: NSJSONReadingOptions.MutableContainers)
-        */
-    
         // parses klist to get a user name for the specified realm
         
         myTickets.getDetails()
