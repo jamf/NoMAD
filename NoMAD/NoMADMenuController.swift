@@ -22,6 +22,8 @@ enum NoADError: ErrorType {
     case LDAPServerPasswordExpiration
     case UserPasswordSetDate
     case UserHome
+    case NoStoredPassword
+    case StoredPasswordWrong
 }
 
 
