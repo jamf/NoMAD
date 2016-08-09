@@ -363,6 +363,10 @@ class UserInfoAPI {
             
             connectionDates["userPasswordSetDate"] = NSDate(timeIntervalSince1970: (Double(Int(userPasswordExpireDate)!))/10000000-11644473600)
             connectionDates["userPasswordExpireDate"] = connectionDates["userPasswordSetDate"]?.dateByAddingTimeInterval(serverPasswordExpirationDefault)
+            
+            if connectionDates["userPasswordExpireDate"] != (defaults.objectForKey("LastPasswordExpireDate") as! NSDate) {
+                NSLog("-----password changed underneath us----")
+            }
             defaults.setObject(connectionDates["userPasswordExpireDate"], forKey: "LastPasswordExpireDate")
         } else {
             throw NoADError.LDAPServerLookup

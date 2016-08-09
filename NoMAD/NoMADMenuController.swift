@@ -77,6 +77,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     var updateScheduled = false
     let dateFormatter = NSDateFormatter()
     
+    let myKeychainUtil = KeychainUtil()
+    
     // on startup we check for preferences
     
     override func awakeFromNib() {
@@ -122,7 +124,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             
             if ( (defaults.stringForKey("LastUser") ?? "") != "" ) {
                 
-                let myKeychainUtil = KeychainUtil()
                 do { myPass = try myKeychainUtil.findPassword(defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!) } catch {
                     loginWindow.showWindow(nil)
                 }
@@ -570,7 +571,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             
             // reset the counter if the password change is over the default
             
-            if ( abs(userinfo!.userPasswordExpireDate.timeIntervalSinceNow) < Double(defaults.integerForKey("PasswordExpireAlertTime") ?? 1296000) ) {
+            if ( abs(userinfo!.userPasswordExpireDate.timeIntervalSinceNow) < Double(defaults.integerForKey("PasswordExpireAlertTime") ?? 1296000) && userinfo!.status == "Logged In" ) {
                 
                 if ( abs(userinfo!.userPasswordExpireDate.timeIntervalSinceNow) < Double(defaults.integerForKey("LastPasswordWarning")) ) {
                     if ( abs(userinfo!.userPasswordExpireDate.timeIntervalSinceNow) > Double(345600) ) {
