@@ -78,6 +78,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     let dateFormatter = NSDateFormatter()
     
     let myKeychainUtil = KeychainUtil()
+    let GetCredentials: KerbUtil = KerbUtil()
     
     // on startup we check for preferences
     
@@ -119,17 +120,20 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         if ( defaults.boolForKey("UseKeychain")) {
             var myPass: String = ""
-            
             // check if there's a last user
             
             if ( (defaults.stringForKey("LastUser") ?? "") != "" ) {
+                var myErr: String? = ""
                 
                 do { myPass = try myKeychainUtil.findPassword(defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!) } catch {
                     loginWindow.showWindow(nil)
                 }
-                let GetCredentials: KerbUtil = KerbUtil()
-                GetCredentials.getKerbCredentials( myPass, defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!)
-                NSLog("Automatically logging in.")
+                myErr = GetCredentials.getKerbCredentials( myPass, defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!)
+                if myErr != nil {
+                    NSLog("Error attempting to automatically log in.")
+                    loginWindow.showWindow(nil)
+                } else {
+                    NSLog("Automatically logging in.") }
             }
         }
         
@@ -164,18 +168,21 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         if ( defaults.boolForKey("UseKeychain")) {
             var myPass: String = ""
-            
+            var myErr: String? = ""
             // check if there's a last user
             
             if ( (defaults.stringForKey("LastUser") ?? "") != "" ) {
                 
-                let myKeychainUtil = KeychainUtil()
                 do { myPass = try myKeychainUtil.findPassword(defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!) } catch {
                     loginWindow.showWindow(nil)
                 }
                 let GetCredentials: KerbUtil = KerbUtil()
-                GetCredentials.getKerbCredentials( myPass, defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!)
-                NSLog("Automatically logging in.")
+                myErr = GetCredentials.getKerbCredentials( myPass, defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!)
+                if myErr != nil {
+                    NSLog("Error attempting to automatically log in.")
+                    loginWindow.showWindow(nil)
+                } else {
+                    NSLog("Automatically logging in.") }
             }
         } else {
             loginWindow.showWindow(nil)
@@ -186,7 +193,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     
     @IBAction func NoMADMenuClickChangePassword(sender: NSMenuItem) {
              passwordChangeWindow.showWindow(nil)
-        //       updateUserInfo()
     }
     
     // kill the Kerb ticket when clicked
@@ -217,6 +223,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             loginWindow.showWindow(nil)
         }
         cliTask("/usr/bin/kdestroy")
+        lastStatusCheck = NSDate().dateByAddingTimeInterval(-5000)
         updateUserInfo()
     }
     

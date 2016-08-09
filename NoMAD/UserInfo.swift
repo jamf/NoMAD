@@ -364,7 +364,10 @@ class UserInfoAPI {
             connectionDates["userPasswordSetDate"] = NSDate(timeIntervalSince1970: (Double(Int(userPasswordExpireDate)!))/10000000-11644473600)
             connectionDates["userPasswordExpireDate"] = connectionDates["userPasswordSetDate"]?.dateByAddingTimeInterval(serverPasswordExpirationDefault)
             
-            if connectionDates["userPasswordExpireDate"] != (defaults.objectForKey("LastPasswordExpireDate") as! NSDate) {
+            let lastDate = defaults.objectForKey("LastPasswordExpireDate") ?? nil
+            
+            
+            if ( lastDate == nil || connectionDates["userPasswordExpireDate"] != lastDate as! NSDate ) {
                 NSLog("-----password changed underneath us----")
             }
             defaults.setObject(connectionDates["userPasswordExpireDate"], forKey: "LastPasswordExpireDate")

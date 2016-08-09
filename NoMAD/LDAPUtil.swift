@@ -219,7 +219,7 @@ class LDAPServers {
     func getHosts(domain: String ) {
         
         var newHosts = [LDAPServer]()
-        var dnsResults = cliTask("/usr/bin/dig +short +time=2 -t SRV _ldap._tcp." + domain).componentsSeparatedByString("\n")
+        var dnsResults = cliTask("/usr/bin/dig +short -t SRV _ldap._tcp." + domain).componentsSeparatedByString("\n")
         
         // check to make sure we got a result
         
