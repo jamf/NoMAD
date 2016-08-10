@@ -26,6 +26,20 @@ enum NoADError: ErrorType {
     case StoredPasswordWrong
 }
 
+// default settings
+
+let settings = [
+    "ADDomain" : "",
+    "KerberosRealm" : "",
+    "InternalSite"    : "",
+    "InternalSiteIP" : "",
+    "Verbose"   :   0,
+    "userCommandHotKey1"    : "",
+    "userCommandName1"  : "",
+    "userCommandTask1"  : "",
+    "secondsToRenew"    : 7200,
+    "RenewTickets"  :   1
+]
 
 // set up a default defaults
 
@@ -95,6 +109,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         dateFormatter.dateStyle = .MediumStyle
         dateFormatter.timeStyle = .ShortStyle
         
+        defaults.registerDefaults(settings)
         
         // find out if Casper Self Service exists - hide the menu if it's not there
         
