@@ -405,9 +405,9 @@ class UserInfoAPI {
             
             if ( lastDate != nil && connectionDates["userPasswordSetDate"] != lastDate as! NSDate ) {
                 NSLog("-----password changed underneath us----")
-                let myAlert = NSAlert()
-                myAlert.messageText = "Your network password has changed. Please login again."
-                myAlert.runModal()
+                //let myAlert = NSAlert()
+            //myAlert.messageText = "Your network password has changed. Please login again."
+                //myAlert.runModal()
             }
             defaults.setObject(connectionDates["userPasswordExpireDate"], forKey: "LastPasswordExpireDate")
             defaults.setObject(connectionDates["userPasswordSetDate"], forKey: "userPasswordSetDate")

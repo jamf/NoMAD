@@ -29,7 +29,7 @@ enum NoADError: ErrorType {
 
 // set up a default defaults
 
-let defaults = NSUserDefaults.standardUserDefaults()
+let defaults = NSUserDefaults.init()
 let statusItem = NSStatusBar.systemStatusBar().statusItemWithLength(NSVariableStatusItemLength)
 let userNotificationCenter = NSUserNotificationCenter.defaultUserNotificationCenter()
 var selfServiceExists = true
