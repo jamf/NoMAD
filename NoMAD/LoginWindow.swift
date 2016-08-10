@@ -52,6 +52,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         self.window?.center()
         self.window?.makeKeyAndOrderFront(nil)
         NSApp.activateIgnoringOtherApps(true)
+        self.window?.makeMainWindow()
     }
     
     func windowWillClose(notification: NSNotification) {

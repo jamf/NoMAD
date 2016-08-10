@@ -364,13 +364,17 @@ class UserInfoAPI {
             connectionDates["userPasswordSetDate"] = NSDate(timeIntervalSince1970: (Double(Int(userPasswordExpireDate)!))/10000000-11644473600)
             connectionDates["userPasswordExpireDate"] = connectionDates["userPasswordSetDate"]?.dateByAddingTimeInterval(serverPasswordExpirationDefault)
             
-            let lastDate = defaults.objectForKey("LastPasswordExpireDate") ?? nil
+            let lastDate = defaults.objectForKey("userPasswordSetDate") ?? nil
             
             
-            if ( lastDate == nil || connectionDates["userPasswordExpireDate"] != lastDate as! NSDate ) {
+            if ( lastDate != nil && connectionDates["userPasswordSetDate"] != lastDate as! NSDate ) {
                 NSLog("-----password changed underneath us----")
+                let myAlert = NSAlert()
+                myAlert.messageText = "Your network password has changed. Please login again."
+                myAlert.runModal()
             }
             defaults.setObject(connectionDates["userPasswordExpireDate"], forKey: "LastPasswordExpireDate")
+            defaults.setObject(connectionDates["userPasswordSetDate"], forKey: "userPasswordSetDate")
         } else {
             throw NoADError.LDAPServerLookup
         }

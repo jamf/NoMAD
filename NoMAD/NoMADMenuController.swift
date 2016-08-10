@@ -138,7 +138,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         }
         
         // if no preferences are set, we show the preferences pane
-        //TODO: Test this to make sure it does what's expected. It's checking for nil values, but not empty strings
+        
         if ( defaults.stringForKey("ADDomain") == nil ) {
              preferencesWindow.showWindow(nil)
         } else {
@@ -183,7 +183,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     loginWindow.showWindow(nil)
                 } else {
                     NSLog("Automatically logging in.") }
-            }
+            } else {
+                loginWindow.showWindow(nil) }
         } else {
             loginWindow.showWindow(nil)
         }
@@ -201,10 +202,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         // remove their password from the keychain if they're logging out
         
+    if ( (defaults.stringForKey("LastUser") ?? "") != "" ) {
+        
         if ( defaults.boolForKey("UseKeychain")) {
             var myKeychainItem: SecKeychainItem?
-            
-            if ( (defaults.stringForKey("LastUser") ?? "") != "" ) {
                 
                 var myErr: OSStatus
                 let serviceName = "NoMAD"
@@ -222,6 +223,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         } else {
             loginWindow.showWindow(nil)
         }
+        
         cliTask("/usr/bin/kdestroy")
         lastStatusCheck = NSDate().dateByAddingTimeInterval(-5000)
         updateUserInfo()
