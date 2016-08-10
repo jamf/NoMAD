@@ -324,6 +324,8 @@ class UserInfoAPI {
         connectionData["ldapServer"] = myLDAPServers.currentServer
         defaults.setObject(myLDAPServers.currentServer, forKey: "CurrentLDAPServer")
         connectionData["ldapServerNamingContext"] = myLDAPServers.defaultNamingContext
+        let passwordSetDate = try myLDAPServers.getLDAPInformation("pwdLastSet", searchTerm: "sAMAccountName=" + connectionData["userPrincipalShort"]!)
+        connectionDates["userPasswordSetDate"] = NSDate(timeIntervalSince1970: (Double(Int(passwordSetDate)!))/10000000-11644473600)
         
         // Now get default password expiration time - this may not be set for environments with no password cycling requirements
         
@@ -390,10 +392,6 @@ class UserInfoAPI {
                 connectionDates["userPasswordExpireDate"] = connectionDates["userPasswordSetDate"]?.dateByAddingTimeInterval(serverPasswordExpirationDefault)
 
             }
-
-
-            
-            connectionDates["userPasswordSetDate"] = NSDate(timeIntervalSince1970: (Double(Int(userPasswordExpireDate)!))/10000000-11644473600)
             
             let lastDate = defaults.objectForKey("userPasswordSetDate") ?? nil
             

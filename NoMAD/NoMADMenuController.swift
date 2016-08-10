@@ -38,7 +38,8 @@ let settings = [
     "userCommandName1"  : "",
     "userCommandTask1"  : "",
     "secondsToRenew"    : 7200,
-    "RenewTickets"  :   1
+    "RenewTickets"  :   1,
+    "userPasswordExpireDate"    : ""
 ]
 
 // set up a default defaults
