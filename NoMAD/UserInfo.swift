@@ -329,21 +329,8 @@ class UserInfoAPI {
         
         if myLDAPServers.currentState {
             NSLog("Getting password aging info")
-            let passwordExpirationLength = try myLDAPServers.getLDAPInformation("maxPwdAge", baseSearch: true )
             
-            if ( passwordExpirationLength.characters.count > 15 ) {
-                serverPasswordExpirationDefault = Double(0)
-                connectionFlags["passwordAging"] = false
-            } else if ( passwordExpirationLength != "" ){
-                serverPasswordExpirationDefault = Double(abs(Int(passwordExpirationLength)!)/10000000)
-                connectionFlags["passwordAging"] = true
-                defaults.setObject(true, forKey: "UserAging")
-            } else {
-                serverPasswordExpirationDefault = Double(0)
-                connectionFlags["passwordAging"] = false
-            }
-            
-            // Now get the users last password set time
+            // get basic password settings
             
             let userPasswordExpireDate = try myLDAPServers.getLDAPInformation("pwdLastSet", searchTerm: "sAMAccountName=" + connectionData["userPrincipalShort"]!)
             
@@ -351,21 +338,70 @@ class UserInfoAPI {
                 throw NoADError.UserPasswordSetDate
             }
             
-            // TODO: time to do this the right way
-            // https://support.microsoft.com/en-us/kb/305144
             
-            let userPasswordUACFlag = try myLDAPServers.getLDAPInformation("userAccountControl", searchTerm: "sAMAccountName=" + connectionData["userPrincipalShort"]!)
+            // First try msDS-UserPasswordExpiryTimeComputed
             
-            if ( userPasswordUACFlag.characters.first == "6" ) {
+            let computedExpireDateRaw = try myLDAPServers.getLDAPInformation("msDS-UserPasswordExpiryTimeComputed", searchTerm: "sAMAccountName=" + connectionData["userPrincipalShort"]!)
+            
+            if ( Int(computedExpireDateRaw) == 9223372036854775807 ) {
+                
+                // password doesn't expire
+                
                 connectionFlags["passwordAging"] = false
                 defaults.setObject(false, forKey: "UserAging")
+                
+            } else if ( Int(computedExpireDateRaw) != nil ) {
+                
+                // password expires
+                
+                connectionFlags["passwordAging"] = true
+                defaults.setObject(true, forKey: "UserAging")
+                let computedExpireDate = NSDate(timeIntervalSince1970: (Double(Int(computedExpireDateRaw)!))/10000000-11644473600)
+                connectionDates["userPasswordExpireDate"] = computedExpireDate
+
+            } else {
+                
+                // need to go old skool
+                
+                let passwordExpirationLength = try myLDAPServers.getLDAPInformation("maxPwdAge", baseSearch: true )
+                
+                if ( passwordExpirationLength.characters.count > 15 ) {
+                    serverPasswordExpirationDefault = Double(0)
+                    connectionFlags["passwordAging"] = false
+                } else if ( passwordExpirationLength != "" ){
+                    serverPasswordExpirationDefault = Double(abs(Int(passwordExpirationLength)!)/10000000)
+                    connectionFlags["passwordAging"] = true
+                    defaults.setObject(true, forKey: "UserAging")
+                } else {
+                    serverPasswordExpirationDefault = Double(0)
+                    connectionFlags["passwordAging"] = false
+                }
+                
+                // TODO: time to do this the right way
+                // https://support.microsoft.com/en-us/kb/305144
+                
+                let userPasswordUACFlag = try myLDAPServers.getLDAPInformation("userAccountControl", searchTerm: "sAMAccountName=" + connectionData["userPrincipalShort"]!)
+                
+                if ( userPasswordUACFlag.characters.first == "6" ) {
+                    connectionFlags["passwordAging"] = false
+                    defaults.setObject(false, forKey: "UserAging")
+                }
+                
+                connectionDates["userPasswordExpireDate"] = connectionDates["userPasswordSetDate"]?.dateByAddingTimeInterval(serverPasswordExpirationDefault)
+
             }
+
+
             
             connectionDates["userPasswordSetDate"] = NSDate(timeIntervalSince1970: (Double(Int(userPasswordExpireDate)!))/10000000-11644473600)
-            connectionDates["userPasswordExpireDate"] = connectionDates["userPasswordSetDate"]?.dateByAddingTimeInterval(serverPasswordExpirationDefault)
             
             let lastDate = defaults.objectForKey("userPasswordSetDate") ?? nil
             
+            defaults.setObject(connectionDates["userPasswordExpireDate"], forKey: "LastPasswordExpireDate")
+            
+            defaults.setObject(connectionDates["userPasswordExpireDate"], forKey: "LastPasswordExpireDate")
+            
+            // end new stuff
             
             if ( lastDate != nil && connectionDates["userPasswordSetDate"] != lastDate as! NSDate ) {
                 NSLog("-----password changed underneath us----")

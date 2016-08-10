@@ -139,7 +139,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         // if no preferences are set, we show the preferences pane
         
-        if ( defaults.stringForKey("ADDomain") == nil ) {
+        if ( (defaults.stringForKey("ADDomain") ?? "") == "" ) {
              preferencesWindow.showWindow(nil)
         } else {
             
