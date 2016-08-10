@@ -332,14 +332,9 @@ class UserInfoAPI {
         if myLDAPServers.currentState {
             NSLog("Getting password aging info")
             
-            // get basic password settings
-            
-            let userPasswordExpireDate = try myLDAPServers.getLDAPInformation("pwdLastSet", searchTerm: "sAMAccountName=" + connectionData["userPrincipalShort"]!)
-            
-            guard ( userPasswordExpireDate != "" ) else {
+            guard ( passwordSetDate != "" ) else {
                 throw NoADError.UserPasswordSetDate
             }
-            
             
             // First try msDS-UserPasswordExpiryTimeComputed
             
@@ -351,6 +346,10 @@ class UserInfoAPI {
                 
                 connectionFlags["passwordAging"] = false
                 defaults.setObject(false, forKey: "UserAging")
+                
+                // set expiration to set date
+                
+                connectionDates["userPasswordExpireDate"] = connectionDates["userPasswordSetDate"]
                 
             } else if ( Int(computedExpireDateRaw) != nil ) {
                 
@@ -371,22 +370,22 @@ class UserInfoAPI {
                     serverPasswordExpirationDefault = Double(0)
                     connectionFlags["passwordAging"] = false
                 } else if ( passwordExpirationLength != "" ){
-                    serverPasswordExpirationDefault = Double(abs(Int(passwordExpirationLength)!)/10000000)
-                    connectionFlags["passwordAging"] = true
-                    defaults.setObject(true, forKey: "UserAging")
+                    
+                    // now check the users uAC to see if they are exempt
+                    
+                    let userPasswordUACFlag = try myLDAPServers.getLDAPInformation("userAccountControl", searchTerm: "sAMAccountName=" + connectionData["userPrincipalShort"]!)
+                    
+                    if ~~( Int(userPasswordUACFlag)! & 0x10000 ) {
+                        connectionFlags["passwordAging"] = false
+                        defaults.setObject(false, forKey: "UserAging")
+                        } else {
+                        serverPasswordExpirationDefault = Double(abs(Int(passwordExpirationLength)!)/10000000)
+                        connectionFlags["passwordAging"] = true
+                        defaults.setObject(true, forKey: "UserAging")
+                    }
                 } else {
                     serverPasswordExpirationDefault = Double(0)
                     connectionFlags["passwordAging"] = false
-                }
-                
-                // TODO: time to do this the right way
-                // https://support.microsoft.com/en-us/kb/305144
-                
-                let userPasswordUACFlag = try myLDAPServers.getLDAPInformation("userAccountControl", searchTerm: "sAMAccountName=" + connectionData["userPrincipalShort"]!)
-                
-                if ( userPasswordUACFlag.characters.first == "6" ) {
-                    connectionFlags["passwordAging"] = false
-                    defaults.setObject(false, forKey: "UserAging")
                 }
                 
                 connectionDates["userPasswordExpireDate"] = connectionDates["userPasswordSetDate"]?.dateByAddingTimeInterval(serverPasswordExpirationDefault)

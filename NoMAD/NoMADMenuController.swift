@@ -26,6 +26,14 @@ enum NoADError: ErrorType {
     case StoredPasswordWrong
 }
 
+// bitwise convenience
+
+prefix operator ~~ {}
+
+prefix func ~~(value: Int)->Bool{
+    return (value>0) ? true : false
+}
+
 // default settings
 
 let settings = [
