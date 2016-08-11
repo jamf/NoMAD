@@ -311,7 +311,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // shows the preferences window
     
     @IBAction func NoMADMenuClickPreferences(sender: NSMenuItem) {
-        preferencesWindow = PreferencesWindow()
         preferencesWindow.showWindow(nil)
     }
     

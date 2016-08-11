@@ -53,7 +53,7 @@ class KeychainUtil {
         myErr = SecKeychainItemDelete(myKeychainItem!)
         return myErr
     }
-    
+
     // convience functions
     
     func findAndDelete(name: String) -> Bool {

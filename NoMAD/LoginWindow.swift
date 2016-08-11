@@ -52,10 +52,10 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         self.window?.center()
         self.window?.makeKeyAndOrderFront(nil)
         NSApp.activateIgnoringOtherApps(true)
-        self.window?.makeMainWindow()
     }
     
     func windowWillClose(notification: NSNotification) {
+        notificationCenter.postNotification(notificationKey)
         delegate?.updateUserInfo()   }
     
     @IBAction func LogInClick(sender: AnyObject) {
@@ -294,7 +294,6 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 		// If the user entered the same value for both password fields.
 		if ( newPassword1 == newPassword2) {
 			let ChangePassword: KerbUtil = KerbUtil()
-			print(username)
 			myError = ChangePassword.changeKerbPassword(currentPassword, newPassword1, username)
 			// If there wasn't an error and Sync Local Password is set
 			// Check if the old password entered matches the current local password
@@ -305,6 +304,20 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 					myError = "Your current local password does not match your AD password."
 				}
 			}
+            
+            // update the password in the keychain if we're using it
+            
+            if ( defaults.boolForKey("UseKeychain") ) {
+                
+                // check if keychain item exists
+                
+                let myKeychainUtil = KeychainUtil()
+                
+                do { try myKeychainUtil.findPassword(username) } catch {
+                    myKeychainUtil.setPassword(username, pass: newPassword2)
+                }
+                
+            }
 			
 			// If there wasn't an error and Sync Local Password is set
 			// Update the keychain password

@@ -104,6 +104,18 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
             let kerbPrefFile = checkKpasswdServer(true)
             
 			myError = ChangePassword.changeKerbPassword(currentPassword, newPassword1, username)
+            
+            
+            if ( defaults.boolForKey("UseKeychain") ) {
+                // check if keychain item exists
+                
+                let myKeychainUtil = KeychainUtil()
+                
+                do { try myKeychainUtil.findPassword(username) } catch {
+                    myKeychainUtil.setPassword(username, pass: newPassword1)
+                }
+                
+            }
 			// If there wasn't an error and Sync Local Password is set
 			// Check if the old password entered matches the current local password
 			if (localPasswordSync == 1 ) && myError == "" {

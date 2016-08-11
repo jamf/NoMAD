@@ -35,11 +35,12 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
     
     // set up defaults
     
-    let defaults = NSUserDefaults.standardUserDefaults()
+    //let defaults = NSUserDefaults.standardUserDefaults()
     
     override var windowNibName: String? {
         return "PreferencesWindow"
     }
+    
     override func windowDidLoad() {
         super.windowDidLoad()
         
