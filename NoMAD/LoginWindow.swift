@@ -55,8 +55,14 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
     }
     
     func windowWillClose(notification: NSNotification) {
+        Password.stringValue = ""
+        changePasswordField1.stringValue = ""
+        changePasswordField2.stringValue = ""
+        
         notificationCenter.postNotification(notificationKey)
-        delegate?.updateUserInfo()   }
+        delegate?.updateUserInfo()
+    
+    }
     
     @IBAction func LogInClick(sender: AnyObject) {
 
