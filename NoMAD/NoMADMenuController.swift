@@ -47,7 +47,9 @@ let settings = [
     "userCommandTask1"  : "",
     "secondsToRenew"    : 7200,
     "RenewTickets"  :   1,
-    "userPasswordExpireDate"    : ""
+    "userPasswordExpireDate"    : "",
+    "PasswordExpireAlertTime"   : 1296000,
+    "LastPasswordWarning"   : 1296000
 ]
 
 // set up a default defaults
@@ -106,7 +108,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // on startup we check for preferences
     
     override func awakeFromNib() {
-        
+        ProcessApplicationTransformState(kProcessTransformToForegroundApplication)
         preferencesWindow = PreferencesWindow()
         loginWindow = LoginWindow()
         passwordChangeWindow = PasswordChangeWindow()
@@ -211,6 +213,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 loginWindow.showWindow(nil) }
         } else {
             loginWindow.showWindow(nil)
+
         }
     }
     
@@ -603,7 +606,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             
             // reset the counter if the password change is over the default
             
-            if ( abs(userinfo!.userPasswordExpireDate.timeIntervalSinceNow) < Double(defaults.integerForKey("PasswordExpireAlertTime") ?? 1296000) && userinfo!.status == "Logged In" ) {
+            if ( abs(userinfo!.userPasswordExpireDate.timeIntervalSinceNow) < Double(defaults.integerForKey("PasswordExpireAlertTime")) && userinfo!.status == "Logged In" ) {
                 
                 if ( abs(userinfo!.userPasswordExpireDate.timeIntervalSinceNow) < Double(defaults.integerForKey("LastPasswordWarning")) ) {
                     if ( abs(userinfo!.userPasswordExpireDate.timeIntervalSinceNow) > Double(345600) ) {
