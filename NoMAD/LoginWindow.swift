@@ -36,7 +36,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
     
     override func windowDidLoad() {
         super.windowDidLoad()
-         guard (( defaults.stringForKey("LastUser") ) != nil) else {
+        guard (( defaults.stringForKey("LastUser") ) != nil) else {
             self.window?.center()
             self.window?.makeKeyAndOrderFront(nil)
             NSApp.activateIgnoringOtherApps(true)
@@ -61,11 +61,11 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         
         notificationCenter.postNotification(notificationKey)
         delegate?.updateUserInfo()
-    
+        
     }
     
     @IBAction func LogInClick(sender: AnyObject) {
-
+        
         
         let GetCredentials: KerbUtil = KerbUtil()
         var myError: String? = ""
@@ -88,100 +88,103 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             do { try myKeychainUtil.findPassword(userName.stringValue + "@" + defaults.stringForKey("KerberosRealm")!) } catch {
                 myKeychainUtil.setPassword(userName.stringValue + "@" + defaults.stringForKey("KerberosRealm")!, pass: Password.stringValue)
             }
-        
+            
         }
         
         if ( myError == nil  && defaults.integerForKey("LocalPasswordSync") == 1 ) {
             do { try testLocalPassword( Password.stringValue) }
-                catch {
-                    myError = "Attempting local password sync."
-                    NSLog("Local password check failed. Attempting to sync.")
-                    let alertController = NSAlert()
-                    alertController.messageText = "Your network and local passwords are not the same. Please enter the password for your Mac."
-                    alertController.addButtonWithTitle("Cancel")
-                    alertController.addButtonWithTitle("Sync")
-                    let localPassword = NSSecureTextField(frame: CGRectMake(0, 0, 200, 24))
-                    alertController.accessoryView = localPassword
-                    alertController.beginSheetModalForWindow(self.window!, completionHandler: { (response) -> Void in
-                        if response == 1001 {
-                            do { try self.testLocalPassword(localPassword.stringValue)
-                                    NSLog("Local password is right. Syncing.")
-                                if (GetCredentials.changeKeychainPassword(self.Password.stringValue, localPassword.stringValue) == 0) {
-                                    NSLog("Error changing local keychain")
-                                    myError = "Could not change your local keychain password."
-                                }
-                                do { try self.changeLocalPassword( self.Password.stringValue, newPassword: localPassword.stringValue) }
-                                catch {
-                                    NSLog("Local password change failed")
-                                    myError = "Local password change failed"
-                                }
+            catch {
+                myError = "Attempting local password sync."
+                NSLog("Local password check failed. Attempting to sync.")
+                let alertController = NSAlert()
+                alertController.messageText = "Your network and local passwords are not the same. Please enter the password for your Mac."
+                alertController.addButtonWithTitle("Cancel")
+                alertController.addButtonWithTitle("Sync")
+                let localPassword = NSSecureTextField(frame: CGRectMake(0, 0, 200, 24))
+                alertController.accessoryView = localPassword
+                alertController.beginSheetModalForWindow(self.window!, completionHandler: { (response) -> Void in
+                    if response == 1001 {
+                        do { try self.testLocalPassword(localPassword.stringValue)
+                            NSLog("Local password is right. Syncing.")
+                            if (GetCredentials.changeKeychainPassword(self.Password.stringValue, localPassword.stringValue) == 0) {
+                                NSLog("Error changing local keychain")
+                                myError = "Could not change your local keychain password."
                             }
+                            do { try self.changeLocalPassword( localPassword.stringValue, newPassword: self.Password.stringValue) }
                             catch {
-                                let alertController = NSAlert()
-                                alertController.messageText = "Invalid password. Please try again."
-                                alertController.beginSheetModalForWindow(self.window!, completionHandler: nil)
-                                NSLog(myError!)
-                                EXIT_FAILURE
-                                NSLog("Local password wrong.")
+                                NSLog("Local password change failed")
+                                myError = "Local password change failed"
                             }
-                        } else {
-                            NSLog("Local sync cancelled by user.")
-                            self.close()
                         }
-                    })
-                    
-                }
-        }
-        
-        if defaults.integerForKey("Verbose") >= 1 {
-            NSLog("Logging in as: " + userName.stringValue)
-        }
-        
-        if myError == "Password has expired" {
-            defaults.setObject(userName.stringValue, forKey: "userPrincipal")
-            print(userName.stringValue)
-            print(defaults.stringForKey("userPrincipal"))
-            let alertController = NSAlert()
-            alertController.messageText = "Your password has expired. Please reset your password now."
-            alertController.addButtonWithTitle("Change Password")
-            alertController.beginSheetModalForWindow(self.window!, completionHandler: { [ unowned self ] (returnCode) -> Void in
-                if returnCode == NSAlertFirstButtonReturn {
-                    NSLog(myError!)
-                    self.setWindowToChange()
-    
-                }
+                        catch {
+                            let alertController = NSAlert()
+                            alertController.messageText = "Invalid password. Please try again."
+                            alertController.beginSheetModalForWindow(self.window!, completionHandler: nil)
+                            NSLog(myError!)
+                            EXIT_FAILURE
+                            NSLog("Local password wrong.")
+                        }
+                    } else {
+                        NSLog("Local sync cancelled by user.")
+                        self.Password.stringValue = ""
+                        self.close()
+                    }
+                    self.Password.stringValue = ""
+                    self.close()
                 })
+                
+            }
+        } else {
+            
+            if defaults.integerForKey("Verbose") >= 1 {
+                NSLog("Logging in as: " + userName.stringValue)
+            }
+            
+            if myError == "Password has expired" {
+                defaults.setObject(userName.stringValue, forKey: "userPrincipal")
+                print(userName.stringValue)
+                print(defaults.stringForKey("userPrincipal"))
+                let alertController = NSAlert()
+                alertController.messageText = "Your password has expired. Please reset your password now."
+                alertController.addButtonWithTitle("Change Password")
+                alertController.beginSheetModalForWindow(self.window!, completionHandler: { [ unowned self ] (returnCode) -> Void in
+                    if returnCode == NSAlertFirstButtonReturn {
+                        NSLog(myError!)
+                        self.setWindowToChange()
+                        
+                    }
+                    })
+            }
+            
+            if myError != nil && myError != "Password has expired" {
+                let alertController = NSAlert()
+                alertController.messageText = "Invalid password. Please try again."
+                alertController.beginSheetModalForWindow(self.window!, completionHandler: nil)
+                NSLog(myError!)
+                EXIT_FAILURE
+            } else if myError == nil {
+                Password.stringValue = ""
+                self.close()
+            }
         }
-        
-        if myError != nil && myError != "Password has expired" {
-            let alertController = NSAlert()
-            alertController.messageText = "Invalid password. Please try again."
-            alertController.beginSheetModalForWindow(self.window!, completionHandler: nil)
-            NSLog(myError!)
-            EXIT_FAILURE
-        } else if myError == nil {
-            Password.stringValue = ""
-            self.close()
-        }
-        
     }
-	
+    
     @IBAction func changePasswordButtonClick(sender: AnyObject) {
-		let userPrincipal: String
-		if userName.stringValue.containsString("@") {
-			userPrincipal = userName.stringValue
-		} else {
-			userPrincipal = userName.stringValue + "@" + defaults.stringForKey("KerberosRealm")!
-		}
-		let currentPassword = Password.stringValue
-		let newPassword1 = changePasswordField1.stringValue
-		let newPassword2 = changePasswordField2.stringValue
-		
-		// If the user entered the same value for both password fields.
-		if ( newPassword1 == newPassword2) {
-			var myError = ""
-			myError = performPasswordChange(userPrincipal, currentPassword: currentPassword, newPassword1: newPassword1, newPassword2: newPassword2)
-
+        let userPrincipal: String
+        if userName.stringValue.containsString("@") {
+            userPrincipal = userName.stringValue
+        } else {
+            userPrincipal = userName.stringValue + "@" + defaults.stringForKey("KerberosRealm")!
+        }
+        let currentPassword = Password.stringValue
+        let newPassword1 = changePasswordField1.stringValue
+        let newPassword2 = changePasswordField2.stringValue
+        
+        // If the user entered the same value for both password fields.
+        if ( newPassword1 == newPassword2) {
+            var myError = ""
+            myError = performPasswordChange(userPrincipal, currentPassword: currentPassword, newPassword1: newPassword1, newPassword2: newPassword2)
+            
             if myError != "" {
                 let alertController = NSAlert()
                 alertController.messageText = myError
@@ -284,32 +287,32 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         self.window?.setContentSize(changeSize)
         
     }
-	
-	// username must be of the format username@kerberosRealm
-	func performPasswordChange(username: String, currentPassword: String, newPassword1: String, newPassword2: String) -> String {
-		let localPasswordSync = defaults.integerForKey("LocalPasswordSync")
-		var myError: String = ""
-		
-		if (currentPassword.isEmpty || newPassword1.isEmpty || newPassword2.isEmpty) {
-			NSLog ("Some of the fields are empty")
-			myError = "All fields must be filled in"
-			return myError
-		} else {
-			NSLog("All fields are filled in, continuing")
-		}
-		// If the user entered the same value for both password fields.
-		if ( newPassword1 == newPassword2) {
-			let ChangePassword: KerbUtil = KerbUtil()
-			myError = ChangePassword.changeKerbPassword(currentPassword, newPassword1, username)
-			// If there wasn't an error and Sync Local Password is set
-			// Check if the old password entered matches the current local password
-			if (localPasswordSync == 1 ) && myError == "" {
-				do { try testLocalPassword(currentPassword) }
-				catch {
-					NSLog("Local password check Swift = no")
-					myError = "Your current local password does not match your AD password."
-				}
-			}
+    
+    // username must be of the format username@kerberosRealm
+    func performPasswordChange(username: String, currentPassword: String, newPassword1: String, newPassword2: String) -> String {
+        let localPasswordSync = defaults.integerForKey("LocalPasswordSync")
+        var myError: String = ""
+        
+        if (currentPassword.isEmpty || newPassword1.isEmpty || newPassword2.isEmpty) {
+            NSLog ("Some of the fields are empty")
+            myError = "All fields must be filled in"
+            return myError
+        } else {
+            NSLog("All fields are filled in, continuing")
+        }
+        // If the user entered the same value for both password fields.
+        if ( newPassword1 == newPassword2) {
+            let ChangePassword: KerbUtil = KerbUtil()
+            myError = ChangePassword.changeKerbPassword(currentPassword, newPassword1, username)
+            // If there wasn't an error and Sync Local Password is set
+            // Check if the old password entered matches the current local password
+            if (localPasswordSync == 1 ) && myError == "" {
+                do { try testLocalPassword(currentPassword) }
+                catch {
+                    NSLog("Local password check Swift = no")
+                    myError = "Your current local password does not match your AD password."
+                }
+            }
             
             // update the password in the keychain if we're using it
             
@@ -324,39 +327,39 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                 }
                 
             }
-			
-			// If there wasn't an error and Sync Local Password is set
-			// Update the keychain password
-			if (localPasswordSync == 1 ) && myError == "" {
-				if (ChangePassword.changeKeychainPassword(currentPassword, newPassword1) == 0) {
-					NSLog("Error changing local keychain")
-					myError = "Could not change your local keychain password."
-				}
-			}
-			
-			// If there wasn't an error and Sync Local Password is set
-			// Update the local password
-			if (localPasswordSync == 1 ) && myError == "" {
-				do { try changeLocalPassword( currentPassword, newPassword: newPassword1) }
-				catch {
-					NSLog("Local password change failed")
-					myError = "Local password change failed"
-				}
-			}
-		}
-		return myError
-	}
-	
-	private func testLocalPassword(password: String) throws {
-		let myUser = NSUserName()
-		let session = ODSession.defaultSession()
-		let node = try ODNode.init(session: session, type: UInt32(kODNodeTypeAuthentication))
-		let query = try ODQuery.init(node: node, forRecordTypes: kODRecordTypeUsers, attribute: kODAttributeTypeRecordName, matchType: UInt32(kODMatchEqualTo), queryValues: myUser, returnAttributes: kODAttributeTypeNativeOnly, maximumResults: 0)
-		let result = try query.resultsAllowingPartial(false)
-		let record: ODRecord = result[0] as! ODRecord
-		try record.verifyPassword(password)
-	}
-	
+            
+            // If there wasn't an error and Sync Local Password is set
+            // Update the keychain password
+            if (localPasswordSync == 1 ) && myError == "" {
+                if (ChangePassword.changeKeychainPassword(currentPassword, newPassword1) == 0) {
+                    NSLog("Error changing local keychain")
+                    myError = "Could not change your local keychain password."
+                }
+            }
+            
+            // If there wasn't an error and Sync Local Password is set
+            // Update the local password
+            if (localPasswordSync == 1 ) && myError == "" {
+                do { try changeLocalPassword( currentPassword, newPassword: newPassword1) }
+                catch {
+                    NSLog("Local password change failed")
+                    myError = "Local password change failed"
+                }
+            }
+        }
+        return myError
+    }
+    
+    private func testLocalPassword(password: String) throws {
+        let myUser = NSUserName()
+        let session = ODSession.defaultSession()
+        let node = try ODNode.init(session: session, type: UInt32(kODNodeTypeAuthentication))
+        let query = try ODQuery.init(node: node, forRecordTypes: kODRecordTypeUsers, attribute: kODAttributeTypeRecordName, matchType: UInt32(kODMatchEqualTo), queryValues: myUser, returnAttributes: kODAttributeTypeNativeOnly, maximumResults: 0)
+        let result = try query.resultsAllowingPartial(false)
+        let record: ODRecord = result[0] as! ODRecord
+        try record.verifyPassword(password)
+    }
+    
     // Needed to attempt to sync local password with AD on login.
     private func changeLocalPassword(oldPassword: String, newPassword: String) throws -> Bool {
         let myUser = NSUserName()
@@ -366,7 +369,6 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         let result = try query.resultsAllowingPartial(false)
         let recordRef: ODRecordRef = result[0] as! ODRecordRef
         if ODRecordChangePassword(recordRef, oldPassword, newPassword, nil) {
-            print("Password changed!")
             return true
         } else {
             return false
