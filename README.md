@@ -37,9 +37,9 @@ Sample screen shot:
 
 ***Current Version***
 
-v. .9 Public Beta - Most things work, but we need some testing.
+v. .9 Public Beta 2 - Most things work, but we need some testing.
 
-[NoMADv.9PB1.zip](/uploads/2fa70aed3fd6149ac46f9ca0c7bf04c4/NoMADv.9PB1.zip)
+[NoMAD-PB2.zip](/uploads/68b3c828d9622b3f86affddc9dc1687f/NoMAD-PB2.zip)
 
 ***Have Questions?***
 
