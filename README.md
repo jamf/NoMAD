@@ -41,6 +41,12 @@ v. .9 Public Beta 2 - Most things work, but we need some testing.
 
 [NoMAD-PB2.zip](/uploads/68b3c828d9622b3f86affddc9dc1687f/NoMAD-PB2.zip)
 
+***Video Walkthrough***
+
+If you want to get a better idea of what NoMAD can do for you, here's a quick walkthrough of some of the major features.
+
+[NoMAD video Walkthrough](https://www.youtube.com/watch?v=Z27GOBl1bWY)
+
 ***Have Questions?***
 
 Feel free to report any issues that you're having or feature requests in the Issues section of the project page.
