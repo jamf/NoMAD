@@ -4,7 +4,7 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>NoMAD.xcscheme</key>
+		<key>NoMAD.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
@@ -13,6 +13,11 @@
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
 		<key>84CC67DA1D30A18A00115C76</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>BF3432491D52844300CE8F89</key>
 		<dict>
 			<key>primary</key>
 			<true/>

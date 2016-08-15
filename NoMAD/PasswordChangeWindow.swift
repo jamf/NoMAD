@@ -41,42 +41,18 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
     func windowWillClose(notification: NSNotification) {
         delegate?.updateUserInfo()
     }
-    
-    
+	
     @IBAction func changePasswordClicked(sender: AnyObject) {
-        
-        var myError = ""
-        
-        if ( newPassword.stringValue == newPasswordAgain.stringValue) {
-            
-            let ChangePassword: KerbUtil = KerbUtil()
-            print(defaults.stringForKey("userPrincipal")!)
-            myError = ChangePassword.changeKerbPassword(oldPassword.stringValue, newPassword.stringValue, defaults.stringForKey("userPrincipal")!.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()))
-            
-            if (defaults.integerForKey("LocalPasswordSync") == 1 ) && myError == "" {
-                do { try testLocalPassword(oldPassword.stringValue) }
-                    catch {
-                        NSLog("Local password check Swift = no")
-                        myError = "Your current local password does not match your AD password."
-                    }
-            }
-            
-            if (defaults.integerForKey("LocalPasswordSync") == 1 ) && myError == "" {
-                // synch keychain
-                if (ChangePassword.changeKeychainPassword(oldPassword.stringValue, newPassword.stringValue) == 0) {
-                    NSLog("Error changing local keychain")
-                    myError = "Could not change your local keychain password."
-                }
-            }
-            
-            if (defaults.stringForKey("LocalPasswordSynch") != "" ) && myError == "" {
-                // synch local passwords
-                do { try changeLocalPassword( oldPassword.stringValue, newPassword: newPassword.stringValue) }
-                catch {
-                    NSLog("Local password change failed")
-                    myError = "Local password change failed"
-                }
-            }
+		let userPrincipal = defaults.stringForKey("userPrincipal")!.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+		let currentPassword = oldPassword.stringValue
+		let newPassword1 = newPassword.stringValue
+		let newPassword2 = newPasswordAgain.stringValue
+		
+        // If the user entered the same value for both password fields.
+        if ( newPassword1 == newPassword2) {
+			var myError = ""
+			
+			myError = performPasswordChange(userPrincipal, currentPassword: currentPassword, newPassword1: newPassword1, newPassword2: newPassword2)
             if myError != "" {
                 let alertController = NSAlert()
                 alertController.messageText = myError
@@ -105,8 +81,78 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
         }
         
     }
-    
-  private func testLocalPassword(password: String) throws {
+	
+	// username must be of the format username@kerberosRealm
+	func performPasswordChange(username: String, currentPassword: String, newPassword1: String, newPassword2: String) -> String {
+		let localPasswordSync = defaults.integerForKey("LocalPasswordSync")
+		var myError: String = ""
+		
+		if (currentPassword.isEmpty || newPassword1.isEmpty || newPassword2.isEmpty) {
+			NSLog ("Some of the fields are empty")
+			myError = "All fields must be filled in"
+			return myError
+		} else {
+			NSLog("All fields are filled in, continuing")
+		}
+		// If the user entered the same value for both password fields.
+		if ( newPassword1 == newPassword2) {
+			let ChangePassword: KerbUtil = KerbUtil()
+            NSLog("Change password for " + username )
+            
+            // check to see we can match the kpasswd server with the LDAP server
+            
+            let kerbPrefFile = checkKpasswdServer(true)
+            
+			myError = ChangePassword.changeKerbPassword(currentPassword, newPassword1, username)
+            
+            
+            if ( defaults.boolForKey("UseKeychain") ) {
+                // check if keychain item exists
+                
+                let myKeychainUtil = KeychainUtil()
+                
+                do { try myKeychainUtil.findPassword(username) } catch {
+                    myKeychainUtil.setPassword(username, pass: newPassword1)
+                }
+                
+            }
+			// If there wasn't an error and Sync Local Password is set
+			// Check if the old password entered matches the current local password
+			if (localPasswordSync == 1 ) && myError == "" {
+				do { try testLocalPassword(currentPassword) }
+				catch {
+					NSLog("Local password check Swift = no")
+					myError = "Your current local password does not match your AD password."
+				}
+			}
+            
+            if kerbPrefFile {
+                cliTask("/usr/bin/defaults delete com.apple.Kerberos")
+            }
+			
+			// If there wasn't an error and Sync Local Password is set
+			// Update the keychain password
+			if (localPasswordSync == 1 ) && myError == "" {
+				if (ChangePassword.changeKeychainPassword(currentPassword, newPassword1) == 0) {
+					NSLog("Error changing local keychain")
+					myError = "Could not change your local keychain password."
+				}
+			}
+			
+			// If there wasn't an error and Sync Local Password is set
+			// Update the local password
+			if (localPasswordSync == 1 ) && myError == "" {
+				do { try changeLocalPassword( currentPassword, newPassword: newPassword1) }
+				catch {
+					NSLog("Local password change failed")
+					myError = "Local password change failed"
+				}
+			}
+		}
+		return myError
+	}
+	
+	private func testLocalPassword(password: String) throws {
         let myUser = NSUserName()
         let session = ODSession.defaultSession()
         let node = try ODNode.init(session: session, type: UInt32(kODNodeTypeAuthentication))
@@ -115,7 +161,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
         let record: ODRecord = result[0] as! ODRecord
         try record.verifyPassword(password)
     }
-    
+    // Needed to attempt to sync local password with AD on login.
     private func changeLocalPassword(oldPassword: String, newPassword: String) throws -> Bool {
         let myUser = NSUserName()
         let session = ODSession.defaultSession()
@@ -130,6 +176,43 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
             return false
         }
 
+    }
+    
+    // write out local krb5.conf file to ensure password change happens to the same kdc as we're using for LDAP
+    
+    private func checkKpasswdServer(writePref: Bool ) -> Bool {
+        let myKpasswdServers = cliTask("/usr/bin/dig +short -t SRV _kpasswd._tcp." + defaults.stringForKey("ADDomain")!)
+        
+        if myKpasswdServers.containsString(defaults.stringForKey("CurrentLDAPServer")!) {
+            
+            if writePref {
+                // check to see if a file exists already
+                
+                let myFileManager = NSFileManager()
+                let myPrefFile = NSHomeDirectory().stringByAppendingString("/Library/Preferences/com.apple.Kerberos.plist")
+                
+                if ( !myFileManager.fileExistsAtPath(myPrefFile)) {
+                    // no existing pref file
+                    
+                    let data = NSMutableDictionary()
+                    let realms = NSMutableDictionary()
+                    let realm = NSMutableDictionary()
+                    
+                    realm.setValue(defaults.stringForKey("CurrentLDAPServer")!, forKey: "kdc")
+                    realm.setValue(defaults.stringForKey("CurrentLDAPServer")!, forKey: "kpasswd")
+                    
+                    realms.setObject(realm, forKey: defaults.stringForKey("KerberosRealm")!)
+                    data.setObject(realms, forKey: "realms")
+                    
+                    return data.writeToFile(myPrefFile, atomically: true)
+                    
+                }
+                return false
+            }
+            return false
+        } else {
+            return false
+        }
     }
     
 }

@@ -30,7 +30,7 @@ class WindowsCATools {
         
         // TODO: Don't use certtool for this, but SecTransform to create the CSR
         
-        let myCLIError = cliTask("/usr/bin/certtool r " + directoryURL.URLByAppendingPathComponent("new.csr").path! + " Z")
+        cliTask("/usr/bin/certtool r " + directoryURL.URLByAppendingPathComponent("new.csr").path! + " Z")
         
         let path = directoryURL.URLByAppendingPathComponent("new.csr")
         
@@ -47,7 +47,6 @@ class WindowsCATools {
     func certEnrollment() -> OSStatus {
         
         // do it all
-        
         // set up the completion handler
         
         let myCompletionHandler: (NSData?, NSURLResponse?, NSError?) -> Void = {(data, response, error) in
@@ -56,7 +55,8 @@ class WindowsCATools {
                 let httpResponse = response as! NSHTTPURLResponse
                 
                 if (httpResponse.statusCode >= 200 && httpResponse.statusCode < 500) {
-                }            }
+                }
+			}
             
             if (data != nil ) {
 
@@ -70,7 +70,7 @@ class WindowsCATools {
         
         var myReqID = 0
         
-       submitCert("User Auth", completionHandler: {(data, response, error) in
+       submitCert(certTemplate, completionHandler: {(data, response, error) in
             if (response != nil) {
 
                 let httpResponse = response as! NSHTTPURLResponse

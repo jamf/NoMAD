@@ -20,48 +20,85 @@ class GetHelp {
     var enabled: Bool
     
     init() {
-        getHelpType = defaults.stringForKey("GetHelpType") ?? ""
-        getHelpOptions = defaults.stringForKey("GetHelpOptions") ?? ""
+        getHelpType = ""
+        getHelpOptions = ""
+        enabled = false
         
-        if ( getHelpType == "" ) {
-            enabled = false
-        } else {
-            enabled = true
+        if let getHelpType = defaults.stringForKey("GetHelpType") {
+            if let getHelpOptions = defaults.stringForKey("GetHelpOptions") {
+                self.getHelpOptions = getHelpOptions
+                self.getHelpType = getHelpType
+
+                enabled = true;
+            }
+            
+            else  {
+                print("Missing getHelpOptions key")
+                self.getHelpType = ""
+                self.getHelpOptions = ""
+                enabled = false
+            }
         }
     }
     
     func getHelp() {
-        switch getHelpType {
-        case "Bomgar":
-            let myURL = subVariables(getHelpOptions)
-            cliTask("curl -o /tmp/BomgarClient " + myURL )
-            cliTaskNoTerm("/usr/bin/unzip -o -d /tmp /tmp/BomgarClient")
-            cliTask("/usr/bin/open /tmp/Bomgar/Double-Click\\ To\\ Start\\ Support\\ Session.app")
-            
-        case "URL":
-            let myURL = subVariables(getHelpOptions)
-            cliTask("/usr/bin/open " + myURL )
-            
-        case "App":
-            cliTask("/usr/bin/open " + getHelpOptions.stringByReplacingOccurrencesOfString(" ", withString: "\\ ") )
         
-        default:
-        cliTask("curl -o /tmp/BomgarClient https://bomgar.bomgar.com/api/start_session -A \"Mozilla/5.0\\ (Macintosh;\\ Intel\\ Mac\\ OS\\ X\\ 10_11_4)\\ AppleWebKit/601.5.17\\ (KHTML,\\ like\\ Gecko)\\ Version/9.1\\ Safari/601.5.17\" -d issue_menu=1 -d session.custom.external_key=NoMAD -d session.custom.full_name=" + String(defaults.stringForKey("displayName")!.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())) + " -d session.custom.serial_number=" + getSerial() + " -d customer.company=" + defaults.stringForKey("ADDomain")! )
-        cliTaskNoTerm("/usr/bin/unzip -o -d /tmp /tmp/BomgarClient")
-        cliTask("/usr/bin/open /tmp/Bomgar/Double-Click\\ To\\ Start\\ Support\\ Session.app")
+        if getHelpType != "" && getHelpOptions != "" {
+            switch getHelpType {
+            case "Bomgar":
+                if let myURL = subVariables(getHelpOptions) {
+                    cliTask("curl -o /tmp/BomgarClient " + myURL )
+                    cliTaskNoTerm("/usr/bin/unzip -o -d /tmp /tmp/BomgarClient")
+                    cliTask("/usr/bin/open /tmp/Bomgar/Double-Click\\ To\\ Start\\ Support\\ Session.app")
+                }
+                
+            case "URL":
+                if let myURL = subVariables(getHelpOptions) {
+                    cliTask("/usr/bin/open " + myURL )
+                }
+                
+            case "App":
+                cliTask("/usr/bin/open " + getHelpOptions.stringByReplacingOccurrencesOfString(" ", withString: "\\ ") )
+            
+            default:
+                
+                // we will most likely never get here...
+                cliTask("/usr/bin/open http://www.apple.com/support")
+                
+            }
+        }
+        
+        else {
+            NSLog("Invalid getHelpType or getHelpOptions, defaulting to www.apple.com/support")
+            cliTask("/usr/bin/open http://www.apple.com/support")
         }
     }
     
-    private func subVariables( url: String ) -> String {
-        //let email = UserInfoAPI.getLDAPInfo(<#T##UserInfoAPI#>)
-        let domain = defaults.stringForKey("ADDomain")!
-        let fullName = defaults.stringForKey("displayName")!.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())
-        //let shortName = userInfoAPI.connectionData["userPrincipal"]!
-        let serial = getSerial()
+    private func subVariables( url: String ) -> String? {
+        // TODO: get e-mail address as a variable
         
-        let subURL = url.stringByReplacingOccurrencesOfString("<<domain>>", withString: domain)
-        let subURL1 = subURL.stringByReplacingOccurrencesOfString("<<fullname>>", withString: fullName!)
-        let subURL2 = subURL1.stringByReplacingOccurrencesOfString("<<serial>>", withString: serial)
-        return subURL2
+        if let domain = defaults.stringForKey("ADDomain") {
+            if let fullName = defaults.stringForKey("displayName")!.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet()) {
+                let shortName = defaults.stringForKey("UserShortName") ?? ""
+                let serial = getSerial()
+                
+                let subURL = url.stringByReplacingOccurrencesOfString("<<domain>>", withString: domain)
+                let subURL1 = subURL.stringByReplacingOccurrencesOfString("<<fullname>>", withString: fullName)
+                let subURL2 = subURL1.stringByReplacingOccurrencesOfString("<<serial>>", withString: serial)
+                let subURL3 = subURL2.stringByReplacingOccurrencesOfString("<<shortname>>", withString: shortName)
+
+                return subURL3
+            }
+            
+            else {
+                print ("displayName key failure")
+
+                return ""
+            }
+        }
+        
+        print("ADDomain key failure")
+        
+        return ""
     }
 }

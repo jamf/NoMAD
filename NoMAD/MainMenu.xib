@@ -14,18 +14,18 @@
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
         <menu id="eKu-sI-x3b">
             <items>
-                <menuItem title="user" id="uQI-ol-UUw" userLabel="NoMADMenuUserName">
+                <menuItem title="user" toolTip="Your network user name." id="uQI-ol-UUw" userLabel="NoMADMenuUserName">
                     <modifierMask key="keyEquivalentModifierMask"/>
                 </menuItem>
-                <menuItem title="password expires" id="CUr-ED-n29" userLabel="NoMADMenuPasswordExpires">
+                <menuItem title="password expires" toolTip="Time until your network password expires." id="CUr-ED-n29" userLabel="NoMADMenuPasswordExpires">
                     <attributedString key="attributedTitle"/>
                     <modifierMask key="keyEquivalentModifierMask"/>
                 </menuItem>
-                <menuItem title="ticket life" alternate="YES" id="QYf-mL-9ta">
+                <menuItem title="ticket life" alternate="YES" toolTip="Time until your Kerberos ticket expires." id="QYf-mL-9ta">
                     <modifierMask key="keyEquivalentModifierMask" option="YES"/>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="7uv-39-xiX"/>
-                <menuItem title="Log In 2" id="XL2-b8-IwM">
+                <menuItem title="Log In 2" toolTip="Log in." id="XL2-b8-IwM">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="NoMADMenuClickLogIn:" target="Gp4-Xp-pEc" id="wVm-5I-piH"/>
@@ -37,7 +37,7 @@
                         <action selector="NoMADMenuClickLogInAlternate:" target="Gp4-Xp-pEc" id="Ght-9J-Q4Q"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Change Password" id="0IM-ZO-KLA">
+                <menuItem title="Change Password" toolTip="Change your network password." id="0IM-ZO-KLA">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="NoMADMenuClickChangePassword:" target="Gp4-Xp-pEc" id="lgn-ZO-gUO"/>
@@ -55,7 +55,7 @@
                         <action selector="NoMADMenuClickLockScreen:" target="Gp4-Xp-pEc" id="1Up-40-AIC"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Get Certificate" id="AlW-9M-CK2">
+                <menuItem title="Get Certificate" toolTip="Get a certificate." id="AlW-9M-CK2">
                     <attributedString key="attributedTitle"/>
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>

@@ -260,14 +260,6 @@ class UserInfoAPI {
     
     func TGTPrincpalName ( realm : String ) throws {
         
-        
-        // TODO: use klist --json and then parse that
-        /*
- let klistResult = cliTask("/usr/bin/klist --json")
- let kslitResultJSON: NSData = klistResult.dataUsingEncoding(NSUTF8StringEncoding)!
- let klistResultDict = try NSJSONSerialization.JSONObjectWithData(klistResultJSON, options: NSJSONReadingOptions.MutableContainers)
-        */
-    
         // parses klist to get a user name for the specified realm
         
         myTickets.getDetails()
@@ -292,7 +284,7 @@ class UserInfoAPI {
                     connectionData["status"] = "Expired Login"
                     connectionData["userPrincipalShort"] = (connectionData["userPrincipal"]!).stringByReplacingOccurrencesOfString("@" + connectionData["realm"]!, withString: "").stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
                     connectionFlags["isLoggedIn"] = false as Bool
-                    connectionFlags["isLoggedIn"] = false
+                    //connectionFlags["isLoggedIn"] = false
                     connectionData["userPrincipal"] = "No User"
                     connectionData["userPrincipalShort"] = "No User"
                     connectionData["ldapServer"] = ""
@@ -330,47 +322,92 @@ class UserInfoAPI {
     func getLDAPInfo ( domain: String ) throws {
         
         connectionData["ldapServer"] = myLDAPServers.currentServer
+        defaults.setObject(myLDAPServers.currentServer, forKey: "CurrentLDAPServer")
         connectionData["ldapServerNamingContext"] = myLDAPServers.defaultNamingContext
+        let passwordSetDate = try myLDAPServers.getLDAPInformation("pwdLastSet", searchTerm: "sAMAccountName=" + connectionData["userPrincipalShort"]!)
+        connectionDates["userPasswordSetDate"] = NSDate(timeIntervalSince1970: (Double(Int(passwordSetDate)!))/10000000-11644473600)
         
         // Now get default password expiration time - this may not be set for environments with no password cycling requirements
         
         if myLDAPServers.currentState {
             NSLog("Getting password aging info")
-            let passwordExpirationLength = try myLDAPServers.getLDAPInformation("maxPwdAge", baseSearch: true )
             
-            if ( passwordExpirationLength.characters.count > 15 ) {
-                serverPasswordExpirationDefault = Double(0)
-                connectionFlags["passwordAging"] = false
-            } else if ( passwordExpirationLength != "" ){
-                serverPasswordExpirationDefault = Double(abs(Int(passwordExpirationLength)!)/10000000)
-                connectionFlags["passwordAging"] = true
-                defaults.setObject(true, forKey: "UserAging")
-            } else {
-                serverPasswordExpirationDefault = Double(0)
-                connectionFlags["passwordAging"] = false
-            }
-            
-            // Now get the users last password set time
-            
-            let userPasswordExpireDate = try myLDAPServers.getLDAPInformation("pwdLastSet", searchTerm: "sAMAccountName=" + connectionData["userPrincipalShort"]!)
-            
-            guard ( userPasswordExpireDate != "" ) else {
+            guard ( passwordSetDate != "" ) else {
                 throw NoADError.UserPasswordSetDate
             }
             
-            // TODO: time to do this the right way
-            // https://support.microsoft.com/en-us/kb/305144
+            // First try msDS-UserPasswordExpiryTimeComputed
             
-            let userPasswordUACFlag = try myLDAPServers.getLDAPInformation("userAccountControl", searchTerm: "sAMAccountName=" + connectionData["userPrincipalShort"]!)
+            let computedExpireDateRaw = try myLDAPServers.getLDAPInformation("msDS-UserPasswordExpiryTimeComputed", searchTerm: "sAMAccountName=" + connectionData["userPrincipalShort"]!)
             
-            if ( userPasswordUACFlag.characters.first == "6" ) {
+            if ( Int(computedExpireDateRaw) == 9223372036854775807 ) {
+                
+                // password doesn't expire
+                
                 connectionFlags["passwordAging"] = false
                 defaults.setObject(false, forKey: "UserAging")
+                
+                // set expiration to set date
+                
+                connectionDates["userPasswordExpireDate"] = connectionDates["userPasswordSetDate"]
+                
+            } else if ( Int(computedExpireDateRaw) != nil ) {
+                
+                // password expires
+                
+                connectionFlags["passwordAging"] = true
+                defaults.setObject(true, forKey: "UserAging")
+                let computedExpireDate = NSDate(timeIntervalSince1970: (Double(Int(computedExpireDateRaw)!))/10000000-11644473600)
+                connectionDates["userPasswordExpireDate"] = computedExpireDate
+
+            } else {
+                
+                // need to go old skool
+                
+                let passwordExpirationLength = try myLDAPServers.getLDAPInformation("maxPwdAge", baseSearch: true )
+                
+                if ( passwordExpirationLength.characters.count > 15 ) {
+                    serverPasswordExpirationDefault = Double(0)
+                    connectionFlags["passwordAging"] = false
+                } else if ( passwordExpirationLength != "" ){
+                    
+                    // now check the users uAC to see if they are exempt
+                    
+                    let userPasswordUACFlag = try myLDAPServers.getLDAPInformation("userAccountControl", searchTerm: "sAMAccountName=" + connectionData["userPrincipalShort"]!)
+                    
+                    if ~~( Int(userPasswordUACFlag)! & 0x10000 ) {
+                        connectionFlags["passwordAging"] = false
+                        defaults.setObject(false, forKey: "UserAging")
+                        } else {
+                        serverPasswordExpirationDefault = Double(abs(Int(passwordExpirationLength)!)/10000000)
+                        connectionFlags["passwordAging"] = true
+                        defaults.setObject(true, forKey: "UserAging")
+                    }
+                } else {
+                    serverPasswordExpirationDefault = Double(0)
+                    connectionFlags["passwordAging"] = false
+                }
+                
+                connectionDates["userPasswordExpireDate"] = connectionDates["userPasswordSetDate"]?.dateByAddingTimeInterval(serverPasswordExpirationDefault)
+
             }
             
-            connectionDates["userPasswordSetDate"] = NSDate(timeIntervalSince1970: (Double(Int(userPasswordExpireDate)!))/10000000-11644473600)
-            connectionDates["userPasswordExpireDate"] = connectionDates["userPasswordSetDate"]?.dateByAddingTimeInterval(serverPasswordExpirationDefault)
+            let lastDate = defaults.objectForKey("userPasswordSetDate") ?? nil
+            
             defaults.setObject(connectionDates["userPasswordExpireDate"], forKey: "LastPasswordExpireDate")
+            
+            defaults.setObject(connectionDates["userPasswordExpireDate"], forKey: "LastPasswordExpireDate")
+            
+            // end new stuff
+            
+            if ( lastDate != nil && connectionDates["userPasswordSetDate"] != lastDate as! NSDate ) {
+                NSLog("-----password changed underneath us----")
+                //let myAlert = NSAlert()
+            //myAlert.messageText = "Your network password has changed. Please login again."
+                //myAlert.runModal()
+            }
+            defaults.setObject(connectionDates["userPasswordExpireDate"], forKey: "LastPasswordExpireDate")
+            defaults.setObject(connectionDates["userPasswordSetDate"], forKey: "userPasswordSetDate")
         } else {
             throw NoADError.LDAPServerLookup
         }

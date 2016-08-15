@@ -8,6 +8,7 @@
 
 import Foundation
 import Cocoa
+import SystemConfiguration
 
 struct LDAPServer {
     var host: String
@@ -173,6 +174,60 @@ class LDAPServers {
         return myResult
     }
     
+    // private function to get system IP and mask
+    
+    private func getIPAndMask() {
+        let store = SCDynamicStoreCreate(nil, NSBundle.mainBundle().bundleIdentifier!, nil, nil)
+        
+        // first grab IPv4
+        let val = SCDynamicStoreCopyValue(store, "State:/Network/Interface/en0/IPv4")
+        let IPs = val!["Addresses"] as! [String]
+        let subs = val!["SubnetMasks"] as! [String]
+    }
+    
+    // private function to determine subnet mask for site determination
+    
+    private func countBits(mask: String) -> Int {
+        var bits: Int
+        switch mask {
+        case "255.255.255.255": bits = 32
+        case "255.255.255.254": bits = 31
+        case "255.255.255.252": bits = 30
+        case "255.255.255.248": bits = 29
+        case "255.255.255.240": bits = 28
+        case "255.255.255.224": bits = 27
+        case "255.255.255.192": bits = 26
+        case "255.255.255.128": bits = 25
+        case "255.255.255.0"  : bits = 24
+        case "255.255.254.0"  : bits = 23
+        case "255.255.252.0"  : bits = 22
+        case "255.255.248.0"  : bits = 21
+        case "255.255.240.0"  : bits = 20
+        case "255.255.224.0"  : bits = 19
+        case "255.255.192.0"  : bits = 18
+        case "255.255.128.0"  : bits = 17
+        case "255.255.0.0"    : bits = 16
+        case "255.254.0.0"    : bits = 15
+        case "255.252.0.0"    : bits = 14
+        case "255.248.0.0"    : bits = 13
+        case "255.240.0.0"    : bits = 12
+        case "255.224.0.0"    : bits = 11
+        case "255.192.0.0"    : bits = 10
+        case "255.128.0.0"    : bits = 9
+        case "255.0.0.0"      : bits = 8
+        case "254.0.0.0"      : bits = 7
+        case "252.0.0.0"      : bits = 6
+        case "248.0.0.0"      : bits = 5
+        case "240.0.0.0"      : bits = 4
+        case "224.0.0.0"      : bits = 3
+        case "192.0.0.0"      : bits = 2
+        case "128.0.0.0"      : bits = 1
+        case "0.0.0.0"        : bits = 0
+        default               : bits = 0
+        }
+        return bits
+    }
+    
     // private function to clean the LDAP results
     
     private func cleanLDAPResults(result: String, attribute: String) -> String {
@@ -219,7 +274,7 @@ class LDAPServers {
     func getHosts(domain: String ) {
         
         var newHosts = [LDAPServer]()
-        var dnsResults = cliTask("/usr/bin/dig +short +time=2 -t SRV _ldap._tcp." + domain).componentsSeparatedByString("\n")
+        var dnsResults = cliTask("/usr/bin/dig +short -t SRV _ldap._tcp." + domain).componentsSeparatedByString("\n")
         
         // check to make sure we got a result
         
@@ -256,10 +311,10 @@ class LDAPServers {
         if self.currentState == true {
             for i in 0...( hosts.count - 1) {
                 if hosts[i].status != "dead" {
-                    print("Trying host: " + hosts[i].host)
+                    NSLog("Trying host: " + hosts[i].host)
                     
                     // socket test first - this could be falsely negative
-                    // also note that this needs to return sdterr
+                    // also note that this needs to return stderr
                     
                     let myPingResult = cliTask("/usr/bin/nc -G 5 -z " + hosts[i].host + " 389")
                     
@@ -276,19 +331,24 @@ class LDAPServers {
                             current = i
                             break
                         } else {
-                            print("Server is dead by way of ldap test: " + hosts[i].host)
+                            NSLog("Server is dead by way of ldap test: " + hosts[i].host)
                             hosts[i].status = "dead"
                             hosts[i].timeStamp = NSDate()
                             break
                         }
                     } else {
-                        print("Server is dead by way of socket test: " + hosts[i].host)
+                        NSLog("Server is dead by way of socket test: " + hosts[i].host)
                         hosts[i].status = "dead"
                         hosts[i].timeStamp = NSDate()
                     }
                 }
             }
         }
+        
+        guard ( hosts.count > 0 ) else {
+            return
+        }
+        
         if hosts.last!.status == "dead" {
             self.currentState = false
         } else {

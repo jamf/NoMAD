@@ -9,7 +9,7 @@
 import Cocoa
 
 protocol PreferencesWindowDelegate {
-    func updateUserInfo()
+    func doTheNeedfull()
 }
 
 class PreferencesWindow: NSWindowController, NSWindowDelegate {
@@ -35,11 +35,12 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
     
     // set up defaults
     
-    let defaults = NSUserDefaults.standardUserDefaults()
+    //let defaults = NSUserDefaults.standardUserDefaults()
     
     override var windowNibName: String? {
         return "PreferencesWindow"
     }
+    
     override func windowDidLoad() {
         super.windowDidLoad()
         
@@ -47,35 +48,132 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
         self.window?.makeKeyAndOrderFront(nil)
         NSApp.activateIgnoringOtherApps(true)
         
-        // set the fields
+        // set the fields and disable them if they're managed
         
         ADDomainTextField.stringValue = defaults.stringForKey("ADDomain") ?? ""
+        
+        if defaults.objectIsForcedForKey("ADDomain") {
+            ADDomainTextField.enabled = false
+        } else {
+            ADDomainTextField.enabled = true
+        }
+        
         KerberosRealmField.stringValue = defaults.stringForKey("KerberosRealm") ?? ""
+        
+        if defaults.objectIsForcedForKey("KerberosRealm") {
+            KerberosRealmField.enabled = false
+        } else {
+            KerberosRealmField.enabled = true
+        }
+        
         InternalSiteField.stringValue = defaults.stringForKey("InternalSite") ?? ""
+        
+        if defaults.objectIsForcedForKey("InternalSite") {
+            InternalSiteField.enabled = false
+        } else {
+            InternalSiteField.enabled = true
+        }
+        
         InternalSiteIPField.stringValue = defaults.stringForKey("InternalSiteIP") ?? ""
+        
+        if defaults.objectIsForcedForKey("InternalSiteIP") {
+            InternalSiteIPField.enabled = false
+        } else {
+            InternalSiteIPField.enabled = true
+        }
+        
         x509CAField.stringValue = defaults.stringForKey("x509CA") ?? ""
+        
+        if defaults.objectIsForcedForKey("x509CA") {
+            x509CAField.enabled = false
+        } else {
+            x509CAField.enabled = true
+        }
+        
         TemplateField.stringValue = defaults.stringForKey("Template") ?? ""
+        
+        if defaults.objectIsForcedForKey("Template") {
+            TemplateField.enabled = false
+        } else {
+            TemplateField.enabled = true
+        }
         
         // now the secret stuff
         
         ButtonNameField.stringValue = defaults.stringForKey("userCommandName1") ?? ""
+        
+        if defaults.objectIsForcedForKey("userCommandName1") {
+            ButtonNameField.enabled = false
+        } else {
+            ButtonNameField.enabled = true
+        }
+        
         HotKeyField.stringValue = defaults.stringForKey("userCommandHotKey1") ?? ""
+        
+        if defaults.objectIsForcedForKey("userCommandHotKey1") {
+            HotKeyField.enabled = false
+        } else {
+            HotKeyField.enabled = true
+        }
+        
         CommandField.stringValue = defaults.stringForKey("userCommandTask1") ?? ""
+        
+        if defaults.objectIsForcedForKey("userCommandTask1") {
+            CommandField.enabled = false
+        } else {
+            CommandField.enabled = true
+        }
         
         // now the buttons
         
         UseKeychain.state = defaults.integerForKey("UseKeychain") ?? 0
+        
+        if defaults.objectIsForcedForKey("UseKeychain") {
+            UseKeychain.enabled = false
+        } else {
+            UseKeychain.enabled = true
+        }
+        
         RenewTickets.state = defaults.integerForKey("RenewTickets") ?? 1
+        
+        if defaults.objectIsForcedForKey("RenewTickets") {
+            RenewTickets.enabled = false
+        } else {
+            RenewTickets.enabled = true
+        }
+        
         ShowHome.state = defaults.integerForKey("ShowHome") ?? 0
+        
+        if defaults.objectIsForcedForKey("ShowHome") {
+            ShowHome.enabled = false
+        } else {
+            ShowHome.enabled = true
+        }
         
         // and the seconds
         
-        if (String(defaults.integerForKey("SecondsToRenew")) != "0" ) {
-        SecondsToRenew.stringValue = String(defaults.integerForKey("SecondsToRenew"))
-        } else {
-        SecondsToRenew.stringValue = "14000"
-        }
+        SecondsToRenew.stringValue = String(defaults.integerForKey("SecondsToRenew") ?? 1400 )
         
+        if defaults.objectIsForcedForKey("SecondsToRenew") {
+            SecondsToRenew.enabled = false
+        } else {
+            SecondsToRenew.enabled = true
+        }
+
+    }
+    
+    func windowShouldClose(sender: AnyObject) -> Bool {
+        
+        // make sure we have an AD Domain
+        
+        if ADDomainTextField.stringValue == "" {
+            let alertController = NSAlert()
+            alertController.messageText = "The AD Domain needs to be filled out."
+            alertController.beginSheetModalForWindow(self.window!, completionHandler: nil)
+            return false
+        } else {
+            return true
+        }
     }
     
     func windowWillClose(notification: NSNotification) {
@@ -109,6 +207,7 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
         
         defaults.setObject(Int(SecondsToRenew.stringValue), forKey: "SecondsToRenew")
         notificationCenter.postNotification(notificationKey)
+                
     }
     
 }
