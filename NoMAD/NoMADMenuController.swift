@@ -551,24 +551,15 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 
                 defaults.setObject(userinfo!.userPrincipalShort, forKey: "UserShortName")
                 
-                // if a user command is specified, show it, otherwise remove the menu item
+                // if a user command is specified, show it, otherwise hide the menu item
                 
                 if ( defaults.stringForKey("userCommandName1") != "" ) {
-              
-                    guard (self.NoMADMenuHiddenItem1 != nil) else {
-                        let NoMADMenuHiddenItem1 = NSMenuItem()
-                        self.NoMADMenu.addItem(self.NoMADMenuHiddenItem1)
-                        return
-                    }
                     self.NoMADMenuHiddenItem1.enabled = true
                     self.NoMADMenuHiddenItem1.hidden = false
                     self.NoMADMenuHiddenItem1.title = defaults.stringForKey("userCommandName1")!
                     self.NoMADMenuHiddenItem1.keyEquivalent = defaults.stringForKey("userCommandHotKey1")!
                 } else  {
-                    guard (self.NoMADMenuHiddenItem1 == nil) else {
-                         self.NoMADMenu.removeItem(self.NoMADMenuHiddenItem1)
-                        return
-                    }
+                         self.NoMADMenuHiddenItem1.hidden = true
                 }
                 
                 // add home directory menu item

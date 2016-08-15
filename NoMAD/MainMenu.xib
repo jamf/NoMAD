@@ -88,7 +88,7 @@
                         <action selector="NoMADMenuClickPreferences:" target="Gp4-Xp-pEc" id="JtX-Sp-fgv"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Spew Logs" hidden="YES" alternate="YES" id="pC8-5a-Aec">
+                <menuItem title="Dump Logs" hidden="YES" alternate="YES" id="pC8-5a-Aec">
                     <modifierMask key="keyEquivalentModifierMask" control="YES" option="YES"/>
                     <connections>
                         <action selector="NoMADMenuClickSpewLogs:" target="Gp4-Xp-pEc" id="aX2-5X-Gjx"/>

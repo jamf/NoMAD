@@ -152,7 +152,7 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
         
         // and the seconds
         
-        SecondsToRenew.stringValue = String(defaults.integerForKey("SecondsToRenew") ?? 1400 )
+        SecondsToRenew.stringValue = String(defaults.integerForKey("SecondsToRenew") )
         
         if defaults.objectIsForcedForKey("SecondsToRenew") {
             SecondsToRenew.enabled = false
