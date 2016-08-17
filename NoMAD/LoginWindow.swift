@@ -79,8 +79,11 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         
         myError = GetCredentials.getKerbCredentials( Password.stringValue, userNameChecked )
         
+        // make sure the just logged in user is the current user and then reset the password warning
+        
         if myError == nil {
             cliTask("/usr/bin/kswitch -p " + userNameChecked )
+            defaults.setInteger(1296000, forKey: "LastPasswordWarning")
         }
         
         // put password in keychain, but only if there was no error
