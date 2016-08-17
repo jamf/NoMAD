@@ -66,40 +66,47 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
     
     @IBAction func LogInClick(sender: AnyObject) {
         
+        var userNameChecked = ""
+        
+        if userName.stringValue.containsString("@") {
+            userNameChecked = userName.stringValue
+        } else {
+            userNameChecked = userName.stringValue + "@" + defaults.stringForKey("KerberosRealm")!
+        }
         
         let GetCredentials: KerbUtil = KerbUtil()
         var myError: String? = ""
         
-        if myError == "" {
-            if userName.stringValue.containsString("@") {
-                myError = GetCredentials.getKerbCredentials( Password.stringValue, userName.stringValue );
-            } else {
-                myError = GetCredentials.getKerbCredentials(Password.stringValue, (userName.stringValue + "@" + defaults.stringForKey("KerberosRealm")!))
-            }
+        myError = GetCredentials.getKerbCredentials( Password.stringValue, userNameChecked )
+        
+        if myError == nil {
+            cliTask("/usr/bin/kswitch -p " + userNameChecked )
         }
         
-        // put password in keychain
+        // put password in keychain, but only if there was no error
         
-        if ( defaults.boolForKey("UseKeychain") ) {
-            // check if keychain item exists
+        if ( defaults.boolForKey("UseKeychain") && myError == nil ) {
+            
+            // check if keychain item exists and delete it if it does
             
             let myKeychainUtil = KeychainUtil()
             
-            do { try myKeychainUtil.findPassword(userName.stringValue + "@" + defaults.stringForKey("KerberosRealm")!) } catch {
-                myKeychainUtil.setPassword(userName.stringValue + "@" + defaults.stringForKey("KerberosRealm")!, pass: Password.stringValue)
-            }
+            myKeychainUtil.findAndDelete(userNameChecked)
+            
+            myKeychainUtil.setPassword(userNameChecked, pass: Password.stringValue)
             
         }
         
         if ( myError == nil  && defaults.integerForKey("LocalPasswordSync") == 1 ) {
             do { try testLocalPassword( Password.stringValue) }
             catch {
-                myError = "Attempting local password sync."
+                
                 NSLog("Local password check failed. Attempting to sync.")
                 let alertController = NSAlert()
                 alertController.messageText = "Your network and local passwords are not the same. Please enter the password for your Mac."
                 alertController.addButtonWithTitle("Cancel")
                 alertController.addButtonWithTitle("Sync")
+                
                 let localPassword = NSSecureTextField(frame: CGRectMake(0, 0, 200, 24))
                 alertController.accessoryView = localPassword
                 alertController.beginSheetModalForWindow(self.window!, completionHandler: { (response) -> Void in
@@ -184,6 +191,20 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         if ( newPassword1 == newPassword2) {
             var myError = ""
             myError = performPasswordChange(userPrincipal, currentPassword: currentPassword, newPassword1: newPassword1, newPassword2: newPassword2)
+            
+            // put password in keychain, but only if there was no error
+            
+            if ( defaults.boolForKey("UseKeychain") && myError != "" ) {
+                
+                // check if keychain item exists and delete it if it does
+                
+                let myKeychainUtil = KeychainUtil()
+                
+                myKeychainUtil.findAndDelete(userName.stringValue + "@" + defaults.stringForKey("KerberosRealm")!)
+                
+                myKeychainUtil.setPassword(userName.stringValue + "@" + defaults.stringForKey("KerberosRealm")!, pass: Password.stringValue)
+                
+            }
             
             if myError != "" {
                 let alertController = NSAlert()

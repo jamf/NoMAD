@@ -56,6 +56,18 @@ class KlistUtil {
         }
     }
     
+    func getCacheListJSON() {
+        dateFormatter.dateFormat = "yyyyMMddHHmmss"
+        let rawJSON = cliTask("/usr/bin/klist -l --json")
+        let rawCache = rawJSON.dataUsingEncoding(NSUTF8StringEncoding)!
+        if returnAllTickets().containsString("cache") {
+            NSLog("Tickets found.")
+        } else {
+            NSLog("No tickets found.")
+            state = false
+        }
+    }
+    
     func getDetails() {
         
         getTicketJSON()

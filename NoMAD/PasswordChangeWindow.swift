@@ -53,6 +53,20 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 			var myError = ""
 			
 			myError = performPasswordChange(userPrincipal, currentPassword: currentPassword, newPassword1: newPassword1, newPassword2: newPassword2)
+            
+            // put password in keychain, but only if there was no error
+            
+            if ( defaults.boolForKey("UseKeychain") && myError != "" ) {
+                
+                // check if keychain item exists and delete it if it does
+                
+                let myKeychainUtil = KeychainUtil()
+                
+                myKeychainUtil.findAndDelete(userPrincipal)
+                
+                myKeychainUtil.setPassword(userPrincipal, pass: newPassword1)
+            }
+            
             if myError != "" {
                 let alertController = NSAlert()
                 alertController.messageText = myError
@@ -77,9 +91,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
             alertController.messageText = "New passwords don't match!"
             alertController.beginSheetModalForWindow(self.window!, completionHandler: nil)
             EXIT_FAILURE
-            
         }
-        
     }
 	
 	// username must be of the format username@kerberosRealm

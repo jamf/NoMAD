@@ -264,7 +264,9 @@ class UserInfoAPI {
         
         myTickets.getDetails()
         
-        let fullTGT = cliTask("/usr/bin/klist -l")
+        // used to be doing this via klist -l, but that was returning too many tickets
+        
+        let fullTGT = cliTask("/usr/bin/klist")
         guard (fullTGT.rangeOfString(realm) != nil) else {
             throw NoADError.NotLoggedIn
         }
@@ -274,11 +276,8 @@ class UserInfoAPI {
         let lines = fullTGT.componentsSeparatedByString("\n")
         
         for line in lines {
-            if line.characters.first == "*" {
-                connectionData["userPrincipal"] = line.componentsSeparatedByCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())[1]
-                
-                // we're getting stuck here if an ticket is expired, we'll never show the user name again
-                // TODO: fix this
+            if (line.rangeOfString("krbtgt") != nil) {
+                connectionData["userPrincipal"] = myTickets.principal
                 
                 if line.rangeOfString("Expired") != nil {
                     connectionData["status"] = "Expired Login"
@@ -295,6 +294,7 @@ class UserInfoAPI {
                     connectionData["userHome"] = ""
                     connectionFlags["passwordAging"] = false
                     connectionDates["userTicketExpireTime"] = NSDate()
+                    throw NoADError.NotLoggedIn
                     break
                 } else {
                     connectionFlags["isLoggedIn"] = true as Bool

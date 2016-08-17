@@ -67,6 +67,5 @@ class KeychainUtil {
         } else {
             return false
         }
-
     }
 }

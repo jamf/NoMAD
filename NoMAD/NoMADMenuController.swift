@@ -159,7 +159,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     NSLog("Error attempting to automatically log in.")
                     loginWindow.showWindow(nil)
                 } else {
-                    NSLog("Automatically logging in.") }
+                    NSLog("Automatically logging in.")
+                    cliTask("/usr/bin/kswitch -p " +  defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!)}
             }
         }
         
@@ -209,6 +210,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     loginWindow.showWindow(nil)
                 } else {
                     NSLog("Automatically logging in.") }
+                    cliTask("/usr/bin/kswitch -p " +  defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!)
             } else {
                 loginWindow.showWindow(nil) }
         } else {
