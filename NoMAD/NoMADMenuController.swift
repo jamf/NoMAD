@@ -108,7 +108,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // on startup we check for preferences
     
     override func awakeFromNib() {
-        ProcessApplicationTransformState(kProcessTransformToForegroundApplication)
+
         preferencesWindow = PreferencesWindow()
         loginWindow = LoginWindow()
         passwordChangeWindow = PasswordChangeWindow()

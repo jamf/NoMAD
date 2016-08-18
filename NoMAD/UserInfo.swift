@@ -267,7 +267,7 @@ class UserInfoAPI {
         // used to be doing this via klist -l, but that was returning too many tickets
         
         let fullTGT = cliTask("/usr/bin/klist")
-        guard (fullTGT.rangeOfString(realm) != nil) else {
+        guard (fullTGT.rangeOfString("@" + realm) != nil) else {
             throw NoADError.NotLoggedIn
         }
         
@@ -400,7 +400,7 @@ class UserInfoAPI {
             
             // end new stuff
             
-            if ( lastDate != nil && connectionDates["userPasswordSetDate"] != lastDate as! NSDate ) {
+            if ( lastDate != nil && connectionDates["userPasswordSetDate"] != lastDate as? NSDate ) {
                 NSLog("-----password changed underneath us----")
                 //let myAlert = NSAlert()
             //myAlert.messageText = "Your network password has changed. Please login again."

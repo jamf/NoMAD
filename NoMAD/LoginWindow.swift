@@ -38,8 +38,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         super.windowDidLoad()
         guard (( defaults.stringForKey("LastUser") ) != nil) else {
             self.window?.center()
-            self.window?.makeKeyAndOrderFront(nil)
             NSApp.activateIgnoringOtherApps(true)
+            self.window?.makeKeyAndOrderFront(nil)
             setWindowToLogin()
             return
         }
@@ -50,8 +50,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         setWindowToLogin()
         
         self.window?.center()
-        self.window?.makeKeyAndOrderFront(nil)
         NSApp.activateIgnoringOtherApps(true)
+        self.window?.makeKeyAndOrderFront(nil)
     }
     
     func windowWillClose(notification: NSNotification) {
