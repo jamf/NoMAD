@@ -15,6 +15,7 @@
 		1A206B2D1D58312800539FA6 /* KeychainUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A206B2C1D58312800539FA6 /* KeychainUtil.swift */; };
 		1A26AFF51D3BE620000776A4 /* WindowsCATools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A26AFF41D3BE620000776A4 /* WindowsCATools.swift */; };
 		1A26AFF71D46E4BF000776A4 /* GetHelp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A26AFF61D46E4BF000776A4 /* GetHelp.swift */; };
+		1AFEAC361D68FEAF00B7FA88 /* UserInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AFEAC351D68FEAF00B7FA88 /* UserInformation.swift */; };
 		8454EFDB1D34ADA600422D4E /* NSTaskWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454EFDA1D34ADA600422D4E /* NSTaskWrapper.swift */; };
 		8454EFDD1D34ADEE00422D4E /* PasswordChangeWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454EFDC1D34ADEE00422D4E /* PasswordChangeWindow.swift */; };
 		8454EFE51D35968100422D4E /* LoginWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454EFE41D35968100422D4E /* LoginWindow.swift */; };
@@ -50,6 +51,7 @@
 		1A206B2C1D58312800539FA6 /* KeychainUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainUtil.swift; sourceTree = "<group>"; };
 		1A26AFF41D3BE620000776A4 /* WindowsCATools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WindowsCATools.swift; sourceTree = "<group>"; };
 		1A26AFF61D46E4BF000776A4 /* GetHelp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetHelp.swift; sourceTree = "<group>"; };
+		1AFEAC351D68FEAF00B7FA88 /* UserInformation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInformation.swift; sourceTree = "<group>"; };
 		8454EFDA1D34ADA600422D4E /* NSTaskWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSTaskWrapper.swift; sourceTree = "<group>"; };
 		8454EFDC1D34ADEE00422D4E /* PasswordChangeWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordChangeWindow.swift; sourceTree = "<group>"; };
 		8454EFE41D35968100422D4E /* LoginWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginWindow.swift; sourceTree = "<group>"; };
@@ -138,6 +140,7 @@
 				1A08F1F21D36DA0900FA68C4 /* NoMADApplication.swift */,
 				1A26AFF41D3BE620000776A4 /* WindowsCATools.swift */,
 				1A206B2C1D58312800539FA6 /* KeychainUtil.swift */,
+				1AFEAC351D68FEAF00B7FA88 /* UserInformation.swift */,
 			);
 			path = NoMAD;
 			sourceTree = "<group>";
@@ -265,6 +268,7 @@
 				84CC67DF1D30A18A00115C76 /* AppDelegate.swift in Sources */,
 				1A206B2D1D58312800539FA6 /* KeychainUtil.swift in Sources */,
 				1A26AFF51D3BE620000776A4 /* WindowsCATools.swift in Sources */,
+				1AFEAC361D68FEAF00B7FA88 /* UserInformation.swift in Sources */,
 				8454EFDB1D34ADA600422D4E /* NSTaskWrapper.swift in Sources */,
 				8454EFE51D35968100422D4E /* LoginWindow.swift in Sources */,
 				84847A671D3DDF5600FAE468 /* KlistUtil.swift in Sources */,

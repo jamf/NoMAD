@@ -108,7 +108,11 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // on startup we check for preferences
     
     override func awakeFromNib() {
-
+        
+        let launchMenu = NSMenu()
+        launchMenu.title = "NoMAD Loading"
+        statusItem.menu = launchMenu
+        
         preferencesWindow = PreferencesWindow()
         loginWindow = LoginWindow()
         passwordChangeWindow = PasswordChangeWindow()
