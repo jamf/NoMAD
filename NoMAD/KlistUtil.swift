@@ -25,6 +25,7 @@ class KlistUtil {
 
     var allTickets = [Ticket]()
     var principal = ""
+    var short = ""
     var cache = ""
     var expire = NSDate()
     var issue = NSDate()
@@ -85,6 +86,7 @@ class KlistUtil {
             
             cache = jsonDict["cache"] as! String
             principal = jsonDict["principal"] as! String
+            short = principal.stringByReplacingOccurrencesOfString("@" + (defaults.objectForKey("Realm")! as! String), withString: "").stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
             
             if let tickets = jsonDict["tickets"] as? [[String: AnyObject]] {
                 for ticket in tickets {
