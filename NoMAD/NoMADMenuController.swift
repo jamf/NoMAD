@@ -96,7 +96,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     
     // globals
     
-    let userInfoAPI = UserInfoAPI()
+ //   let userInfoAPI = UserInfoAPI()
     let userInformation = UserInformation()
     
     var lastStatusCheck = NSDate().dateByAddingTimeInterval(-5000)
@@ -342,28 +342,26 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         NSLog("---- Spew Logs ----")
 
         NSLog("User information state:")
-        NSLog("Connection test URL: " + userInfoAPI.connectionData["connectionTestURL"]!)
-        NSLog("Connection test result: " + userInfoAPI.connectionData["connectionTestResult"]!)
-        NSLog("Realm: " + userInfoAPI.connectionData["realm"]!)
-        NSLog("Domain: " + userInfoAPI.connectionData["domain"]!)
-        NSLog("LDAP Server: " + userInfoAPI.connectionData["ldapServer"]!)
-        NSLog("LDAP Server Naming Context: " + userInfoAPI.connectionData["ldapServerNamingContext"]!)
-        NSLog("Password expiration default: " + String(userInfoAPI.serverPasswordExpirationDefault))
-        NSLog("Password aging: " + String(userInfoAPI.connectionFlags["passwordAging"]!))
-        NSLog("Connected: " + String(userInfoAPI.connectionFlags["isConnected"]!))
-        NSLog("Status: " + String(userInfoAPI.connectionData["status"]!))
+        NSLog("Realm: " + userInformation.realm)
+        NSLog("Domain: " + userInformation.domain)
+        NSLog("LDAP Server: " + userInformation.myLDAPServers.currentServer)
+        NSLog("LDAP Server Naming Context: " + userInformation.myLDAPServers.defaultNamingContext)
+        NSLog("Password expiration default: " + String(userInformation.serverPasswordExpirationDefault))
+        NSLog("Password aging: " + String(userInformation.passwordAging))
+        NSLog("Connected: " + String(userInformation.connected))
+        NSLog("Status: " + userInformation.status)
         NSLog("User short name: " + getConsoleUser())
         NSLog("User long name: " + NSUserName())
-        NSLog("User principal: " + userInfoAPI.connectionData["userPrincipal"]!)
-        NSLog("TGT expires: " + String(userInfoAPI.connectionDates["userTicketExpireTime"]!))
-        NSLog("User password set date: " + String(userInfoAPI.connectionDates["userPasswordSetDate"]!))
-        NSLog("User password expire date: " + String(userInfoAPI.connectionDates["userPasswordExpireDate"]!))
-        NSLog("User home share: " + userInfoAPI.connectionData["userHome"]!)
+        NSLog("User principal: " + userInformation.userPrincipal)
+        NSLog("TGT expires: " + String(userInformation.myTickets.expire))
+        NSLog("User password set date: " + String(userInformation.userPasswordSetDate))
+        NSLog("User password expire date: " + String(userInformation.userPasswordExpireDate))
+        NSLog("User home share: " + userInformation.userHome)
         
         NSLog("---- User Record ----")
         logEntireUserRecord()
         NSLog("---- Kerberos Tickets ----")
-        NSLog(userInfoAPI.myTickets.returnAllTickets())
+        NSLog(userInformation.myTickets.returnAllTickets())
 
     }
     
@@ -381,7 +379,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         // disable the menus that don't work if you're not logged in
         
-        if self.userInfoAPI.connectionFlags["isConnected"] == false {
+        if self.userInformation.connected == false {
             
             self.NoMADMenuLogIn.enabled = false
             self.NoMADMenuLogIn.title = "Log In"
@@ -391,7 +389,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             
             // twiddles what needs to be twiddled for connected but not logged in
             
-        } else if self.userInfoAPI.connectionFlags["isLoggedIn"] == false {
+        } else if self.userInformation.loggedIn == false {
             
             self.NoMADMenuLogIn.enabled = true
             self.NoMADMenuLogIn.title = "Log In"
@@ -429,19 +427,19 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // pulls user's entire LDAP record when asked
     
     func logEntireUserRecord() {
-        let myResult = userInfoAPI.myLDAPServers.returnFullRecord("sAMAccountName=" + defaults.stringForKey("LastUser")!)
+        let myResult = userInformation.myLDAPServers.returnFullRecord("sAMAccountName=" + defaults.stringForKey("LastUser")!)
         NSLog(myResult)
     }
 
     // everything to do on a network change
     
     func doTheNeedfull() {
-        if ( userInfoAPI.myLDAPServers.getDomain() == "not set" ) {
-            userInfoAPI.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!)
-            userInfoAPI.myTickets.getDetails()
+        if ( userInformation.myLDAPServers.getDomain() == "not set" ) {
+            userInformation.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!)
+            userInformation.myTickets.getDetails()
         }
 
-        userInfoAPI.myLDAPServers.check()
+        userInformation.myLDAPServers.check()
         updateUserInfo()
     }
     
@@ -449,7 +447,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     
     func renewTickets(){
         cliTask("/usr/bin/kinit -R")
-        userInfoAPI.myTickets.getDetails()
+        userInformation.myTickets.getDetails()
         if defaults.integerForKey("Verbose") >= 1 {
             NSLog("Renewing tickets.")
         }
@@ -463,8 +461,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         // make sure the domain we're using is the domain we should be using
         
-        if ( userInfoAPI.myLDAPServers.getDomain() != defaults.stringForKey("ADDomain")!) {
-             userInfoAPI.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!)
+        if ( userInformation.myLDAPServers.getDomain() != defaults.stringForKey("ADDomain")!) {
+             userInformation.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!)
         }
         
         // get the information on the current setup
@@ -477,7 +475,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         // through the magic of code blocks we'll update in the background
         
         dispatch_async(backgroundQueue, {
-            let userinfo = self.userInfoAPI.checkAll()
+ //           let userinfo = self.userInformation.checkAll()
             
             self.userInformation.getUserInfo()
             
@@ -487,18 +485,18 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 statusItem.menu = self.NoMADMenu
                 
                 // set the menu icon
-                if userinfo!.status == "Connected" {
+                if self.userInformation.status == "Connected" {
                     statusItem.image = self.iconOnOff
                    // we do this twice b/c doing it only once seems to make it less than full width
-                    statusItem.title = userinfo!.status
-                    statusItem.title = userinfo!.status
+                    statusItem.title = self.userInformation.status
+                    statusItem.title = self.userInformation.status
                     
                     // if we're not logged in we disable some options
                     
-                    statusItem.toolTip = self.dateFormatter.stringFromDate(userinfo!.userPasswordExpireDate)
+                    statusItem.toolTip = self.dateFormatter.stringFromDate(self.userInformation.userPasswordExpireDate)
                     self.NoMADMenuTicketLife.title = "Not logged in."
                 
-                } else if userinfo!.status == "Logged In" {
+                } else if self.userInformation.status == "Logged In" {
                     statusItem.image = self.iconOnOn
                     
                     // if we're logged in we enable some options
@@ -506,12 +504,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                    // self.NoMADMenuLogOut.enabled = true
                    // self.NoMADMenuChangePassword.enabled = true
                     
-                    if userinfo!.passwordAging {
+                    if self.userInformation.passwordAging {
                         
-                        statusItem.toolTip = self.dateFormatter.stringFromDate(userinfo!.userPasswordExpireDate)
-                        self.NoMADMenuTicketLife.title = self.dateFormatter.stringFromDate(self.userInfoAPI.myTickets.expire) + " " + self.userInfoAPI.myLDAPServers.currentServer
+                        statusItem.toolTip = self.dateFormatter.stringFromDate(self.userInformation.userPasswordExpireDate)
+                        self.NoMADMenuTicketLife.title = self.dateFormatter.stringFromDate(self.userInformation.myTickets.expire) + " " + self.userInformation.myLDAPServers.currentServer
                         
-                        let daysToGo = Int(abs(userinfo!.userPasswordExpireDate.timeIntervalSinceNow)/86400)
+                        let daysToGo = Int(abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow)/86400)
                         // we do this twice b/c doing it only once seems to make it less than full width
                         if Int(daysToGo) > 4 {
                         statusItem.title = (String(daysToGo) + "d" )
@@ -528,18 +526,18 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         // we do this twice b/c doing it only once seems to make it less than full width
                         statusItem.title = ""
                         statusItem.title = ""
-                         self.NoMADMenuTicketLife.title = self.dateFormatter.stringFromDate(self.userInfoAPI.myTickets.expire) + " " + self.userInfoAPI.myLDAPServers.currentServer
+                         self.NoMADMenuTicketLife.title = self.dateFormatter.stringFromDate(self.userInformation.myTickets.expire) + " " + self.userInformation.myLDAPServers.currentServer
                     }
                 } else {
                     statusItem.image = self.iconOffOff
                     
                     // we do this twice b/c doing it only once seems to make it less than full width
-                    statusItem.title = userinfo!.status
-                    statusItem.title = userinfo!.status
+                    statusItem.title = self.userInformation.status
+                    statusItem.title = self.userInformation.status
                 }
                 
-                if ( userinfo!.userPrincipalShort != "No User" ) {
-                self.NoMADMenuUserName.title = userinfo!.userPrincipalShort
+                if ( self.userInformation.userPrincipalShort != "No User" ) {
+                self.NoMADMenuUserName.title = self.userInformation.userPrincipalShort
                 } else {
                     self.NoMADMenuUserName.title = defaults.stringForKey("LastUser") ?? "No User"
                 }
@@ -558,7 +556,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 
                 // add shortname into the defaults
                 
-                defaults.setObject(userinfo!.userPrincipalShort, forKey: "UserShortName")
+                defaults.setObject(self.userInformation.userPrincipalShort, forKey: "UserShortName")
                 
                 // if a user command is specified, show it, otherwise hide the menu item
                 
@@ -573,9 +571,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 
                 // add home directory menu item
                 
-                if userinfo!.isConnected && defaults.integerForKey("ShowHome") == 1 {
+                if self.userInformation.connected && defaults.integerForKey("ShowHome") == 1 {
                     
-                    if ( userinfo!.userHome != "" && self.NoMADMenu.itemArray.contains(self.NoMADMenuHome) == false ) {
+                    if ( self.userInformation.userHome != "" && self.NoMADMenu.itemArray.contains(self.NoMADMenuHome) == false ) {
                         self.NoMADMenuHome.title = "Home Sharepoint"
                         self.NoMADMenuHome.action = #selector(self.homeClicked)
                         self.NoMADMenuHome.target = self.NoMADMenuLogOut.target
@@ -583,7 +581,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         // should key this off of the position of the Preferences menu
                         let prefIndex = self.NoMADMenu.indexOfItem(self.NoMADMenuPreferences)
                         self.NoMADMenu.insertItem(self.NoMADMenuHome, atIndex: (prefIndex - 1 ))
-                    } else if userinfo!.userHome != "" && self.NoMADMenu.itemArray.contains(self.NoMADMenuHome) {
+                    } else if self.userInformation.userHome != "" && self.NoMADMenu.itemArray.contains(self.NoMADMenuHome) {
                         self.NoMADMenuHome.title = "Home Sharepoint"
                         self.NoMADMenuHome.action = #selector(self.homeClicked)
                         self.NoMADMenuHome.target = self.NoMADMenuLogOut.target
@@ -597,8 +595,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
             // check if we need to renew the ticket
             
-            if defaults.integerForKey("RenewTickets") == 1 && userinfo!.status == "Logged In" && ( abs(userinfo!.userTicketExpireTime.timeIntervalSinceNow) >= Double(defaults.integerForKey("SecondsToRenew"))) {
-                self.userInfoAPI.renewTickets()
+            if defaults.integerForKey("RenewTickets") == 1 && self.userInformation.status == "Logged In" && ( abs(self.userInformation.myTickets.expire.timeIntervalSinceNow) >= Double(defaults.integerForKey("SecondsToRenew"))) {
+                self.renewTickets()
             }
             
             // check if we need to notify the user
@@ -606,21 +604,21 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             
             // reset the counter if the password change is over the default
             
-            if ( abs(userinfo!.userPasswordExpireDate.timeIntervalSinceNow) < Double(defaults.integerForKey("PasswordExpireAlertTime")) && userinfo!.status == "Logged In" ) {
+            if ( abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) < Double(defaults.integerForKey("PasswordExpireAlertTime")) && self.userInformation.status == "Logged In" ) {
                 
-                if ( abs(userinfo!.userPasswordExpireDate.timeIntervalSinceNow) < Double(defaults.integerForKey("LastPasswordWarning")) ) {
-                    if ( abs(userinfo!.userPasswordExpireDate.timeIntervalSinceNow) > Double(345600) ) {
+                if ( abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) < Double(defaults.integerForKey("LastPasswordWarning")) ) {
+                    if ( abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) > Double(345600) ) {
                         // expire is between default and four days so notify once a day
-                        self.showNotification("Password about to expire!", text: "Your network password is about to expire on " + self.dateFormatter.stringFromDate(userinfo!.userPasswordExpireDate), date: NSDate())
-                        defaults.setObject((abs(userinfo!.userPasswordExpireDate.timeIntervalSinceNow) - 86400 ), forKey: "LastPasswordWarning")
-                    } else if ( abs(userinfo!.userPasswordExpireDate.timeIntervalSinceNow) > Double(86400) ) {
+                        self.showNotification("Password about to expire!", text: "Your network password is about to expire on " + self.dateFormatter.stringFromDate(self.userInformation.userPasswordExpireDate), date: NSDate())
+                        defaults.setObject((abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) - 86400 ), forKey: "LastPasswordWarning")
+                    } else if ( abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) > Double(86400) ) {
                         // expire is between 4 days and 1 day so notifiy every 12 hours
-                        self.showNotification("Password about to expire!", text: "Your network password is about to expire on " + self.dateFormatter.stringFromDate(userinfo!.userPasswordExpireDate), date: NSDate())
-                        defaults.setObject( (abs(userinfo!.userPasswordExpireDate.timeIntervalSinceNow) - 23200 ), forKey: "LastPasswordWarning")
+                        self.showNotification("Password about to expire!", text: "Your network password is about to expire on " + self.dateFormatter.stringFromDate(self.userInformation.userPasswordExpireDate), date: NSDate())
+                        defaults.setObject( (abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) - 23200 ), forKey: "LastPasswordWarning")
                     } else {
                         // expire is less than 1 day so notifiy every hour
-                        self.showNotification("Password about to expire!", text: "Your network password is about to expire on " + self.dateFormatter.stringFromDate(userinfo!.userPasswordExpireDate), date: NSDate())
-                        defaults.setObject((abs(userinfo!.userPasswordExpireDate.timeIntervalSinceNow) - 3600 ), forKey: "LastPasswordWarning")
+                        self.showNotification("Password about to expire!", text: "Your network password is about to expire on " + self.dateFormatter.stringFromDate(self.userInformation.userPasswordExpireDate), date: NSDate())
+                        defaults.setObject((abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) - 3600 ), forKey: "LastPasswordWarning")
                     }
                 }
             } else {
