@@ -63,7 +63,12 @@ class LDAPServers {
         if self.currentState {
         testHosts()
         }
+        
         // TODO: use sites to figure out the "right" server to be using
+        
+        if self.currentState {
+            findSite()
+        }
         
     }
     
@@ -176,13 +181,60 @@ class LDAPServers {
     
     // private function to get system IP and mask
     
-    private func getIPAndMask() {
+    private func findSite() {
         let store = SCDynamicStoreCreate(nil, NSBundle.mainBundle().bundleIdentifier!, nil, nil)
+        var found = false
+        var site = ""
         
         // first grab IPv4
+        // TODO: fix for IPv6
+        
         let val = SCDynamicStoreCopyValue(store, "State:/Network/Interface/en0/IPv4")
         let IPs = val!["Addresses"] as! [String]
         let subs = val!["SubnetMasks"] as! [String]
+        
+        // Now look for sites
+        
+        for index in 1...IPs.count {
+            var subMask = countBits(subs[index - 1])
+            let IPOctets = IPs[index - 1].componentsSeparatedByString(".")
+            var IP = ""
+            
+            while subMask > 0 && !found {
+                
+                let octet = subMask / 8
+                let octetMask = subMask % 8
+                let network = Int(IPOctets[octet])! - (Int(IPOctets[octet])! % binToDecimal(octetMask))
+                
+                switch octet {
+                case 0  : IP = String(network) + ".0.0.0"
+                case 1  : IP = IPOctets[0] + "." + String(network) + ".0.0"
+                case 2  : IP = IPOctets[0] + "." + IPOctets[1] + "." + String(network) + ".0"
+                case 3  : IP = IPOctets[0] + "." + IPOctets[1] + "." + IPOctets[2] + "." + String(network)
+                case 4  : IP = IPOctets[0] + "." + IPOctets[1] + "." + IPOctets[2] + "." + IPOctets[3]
+                default : IP = IPOctets[0] + "." + IPOctets[1] + "." + IPOctets[2] + "." + IPOctets[3]
+                }
+                
+                do {
+                    
+                    let tempDefaultNamingContext = defaultNamingContext
+                    defaultNamingContext = "cn=Subnets,cn=Sites,cn=Configuration," + tempDefaultNamingContext
+                    
+                    site = try getLDAPInformation("siteObject", baseSearch: false, searchTerm: "cn=" + IP + "/" + String(subMask))
+                    NSLog(site)
+                }
+                catch { }
+                
+                if site != "" {
+                    found = true
+                    let siteDomain = site.componentsSeparatedByString(",")[0].stringByReplacingOccurrencesOfString("CN=", withString: "") + "._sites." + currentDomain
+                    getHosts(siteDomain)
+                    testHosts()
+                } else {
+                    subMask -= 1
+                }
+            }
+        }
     }
     
     // private function to determine subnet mask for site determination
@@ -226,6 +278,25 @@ class LDAPServers {
         default               : bits = 0
         }
         return bits
+    }
+    
+    // private function to convert the mask length to a decimal
+    
+    private func binToDecimal(mask: Int) -> Int {
+        var dec: Int
+        switch mask {
+        case 0  : dec = 256
+        case 1  : dec = 128
+        case 2  : dec = 64
+        case 3  : dec = 32
+        case 4  : dec = 16
+        case 5  : dec = 8
+        case 6  : dec = 4
+        case 7  : dec = 2
+        case 8  : dec = 1
+        default : dec = 0
+        }
+        return dec
     }
     
     // private function to clean the LDAP results
@@ -355,5 +426,4 @@ class LDAPServers {
             self.currentState = true
         }
     }
-    
 }
