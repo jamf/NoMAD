@@ -97,6 +97,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // globals
     
     let userInfoAPI = UserInfoAPI()
+    let userInformation = UserInformation()
     
     var lastStatusCheck = NSDate().dateByAddingTimeInterval(-5000)
     var updateScheduled = false
@@ -477,6 +478,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         dispatch_async(backgroundQueue, {
             let userinfo = self.userInfoAPI.checkAll()
+            
+            self.userInformation.getUserInfo()
             
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 // build the menu

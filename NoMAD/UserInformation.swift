@@ -64,6 +64,11 @@ class UserInformation {
         
         // 1. check if AD can be reached
         
+        // ---remove---
+        myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!)
+        
+        myTickets.getDetails()
+        
         if myLDAPServers.currentState {
             status = "Connected"
             connected = true
@@ -78,7 +83,10 @@ class UserInformation {
         if myTickets.state {
             tickets = true
             userPrincipal = myTickets.principal
-            userPrincipalShort = myTickets.short
+            realm = defaults.stringForKey("KerberosRealm")!
+            NSLog(myTickets.principal.stringByReplacingOccurrencesOfString("@" + defaults.stringForKey("KerberosRealm")!, withString: ""))
+            userPrincipalShort = userPrincipal.stringByReplacingOccurrencesOfString("@" + realm, withString: "")
+            NSLog(userPrincipalShort)
         } else {
             tickets = false
             NSLog("No tickets")
@@ -87,6 +95,7 @@ class UserInformation {
         // 3. if connected and with tickets, get password aging information
         
         if connected && tickets {
+            
             let passwordSetDate = try! myLDAPServers.getLDAPInformation("pwdLastSet", searchTerm: "sAMAccountName=" + userPrincipalShort)
             userPasswordSetDate = NSDate(timeIntervalSince1970: (Double(Int(passwordSetDate)!))/10000000-11644473600)
             

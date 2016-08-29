@@ -154,12 +154,14 @@ class LDAPServers {
     
     // do an LDAP lookup with the current naming context
     
-    func getLDAPInformation( attribute: String, baseSearch: Bool=false, searchTerm: String="") throws -> String {
+    func getLDAPInformation( attribute: String, baseSearch: Bool=false, searchTerm: String="", test: Bool=true) throws -> String {
         
         var myResult: String
         
+        if test {
         guard testSocket(self.currentServer) else {
             throw NoADError.LDAPServerLookup
+        }
         }
         
         if (defaultNamingContext == "") || (defaultNamingContext.containsString("GSSAPI Error")) {
@@ -195,6 +197,9 @@ class LDAPServers {
         
         // Now look for sites
         
+        let tempDefaultNamingContext = defaultNamingContext
+        defaultNamingContext = "cn=Subnets,cn=Sites,cn=Configuration," + tempDefaultNamingContext
+        
         for index in 1...IPs.count {
             var subMask = countBits(subs[index - 1])
             let IPOctets = IPs[index - 1].componentsSeparatedByString(".")
@@ -216,14 +221,12 @@ class LDAPServers {
                 }
                 
                 do {
-                    
-                    let tempDefaultNamingContext = defaultNamingContext
-                    defaultNamingContext = "cn=Subnets,cn=Sites,cn=Configuration," + tempDefaultNamingContext
-                    
-                    site = try getLDAPInformation("siteObject", baseSearch: false, searchTerm: "cn=" + IP + "/" + String(subMask))
-                    NSLog(site)
+                    NSLog("Trying site: cn=" + IP + "/" + String(subMask))
+                    site = try getLDAPInformation("siteObject", baseSearch: false, searchTerm: "cn=" + IP + "/" + String(subMask), test: false)
+                    NSLog("Using site: " + site.componentsSeparatedByString(",")[0].stringByReplacingOccurrencesOfString("CN=", withString: ""))
                 }
-                catch { }
+                catch {
+                }
                 
                 if site != "" {
                     found = true
@@ -235,6 +238,8 @@ class LDAPServers {
                 }
             }
         }
+        defaultNamingContext = tempDefaultNamingContext
+        NSLog("Resetting default naming context to: " + defaultNamingContext)
     }
     
     // private function to determine subnet mask for site determination

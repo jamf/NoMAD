@@ -86,7 +86,8 @@ class KlistUtil {
             
             cache = jsonDict["cache"] as! String
             principal = jsonDict["principal"] as! String
-            short = principal.stringByReplacingOccurrencesOfString("@", withString: "")
+            
+            short = principal.stringByReplacingOccurrencesOfString("@" + defaults.stringForKey("KerberosRealm")!, withString: "").stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
             
             if let tickets = jsonDict["tickets"] as? [[String: AnyObject]] {
                 for ticket in tickets {
