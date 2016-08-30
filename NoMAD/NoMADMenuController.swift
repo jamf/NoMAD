@@ -109,11 +109,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // on startup we check for preferences
     
     override func awakeFromNib() {
-        
+        let menuAnimationTimer = NSTimer(timeInterval: 0.5, target: self, selector: #selector(animateMenuItem), userInfo: nil, repeats: true)
         statusItem.menu = NSMenu()
-        statusItem.image = iconOffOff
-        statusItem.menu!.title = "Loading..."
-        statusItem.menu!.title = "Loading..."
+           NSRunLoop.currentRunLoop().addTimer(menuAnimationTimer, forMode: NSDefaultRunLoopMode)
+        // menuAnimationTimer.fire()
         
         preferencesWindow = PreferencesWindow()
         loginWindow = LoginWindow()
@@ -191,7 +190,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         if defaults.integerForKey("Verbose") >= 1 {
             NSLog("Starting up NoMAD")
         }
-        
+        menuAnimationTimer.invalidate()
     }
     
     // actions for the menu items
@@ -438,7 +437,11 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     func doTheNeedfull() {
         if ( userInformation.myLDAPServers.getDomain() == "not set" ) {
             userInformation.myTickets.getDetails()
+            if userInformation.myTickets.state {
             userInformation.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!)
+            } else {
+                userInformation.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!, loggedIn: false)
+            }
         }
         userInformation.myLDAPServers.check()
         updateUserInfo()
@@ -451,6 +454,14 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         userInformation.myTickets.getDetails()
         if defaults.integerForKey("Verbose") >= 1 {
             NSLog("Renewing tickets.")
+        }
+    }
+    
+    func animateMenuItem() {
+        if statusItem.image == iconOnOn {
+            statusItem.image = iconOffOff
+        } else {
+            statusItem.image = iconOnOn
         }
     }
     

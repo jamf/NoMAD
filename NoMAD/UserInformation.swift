@@ -102,6 +102,10 @@ class UserInformation {
         if connected && loggedIn {
             
             let passwordSetDate = try! myLDAPServers.getLDAPInformation("pwdLastSet", searchTerm: "sAMAccountName=" + userPrincipalShort)
+            
+            if passwordSetDate == "" {
+                NSLog("We shouldn't have gotten here... tell Joel")
+            }
             userPasswordSetDate = NSDate(timeIntervalSince1970: (Double(Int(passwordSetDate)!))/10000000-11644473600)
             
             // Now get default password expiration time - this may not be set for environments with no password cycling requirements

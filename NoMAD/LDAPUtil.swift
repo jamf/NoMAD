@@ -27,13 +27,14 @@ class LDAPServers {
     var currentState: Bool = false
     var currentDomain = ""
     var lookupServers = true
+    var site = ""
     var current: Int = 0 {
         didSet(LDAPServer) {
             NSLog("Setting the current LDAP server to: " + hosts[current].host)
         }
     }
     
-    func setDomain(domain: String) {
+    func setDomain(domain: String, loggedIn: Bool=true) {
         
         if defaults.integerForKey("Verbose") >= 1 {
             NSLog("Finding LDAP Servers.")
@@ -54,11 +55,14 @@ class LDAPServers {
                 }
             currentState = true
             lookupServers = false
+            site = "static"
             testHosts()
             return
             }
-        
+        if loggedIn {
+            
         getHosts(domain)
+            
         // now to sort them if we got results
         
         if self.currentState {
@@ -67,10 +71,10 @@ class LDAPServers {
         
         // TODO: use sites to figure out the "right" server to be using
         
-        if self.currentState && lookupServers {
+        if self.currentState && lookupServers && defaultNamingContext != "" {
             findSite()
         }
-        
+        }
     }
     
     // Return the current Domain
@@ -111,8 +115,13 @@ class LDAPServers {
             }
             currentState = true
             lookupServers = false
+            site = "static"
          } else {
             getHosts(currentDomain)
+            if self.currentState && defaultNamingContext != "" {
+                testHosts()
+                findSite()
+            }
         }
         testHosts()
     }
@@ -157,7 +166,12 @@ class LDAPServers {
     func check() {
         
         if testSocket(self.currentServer) && testLDAP(self.currentServer) {
+            
+        if  defaultNamingContext != "" && site != "" {
             NSLog("Using same LDAP server: " + self.currentServer)
+        } else {
+            findSite()
+            }
         } else {
             NSLog("Can't connect to LDAP server, finding new one")
             networkChange()
@@ -199,7 +213,7 @@ class LDAPServers {
     private func findSite() {
         let store = SCDynamicStoreCreate(nil, NSBundle.mainBundle().bundleIdentifier!, nil, nil)
         var found = false
-        var site = ""
+        site = ""
         
         // first grab IPv4
         // TODO: fix for IPv6
@@ -209,6 +223,7 @@ class LDAPServers {
         let subs = val!["SubnetMasks"] as! [String]
         
         // Now look for sites
+        
         
         let tempDefaultNamingContext = defaultNamingContext
         defaultNamingContext = "cn=Subnets,cn=Sites,cn=Configuration," + tempDefaultNamingContext

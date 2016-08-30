@@ -106,6 +106,7 @@ class KlistUtil {
             principal = jsonDict["principal"] as! String
             
             short = principal.stringByReplacingOccurrencesOfString("@" + defaults.stringForKey("KerberosRealm")!, withString: "").stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+            state = false
             
             if let tickets = jsonDict["tickets"] as? [[String: AnyObject]] {
                 for ticket in tickets {
@@ -114,6 +115,7 @@ class KlistUtil {
                         let expire = dateFormatter.dateFromString((ticket["Expires"] as? String)!)
                         let myTicket = Ticket(Issued: issue!, Expires: expire!, Principal: tick )
                         allTickets.append(myTicket)
+                        state = true
                     }
                 }
             }
