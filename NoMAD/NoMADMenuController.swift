@@ -110,9 +110,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     
     override func awakeFromNib() {
         
-        let launchMenu = NSMenu()
-        launchMenu.title = "NoMAD Loading"
-        statusItem.menu = launchMenu
+        statusItem.menu = NSMenu()
+        statusItem.image = iconOffOff
+        statusItem.menu!.title = "Loading..."
+        statusItem.menu!.title = "Loading..."
         
         preferencesWindow = PreferencesWindow()
         loginWindow = LoginWindow()
@@ -149,10 +150,11 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         // Autologin if you can
         
-        if ( defaults.boolForKey("UseKeychain")) {
+        userInformation.myTickets.getDetails()
+        
+        if ( defaults.boolForKey("UseKeychain")) && !userInformation.myTickets.state {
             var myPass: String = ""
             // check if there's a last user
-            
             if ( (defaults.stringForKey("LastUser") ?? "") != "" ) {
                 var myErr: String? = ""
                 
@@ -435,10 +437,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     
     func doTheNeedfull() {
         if ( userInformation.myLDAPServers.getDomain() == "not set" ) {
-            userInformation.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!)
             userInformation.myTickets.getDetails()
+            userInformation.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!)
         }
-
         userInformation.myLDAPServers.check()
         updateUserInfo()
     }
@@ -604,7 +605,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             
             // reset the counter if the password change is over the default
             
-            if ( abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) < Double(defaults.integerForKey("PasswordExpireAlertTime")) && self.userInformation.status == "Logged In" ) {
+            if ( abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) < Double(defaults.integerForKey("PasswordExpireAlertTime")) && self.userInformation.status == "Logged In" ) && self.userInformation.passwordAging {
                 
                 if ( abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) < Double(defaults.integerForKey("LastPasswordWarning")) ) {
                     if ( abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) > Double(345600) ) {

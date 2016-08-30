@@ -18,7 +18,6 @@ struct LDAPServer {
     var timeStamp: NSDate
 }
 
-
 class LDAPServers {
     
     // defaults
@@ -27,6 +26,7 @@ class LDAPServers {
     var defaultNamingContext: String = ""
     var currentState: Bool = false
     var currentDomain = ""
+    var lookupServers = true
     var current: Int = 0 {
         didSet(LDAPServer) {
             NSLog("Setting the current LDAP server to: " + hosts[current].host)
@@ -53,6 +53,7 @@ class LDAPServers {
                 hosts.append(currentServer)
                 }
             currentState = true
+            lookupServers = false
             testHosts()
             return
             }
@@ -66,7 +67,7 @@ class LDAPServers {
         
         // TODO: use sites to figure out the "right" server to be using
         
-        if self.currentState {
+        if self.currentState && lookupServers {
             findSite()
         }
         
@@ -100,7 +101,19 @@ class LDAPServers {
     }
     
     func networkChange() {
-        getHosts(currentDomain)
+        
+         if defaults.stringForKey("LDAPServerList") != nil {
+            let myLDAPServerListRaw = defaults.stringForKey("LDAPServerList")
+            let myLDAPServerList = myLDAPServerListRaw?.componentsSeparatedByString(",")
+            for server in myLDAPServerList! {
+                let currentServer: LDAPServer = LDAPServer(host: server, status: "found", priority: 0, weight: 0, timeStamp: NSDate())
+                hosts.append(currentServer)
+            }
+            currentState = true
+            lookupServers = false
+         } else {
+            getHosts(currentDomain)
+        }
         testHosts()
     }
     
@@ -199,6 +212,8 @@ class LDAPServers {
         
         let tempDefaultNamingContext = defaultNamingContext
         defaultNamingContext = "cn=Subnets,cn=Sites,cn=Configuration," + tempDefaultNamingContext
+        
+        // TODO: do we just look to see if there's only one site?
         
         for index in 1...IPs.count {
             var subMask = countBits(subs[index - 1])

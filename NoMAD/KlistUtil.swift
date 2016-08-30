@@ -32,12 +32,14 @@ class KlistUtil {
     var dateFormatter = NSDateFormatter()
     var state = true
     var rawTicket: NSData
+    var realm = ""
     
     init() {
         dateFormatter.dateFormat = "yyyyMMddHHmmss"
         let rawJSON = cliTask("/usr/bin/klist --json")
         rawTicket = rawJSON.dataUsingEncoding(NSUTF8StringEncoding)!
-        if returnAllTickets().containsString("cache") {
+        realm = defaults.stringForKey("KerberosRealm") ?? ""
+        if returnAllTickets().containsString("cache") && returnAllTickets().containsString("@" + realm) {
             NSLog("Tickets found.")
         } else {
             NSLog("No tickets found.")
@@ -46,11 +48,20 @@ class KlistUtil {
     }
     
     func getTicketJSON() {
+        
+        realm = defaults.stringForKey("KerberosRealm") ?? ""
         dateFormatter.dateFormat = "yyyyMMddHHmmss"
         let rawJSON = cliTask("/usr/bin/klist --json")
         rawTicket = rawJSON.dataUsingEncoding(NSUTF8StringEncoding)!
         if returnAllTickets().containsString("cache") {
-            NSLog("Tickets found.")
+           // NSLog("Tickets found.")
+            if returnAllTickets().containsString("@" + realm ) {
+                NSLog("Ticket found for domain: " + realm)
+                state = true
+            } else {
+                NSLog("No ticket found for domain: " + realm)
+                state = false
+            }
         } else {
             NSLog("No tickets found.")
             state = false
@@ -63,6 +74,13 @@ class KlistUtil {
         let rawCache = rawJSON.dataUsingEncoding(NSUTF8StringEncoding)!
         if returnAllTickets().containsString("cache") {
             NSLog("Tickets found.")
+            if returnAllTickets().containsString("@" + defaults.stringForKey("KerberosRealms")!) {
+                NSLog("Ticket found for domain: " + defaults.stringForKey("KerberosRealms")!)
+                state = true
+            } else {
+                NSLog("No ticket found for domain: " + defaults.stringForKey("KerberosRealms")!)
+                state = false
+            }
         } else {
             NSLog("No tickets found.")
             state = false
