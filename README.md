@@ -18,6 +18,7 @@ Active Directory without having to actually bind to AD.
 - Sync your AD password to your local account.
 - Users are warned about impending password expirations.
 - Customize user's help options between a Bomgar URL, web URL or local application path.
+- AD Site aware
 
 Coming in future versions:
 
