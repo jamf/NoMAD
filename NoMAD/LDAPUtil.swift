@@ -72,6 +72,7 @@ class LDAPServers {
         // TODO: use sites to figure out the "right" server to be using
         
         if self.currentState && lookupServers && defaultNamingContext != "" {
+            NSLog("Looking for sites")
             findSite()
         }
         }
@@ -211,6 +212,7 @@ class LDAPServers {
     // private function to get system IP and mask
     
     private func findSite() {
+        NSLog("Looking for local IP")
         let store = SCDynamicStoreCreate(nil, NSBundle.mainBundle().bundleIdentifier!, nil, nil)
         var found = false
         site = ""
@@ -222,8 +224,10 @@ class LDAPServers {
         let IPs = val!["Addresses"] as! [String]
         let subs = val!["SubnetMasks"] as! [String]
         
-        // Now look for sites
+        NSLog("IPs: " + IPs.joinWithSeparator(", "))
+        NSLog("Sunets: " + subs.joinWithSeparator(", "))
         
+        // Now look for sites
         
         let tempDefaultNamingContext = defaultNamingContext
         defaultNamingContext = "cn=Subnets,cn=Sites,cn=Configuration," + tempDefaultNamingContext
@@ -234,6 +238,8 @@ class LDAPServers {
             var subMask = countBits(subs[index - 1])
             let IPOctets = IPs[index - 1].componentsSeparatedByString(".")
             var IP = ""
+            
+            NSLog("Starting site lookups")
             
             while subMask > 0 && !found {
                 
