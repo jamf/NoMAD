@@ -220,12 +220,16 @@ class LDAPServers {
         // first grab IPv4
         // TODO: fix for IPv6
         
-        let val = SCDynamicStoreCopyValue(store, "State:/Network/Interface/en0/IPv4")
+        let globalInterface = SCDynamicStoreCopyValue(store, "State:/Network/Global/IPv4")
+        let interface = globalInterface!["PrimaryInterface"] as! String
+        
+        let val = SCDynamicStoreCopyValue(store, "State:/Network/Interface/" + interface + "/IPv4")
+        
         let IPs = val!["Addresses"] as! [String]
         let subs = val!["SubnetMasks"] as! [String]
         
         NSLog("IPs: " + IPs.joinWithSeparator(", "))
-        NSLog("Sunets: " + subs.joinWithSeparator(", "))
+        NSLog("Subnets: " + subs.joinWithSeparator(", "))
         
         // Now look for sites
         
@@ -459,6 +463,7 @@ class LDAPServers {
                             hosts[i].status = "live"
                             hosts[i].timeStamp = NSDate()
                             NSLog("Current LDAP Server is: " + hosts[i].host )
+                            NSLog("Current default naming context: " + defaultNamingContext )
                             current = i
                             break
                         } else {
