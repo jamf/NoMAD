@@ -225,11 +225,11 @@ class LDAPServers {
         
         let val = SCDynamicStoreCopyValue(store, "State:/Network/Interface/" + interface + "/IPv4")
         
-        let IPs = val!["Addresses"] as! [String]
-        let subs = val!["SubnetMasks"] as! [String]
+        let IP = val!["Addresses"] as! [String]
+        let sub = val!["SubnetMasks"] as! [String]
         
-        NSLog("IPs: " + IPs.joinWithSeparator(", "))
-        NSLog("Subnets: " + subs.joinWithSeparator(", "))
+        NSLog("IPs: " + IP[0] )
+        NSLog("Subnets: " + sub[0] )
         
         // Now look for sites
         
@@ -238,10 +238,10 @@ class LDAPServers {
         
         // TODO: do we just look to see if there's only one site?
         
-        for index in 1...IPs.count {
-            var subMask = countBits(subs[index - 1])
-            let IPOctets = IPs[index - 1].componentsSeparatedByString(".")
-            var IP = ""
+        //for index in 1...IP.count {
+            var subMask = countBits(sub[0])
+            let IPOctets = IP[0].componentsSeparatedByString(".")
+            var networkIP = ""
             
             NSLog("Starting site lookups")
             
@@ -252,17 +252,17 @@ class LDAPServers {
                 let network = Int(IPOctets[octet])! - (Int(IPOctets[octet])! % binToDecimal(octetMask))
                 
                 switch octet {
-                case 0  : IP = String(network) + ".0.0.0"
-                case 1  : IP = IPOctets[0] + "." + String(network) + ".0.0"
-                case 2  : IP = IPOctets[0] + "." + IPOctets[1] + "." + String(network) + ".0"
-                case 3  : IP = IPOctets[0] + "." + IPOctets[1] + "." + IPOctets[2] + "." + String(network)
-                case 4  : IP = IPOctets[0] + "." + IPOctets[1] + "." + IPOctets[2] + "." + IPOctets[3]
-                default : IP = IPOctets[0] + "." + IPOctets[1] + "." + IPOctets[2] + "." + IPOctets[3]
+                case 0  : networkIP = String(network) + ".0.0.0"
+                case 1  : networkIP = IPOctets[0] + "." + String(network) + ".0.0"
+                case 2  : networkIP = IPOctets[0] + "." + IPOctets[1] + "." + String(network) + ".0"
+                case 3  : networkIP = IPOctets[0] + "." + IPOctets[1] + "." + IPOctets[2] + "." + String(network)
+                case 4  : networkIP = IPOctets[0] + "." + IPOctets[1] + "." + IPOctets[2] + "." + IPOctets[3]
+                default : networkIP = IPOctets[0] + "." + IPOctets[1] + "." + IPOctets[2] + "." + IPOctets[3]
                 }
                 
                 do {
-                    NSLog("Trying site: cn=" + IP + "/" + String(subMask))
-                    site = try getLDAPInformation("siteObject", baseSearch: false, searchTerm: "cn=" + IP + "/" + String(subMask), test: false)
+                    NSLog("Trying site: cn=" + networkIP + "/" + String(subMask))
+                    site = try getLDAPInformation("siteObject", baseSearch: false, searchTerm: "cn=" + networkIP + "/" + String(subMask), test: false)
                     NSLog("Using site: " + site.componentsSeparatedByString(",")[0].stringByReplacingOccurrencesOfString("CN=", withString: ""))
                 }
                 catch {
@@ -276,8 +276,12 @@ class LDAPServers {
                 } else {
                     subMask -= 1
                 }
-            }
+          // }
         }
+        if site == "" {
+            site = "No site found"
+        }
+        NSLog("Using site: " + site )
         defaultNamingContext = tempDefaultNamingContext
         NSLog("Resetting default naming context to: " + defaultNamingContext)
     }

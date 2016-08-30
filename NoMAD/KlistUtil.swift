@@ -138,6 +138,13 @@ class KlistUtil {
             for ticket in allTickets {
                 if ticket.Principal.containsString("krbtgt") {
                     expire = ticket.Expires
+                    
+                    // we need to check for an expired TGT and set state to false if we are
+                    
+                    if expire.compare(NSDate()) == NSComparisonResult.OrderedAscending {
+                        NSLog("Tickets are expired")
+                        state = false
+                    }
                     break
                 }
             }
