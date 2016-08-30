@@ -198,7 +198,7 @@ class LDAPServers {
         if baseSearch {
             myResult = cleanLDAPResults(cliTask("/usr/bin/ldapsearch -Q -LLL -s base -H ldap://" + self.currentServer + " -b " + self.defaultNamingContext + " " + searchTerm + " " + attribute), attribute: attribute)
         } else {
-            myResult = cleanLDAPResults(cliTask("/usr/bin/ldapsearch -Q -LLL -H ldap://" + self.currentServer + " -b " + self.defaultNamingContext + " " + searchTerm + " " + attribute), attribute: attribute)
+            myResult = cleanLDAPResultsMultiple(cliTask("/usr/bin/ldapsearch -Q -LLL -H ldap://" + self.currentServer + " -b " + self.defaultNamingContext + " " + searchTerm + " " + attribute), attribute: attribute)
         }
         return myResult
     }
@@ -350,6 +350,25 @@ class LDAPServers {
         return myResult
     }
     
+    // private function to clean the LDAP results
+    
+    private func cleanLDAPResultsMultiple(result: String, attribute: String) -> String {
+        let lines = result.componentsSeparatedByString("\n")
+        
+        var myResult = ""
+        
+        for i in lines {
+            if (i.containsString(attribute)) {
+                if myResult == "" {
+                myResult = i.stringByReplacingOccurrencesOfString( attribute + ": ", withString: "")
+                } else {
+                    myResult = myResult.stringByAppendingString( ", " + i.stringByReplacingOccurrencesOfString( attribute + ": ", withString: ""))
+                }
+            }
+        }
+        return myResult
+    }
+    
     private func testSocket( host: String ) -> Bool {
         
         let mySocketResult = cliTask("/usr/bin/nc -G 5 -z " + host + " 389")
@@ -367,7 +386,7 @@ class LDAPServers {
         }
         
         let myLDAPResult = cliTask("/usr/bin/ldapsearch -LLL -Q -l 3 -s base -H ldap://" + host + " defaultNamingContext")
-        if myLDAPResult != "" {
+        if myLDAPResult != "" || !myLDAPResult.containsString("GSSAPI Error") || !myLDAPResult.containsString("Can't contact") {
             defaultNamingContext = cleanLDAPResults(myLDAPResult, attribute: "defaultNamingContext")
             return true
         } else {

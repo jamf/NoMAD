@@ -33,6 +33,7 @@ class UserInformation {
     var userPasswordExpireDate = NSDate()
     var userHome: String
     var userCertDate = NSDate()
+    var groups = [String]()
     
     let myLDAPServers = LDAPServers()
     let myTickets = KlistUtil()
@@ -64,6 +65,8 @@ class UserInformation {
     func getUserInfo() {
         
         // 1. check if AD can be reached
+        
+        var canary = true
         
         myTickets.getDetails()
         
@@ -101,11 +104,17 @@ class UserInformation {
         
         if connected && loggedIn {
             
-            let passwordSetDate = try! myLDAPServers.getLDAPInformation("pwdLastSet", searchTerm: "sAMAccountName=" + userPrincipalShort)
+            var passwordSetDate = ""
             
-            if passwordSetDate == "" {
+            do {
+                passwordSetDate = try myLDAPServers.getLDAPInformation("pwdLastSet", searchTerm: "sAMAccountName=" + userPrincipalShort)
+            } catch {
+                passwordSetDate = ""
                 NSLog("We shouldn't have gotten here... tell Joel")
+                canary = false
             }
+            
+            if canary {
             userPasswordSetDate = NSDate(timeIntervalSince1970: (Double(Int(passwordSetDate)!))/10000000-11644473600)
             
             // Now get default password expiration time - this may not be set for environments with no password cycling requirements
@@ -163,22 +172,31 @@ class UserInformation {
                     serverPasswordExpirationDefault = Double(0)
                     passwordAging = false
                 }
-                
                 userPasswordExpireDate = userPasswordSetDate.dateByAddingTimeInterval(serverPasswordExpirationDefault)
-                
             }
+        }
         }
         
         // TODO: figure out if the password changed without us knowing
         
         // 4. if connected and with tickets, get all of user information
         
-        if connected && tickets {
+        if connected && tickets && canary {
             let userHomeTemp = try! myLDAPServers.getLDAPInformation("homeDirectory", searchTerm: "sAMAccountName=" + userPrincipalShort)
             userHome = userHomeTemp.stringByReplacingOccurrencesOfString("\\", withString: "/")
             userDisplayName = try! myLDAPServers.getLDAPInformation("displayName", searchTerm: "sAMAccountName=" + userPrincipalShort)
             
+            groups.removeAll()
+            
+            let groupsTemp = try! myLDAPServers.getLDAPInformation("memberOf", searchTerm: "sAMAccountName=" + userPrincipalShort ).componentsSeparatedByString(", ")
+            for group in groupsTemp {
+                let a = group.componentsSeparatedByString(",")
+                let b = a[0].stringByReplacingOccurrencesOfString("CN=", withString: "") as String
+                groups.append(b)
+            }
+            print(groups)
             // set defaults for these 
+            
             
             defaults.setObject(userHome, forKey: "userHome")
             defaults.setObject(userDisplayName, forKey: "displayName")
@@ -186,9 +204,7 @@ class UserInformation {
             defaults.setObject(userPrincipalShort, forKey: "LastUser")
             defaults.setObject(userPasswordExpireDate, forKey: "LastPasswordExpireDate")
         }
-        
         }
-    
-    // private functions
+
 
 }
