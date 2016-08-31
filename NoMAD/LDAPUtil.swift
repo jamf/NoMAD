@@ -42,9 +42,6 @@ class LDAPServers {
     
         currentDomain = domain
         
-        // TODO: get the this working better
-        //print(defaults.stringForKey("LDAPServerList"))
-        
         guard (( defaults.stringForKey("LDAPServerList")) == nil ) else {
 
            let myLDAPServerListRaw = defaults.stringForKey("LDAPServerList")
