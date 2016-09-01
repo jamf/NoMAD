@@ -33,10 +33,6 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
     @IBOutlet weak var RenewTickets: NSButton!
     @IBOutlet weak var ShowHome: NSButton!
     
-    // set up defaults
-    
-    //let defaults = NSUserDefaults.standardUserDefaults()
-    
     override var windowNibName: String? {
         return "PreferencesWindow"
     }
