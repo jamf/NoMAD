@@ -197,9 +197,9 @@ class UserInformation {
                 groups.append(b)
                 }
             }
-            print(groups)
-            // set defaults for these 
             
+            NSLog("You are a member of: " + groups.joinWithSeparator(", ") )
+            // set defaults for these
             
             defaults.setObject(userHome, forKey: "userHome")
             defaults.setObject(userDisplayName, forKey: "displayName")
