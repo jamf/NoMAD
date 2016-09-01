@@ -435,17 +435,23 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // everything to do on a network change
     
     func doTheNeedfull() {
-        if ( userInformation.myLDAPServers.getDomain() == "not set" ) {
-            userInformation.myTickets.getDetails()
-            if userInformation.myTickets.state {
-            userInformation.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!)
+        
+        let qualityBackground = QOS_CLASS_BACKGROUND
+        let backgroundQueue = dispatch_get_global_queue(qualityBackground, 0)
+        dispatch_async(backgroundQueue, {
+        if ( self.userInformation.myLDAPServers.getDomain() == "not set" ) {
+            self.userInformation.myTickets.getDetails()
+            if self.userInformation.myTickets.state {
+            self.userInformation.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!)
             } else {
-                userInformation.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!, loggedIn: false)
+                self.userInformation.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!, loggedIn: false)
             }
         } else {
-        userInformation.myLDAPServers.check()
+        self.userInformation.myLDAPServers.check()
         }
-        updateUserInfo()
+        })
+        self.updateUserInfo()
+ 
     }
     
     // simple function to renew tickets

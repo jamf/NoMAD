@@ -202,7 +202,7 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
         // and the seconds
         
         defaults.setObject(Int(SecondsToRenew.stringValue), forKey: "SecondsToRenew")
-        //notificationCenter.postNotification(notificationKey)
+        notificationCenter.postNotification(notificationKey)
                 
     }
     
