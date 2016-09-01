@@ -28,6 +28,7 @@ class LDAPServers {
     var currentDomain = ""
     var lookupServers = true
     var site = ""
+    let store = SCDynamicStoreCreate(nil, NSBundle.mainBundle().bundleIdentifier!, nil, nil)
     var current: Int = 0 {
         didSet(LDAPServer) {
             NSLog("Setting the current LDAP server to: " + hosts[current].host)
@@ -45,7 +46,7 @@ class LDAPServers {
         // TODO: get the this working better
         //print(defaults.stringForKey("LDAPServerList"))
         
-        guard (( defaults.stringForKey("LDAPServerList")) == nil ) else {
+        if ( (defaults.stringForKey("LDAPServerList") ?? "") != "" ) {
 
            let myLDAPServerListRaw = defaults.stringForKey("LDAPServerList")
             let myLDAPServerList = myLDAPServerListRaw?.componentsSeparatedByString(",")
@@ -57,8 +58,7 @@ class LDAPServers {
             lookupServers = false
             site = "static"
             testHosts()
-            return
-            }
+        } else {
         if loggedIn {
             
         getHosts(domain)
@@ -67,13 +67,8 @@ class LDAPServers {
         
         if self.currentState {
         testHosts()
-        }
-        
-        // TODO: use sites to figure out the "right" server to be using
-        
-        if self.currentState && lookupServers && defaultNamingContext != "" {
-            NSLog("Looking for sites")
-            findSite()
+        findSite()
+            }
         }
         }
     }
@@ -117,7 +112,9 @@ class LDAPServers {
             currentState = true
             lookupServers = false
             site = "static"
+            testHosts()
          } else {
+            currentState = false
             getHosts(currentDomain)
             if self.currentState && defaultNamingContext != "" {
                 testHosts()
@@ -213,23 +210,17 @@ class LDAPServers {
     
     private func findSite() {
         NSLog("Looking for local IP")
-        let store = SCDynamicStoreCreate(nil, NSBundle.mainBundle().bundleIdentifier!, nil, nil)
+        
         var found = false
         site = ""
         
         // first grab IPv4
         // TODO: fix for IPv6
         
-        let globalInterface = SCDynamicStoreCopyValue(store, "State:/Network/Global/IPv4")
-        let interface = globalInterface!["PrimaryInterface"] as! String
+        let network = getIPandMask()
         
-        let val = SCDynamicStoreCopyValue(store, "State:/Network/Interface/" + interface + "/IPv4")
-        
-        let IPs = val!["Addresses"] as! [String]
-        let subs = val!["SubnetMasks"] as! [String]
-        
-        NSLog("IPs: " + IPs.joinWithSeparator(", "))
-        NSLog("Subnets: " + subs.joinWithSeparator(", "))
+        NSLog("IPs: " + network["IP"]![0])
+        NSLog("Subnets: " + network["mask"]![0])
         
         // Now look for sites
         
@@ -238,9 +229,9 @@ class LDAPServers {
         
         // TODO: do we just look to see if there's only one site?
         
-        for index in 1...IPs.count {
-            var subMask = countBits(subs[index - 1])
-            let IPOctets = IPs[index - 1].componentsSeparatedByString(".")
+      //  for index in 1...IPs.count {
+            var subMask = countBits(network["mask"]![0])
+            let IPOctets = network["IP"]![0].componentsSeparatedByString(".")
             var IP = ""
             
             NSLog("Starting site lookups")
@@ -276,10 +267,30 @@ class LDAPServers {
                 } else {
                     subMask -= 1
                 }
-            }
+         //   }
         }
         defaultNamingContext = tempDefaultNamingContext
         NSLog("Resetting default naming context to: " + defaultNamingContext)
+    }
+    
+    // private function to get IP and mask
+    
+    private func getIPandMask() -> [String: [String]] {
+        
+        var network = [String: [String]]()
+        
+        let globalInterface = SCDynamicStoreCopyValue(store, "State:/Network/Global/IPv4")
+        let interface = globalInterface!["PrimaryInterface"] as! String
+        
+        let val = SCDynamicStoreCopyValue(store, "State:/Network/Interface/" + interface + "/IPv4") as! NSDictionary
+        
+        network["IP"] = val["Addresses"] as! [String]
+        guard (( val["SubnetMasks"] ) != nil) else {
+            network["mask"] = ["255.255.255.254"]
+            return network
+        }
+        network["mask"] = val["SubnetMasks"] as! [String]
+        return network
     }
     
     // private function to determine subnet mask for site determination
@@ -396,7 +407,7 @@ class LDAPServers {
         }
         
         let myLDAPResult = cliTask("/usr/bin/ldapsearch -LLL -Q -l 3 -s base -H ldap://" + host + " defaultNamingContext")
-        if myLDAPResult != "" || !myLDAPResult.containsString("GSSAPI Error") || !myLDAPResult.containsString("Can't contact") {
+        if myLDAPResult != "" && !myLDAPResult.containsString("GSSAPI Error") && !myLDAPResult.containsString("Can't contact") {
             defaultNamingContext = cleanLDAPResults(myLDAPResult, attribute: "defaultNamingContext")
             return true
         } else {
@@ -415,6 +426,7 @@ class LDAPServers {
         
         if dnsResults[0] == "" || dnsResults[0].containsString("connection timed out") {
             self.currentState = false
+            hosts.removeAll()
         } else {
             
             // check to make sure we didn't get a long TCP response
@@ -455,7 +467,7 @@ class LDAPServers {
                     
                     if myPingResult.containsString("succeeded!") {
                         
-                        // if socket test works, then atempt ldapsearch to get default naming context
+                        // if socket test works, then attempt ldapsearch to get default naming context
                         
                         let myResult = cliTask("/usr/bin/ldapsearch -LLL -Q -l 3 -s base -H ldap://" + hosts[i].host + " defaultNamingContext")
                         if myResult != "" {

@@ -67,6 +67,7 @@ class UserInformation {
         // 1. check if AD can be reached
         
         var canary = true
+        checkNetwork()
         
         myTickets.getDetails()
         
@@ -192,7 +193,9 @@ class UserInformation {
             for group in groupsTemp {
                 let a = group.componentsSeparatedByString(",")
                 let b = a[0].stringByReplacingOccurrencesOfString("CN=", withString: "") as String
+                if b != "" {
                 groups.append(b)
+                }
             }
             print(groups)
             // set defaults for these 
@@ -203,6 +206,7 @@ class UserInformation {
             defaults.setObject(userPrincipalShort, forKey: "userPrincipal")
             defaults.setObject(userPrincipalShort, forKey: "LastUser")
             defaults.setObject(userPasswordExpireDate, forKey: "LastPasswordExpireDate")
+            defaults.setObject(groups, forKey: "Groups")
         }
         }
 
