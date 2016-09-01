@@ -442,8 +442,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             } else {
                 userInformation.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!, loggedIn: false)
             }
-        }
+        } else {
         userInformation.myLDAPServers.check()
+        }
         updateUserInfo()
     }
     
@@ -487,7 +488,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         // through the magic of code blocks we'll update in the background
         
         dispatch_async(backgroundQueue, {
- //           let userinfo = self.userInformation.checkAll()
             
             self.userInformation.getUserInfo()
             
@@ -508,7 +508,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     statusItem.toolTip = self.dateFormatter.stringFromDate(self.userInformation.userPasswordExpireDate)
                     self.NoMADMenuTicketLife.title = "Not logged in."
                 
-                } else if self.userInformation.status == "Logged In" {
+                } else if self.userInformation.status == "Logged In" && self.userInformation.connected {
                     statusItem.image = self.iconOnOn
                     
                     // if we're logged in we enable some options

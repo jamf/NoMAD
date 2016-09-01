@@ -43,7 +43,10 @@ class LDAPServers {
     
         currentDomain = domain
         
-        guard (( defaults.stringForKey("LDAPServerList")) == nil ) else {
+        // TODO: get the this working better
+        //print(defaults.stringForKey("LDAPServerList"))
+        
+        if ( (defaults.stringForKey("LDAPServerList") ?? "") != "" ) {
 
            let myLDAPServerListRaw = defaults.stringForKey("LDAPServerList")
             let myLDAPServerList = myLDAPServerListRaw?.componentsSeparatedByString(",")
@@ -55,8 +58,7 @@ class LDAPServers {
             lookupServers = false
             site = "static"
             testHosts()
-            return
-            }
+        } else {
         if loggedIn {
             
         getHosts(domain)
@@ -113,7 +115,9 @@ class LDAPServers {
             currentState = true
             lookupServers = false
             site = "static"
+            testHosts()
          } else {
+            currentState = false
             getHosts(currentDomain)
             if self.currentState && defaultNamingContext != "" {
                 testHosts()
@@ -277,6 +281,26 @@ class LDAPServers {
         NSLog("Resetting default naming context to: " + defaultNamingContext)
     }
     
+    // private function to get IP and mask
+    
+    private func getIPandMask() -> [String: [String]] {
+        
+        var network = [String: [String]]()
+        
+        let globalInterface = SCDynamicStoreCopyValue(store, "State:/Network/Global/IPv4")
+        let interface = globalInterface!["PrimaryInterface"] as! String
+        
+        let val = SCDynamicStoreCopyValue(store, "State:/Network/Interface/" + interface + "/IPv4") as! NSDictionary
+        
+        network["IP"] = val["Addresses"] as! [String]
+        guard (( val["SubnetMasks"] ) != nil) else {
+            network["mask"] = ["255.255.255.254"]
+            return network
+        }
+        network["mask"] = val["SubnetMasks"] as! [String]
+        return network
+    }
+    
     // private function to determine subnet mask for site determination
     
     private func countBits(mask: String) -> Int {
@@ -431,6 +455,7 @@ class LDAPServers {
         
         if dnsResults[0] == "" || dnsResults[0].containsString("connection timed out") {
             self.currentState = false
+            hosts.removeAll()
         } else {
             
             // check to make sure we didn't get a long TCP response
