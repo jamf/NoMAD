@@ -6,7 +6,8 @@
 //  Copyright © 2016 Trusource Labs. All rights reserved.
 //
 
-// Thanks much to Kyle Crawshaw and ShareMounter
+// mad props to Kyle Crawshaw
+// since much of this is cribbed from Share Mounter
 
 import Foundation
 import NetFS
