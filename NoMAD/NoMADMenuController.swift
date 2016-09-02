@@ -105,6 +105,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     
     let myKeychainUtil = KeychainUtil()
     let GetCredentials: KerbUtil = KerbUtil()
+    let myShareMounter = ShareMounter()
     
     // on startup we check for preferences
     
@@ -436,9 +437,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     
     func doTheNeedfull() {
         
-        let qualityBackground = QOS_CLASS_BACKGROUND
-        let backgroundQueue = dispatch_get_global_queue(qualityBackground, 0)
-        dispatch_async(backgroundQueue, {
+     //   let qualityBackground = QOS_CLASS_BACKGROUND
+    //    let backgroundQueue = dispatch_get_global_queue(qualityBackground, 0)
+   //     dispatch_async(backgroundQueue, {
         if ( self.userInformation.myLDAPServers.getDomain() == "not set" ) {
             self.userInformation.myTickets.getDetails()
             if self.userInformation.myTickets.state {
@@ -449,7 +450,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         } else {
         self.userInformation.myLDAPServers.check()
         }
-        })
+ //       })
         self.updateUserInfo()
  
     }
@@ -608,6 +609,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         self.NoMADMenu.removeItem(self.NoMADMenuHome)
                         
                     }
+                    self.myShareMounter.asyncMountShare("smb:" + defaults.stringForKey("userHome")!)
+                    self.myShareMounter.mount()
                 }
             })
 

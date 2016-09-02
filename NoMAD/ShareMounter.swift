@@ -12,18 +12,50 @@
 import Foundation
 import NetFS
 
+struct share_info {
+    var groups: [String]
+    var share_url: String
+    var title: String
+}
+
 class ShareMounter {
     
-    var shares: [String: AnyObject]?
+    var all_shares = [share_info]()
+    let ws = NSWorkspace.init()
     
     init() {
-        shares = defaults.dictionaryForKey("Shares")
+        // read in the preference files
+        
+        let prefs = ["/Library/Preferences/ShareMounter.plist", NSHomeDirectory() + "/Library/Preferences/ShareMounter.plist"]
+        
+        for place in prefs {
+            let myDictionary = NSDictionary.init(contentsOfFile: place)
+            
+            if myDictionary != nil {
+                let shares = (myDictionary?.objectForKey("network_shares"))! as! [AnyObject]
+                
+                for i in shares {
+                    let currentShare = share_info(groups: i.objectForKey("groups")! as! Array, share_url: i.objectForKey("share_url")! as! String, title: i.objectForKey("title")! as! String)
+                    all_shares.append(currentShare)
+                }
+            }
+        }
+            
     }
     
     func mount() {
-        let groups = defaults.objectForKey("Groups")
-        for share in shares! {
-           // let shareGroups = share["groups"]
+        
+        let myGroups = defaults.arrayForKey("Groups")
+    
+        for share in all_shares {
+            for group in myGroups! {
+                if share.groups.contains(group as! String) {
+                // time to mount
+                    NSLog("Attempting to mount: " + share.share_url)
+                    asyncMountShare(share.share_url)
+                    break
+                }
+            }
         }
     }
     
@@ -40,18 +72,18 @@ class ShareMounter {
     }
     
     
-    func asyncMountShare(serverAddress: String, shareName: String) {
+    func asyncMountShare(serverAddress: String) {
         
         let escapedAddress = serverAddress.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())
         let shareAddress = NSURL(string: escapedAddress!)!
         
-        let openOptions : CFMutableDictionary = openOptionsDict()
-        let mount_options : CFMutableDictionary = mountOptionsDict()
+        //let openOptions : CFMutableDictionary = openOptionsDict()
+        //let mount_options : CFMutableDictionary = mountOptionsDict()
         
         var requestID: AsyncRequestID = nil
         let queue = dispatch_get_main_queue()
         
-        NetFSMountURLAsync(shareAddress, nil, nil, nil, openOptions, mount_options, &requestID, queue)
+        NetFSMountURLAsync(shareAddress, nil, defaults.stringForKey("userPrincipal")!, nil, nil, nil, &requestID, queue)
         {(stat:Int32,  requestID:AsyncRequestID,  mountpoints:CFArray!) -> Void in
             print("msg: \(stat) mountpoint: \(mountpoints)")
         }
@@ -61,8 +93,6 @@ class ShareMounter {
     let fm = NSFileManager.defaultManager()
     
     let myShares = fm.mountedVolumeURLsIncludingResourceValuesForKeys(nil, options: NSVolumeEnumerationOptions.SkipHiddenVolumes)
-    
-    let ws = NSWorkspace.init()
     
     for share in myShares! {
     
