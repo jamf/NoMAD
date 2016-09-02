@@ -107,10 +107,14 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     let GetCredentials: KerbUtil = KerbUtil()
     let myShareMounter = ShareMounter()
     
+    var menuAnimationTimer = NSTimer()
+    
+    let myWorkQueue = dispatch_queue_create("background_work_queue", nil)
+    
     // on startup we check for preferences
     
     override func awakeFromNib() {
-        let menuAnimationTimer = NSTimer(timeInterval: 0.5, target: self, selector: #selector(animateMenuItem), userInfo: nil, repeats: true)
+        menuAnimationTimer = NSTimer(timeInterval: 0.5, target: self, selector: #selector(animateMenuItem), userInfo: nil, repeats: true)
         statusItem.menu = NSMenu()
            NSRunLoop.currentRunLoop().addTimer(menuAnimationTimer, forMode: NSDefaultRunLoopMode)
         // menuAnimationTimer.fire()
@@ -261,6 +265,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         }
         
         cliTask("/usr/bin/kdestroy")
+        
+        // new
+        self.userInformation.connected = false
+        
         lastStatusCheck = NSDate().dateByAddingTimeInterval(-5000)
         updateUserInfo()
     }
@@ -439,18 +447,15 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
      //   let qualityBackground = QOS_CLASS_BACKGROUND
     //    let backgroundQueue = dispatch_get_global_queue(qualityBackground, 0)
-   //     dispatch_async(backgroundQueue, {
+        dispatch_async(myWorkQueue, {
         if ( self.userInformation.myLDAPServers.getDomain() == "not set" ) {
             self.userInformation.myTickets.getDetails()
-            if self.userInformation.myTickets.state {
-            self.userInformation.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!)
-            } else {
-                self.userInformation.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!, loggedIn: false)
-            }
+            self.userInformation.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!, loggedIn: self.userInformation.myTickets.state )
         } else {
         self.userInformation.myLDAPServers.check()
         }
- //       })
+        })
+        
         self.updateUserInfo()
  
     }
@@ -482,23 +487,24 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         // make sure the domain we're using is the domain we should be using
         
         if ( userInformation.myLDAPServers.getDomain() != defaults.stringForKey("ADDomain")!) {
-             userInformation.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!)
+             userInformation.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!, loggedIn: self.userInformation.myTickets.state)
         }
         
         // get the information on the current setup
         
         let qualityBackground = QOS_CLASS_BACKGROUND
-        let backgroundQueue = dispatch_get_global_queue(qualityBackground, 0)
+        //let backgroundQueue: dispatch_queue_t = dispatch_get_global_queue(qualityBackground, 0)
         
         if abs(lastStatusCheck.timeIntervalSinceNow) > 3 {
         
         // through the magic of code blocks we'll update in the background
         
-        dispatch_async(backgroundQueue, {
+        dispatch_async(myWorkQueue, {
             
             self.userInformation.getUserInfo()
             
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                
                 // build the menu
                 
                 statusItem.menu = self.NoMADMenu

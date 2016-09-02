@@ -22,25 +22,22 @@ class ShareMounter {
     
     var all_shares = [share_info]()
     let ws = NSWorkspace.init()
+    var prefs: [String]
     
     init() {
         // read in the preference files
         
-        let prefs = ["/Library/Preferences/ShareMounter.plist", NSHomeDirectory() + "/Library/Preferences/ShareMounter.plist"]
+
+        if defaults.integerForKey("ShowHome") == 1 {
+        NSLog("Looking for ShareMounter files")
+        prefs = try! ["/Library/Preferences/ShareMounter.plist", NSHomeDirectory() + "/Library/Preferences/ShareMounter.plist"]
         
-        for place in prefs {
-            let myDictionary = NSDictionary.init(contentsOfFile: place)
-            
-            if myDictionary != nil {
-                let shares = (myDictionary?.objectForKey("network_shares"))! as! [AnyObject]
-                
-                for i in shares {
-                    let currentShare = share_info(groups: i.objectForKey("groups")! as! Array, share_url: i.objectForKey("share_url")! as! String, title: i.objectForKey("title")! as! String)
-                    all_shares.append(currentShare)
-                }
+        do {
+            try! getShares()
             }
+        } else {
+            prefs = [""]
         }
-            
     }
     
     func mount() {
@@ -59,9 +56,24 @@ class ShareMounter {
         }
     }
     
+    func getShares() {
+        for place in prefs {
+            let myDictionary = NSDictionary.init(contentsOfFile: place)
+            
+            if myDictionary != nil {
+                let shares = (myDictionary?.objectForKey("network_shares"))! as! [AnyObject]
+                
+                for i in shares {
+                    let currentShare = share_info(groups: i.objectForKey("groups")! as! Array, share_url: i.objectForKey("share_url")! as! String, title: i.objectForKey("title")! as! String)
+                    all_shares.append(currentShare)
+                }
+            }
+        }
+    }
+    
     func openOptionsDict() -> CFMutableDictionary {
         let dict = NSMutableDictionary()
-        dict[kNAUIOptionKey] = kNAUIOptionAllowUI
+        dict[kNAUIOptionKey] = kNAUIOptionNoUI
         dict[kNetFSUseGuestKey] = true
         return dict
     }
@@ -78,12 +90,12 @@ class ShareMounter {
         let shareAddress = NSURL(string: escapedAddress!)!
         
         //let openOptions : CFMutableDictionary = openOptionsDict()
-        //let mount_options : CFMutableDictionary = mountOptionsDict()
+        let mount_options : CFMutableDictionary = mountOptionsDict()
         
         var requestID: AsyncRequestID = nil
         let queue = dispatch_get_main_queue()
         
-        NetFSMountURLAsync(shareAddress, nil, defaults.stringForKey("userPrincipal")!, nil, nil, nil, &requestID, queue)
+        NetFSMountURLAsync(shareAddress, nil, defaults.stringForKey("userPrincipal")!, nil, nil, mount_options, &requestID, queue)
         {(stat:Int32,  requestID:AsyncRequestID,  mountpoints:CFArray!) -> Void in
             print("msg: \(stat) mountpoint: \(mountpoints)")
         }

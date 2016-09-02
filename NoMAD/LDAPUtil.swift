@@ -29,7 +29,7 @@ class LDAPServers {
     var lookupServers = true
     var site = ""
     let store = SCDynamicStoreCreate(nil, NSBundle.mainBundle().bundleIdentifier!, nil, nil)
-    var canary = false
+
     var current: Int = 0 {
         didSet(LDAPServer) {
             NSLog("Setting the current LDAP server to: " + hosts[current].host)
@@ -211,8 +211,7 @@ class LDAPServers {
     // private function to get system IP and mask
     
     private func findSite() {
-        if !canary {
-            canary = true
+
         NSLog("Looking for local IP")
         
         var found = false
@@ -231,7 +230,14 @@ class LDAPServers {
         let tempDefaultNamingContext = defaultNamingContext
         defaultNamingContext = "cn=Subnets,cn=Sites,cn=Configuration," + tempDefaultNamingContext
         
-        // TODO: do we just look to see if there's only one site?
+        // is there more than one subnet?
+        
+        let subnetNetworks = try! getLDAPInformation("cn", baseSearch: false, searchTerm: "objectClass=subnet", test: false).componentsSeparatedByString(", ")
+        let subnetCount = subnetNetworks.count
+        
+        NSLog("Total number of subnets: " + String(subnetCount))
+        
+
         
       //  for index in 1...IPs.count {
             var subMask = countBits(network["mask"]![0])
@@ -240,7 +246,7 @@ class LDAPServers {
             
             NSLog("Starting site lookups")
             
-            while subMask >= 0 && !found {
+            while subMask >= 0 && !found && subnetCount >= 2 {
                 
                 let octet = subMask / 8
                 let octetMask = subMask % 8
@@ -255,12 +261,16 @@ class LDAPServers {
                 default : IP = IPOctets[0] + "." + IPOctets[1] + "." + IPOctets[2] + "." + IPOctets[3]
                 }
                 
+                let currentNetwork = IP + "/" + String(subMask)
+                
+                if subnetNetworks.contains(currentNetwork) {
                 do {
                     NSLog("Trying site: cn=" + IP + "/" + String(subMask))
-                    site = try getLDAPInformation("siteObject", baseSearch: false, searchTerm: "cn=" + IP + "/" + String(subMask), test: false)
+                    site = try getLDAPInformation("siteObject", baseSearch: false, searchTerm: "cn=" + currentNetwork, test: false)
                     NSLog("Using site: " + site.componentsSeparatedByString(",")[0].stringByReplacingOccurrencesOfString("CN=", withString: ""))
                 }
                 catch {
+                }
                 }
                 
                 if site != "" {
@@ -276,8 +286,6 @@ class LDAPServers {
         }
         defaultNamingContext = tempDefaultNamingContext
         NSLog("Resetting default naming context to: " + defaultNamingContext)
-            canary = false
-    }
     }
     
     // private function to get IP and mask
@@ -476,7 +484,7 @@ class LDAPServers {
                         
                         // if socket test works, then attempt ldapsearch to get default naming context
                         
-                        let myResult = cliTask("/usr/bin/ldapsearch -LLL -Q -l 3 -s base -H ldap://" + hosts[i].host + " defaultNamingContext")
+                        let myResult = cliTaskNoTerm("/usr/bin/ldapsearch -LLL -Q -l 3 -s base -H ldap://" + hosts[i].host + " defaultNamingContext")
                         if myResult != "" {
                             defaultNamingContext = cleanLDAPResults(myResult, attribute: "defaultNamingContext")
                             hosts[i].status = "live"
