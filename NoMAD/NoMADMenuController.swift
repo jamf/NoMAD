@@ -109,7 +109,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     
     var menuAnimationTimer = NSTimer()
     
-    let myWorkQueue = dispatch_queue_create("background_work_queue", nil)
+    let myWorkQueue = dispatch_queue_create("com.trusourcelabs.NoMAD.background_work_queue", nil)
     
     // on startup we check for preferences
     
