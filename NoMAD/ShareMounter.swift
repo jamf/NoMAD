@@ -80,16 +80,16 @@ class ShareMounter {
     
     func mountOptionsDict() -> CFMutableDictionary {
         let dict = NSMutableDictionary()
+        dict[kNetFSMountFlagsKey] = Int(MNT_DONTBROWSE)
         return dict
     }
-    
     
     func asyncMountShare(serverAddress: String) {
         
         let escapedAddress = serverAddress.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())
         let shareAddress = NSURL(string: escapedAddress!)!
         
-        //let openOptions : CFMutableDictionary = openOptionsDict()
+        let open_options : CFMutableDictionary = openOptionsDict()
         let mount_options : CFMutableDictionary = mountOptionsDict()
         
         var requestID: AsyncRequestID = nil
