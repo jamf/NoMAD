@@ -32,7 +32,7 @@ class LDAPServers {
 
     var current: Int {
         didSet(LDAPServer) {
-            NSLog("Setting the current LDAP server to: " + hosts[current].host)
+            myLogger.logit(0, message:"Setting the current LDAP server to: " + hosts[current].host)
         }
     }
     
@@ -52,7 +52,7 @@ class LDAPServers {
     func setDomain(domain: String, loggedIn: Bool=true) {
         
         if defaults.integerForKey("Verbose") >= 1 {
-            NSLog("Finding LDAP Servers.")
+            myLogger.logit(0, message:"Finding LDAP Servers.")
         }
         
         // set the domain to the current AD Domain
@@ -157,7 +157,7 @@ class LDAPServers {
     // TODO: just re-test the non-dead servers
     
     func dead() {
-        NSLog("Marking server as dead: " + hosts[current].host)
+        myLogger.logit(1, message:"Marking server as dead: " + hosts[current].host)
         hosts[current].status = "dead"
         hosts[current].timeStamp = NSDate()
         if (hosts.count > current) { testHosts() }
@@ -195,12 +195,12 @@ class LDAPServers {
         if testSocket(self.currentServer) && testLDAP(self.currentServer) {
             
         if  defaultNamingContext != "" && site != "" {
-            NSLog("Using same LDAP server: " + self.currentServer)
+            myLogger.logit(0, message:"Using same LDAP server: " + self.currentServer)
         } else {
             findSite()
             }
         } else {
-            NSLog("Can't connect to LDAP server, finding new one")
+            myLogger.logit(0, message:"Can't connect to LDAP server, finding new one")
             networkChange()
         }
         
@@ -239,7 +239,7 @@ class LDAPServers {
     
     private func findSite() {
 
-        NSLog("Looking for local IP")
+        myLogger.logit(2, message:"Looking for local IP")
         
         var found = false
         site = ""
@@ -249,8 +249,8 @@ class LDAPServers {
         
         let network = getIPandMask()
         
-        NSLog("IPs: " + network["IP"]![0])
-        NSLog("Subnets: " + network["mask"]![0])
+        myLogger.logit(2, message:"IPs: " + network["IP"]![0])
+        myLogger.logit(2, message:"Subnets: " + network["mask"]![0])
         
         // Now look for sites
         
@@ -262,7 +262,7 @@ class LDAPServers {
         let subnetNetworks = try! getLDAPInformation("cn", baseSearch: false, searchTerm: "objectClass=subnet", test: false).componentsSeparatedByString(", ")
         let subnetCount = subnetNetworks.count
         
-        NSLog("Total number of subnets: " + String(subnetCount))
+        myLogger.logit(2, message:"Total number of subnets: " + String(subnetCount))
 
         
       //  for index in 1...IPs.count {
@@ -270,7 +270,7 @@ class LDAPServers {
             let IPOctets = network["IP"]![0].componentsSeparatedByString(".")
             var IP = ""
             
-            NSLog("Starting site lookups")
+            myLogger.logit(1, message:"Starting site lookups")
             
             while subMask >= 0 && !found && subnetCount >= 2 {
                 
@@ -291,9 +291,9 @@ class LDAPServers {
                 
                 if subnetNetworks.contains(currentNetwork) {
                 do {
-                    NSLog("Trying site: cn=" + IP + "/" + String(subMask))
+                    myLogger.logit(3, message:"Trying site: cn=" + IP + "/" + String(subMask))
                     site = try getLDAPInformation("siteObject", baseSearch: false, searchTerm: "cn=" + currentNetwork, test: false)
-                    NSLog("Using site: " + site.componentsSeparatedByString(",")[0].stringByReplacingOccurrencesOfString("CN=", withString: ""))
+                    myLogger.logit(1, message:"Using site: " + site.componentsSeparatedByString(",")[0].stringByReplacingOccurrencesOfString("CN=", withString: ""))
                 }
                 catch {
                 }
@@ -311,7 +311,7 @@ class LDAPServers {
          //   }
         }
         defaultNamingContext = tempDefaultNamingContext
-        NSLog("Resetting default naming context to: " + defaultNamingContext)
+        myLogger.logit(2, message:"Resetting default naming context to: " + defaultNamingContext)
     }
     
     // private function to get IP and mask
@@ -450,7 +450,7 @@ class LDAPServers {
     private func testLDAP ( host: String ) -> Bool {
         
         if defaults.integerForKey("Verbose") >= 1 {
-            NSLog("Testing " + host + ".")
+            myLogger.logit(1, message:"Testing " + host + ".")
         }
         
         let myLDAPResult = cliTask("/usr/bin/ldapsearch -LLL -Q -l 3 -s base -H ldap://" + host + " defaultNamingContext")
@@ -522,7 +522,7 @@ class LDAPServers {
         if self.currentState == true {
             for i in 0...( hosts.count - 1) {
                 if hosts[i].status != "dead" {
-                    NSLog("Trying host: " + hosts[i].host)
+                    myLogger.logit(1, message:"Trying host: " + hosts[i].host)
                     
                     // socket test first - this could be falsely negative
                     // also note that this needs to return stderr
@@ -538,18 +538,18 @@ class LDAPServers {
                             defaultNamingContext = cleanLDAPResults(myResult, attribute: "defaultNamingContext")
                             hosts[i].status = "live"
                             hosts[i].timeStamp = NSDate()
-                            NSLog("Current LDAP Server is: " + hosts[i].host )
-                            NSLog("Current default naming context: " + defaultNamingContext )
+                            myLogger.logit(0, message:"Current LDAP Server is: " + hosts[i].host )
+                            myLogger.logit(0, message:"Current default naming context: " + defaultNamingContext )
                             current = i
                             break
                         } else {
-                            NSLog("Server is dead by way of ldap test: " + hosts[i].host)
+                            myLogger.logit(1, message:"Server is dead by way of ldap test: " + hosts[i].host)
                             hosts[i].status = "dead"
                             hosts[i].timeStamp = NSDate()
                             break
                         }
                     } else {
-                        NSLog("Server is dead by way of socket test: " + hosts[i].host)
+                        myLogger.logit(1, message:"Server is dead by way of socket test: " + hosts[i].host)
                         hosts[i].status = "dead"
                         hosts[i].timeStamp = NSDate()
                     }

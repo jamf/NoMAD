@@ -84,7 +84,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
                     }
                 })
             }
-            NSLog(myError)
+            myLogger.logit(0, message: myError)
         } else {
             
             let alertController = NSAlert()
@@ -100,16 +100,16 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 		var myError: String = ""
 		
 		if (currentPassword.isEmpty || newPassword1.isEmpty || newPassword2.isEmpty) {
-			NSLog ("Some of the fields are empty")
+            myLogger.logit(1, message: "Some of the fields are empty")
 			myError = "All fields must be filled in"
 			return myError
 		} else {
-			NSLog("All fields are filled in, continuing")
+			myLogger.logit(1, message: "All fields are filled in, continuing")
 		}
 		// If the user entered the same value for both password fields.
 		if ( newPassword1 == newPassword2) {
 			let ChangePassword: KerbUtil = KerbUtil()
-            NSLog("Change password for " + username )
+            myLogger.logit(0, message: "Change password for " + username )
             
             // check to see we can match the kpasswd server with the LDAP server
             
@@ -133,7 +133,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 			if (localPasswordSync == 1 ) && myError == "" {
 				do { try testLocalPassword(currentPassword) }
 				catch {
-					NSLog("Local password check Swift = no")
+					myLogger.logit(1, message: "Local password check Swift = no")
 					myError = "Your current local password does not match your AD password."
 				}
 			}
@@ -146,7 +146,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 			// Update the keychain password
 			if (localPasswordSync == 1 ) && myError == "" {
 				if (ChangePassword.changeKeychainPassword(currentPassword, newPassword1) == 0) {
-					NSLog("Error changing local keychain")
+					myLogger.logit(0, message: "Error changing local keychain")
 					myError = "Could not change your local keychain password."
 				}
 			}
@@ -156,7 +156,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 			if (localPasswordSync == 1 ) && myError == "" {
 				do { try changeLocalPassword( currentPassword, newPassword: newPassword1) }
 				catch {
-					NSLog("Local password change failed")
+					myLogger.logit(0, message: "Local password change failed")
 					myError = "Local password change failed"
 				}
 			}

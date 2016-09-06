@@ -58,6 +58,7 @@ let defaults = NSUserDefaults.init()
 let statusItem = NSStatusBar.systemStatusBar().statusItemWithLength(NSVariableStatusItemLength)
 let userNotificationCenter = NSUserNotificationCenter.defaultUserNotificationCenter()
 var selfServiceExists = true
+let myLogger = Logger()
 
 class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate, PreferencesWindowDelegate {
     
@@ -114,6 +115,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // on startup we check for preferences
     
     override func awakeFromNib() {
+        
+        myLogger.logit(0, message:"---Starting NoMAD---")
+        
         menuAnimationTimer = NSTimer(timeInterval: 0.5, target: self, selector: #selector(animateMenuItem), userInfo: nil, repeats: true)
         statusItem.menu = NSMenu()
            NSRunLoop.currentRunLoop().addTimer(menuAnimationTimer, forMode: NSDefaultRunLoopMode)
@@ -167,10 +171,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 }
                 myErr = GetCredentials.getKerbCredentials( myPass, defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!)
                 if myErr != nil {
-                    NSLog("Error attempting to automatically log in.")
+                    myLogger.logit(0, message: "Error attempting to automatically log in.")
                     loginWindow.showWindow(nil)
                 } else {
-                    NSLog("Automatically logging in.")
+                    myLogger.logit(0, message:"Automatically logging in.")
                     cliTask("/usr/bin/kswitch -p " +  defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!)}
             }
         }
@@ -193,7 +197,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         }
         
         if defaults.integerForKey("Verbose") >= 1 {
-            NSLog("Starting up NoMAD")
+            myLogger.logit(0, message:"Starting up NoMAD")
         }
         menuAnimationTimer.invalidate()
     }
@@ -217,10 +221,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 let GetCredentials: KerbUtil = KerbUtil()
                 myErr = GetCredentials.getKerbCredentials( myPass, defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!)
                 if myErr != nil {
-                    NSLog("Error attempting to automatically log in.")
+                    myLogger.logit(0, message:"Error attempting to automatically log in.")
                     loginWindow.showWindow(nil)
                 } else {
-                    NSLog("Automatically logging in.") }
+                    myLogger.logit(0, message:"Automatically logging in.") }
                     cliTask("/usr/bin/kswitch -p " +  defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!)
             } else {
                 loginWindow.showWindow(nil) }
@@ -257,7 +261,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 
                if ( myErr == 0 )
                { SecKeychainItemDelete(myKeychainItem!) } else {
-                NSLog("Error deleting Keychain entry.")
+                myLogger.logit(0, message:"Error deleting Keychain entry.")
                 }
             }
         } else {
@@ -325,7 +329,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     
     @IBAction func NoMADMenuClickHiddenItem1(sender: NSMenuItem) {
         let myResult = cliTask(defaults.stringForKey("userCommandTask1")!)
-        NSLog(myResult)
+        myLogger.logit(1, message:myResult)
     }
 
     // shows the preferences window
@@ -349,29 +353,29 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // send copious logs to the console
     
     @IBAction func NoMADMenuClickSpewLogs(sender: AnyObject) {
-        NSLog("---- Spew Logs ----")
+        myLogger.logit(0, message:"---- Spew Logs ----")
 
-        NSLog("User information state:")
-        NSLog("Realm: " + userInformation.realm)
-        NSLog("Domain: " + userInformation.domain)
-        NSLog("LDAP Server: " + userInformation.myLDAPServers.currentServer)
-        NSLog("LDAP Server Naming Context: " + userInformation.myLDAPServers.defaultNamingContext)
-        NSLog("Password expiration default: " + String(userInformation.serverPasswordExpirationDefault))
-        NSLog("Password aging: " + String(userInformation.passwordAging))
-        NSLog("Connected: " + String(userInformation.connected))
-        NSLog("Status: " + userInformation.status)
-        NSLog("User short name: " + getConsoleUser())
-        NSLog("User long name: " + NSUserName())
-        NSLog("User principal: " + userInformation.userPrincipal)
-        NSLog("TGT expires: " + String(userInformation.myTickets.expire))
-        NSLog("User password set date: " + String(userInformation.userPasswordSetDate))
-        NSLog("User password expire date: " + String(userInformation.userPasswordExpireDate))
-        NSLog("User home share: " + userInformation.userHome)
+        myLogger.logit(0, message:"User information state:")
+        myLogger.logit(0, message:"Realm: " + userInformation.realm)
+        myLogger.logit(0, message:"Domain: " + userInformation.domain)
+        myLogger.logit(0, message:"LDAP Server: " + userInformation.myLDAPServers.currentServer)
+        myLogger.logit(0, message:"LDAP Server Naming Context: " + userInformation.myLDAPServers.defaultNamingContext)
+        myLogger.logit(0, message:"Password expiration default: " + String(userInformation.serverPasswordExpirationDefault))
+        myLogger.logit(0, message:"Password aging: " + String(userInformation.passwordAging))
+        myLogger.logit(0, message:"Connected: " + String(userInformation.connected))
+        myLogger.logit(0, message:"Status: " + userInformation.status)
+        myLogger.logit(0, message:"User short name: " + getConsoleUser())
+        myLogger.logit(0, message:"User long name: " + NSUserName())
+        myLogger.logit(0, message:"User principal: " + userInformation.userPrincipal)
+        myLogger.logit(0, message:"TGT expires: " + String(userInformation.myTickets.expire))
+        myLogger.logit(0, message:"User password set date: " + String(userInformation.userPasswordSetDate))
+        myLogger.logit(0, message:"User password expire date: " + String(userInformation.userPasswordExpireDate))
+        myLogger.logit(0, message:"User home share: " + userInformation.userHome)
         
-        NSLog("---- User Record ----")
+        myLogger.logit(0, message:"---- User Record ----")
         logEntireUserRecord()
-        NSLog("---- Kerberos Tickets ----")
-        NSLog(userInformation.myTickets.returnAllTickets())
+        myLogger.logit(0, message:"---- Kerberos Tickets ----")
+        myLogger.logit(0, message:(userInformation.myTickets.returnAllTickets()))
 
     }
     
@@ -438,7 +442,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     
     func logEntireUserRecord() {
         let myResult = userInformation.myLDAPServers.returnFullRecord("sAMAccountName=" + defaults.stringForKey("LastUser")!)
-        NSLog(myResult)
+        myLogger.logit(0, message:myResult)
     }
 
     // everything to do on a network change
@@ -463,7 +467,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         cliTask("/usr/bin/kinit -R")
         userInformation.myTickets.getDetails()
         if defaults.integerForKey("Verbose") >= 1 {
-            NSLog("Renewing tickets.")
+            myLogger.logit(0, message:"Renewing tickets.")
         }
     }
     
@@ -479,7 +483,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     
     func updateUserInfo() {
         
-        NSLog("Updating User Info")
+        myLogger.logit(0, message:"Updating User Info")
         
         // make sure the domain we're using is the domain we should be using
         
@@ -656,7 +660,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             updateScheduled = false
             
         } else {
-            NSLog("Time between system checks is too short, delaying")
+            myLogger.logit(1, message:"Time between system checks is too short, delaying")
             if ( !updateScheduled ) {
                 NSTimer.scheduledTimerWithTimeInterval(3, target: self, selector: #selector(updateUserInfo), userInfo: nil, repeats: false)
                 updateScheduled = true

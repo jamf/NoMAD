@@ -6,6 +6,10 @@
 //  Copyright © 2016 Trusource Labs. All rights reserved.
 //
 
+// deprecated
+
+/*
+
 import Foundation
 
 struct UserInfo: CustomStringConvertible {
@@ -482,3 +486,5 @@ class UserInfoAPI {
     
     //end of class
 }
+ 
+*/

@@ -40,9 +40,9 @@ class KlistUtil {
         rawTicket = rawJSON.dataUsingEncoding(NSUTF8StringEncoding)!
         realm = defaults.stringForKey("KerberosRealm") ?? ""
         if returnAllTickets().containsString("cache") && returnAllTickets().containsString("@" + realm) {
-            NSLog("Tickets found.")
+            myLogger.logit(0, message:"Tickets found.")
         } else {
-            NSLog("No tickets found.")
+            myLogger.logit(0, message:"No tickets found.")
             state = false
         }
     }
@@ -54,16 +54,15 @@ class KlistUtil {
         let rawJSON = cliTask("/usr/bin/klist --json")
         rawTicket = rawJSON.dataUsingEncoding(NSUTF8StringEncoding)!
         if returnAllTickets().containsString("cache") {
-           // NSLog("Tickets found.")
             if returnAllTickets().containsString("@" + realm ) {
-                NSLog("Ticket found for domain: " + realm)
+                myLogger.logit(0, message:"Ticket found for domain: " + realm)
                 state = true
             } else {
-                NSLog("No ticket found for domain: " + realm)
+                myLogger.logit(0, message:"No ticket found for domain: " + realm)
                 state = false
             }
         } else {
-            NSLog("No tickets found.")
+            myLogger.logit(0, message:"No tickets found.")
             state = false
         }
     }
@@ -73,16 +72,16 @@ class KlistUtil {
         let rawJSON = cliTask("/usr/bin/klist -l --json")
         let rawCache = rawJSON.dataUsingEncoding(NSUTF8StringEncoding)!
         if returnAllTickets().containsString("cache") {
-            NSLog("Tickets found.")
+            myLogger.logit(0, message:"Tickets found.")
             if returnAllTickets().containsString("@" + defaults.stringForKey("KerberosRealms")!) {
-                NSLog("Ticket found for domain: " + defaults.stringForKey("KerberosRealms")!)
+                myLogger.logit(0, message:"Ticket found for domain: " + defaults.stringForKey("KerberosRealms")!)
                 state = true
             } else {
-                NSLog("No ticket found for domain: " + defaults.stringForKey("KerberosRealms")!)
+                myLogger.logit(0, message:"No ticket found for domain: " + defaults.stringForKey("KerberosRealms")!)
                 state = false
             }
         } else {
-            NSLog("No tickets found.")
+            myLogger.logit(0, message:"No tickets found.")
             state = false
         }
     }
@@ -142,7 +141,7 @@ class KlistUtil {
                     // we need to check for an expired TGT and set state to false if we are
                     
                     if expire.compare(NSDate()) == NSComparisonResult.OrderedAscending {
-                        NSLog("Tickets are expired")
+                        myLogger.logit(0, message:"Tickets are expired")
                         state = false
                     }
                     break

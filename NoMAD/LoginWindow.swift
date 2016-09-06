@@ -104,7 +104,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             do { try testLocalPassword( Password.stringValue) }
             catch {
                 
-                NSLog("Local password check failed. Attempting to sync.")
+                myLogger.logit(0, message:"Local password check failed. Attempting to sync.")
                 let alertController = NSAlert()
                 alertController.messageText = "Your network and local passwords are not the same. Please enter the password for your Mac."
                 alertController.addButtonWithTitle("Cancel")
@@ -115,14 +115,14 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                 alertController.beginSheetModalForWindow(self.window!, completionHandler: { (response) -> Void in
                     if response == 1001 {
                         do { try self.testLocalPassword(localPassword.stringValue)
-                            NSLog("Local password is right. Syncing.")
+                            myLogger.logit(0, message:"Local password is right. Syncing.")
                             if (GetCredentials.changeKeychainPassword(self.Password.stringValue, localPassword.stringValue) == 0) {
-                                NSLog("Error changing local keychain")
+                                myLogger.logit(0, message:"Error changing local keychain")
                                 myError = "Could not change your local keychain password."
                             }
                             do { try self.changeLocalPassword( localPassword.stringValue, newPassword: self.Password.stringValue) }
                             catch {
-                                NSLog("Local password change failed")
+                                myLogger.logit(0, message:"Local password change failed")
                                 myError = "Local password change failed"
                             }
                         }
@@ -130,12 +130,12 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                             let alertController = NSAlert()
                             alertController.messageText = "Invalid password. Please try again."
                             alertController.beginSheetModalForWindow(self.window!, completionHandler: nil)
-                            NSLog(myError!)
+                            myLogger.logit(0, message:myError!)
                             EXIT_FAILURE
-                            NSLog("Local password wrong.")
+                            myLogger.logit(0, message:"Local password wrong.")
                         }
                     } else {
-                        NSLog("Local sync cancelled by user.")
+                        myLogger.logit(0, message:"Local sync cancelled by user.")
                         self.Password.stringValue = ""
                         self.close()
                     }
@@ -147,7 +147,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         } else {
             
             if defaults.integerForKey("Verbose") >= 1 {
-                NSLog("Logging in as: " + userName.stringValue)
+                myLogger.logit(0, message:"Logging in as: " + userName.stringValue)
             }
             
             if myError == "Password has expired" {
@@ -159,7 +159,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                 alertController.addButtonWithTitle("Change Password")
                 alertController.beginSheetModalForWindow(self.window!, completionHandler: { [ unowned self ] (returnCode) -> Void in
                     if returnCode == NSAlertFirstButtonReturn {
-                        NSLog(myError!)
+                        myLogger.logit(0, message:myError!)
                         self.setWindowToChange()
                         
                     }
@@ -170,7 +170,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                 let alertController = NSAlert()
                 alertController.messageText = "Invalid password. Please try again."
                 alertController.beginSheetModalForWindow(self.window!, completionHandler: nil)
-                NSLog(myError!)
+                myLogger.logit(0, message:myError!)
                 EXIT_FAILURE
             } else if myError == nil {
                 Password.stringValue = ""
@@ -242,7 +242,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                     }
                 })
             }
-            NSLog(myError)
+            myLogger.logit(0, message:myError)
         } else {
             
             let alertController = NSAlert()
@@ -318,11 +318,11 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         var myError: String = ""
         
         if (currentPassword.isEmpty || newPassword1.isEmpty || newPassword2.isEmpty) {
-            NSLog ("Some of the fields are empty")
+            myLogger.logit(0, message:"Some of the fields are empty")
             myError = "All fields must be filled in"
             return myError
         } else {
-            NSLog("All fields are filled in, continuing")
+            myLogger.logit(2, message:"All fields are filled in, continuing")
         }
         // If the user entered the same value for both password fields.
         if ( newPassword1 == newPassword2) {
@@ -333,7 +333,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             if (localPasswordSync == 1 ) && myError == "" {
                 do { try testLocalPassword(currentPassword) }
                 catch {
-                    NSLog("Local password check Swift = no")
+                    myLogger.logit(1, message:"Local password check Swift = no")
                     myError = "Your current local password does not match your AD password."
                 }
             }
@@ -356,7 +356,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             // Update the keychain password
             if (localPasswordSync == 1 ) && myError == "" {
                 if (ChangePassword.changeKeychainPassword(currentPassword, newPassword1) == 0) {
-                    NSLog("Error changing local keychain")
+                    myLogger.logit(1, message:"Error changing local keychain")
                     myError = "Could not change your local keychain password."
                 }
             }
@@ -366,7 +366,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             if (localPasswordSync == 1 ) && myError == "" {
                 do { try changeLocalPassword( currentPassword, newPassword: newPassword1) }
                 catch {
-                    NSLog("Local password change failed")
+                    myLogger.logit(0, message:"Local password change failed")
                     myError = "Local password change failed"
                 }
             }
@@ -400,7 +400,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
     }
     
     private func sendResetMessage() -> Void {
-        NSLog("Need to reset user's password.")
+        myLogger.logit(0, message:"Need to reset user's password.")
         notificationQueue.enqueueNotification(resetNotificationKey, postingStyle: .PostNow, coalesceMask: .CoalescingOnName, forModes: nil)
     }
 }

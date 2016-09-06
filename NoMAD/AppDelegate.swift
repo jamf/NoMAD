@@ -21,7 +21,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
     
     func applicationDidFinishLaunching(aNotification: NSNotification) {
         
-        NSLog("---- we made it ---")
+        myLogger.logit(0, message:"---NoMAD Initialized---")
         
         //NSUserNotificationCenter.defaultUserNotificationCenter().delegate = self
         

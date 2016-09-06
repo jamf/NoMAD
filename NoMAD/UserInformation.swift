@@ -77,7 +77,7 @@ class UserInformation {
         } else {
             status = "Not connected"
             connected = false
-            NSLog("Not connected to the network")
+            myLogger.logit(0, message: "Not connected to the network")
         }
         
         // 2. check for tickets
@@ -90,15 +90,15 @@ class UserInformation {
                 userPrincipalShort = userPrincipal.stringByReplacingOccurrencesOfString("@" + realm, withString: "")
                 loggedIn = true
                 status = "Logged In"
-                NSLog("Logged in.")
+                myLogger.logit(0, message: "Logged in.")
             } else {
                 loggedIn = false
-                NSLog("No ticket for realm.")
+                myLogger.logit(0, message: "No ticket for realm.")
             }
         } else {
             tickets = false
             loggedIn = false
-            NSLog("No tickets")
+            myLogger.logit(0, message: "No tickets")
         }
         
         // 3. if connected and with tickets, get password aging information
@@ -111,7 +111,7 @@ class UserInformation {
                 passwordSetDate = try myLDAPServers.getLDAPInformation("pwdLastSet", searchTerm: "sAMAccountName=" + userPrincipalShort)
             } catch {
                 passwordSetDate = ""
-                NSLog("We shouldn't have gotten here... tell Joel")
+                myLogger.logit(0, message: "We shouldn't have gotten here... tell Joel")
                 canary = false
             }
             
@@ -120,7 +120,7 @@ class UserInformation {
             
             // Now get default password expiration time - this may not be set for environments with no password cycling requirements
             
-            NSLog("Getting password aging info")
+            myLogger.logit(1, message: "Getting password aging info")
             
             // First try msDS-UserPasswordExpiryTimeComputed
             
@@ -198,7 +198,7 @@ class UserInformation {
                 }
             }
             
-            NSLog("You are a member of: " + groups.joinWithSeparator(", ") )
+            myLogger.logit(1, message: "You are a member of: " + groups.joinWithSeparator(", ") )
             // set defaults for these
             
             defaults.setObject(userHome, forKey: "userHome")

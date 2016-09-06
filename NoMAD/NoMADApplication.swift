@@ -6,6 +6,9 @@
 //  Copyright © 2016 Trusource Labs. All rights reserved.
 //
 
+// This lets copy/paste and other shortcuts work in NoMAD windows
+// Otherwise since it's a menu item only it can't do that
+
 import Cocoa
 
 @objc protocol UndoActionRespondable {

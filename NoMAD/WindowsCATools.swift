@@ -23,7 +23,7 @@ class WindowsCATools {
         do {
             try NSFileManager.defaultManager().createDirectoryAtURL(directoryURL, withIntermediateDirectories: true, attributes: nil)
         } catch {
-            NSLog("Can't create temp directory")
+            myLogger.logit(1, message: "Can't create temp directory")
         }
         
         // we should return this in case there's an error 
@@ -38,7 +38,7 @@ class WindowsCATools {
             certCSR = try NSString(contentsOfFile: path.path!, encoding: NSASCIIStringEncoding) as String
         } catch {
             certCSR = ""
-            NSLog("Error getting CSR")
+            myLogger.logit(0, message: "Error getting CSR")
         }
         certTemplate = template
         myImportError = 0
