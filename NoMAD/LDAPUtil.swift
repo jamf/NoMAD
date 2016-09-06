@@ -123,9 +123,13 @@ class LDAPServers {
         // on a network change we need to relook at things
         // if we have a static list of servers, use that
         
+        myLogger.logit(1, message:"Network Changed, sorting LDAP servers.")
+        
          if defaults.stringForKey("LDAPServerList") != nil {
             
             // clear out the hosts list and reload it
+            
+            myLogger.logit(2, message:"Recreating static LDAP server list")
             
             hosts.removeAll()
             
@@ -142,6 +146,9 @@ class LDAPServers {
             site = "static"
             testHosts()
          } else {
+            
+            myLogger.logit(2, message:"Looking for LDAP servers via SRV records.")
+            
             currentState = false
             site = ""
             getHosts(currentDomain)
@@ -263,6 +270,7 @@ class LDAPServers {
         let subnetCount = subnetNetworks.count
         
         myLogger.logit(2, message:"Total number of subnets: " + String(subnetCount))
+        myLogger.logit(3, message:"Subnet list: " + subnetNetworks.joinWithSeparator(","))
 
         
       //  for index in 1...IPs.count {
@@ -288,14 +296,16 @@ class LDAPServers {
                 }
                 
                 let currentNetwork = IP + "/" + String(subMask)
+                myLogger.logit(3, message:"Trying network: " + currentNetwork)
                 
                 if subnetNetworks.contains(currentNetwork) {
                 do {
-                    myLogger.logit(3, message:"Trying site: cn=" + IP + "/" + String(subMask))
+                    myLogger.logit(1, message:"Trying site: cn=" + IP + "/" + String(subMask))
                     site = try getLDAPInformation("siteObject", baseSearch: false, searchTerm: "cn=" + currentNetwork, test: false)
                     myLogger.logit(1, message:"Using site: " + site.componentsSeparatedByString(",")[0].stringByReplacingOccurrencesOfString("CN=", withString: ""))
                 }
                 catch {
+                    myLogger.logit(3, message:"Error looking up site: " + site.componentsSeparatedByString(",")[0].stringByReplacingOccurrencesOfString("CN=", withString: ""))
                 }
                 }
                 
@@ -303,9 +313,15 @@ class LDAPServers {
                     found = true
                     let siteDomain = site.componentsSeparatedByString(",")[0].stringByReplacingOccurrencesOfString("CN=", withString: "") + "._sites." + currentDomain
                     getHosts(siteDomain)
+                    
+                    myLogger.logit(3, message:"Found and using: " + siteDomain )
+                    
+                    // TODO: We should only retest the DCs we haven't already tested... or just use any DCs that we've already tested that are a) in the site and b) valid
+                    
                     testHosts()
                 } else {
                     subMask -= 1
+                    myLogger.logit(1, message: "No site found.")
                     site = "No site found."
                 }
          //   }

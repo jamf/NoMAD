@@ -2,7 +2,7 @@
 //  AutoConfigure.swift
 //  NoMAD
 //
-//  Created by Admin on 7/14/16.
+//  Created by Joel Rennich on 7/14/16.
 //  Copyright © 2016 Trusource Labs. All rights reserved.
 //
 
@@ -19,8 +19,8 @@ import Foundation
             case "TSL":
                 defaults.setObject("trusourcelabs.com", forKey: "ADDomain")
                 defaults.setObject("TRUSOURCELABS.COM", forKey: "KerberosRealm")
-                defaults.setObject("jupiter.trusourcelabs.com", forKey: "InternalSite")
-                defaults.setObject("192.168.32.43", forKey: "InternalSiteIP")
+                //defaults.setObject("jupiter.trusourcelabs.com", forKey: "InternalSite")
+                //defaults.setObject("192.168.32.43", forKey: "InternalSiteIP")
                 defaults.setObject(3, forKey: "Verbose")
                 defaults.setObject("", forKey: "userCommandHotKey1")
                 defaults.setObject("", forKey: "userCommandName1")
@@ -32,8 +32,8 @@ import Foundation
             case "JODA":
                 defaults.setObject("jodapro.com", forKey: "ADDomain")
                 defaults.setObject("JODAPRO.COM", forKey: "KerberosRealm")
-                defaults.setObject("in-or-out.jodapro.com", forKey: "InternalSite")
-                defaults.setObject("1.1.1.1", forKey: "InternalSiteIP")
+                //defaults.setObject("in-or-out.jodapro.com", forKey: "InternalSite")
+                //defaults.setObject("1.1.1.1", forKey: "InternalSiteIP")
                 defaults.setObject("2k12.jodapro.com", forKey: "x509CA")
                 defaults.setObject("User Auth", forKey: "Template")
                 defaults.setObject(3, forKey: "Verbose")
@@ -67,8 +67,8 @@ private func getADSettings() {
                 let myDomain = (line as NSString).substringFromIndex(35)
                 defaults.setObject(myDomain, forKey: "ADDomain")
                 defaults.setObject(myDomain.uppercaseString, forKey: "KerberosRealm")
-                defaults.setObject("", forKey: "InternalSite")
-                defaults.setObject("", forKey: "InternalSiteIP")
+                //defaults.setObject("", forKey: "InternalSite")
+                //defaults.setObject("", forKey: "InternalSiteIP")
                 defaults.setObject(0, forKey: "Verbose")
                 defaults.setObject("", forKey: "userCommandHotKey1")
                 defaults.setObject("", forKey: "userCommandName1")

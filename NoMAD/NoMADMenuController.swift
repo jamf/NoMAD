@@ -2,7 +2,7 @@
 //  NoMADMenuController.swift
 //  NoMAD
 //
-//  Created by Admin on 7/8/16.
+//  Created by Joel Rennich on 7/8/16.
 //  Copyright © 2016 Trusource Labs. All rights reserved.
 //
 
@@ -39,8 +39,8 @@ prefix func ~~(value: Int)->Bool{
 let settings = [
     "ADDomain" : "",
     "KerberosRealm" : "",
-    "InternalSite"    : "",
-    "InternalSiteIP" : "",
+    //"InternalSite"    : "",
+    //"InternalSiteIP" : "",
     "Verbose"   :   0,
     "userCommandHotKey1"    : "",
     "userCommandName1"  : "",

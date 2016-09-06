@@ -18,8 +18,8 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
     
     @IBOutlet weak var ADDomainTextField: NSTextField!
     @IBOutlet weak var KerberosRealmField: NSTextField!
-    @IBOutlet weak var InternalSiteField: NSTextField!
-    @IBOutlet weak var InternalSiteIPField: NSTextField!
+    //@IBOutlet weak var InternalSiteField: NSTextField!
+    //@IBOutlet weak var InternalSiteIPField: NSTextField!
     @IBOutlet weak var x509CAField: NSTextField!
     @IBOutlet weak var TemplateField: NSTextField!
     @IBOutlet weak var ButtonNameField: NSTextField!
@@ -61,7 +61,7 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
         } else {
             KerberosRealmField.enabled = true
         }
-        
+        /*
         InternalSiteField.stringValue = defaults.stringForKey("InternalSite") ?? ""
         
         if defaults.objectIsForcedForKey("InternalSite") {
@@ -77,7 +77,7 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
         } else {
             InternalSiteIPField.enabled = true
         }
-        
+        */
         x509CAField.stringValue = defaults.stringForKey("x509CA") ?? ""
         
         if defaults.objectIsForcedForKey("x509CA") {
@@ -182,8 +182,8 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
         } else {
             defaults.setObject(KerberosRealmField.stringValue, forKey: "KerberosRealm")
         }
-        defaults.setObject(InternalSiteField.stringValue, forKey: "InternalSite")
-        defaults.setObject(InternalSiteIPField.stringValue, forKey: "InternalSiteIP")
+        //defaults.setObject(InternalSiteField.stringValue, forKey: "InternalSite")
+        //defaults.setObject(InternalSiteIPField.stringValue, forKey: "InternalSiteIP")
         defaults.setObject(x509CAField.stringValue, forKey: "x509CA")
         defaults.setObject(TemplateField.stringValue, forKey: "Template")
         

@@ -2,7 +2,7 @@
 //  KlistUtil.swift
 //  NoMAD
 //
-//  Created by Admin on 7/18/16.
+//  Created by Joel Rennich on 7/18/16.
 //  Copyright © 2016 Trusource Labs. All rights reserved.
 //
 
