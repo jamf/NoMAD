@@ -112,6 +112,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     
     let myWorkQueue = dispatch_queue_create("com.trusourcelabs.NoMAD.background_work_queue", nil)
     
+    var SelfServiceType: String = ""
+    
     // on startup we check for preferences
     
     override func awakeFromNib() {
@@ -136,10 +138,25 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         defaults.registerDefaults(settings)
         
-        // find out if Casper Self Service exists - hide the menu if it's not there
+        // find out if a Self Service Solution exists - hide the menu if it's not there
+        
+        myLogger.logit(2, message:"Looking for Self Service applications")
         
         let selfServiceFileManager = NSFileManager.defaultManager()
+        
         selfServiceExists = selfServiceFileManager.fileExistsAtPath("/Applications/Self Service.app")
+        
+        if !selfServiceExists {
+            // try LANRev
+            selfServiceExists = selfServiceFileManager.fileExistsAtPath("/Library/Application Support/LANrev Agent/LANrev Agent.app/Contents/MacOS/LANrev Agent")
+            if selfServiceExists {
+                SelfServiceType = "LANRev"
+                 myLogger.logit(1, message:"Using LANRev for Self Service")
+            }
+        } else {
+            SelfServiceType = "Casper"
+             myLogger.logit(1, message:"Using Casper for Self Service")
+        }
         
         if !selfServiceExists {
             if NoMADMenu.itemArray.contains(NoMADMenuGetSoftware) {
@@ -147,6 +164,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 NoMADMenu.removeItem(NoMADMenuGetSoftware)
             }
         }
+
         
         // listen for updates
         
@@ -315,7 +333,11 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // opens up Casper Self Service - this should only be shown if Self Service exists on the machine
     
     @IBAction func NoMADMenuClickGetSoftware(sender: NSMenuItem) {
-                cliTask("/usr/bin/open /Applications/Self\\ Service.app")
+        switch SelfServiceType {
+        case "Casper" :     cliTask("/usr/bin/open /Applications/Self\\ Service.app")
+        case "LANRev" :     cliTask("/Library/Application\\ Support/LANrev\\ Agent/LANrev\\ Agent.app/Contents/MacOS/LANrev\\ Agent --ShowOnDemandPackages")
+        default :  return
+        }
     }
     
     // this downloads the Bomgar client and launches it, passing in various bits of info
