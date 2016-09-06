@@ -29,15 +29,17 @@ class ShareMounter {
         
 
         if defaults.integerForKey("ShowHome") == 1 {
-        NSLog("Looking for ShareMounter files")
-        prefs = try! ["/Library/Preferences/ShareMounter.plist", NSHomeDirectory() + "/Library/Preferences/ShareMounter.plist"]
-        
+        //NSLog("Looking for ShareMounter files")
+        //prefs = try! ["/Library/Preferences/ShareMounter.plist", NSHomeDirectory() + "/Library/Preferences/ShareMounter.plist"]
+        /*
         do {
             try! getShares()
             }
         } else {
-            prefs = [""]
+             prefs = [""]
+ */
         }
+        prefs = [""]
     }
     
     func mount() {
@@ -80,7 +82,7 @@ class ShareMounter {
     
     func mountOptionsDict() -> CFMutableDictionary {
         let dict = NSMutableDictionary()
-        dict[kNetFSMountFlagsKey] = Int(MNT_DONTBROWSE)
+        //dict[kNetFSMountFlagsKey] = Int(MNT_DONTBROWSE)
         return dict
     }
     
@@ -88,8 +90,10 @@ class ShareMounter {
         
         let escapedAddress = serverAddress.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())
         let shareAddress = NSURL(string: escapedAddress!)!
+
+        // TODO: ensure the URL is reachable before attempting to mount
         
-        let open_options : CFMutableDictionary = openOptionsDict()
+        //let open_options : CFMutableDictionary = openOptionsDict()
         let mount_options : CFMutableDictionary = mountOptionsDict()
         
         var requestID: AsyncRequestID = nil

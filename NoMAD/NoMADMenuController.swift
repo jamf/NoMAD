@@ -447,14 +447,11 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
      //   let qualityBackground = QOS_CLASS_BACKGROUND
     //    let backgroundQueue = dispatch_get_global_queue(qualityBackground, 0)
-        dispatch_async(myWorkQueue, {
+        //dispatch_async(myWorkQueue, {
         if ( self.userInformation.myLDAPServers.getDomain() == "not set" ) {
             self.userInformation.myTickets.getDetails()
             self.userInformation.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!, loggedIn: self.userInformation.myTickets.state )
-        } else {
-        self.userInformation.myLDAPServers.check()
         }
-        })
         
         self.updateUserInfo()
  

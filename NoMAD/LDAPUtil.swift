@@ -23,29 +23,43 @@ class LDAPServers {
     // defaults
     
     var hosts = [LDAPServer]()
-    var defaultNamingContext: String = ""
-    var currentState: Bool = false
-    var currentDomain = ""
-    var lookupServers = true
-    var site = ""
+    var defaultNamingContext: String
+    var currentState: Bool
+    var currentDomain : String
+    var lookupServers: Bool
+    var site: String
     let store = SCDynamicStoreCreate(nil, NSBundle.mainBundle().bundleIdentifier!, nil, nil)
 
-    var current: Int = 0 {
+    var current: Int {
         didSet(LDAPServer) {
             NSLog("Setting the current LDAP server to: " + hosts[current].host)
         }
     }
+    
+    // on init zero everything out
+    
+    init() {
+        defaultNamingContext = ""
+        currentState = false
+        currentDomain = ""
+        lookupServers = true
+        site = ""
+        current = 0
+    }
+    
+    // this sets the default domain, will take an optional value to determine if the user has a TGT for the domain
     
     func setDomain(domain: String, loggedIn: Bool=true) {
         
         if defaults.integerForKey("Verbose") >= 1 {
             NSLog("Finding LDAP Servers.")
         }
+        
+        // set the domain to the current AD Domain
     
         currentDomain = domain
         
-        // TODO: get the this working better
-        //print(defaults.stringForKey("LDAPServerList"))
+        // if a static LDAP server list is given, we don't need to do any testing
         
         if ( (defaults.stringForKey("LDAPServerList") ?? "") != "" ) {
 
@@ -60,11 +74,14 @@ class LDAPServers {
             site = "static"
             testHosts()
         } else {
+            
+            // if we have a TGT and we aren't using a static LDAP server list...
+            
         if loggedIn {
             
         getHosts(domain)
             
-        // now to sort them if we got results
+        // now to sort them if we received results
         
         if self.currentState {
         testHosts()
@@ -103,13 +120,23 @@ class LDAPServers {
     
     func networkChange() {
         
+        // on a network change we need to relook at things
+        // if we have a static list of servers, use that
+        
          if defaults.stringForKey("LDAPServerList") != nil {
+            
+            // clear out the hosts list and reload it
+            
+            hosts.removeAll()
+            
             let myLDAPServerListRaw = defaults.stringForKey("LDAPServerList")
             let myLDAPServerList = myLDAPServerListRaw?.componentsSeparatedByString(",")
+            
             for server in myLDAPServerList! {
                 let currentServer: LDAPServer = LDAPServer(host: server, status: "found", priority: 0, weight: 0, timeStamp: NSDate())
                 hosts.append(currentServer)
             }
+            
             currentState = true
             lookupServers = false
             site = "static"
@@ -123,7 +150,7 @@ class LDAPServers {
                 findSite()
             }
         }
-        testHosts()
+       // testHosts()
     }
     
     // mark the current server as dead - this will redo the whole process
@@ -188,7 +215,7 @@ class LDAPServers {
         if test {
         guard testSocket(self.currentServer) else {
             throw NoADError.LDAPServerLookup
-        }
+            }
         }
         
         if (defaultNamingContext == "") || (defaultNamingContext.containsString("GSSAPI Error")) {
@@ -208,7 +235,7 @@ class LDAPServers {
         return myResult
     }
     
-    // private function to get system IP and mask
+    // private function to get the AD site
     
     private func findSite() {
 
@@ -230,13 +257,12 @@ class LDAPServers {
         let tempDefaultNamingContext = defaultNamingContext
         defaultNamingContext = "cn=Subnets,cn=Sites,cn=Configuration," + tempDefaultNamingContext
         
-        // is there more than one subnet?
+        // is there more than one subnet?, we don't check for that at this time
         
         let subnetNetworks = try! getLDAPInformation("cn", baseSearch: false, searchTerm: "objectClass=subnet", test: false).componentsSeparatedByString(", ")
         let subnetCount = subnetNetworks.count
         
         NSLog("Total number of subnets: " + String(subnetCount))
-        
 
         
       //  for index in 1...IPs.count {
@@ -386,7 +412,7 @@ class LDAPServers {
         return myResult
     }
     
-    // private function to clean the LDAP results
+    // private function to clean the LDAP results if we're looking for multiple returns
     
     private func cleanLDAPResultsMultiple(result: String, attribute: String) -> String {
         let lines = result.componentsSeparatedByString("\n")
@@ -405,6 +431,9 @@ class LDAPServers {
         return myResult
     }
     
+    // private function that uses netcat to create a socket connection to the LDAP server to see if it's reachable.
+    // using ldapsearch for this can take a long time to timeout, this returns much quicker
+    
     private func testSocket( host: String ) -> Bool {
         
         let mySocketResult = cliTask("/usr/bin/nc -G 5 -z " + host + " 389")
@@ -414,6 +443,9 @@ class LDAPServers {
             return false
         }
     }
+    
+    // private function to test for an LDAP defaultNamingContext from the LDAP server
+    // this tests for LDAP connectivity and gets the default naming context at the same time
     
     private func testLDAP ( host: String ) -> Bool {
         
@@ -427,6 +459,23 @@ class LDAPServers {
             return true
         } else {
             return false
+        }
+    }
+    
+    // this checks to see if we can get SRV records for the domain
+    
+    private func checkConnectivity( domain: String ) -> Bool {
+        
+        let dnsResults = cliTask("/usr/bin/dig +short -t SRV _ldap._tcp." + domain).componentsSeparatedByString("\n")
+        
+        // check to make sure we got a result
+        
+        if dnsResults[0] == "" || dnsResults[0].containsString("connection timed out") {
+            currentState = false
+            return false
+        } else {
+            currentState = true
+            return true
         }
     }
     
@@ -478,9 +527,9 @@ class LDAPServers {
                     // socket test first - this could be falsely negative
                     // also note that this needs to return stderr
                     
-                    let myPingResult = cliTask("/usr/bin/nc -G 5 -z " + hosts[i].host + " 389")
+                    let mySocketResult = cliTask("/usr/bin/nc -G 5 -z " + hosts[i].host + " 389")
                     
-                    if myPingResult.containsString("succeeded!") {
+                    if mySocketResult.containsString("succeeded!") {
                         
                         // if socket test works, then attempt ldapsearch to get default naming context
                         
