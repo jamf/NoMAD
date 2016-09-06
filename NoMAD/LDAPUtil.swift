@@ -254,7 +254,7 @@ class LDAPServers {
         // first grab IPv4
         // TODO: fix for IPv6
         
-        let network = getIPandMask()
+        var network = getIPandMask()
         
         myLogger.logit(2, message:"IPs: " + network["IP"]![0])
         myLogger.logit(2, message:"Subnets: " + network["mask"]![0])
@@ -271,9 +271,10 @@ class LDAPServers {
         
         myLogger.logit(2, message:"Total number of subnets: " + String(subnetCount))
         myLogger.logit(3, message:"Subnet list: " + subnetNetworks.joinWithSeparator(","))
-
+        myLogger.logit(3, message:"Site is currently: " + site )
         
       //  for index in 1...IPs.count {
+        
             var subMask = countBits(network["mask"]![0])
             let IPOctets = network["IP"]![0].componentsSeparatedByString(".")
             var IP = ""
@@ -297,6 +298,8 @@ class LDAPServers {
                 
                 let currentNetwork = IP + "/" + String(subMask)
                 myLogger.logit(3, message:"Trying network: " + currentNetwork)
+                myLogger.logit(3, message:"Mask: " + String(subMask) )
+                myLogger.logit(3, message:" Found: " + String(found) + " Subnet Count: " + String(subnetCount) )
                 
                 if subnetNetworks.contains(currentNetwork) {
                 do {

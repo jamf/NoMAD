@@ -144,24 +144,29 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         let selfServiceFileManager = NSFileManager.defaultManager()
         
-        selfServiceExists = selfServiceFileManager.fileExistsAtPath("/Applications/Self Service.app")
-        
-        if !selfServiceExists {
-            // try LANRev
-            selfServiceExists = selfServiceFileManager.fileExistsAtPath("/Library/Application Support/LANrev Agent/LANrev Agent.app/Contents/MacOS/LANrev Agent")
-            if selfServiceExists {
-                SelfServiceType = "LANRev"
-                 myLogger.logit(1, message:"Using LANRev for Self Service")
-            }
-        } else {
+        if selfServiceFileManager.fileExistsAtPath("/Applications/Self Service.app") {
+            selfServiceExists = true
             SelfServiceType = "Casper"
-             myLogger.logit(1, message:"Using Casper for Self Service")
+            myLogger.logit(1, message:"Using Casper for Self Service")
+        }
+        
+        if !selfServiceExists && selfServiceFileManager.fileExistsAtPath("/Library/Application Support/LANrev Agent/LANrev Agent.app/Contents/MacOS/LANrev Agent") {
+            selfServiceExists = true
+            SelfServiceType = "LANRev"
+            myLogger.logit(1, message:"Using LANRev for Self Service")
+        }
+        
+        if !selfServiceExists && selfServiceFileManager.fileExistsAtPath("/Applications/Managed Software Center.app") {
+            selfServiceExists = true
+            SelfServiceType = "Munki"
+            myLogger.logit(1, message:"Using Munki for Self Service")
         }
         
         if !selfServiceExists {
             if NoMADMenu.itemArray.contains(NoMADMenuGetSoftware) {
                 NoMADMenuGetSoftware.enabled = false
                 NoMADMenu.removeItem(NoMADMenuGetSoftware)
+                myLogger.logit(1, message:"Not using Self Service.")
             }
         }
 
@@ -336,6 +341,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         switch SelfServiceType {
         case "Casper" :     cliTask("/usr/bin/open /Applications/Self\\ Service.app")
         case "LANRev" :     cliTask("/Library/Application\\ Support/LANrev\\ Agent/LANrev\\ Agent.app/Contents/MacOS/LANrev\\ Agent --ShowOnDemandPackages")
+        case "Munki"  :     cliTask("/usr/bin/open /Applications/Managed\\ Software\\ Center.app")
         default :  return
         }
     }
