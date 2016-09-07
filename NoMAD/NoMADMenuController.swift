@@ -57,7 +57,7 @@ let settings = [
 let defaults = NSUserDefaults.init()
 let statusItem = NSStatusBar.systemStatusBar().statusItemWithLength(NSVariableStatusItemLength)
 let userNotificationCenter = NSUserNotificationCenter.defaultUserNotificationCenter()
-var selfServiceExists = true
+var selfServiceExists = false
 let myLogger = Logger()
 
 class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate, PreferencesWindowDelegate {
@@ -479,14 +479,14 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
      //   let qualityBackground = QOS_CLASS_BACKGROUND
     //    let backgroundQueue = dispatch_get_global_queue(qualityBackground, 0)
-        //dispatch_async(myWorkQueue, {
+        dispatch_async(myWorkQueue, {
         if ( self.userInformation.myLDAPServers.getDomain() == "not set" ) {
             self.userInformation.myTickets.getDetails()
             self.userInformation.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!, loggedIn: self.userInformation.myTickets.state )
         }
         
         self.updateUserInfo()
- 
+        })
     }
     
     // simple function to renew tickets
@@ -521,7 +521,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         // get the information on the current setup
         
-        let qualityBackground = QOS_CLASS_BACKGROUND
+        //let qualityBackground = QOS_CLASS_BACKGROUND
         //let backgroundQueue: dispatch_queue_t = dispatch_get_global_queue(qualityBackground, 0)
         
         if abs(lastStatusCheck.timeIntervalSinceNow) > 3 {

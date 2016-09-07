@@ -65,8 +65,7 @@ class UserInformation {
     func getUserInfo() {
         
         // 1. check if AD can be reached
-        
-        var canary = true
+
         checkNetwork()
         
         myTickets.getDetails()
@@ -112,10 +111,9 @@ class UserInformation {
             } catch {
                 passwordSetDate = ""
                 myLogger.logit(0, message: "We shouldn't have gotten here... tell Joel")
-                canary = false
+
             }
             
-            if canary {
             userPasswordSetDate = NSDate(timeIntervalSince1970: (Double(Int(passwordSetDate)!))/10000000-11644473600)
             
             // Now get default password expiration time - this may not be set for environments with no password cycling requirements
@@ -176,13 +174,13 @@ class UserInformation {
                 userPasswordExpireDate = userPasswordSetDate.dateByAddingTimeInterval(serverPasswordExpirationDefault)
             }
         }
-        }
+
         
         // TODO: figure out if the password changed without us knowing
         
         // 4. if connected and with tickets, get all of user information
         
-        if connected && tickets && canary {
+        if connected && tickets {
             let userHomeTemp = try! myLDAPServers.getLDAPInformation("homeDirectory", searchTerm: "sAMAccountName=" + userPrincipalShort)
             userHome = userHomeTemp.stringByReplacingOccurrencesOfString("\\", withString: "/")
             userDisplayName = try! myLDAPServers.getLDAPInformation("displayName", searchTerm: "sAMAccountName=" + userPrincipalShort)

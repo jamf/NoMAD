@@ -14,12 +14,14 @@ class Logger {
     var loglevel: Int
     
     init() {
-        loglevel = defaults.integerForKey("Verbose")
+        //loglevel = defaults.integerForKey("Verbose")
+        
+        loglevel = 3
     }
     
     func logit(level: Int, message: String) {
         
-        if level >= loglevel {
+        if level <= loglevel {
             NSLog(message)
         }
     }

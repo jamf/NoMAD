@@ -29,6 +29,7 @@ class LDAPServers {
     var lookupServers: Bool
     var site: String
     let store = SCDynamicStoreCreate(nil, NSBundle.mainBundle().bundleIdentifier!, nil, nil)
+    var lastNetwork = ""
 
     var current: Int {
         didSet(LDAPServer) {
@@ -76,18 +77,19 @@ class LDAPServers {
         } else {
             
             // if we have a TGT and we aren't using a static LDAP server list...
+            // Although first we check to make sure we have a Kerberos TGT
             
-        if loggedIn {
+            if loggedIn {
             
-        getHosts(domain)
+                getHosts(domain)
             
-        // now to sort them if we received results
+                    // now to sort them if we received results
         
-        if self.currentState {
-        testHosts()
-        findSite()
+                if self.currentState {
+                    testHosts()
+                    findSite()
+                }
             }
-        }
         }
     }
     
@@ -299,11 +301,11 @@ class LDAPServers {
                 let currentNetwork = IP + "/" + String(subMask)
                 myLogger.logit(3, message:"Trying network: " + currentNetwork)
                 myLogger.logit(3, message:"Mask: " + String(subMask) )
-                myLogger.logit(3, message:" Found: " + String(found) + " Subnet Count: " + String(subnetCount) )
+                myLogger.logit(3, message:"Found: " + String(found) + " Subnet Count: " + String(subnetCount) )
                 
                 if subnetNetworks.contains(currentNetwork) {
                 do {
-                    myLogger.logit(1, message:"Trying site: cn=" + IP + "/" + String(subMask))
+                    myLogger.logit(1, message:"Trying network: cn=" + IP + "/" + String(subMask))
                     site = try getLDAPInformation("siteObject", baseSearch: false, searchTerm: "cn=" + currentNetwork, test: false)
                     myLogger.logit(1, message:"Using site: " + site.componentsSeparatedByString(",")[0].stringByReplacingOccurrencesOfString("CN=", withString: ""))
                 }
