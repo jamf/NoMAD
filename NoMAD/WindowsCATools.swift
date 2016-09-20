@@ -19,7 +19,7 @@ class WindowsCATools {
     init(serverURL: String, template: String) {
         self.api = "https://\(serverURL)/certsrv/"
         
-        directoryURL = NSURL(fileURLWithPath: NSTemporaryDirectory()).URLByAppendingPathComponent(NSProcessInfo.processInfo().globallyUniqueString, isDirectory: true)
+        directoryURL = NSURL(fileURLWithPath: NSTemporaryDirectory()).URLByAppendingPathComponent(NSProcessInfo.processInfo().globallyUniqueString, isDirectory: true)!
         do {
             try NSFileManager.defaultManager().createDirectoryAtURL(directoryURL, withIntermediateDirectories: true, attributes: nil)
         } catch {
@@ -30,12 +30,12 @@ class WindowsCATools {
         
         // TODO: Don't use certtool for this, but SecTransform to create the CSR
         
-        cliTask("/usr/bin/certtool r " + directoryURL.URLByAppendingPathComponent("new.csr").path! + " Z")
+        cliTask("/usr/bin/certtool r " + directoryURL.URLByAppendingPathComponent("new.csr")!.path! + " Z")
         
         let path = directoryURL.URLByAppendingPathComponent("new.csr")
         
         do {
-            certCSR = try NSString(contentsOfFile: path.path!, encoding: NSASCIIStringEncoding) as String
+            certCSR = try NSString(contentsOfFile: path!.path!, encoding: NSASCIIStringEncoding) as String
         } catch {
             certCSR = ""
             myLogger.logit(0, message: "Error getting CSR")

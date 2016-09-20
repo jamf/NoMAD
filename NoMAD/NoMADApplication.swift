@@ -20,8 +20,8 @@ import Cocoa
 }
 
 class NoMADApplication: NSApplication {
-    private let commandKey = NSEventModifierFlags.CommandKeyMask.rawValue
-    private let commandShiftKey = NSEventModifierFlags.CommandKeyMask.rawValue | NSEventModifierFlags.ShiftKeyMask.rawValue
+    private let commandKey = NSEventModifierFlags.Command.rawValue
+    private let commandShiftKey = NSEventModifierFlags.Command.rawValue | NSEventModifierFlags.Shift.rawValue
     
     override func sendEvent(event: NSEvent) {
         if event.type == NSEventType.KeyDown {
