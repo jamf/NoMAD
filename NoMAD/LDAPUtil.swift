@@ -29,8 +29,9 @@ class LDAPServers {
     var lookupServers: Bool
     var site: String
     let store = SCDynamicStoreCreate(nil, NSBundle.mainBundle().bundleIdentifier!, nil, nil)
-    var lastNetwork = ""
-
+    
+    let tickets = KlistUtil()
+    
     var current: Int {
         didSet(LDAPServer) {
             myLogger.logit(0, message:"Setting the current LDAP server to: " + hosts[current].host)
@@ -46,49 +47,51 @@ class LDAPServers {
         lookupServers = true
         site = ""
         current = 0
+        tickets.getDetails()
     }
     
     // this sets the default domain, will take an optional value to determine if the user has a TGT for the domain
     
-    func setDomain(domain: String, loggedIn: Bool=true) {
+    func setDomain(domain: String) {
         
-        if defaults.integerForKey("Verbose") >= 1 {
-            myLogger.logit(0, message:"Finding LDAP Servers.")
-        }
+        myLogger.logit(0, message:"Finding LDAP Servers.")
         
         // set the domain to the current AD Domain
-    
+        
         currentDomain = domain
         
         // if a static LDAP server list is given, we don't need to do any testing
         
         if ( (defaults.stringForKey("LDAPServerList") ?? "") != "" ) {
-
-           let myLDAPServerListRaw = defaults.stringForKey("LDAPServerList")
+            
+            let myLDAPServerListRaw = defaults.stringForKey("LDAPServerList")
             let myLDAPServerList = myLDAPServerListRaw?.componentsSeparatedByString(",")
             for server in myLDAPServerList! {
                 let currentServer: LDAPServer = LDAPServer(host: server, status: "found", priority: 0, weight: 0, timeStamp: NSDate())
                 hosts.append(currentServer)
-                }
+            }
             currentState = true
             lookupServers = false
             site = "static"
-            testHosts()
+            
+            if tickets.state {
+                testHosts()
+            }
         } else {
             
-            // if we have a TGT and we aren't using a static LDAP server list...
-            // Although first we check to make sure we have a Kerberos TGT
-            
-            if loggedIn {
-            
+            // check if we're connected
+                
                 getHosts(domain)
-            
-                    // now to sort them if we received results
-        
-                if self.currentState {
+                
+                // now to sort them if we received results
+                
+                if self.currentState && tickets.state {
                     testHosts()
-                    findSite()
-                }
+                    do {
+                        try findSite()
+                    } catch {
+                        myLogger.logit(0, message: "Site lookup failed")
+                    }
             }
         }
     }
@@ -108,7 +111,7 @@ class LDAPServers {
     
     var currentServer: String {
         if self.currentState {
-        return hosts[current].host
+            return hosts[current].host
         } else {
             return ""
         }
@@ -125,13 +128,11 @@ class LDAPServers {
         // on a network change we need to relook at things
         // if we have a static list of servers, use that
         
-        myLogger.logit(1, message:"Network Changed, sorting LDAP servers.")
+        tickets.getDetails()
         
-         if defaults.stringForKey("LDAPServerList") != nil {
+        if defaults.stringForKey("LDAPServerList") != nil {
             
             // clear out the hosts list and reload it
-            
-            myLogger.logit(2, message:"Recreating static LDAP server list")
             
             hosts.removeAll()
             
@@ -147,19 +148,19 @@ class LDAPServers {
             lookupServers = false
             site = "static"
             testHosts()
-         } else {
-            
-            myLogger.logit(2, message:"Looking for LDAP servers via SRV records.")
-            
+        } else {
             currentState = false
             site = ""
             getHosts(currentDomain)
-            if self.currentState && defaultNamingContext != "" {
+            if self.currentState && tickets.state {
                 testHosts()
-                findSite()
+                do {
+                    try findSite()
+                } catch {
+                    myLogger.logit(0, message: "Site lookup failed")
+                }
             }
         }
-       // testHosts()
     }
     
     // mark the current server as dead - this will redo the whole process
@@ -201,16 +202,24 @@ class LDAPServers {
     
     func check() {
         
-        if testSocket(self.currentServer) && testLDAP(self.currentServer) {
+        tickets.getDetails()
+        
+        if testSocket(self.currentServer) && testLDAP(self.currentServer) && tickets.state {
             
-        if  defaultNamingContext != "" && site != "" {
-            myLogger.logit(0, message:"Using same LDAP server: " + self.currentServer)
-        } else {
-            findSite()
+            if  defaultNamingContext != "" && site != "" {
+                myLogger.logit(0, message:"Using same LDAP server: " + self.currentServer)
+            } else {
+                do {
+                    try findSite()
+                } catch {
+                    myLogger.logit(0, message: "Site lookup failed")
+                }
             }
         } else {
-            myLogger.logit(0, message:"Can't connect to LDAP server, finding new one")
-            networkChange()
+            if tickets.state {
+                myLogger.logit(0, message:"Can't connect to LDAP server, finding new one")
+            }
+        networkChange()
         }
         
     }
@@ -222,8 +231,8 @@ class LDAPServers {
         var myResult: String
         
         if test {
-        guard testSocket(self.currentServer) else {
-            throw NoADError.LDAPServerLookup
+            guard testSocket(self.currentServer) else {
+                throw NoADError.LDAPServerLookup
             }
         }
         
@@ -244,10 +253,16 @@ class LDAPServers {
         return myResult
     }
     
+    // private function to resolve SRV records
+    
+    private func getSRV() {
+        
+    }
+    
     // private function to get the AD site
     
-    private func findSite() {
-
+    private func findSite() throws {
+        
         myLogger.logit(2, message:"Looking for local IP")
         
         var found = false
@@ -256,7 +271,7 @@ class LDAPServers {
         // first grab IPv4
         // TODO: fix for IPv6
         
-        var network = getIPandMask()
+        let network = getIPandMask()
         
         myLogger.logit(2, message:"IPs: " + network["IP"]![0])
         myLogger.logit(2, message:"Subnets: " + network["mask"]![0])
@@ -272,64 +287,52 @@ class LDAPServers {
         let subnetCount = subnetNetworks.count
         
         myLogger.logit(2, message:"Total number of subnets: " + String(subnetCount))
-        myLogger.logit(3, message:"Subnet list: " + subnetNetworks.joinWithSeparator(","))
-        myLogger.logit(3, message:"Site is currently: " + site )
         
-      //  for index in 1...IPs.count {
         
-            var subMask = countBits(network["mask"]![0])
-            let IPOctets = network["IP"]![0].componentsSeparatedByString(".")
-            var IP = ""
+        //  for index in 1...IPs.count {
+        var subMask = countBits(network["mask"]![0])
+        let IPOctets = network["IP"]![0].componentsSeparatedByString(".")
+        var IP = ""
+        
+        myLogger.logit(1, message:"Starting site lookups")
+        
+        while subMask >= 0 && !found && subnetCount >= 2 {
             
-            myLogger.logit(1, message:"Starting site lookups")
+            let octet = subMask / 8
+            let octetMask = subMask % 8
+            let network = Int(IPOctets[octet])! - (Int(IPOctets[octet])! % binToDecimal(octetMask))
             
-            while subMask >= 0 && !found && subnetCount >= 2 {
-                
-                let octet = subMask / 8
-                let octetMask = subMask % 8
-                let network = Int(IPOctets[octet])! - (Int(IPOctets[octet])! % binToDecimal(octetMask))
-                
-                switch octet {
-                case 0  : IP = String(network) + ".0.0.0"
-                case 1  : IP = IPOctets[0] + "." + String(network) + ".0.0"
-                case 2  : IP = IPOctets[0] + "." + IPOctets[1] + "." + String(network) + ".0"
-                case 3  : IP = IPOctets[0] + "." + IPOctets[1] + "." + IPOctets[2] + "." + String(network)
-                case 4  : IP = IPOctets[0] + "." + IPOctets[1] + "." + IPOctets[2] + "." + IPOctets[3]
-                default : IP = IPOctets[0] + "." + IPOctets[1] + "." + IPOctets[2] + "." + IPOctets[3]
-                }
-                
-                let currentNetwork = IP + "/" + String(subMask)
-                myLogger.logit(3, message:"Trying network: " + currentNetwork)
-                myLogger.logit(3, message:"Mask: " + String(subMask) )
-                myLogger.logit(3, message:"Found: " + String(found) + " Subnet Count: " + String(subnetCount) )
-                
-                if subnetNetworks.contains(currentNetwork) {
+            switch octet {
+            case 0  : IP = String(network) + ".0.0.0"
+            case 1  : IP = IPOctets[0] + "." + String(network) + ".0.0"
+            case 2  : IP = IPOctets[0] + "." + IPOctets[1] + "." + String(network) + ".0"
+            case 3  : IP = IPOctets[0] + "." + IPOctets[1] + "." + IPOctets[2] + "." + String(network)
+            case 4  : IP = IPOctets[0] + "." + IPOctets[1] + "." + IPOctets[2] + "." + IPOctets[3]
+            default : IP = IPOctets[0] + "." + IPOctets[1] + "." + IPOctets[2] + "." + IPOctets[3]
+            }
+            
+            let currentNetwork = IP + "/" + String(subMask)
+            
+            if subnetNetworks.contains(currentNetwork) {
                 do {
-                    myLogger.logit(1, message:"Trying network: cn=" + IP + "/" + String(subMask))
+                    myLogger.logit(3, message:"Trying site: cn=" + IP + "/" + String(subMask))
                     site = try getLDAPInformation("siteObject", baseSearch: false, searchTerm: "cn=" + currentNetwork, test: false)
                     myLogger.logit(1, message:"Using site: " + site.componentsSeparatedByString(",")[0].stringByReplacingOccurrencesOfString("CN=", withString: ""))
                 }
                 catch {
-                    myLogger.logit(3, message:"Error looking up site: " + site.componentsSeparatedByString(",")[0].stringByReplacingOccurrencesOfString("CN=", withString: ""))
                 }
-                }
-                
-                if site != "" {
-                    found = true
-                    let siteDomain = site.componentsSeparatedByString(",")[0].stringByReplacingOccurrencesOfString("CN=", withString: "") + "._sites." + currentDomain
-                    getHosts(siteDomain)
-                    
-                    myLogger.logit(3, message:"Found and using: " + siteDomain )
-                    
-                    // TODO: We should only retest the DCs we haven't already tested... or just use any DCs that we've already tested that are a) in the site and b) valid
-                    
-                    testHosts()
-                } else {
-                    subMask -= 1
-                    myLogger.logit(1, message: "No site found.")
-                    site = "No site found."
-                }
-         //   }
+            }
+            
+            if site != "" {
+                found = true
+                let siteDomain = site.componentsSeparatedByString(",")[0].stringByReplacingOccurrencesOfString("CN=", withString: "") + "._sites." + currentDomain
+                getHosts(siteDomain)
+                testHosts()
+            } else {
+                subMask -= 1
+                site = "No site found."
+            }
+            //   }
         }
         defaultNamingContext = tempDefaultNamingContext
         myLogger.logit(2, message:"Resetting default naming context to: " + defaultNamingContext)
@@ -443,7 +446,7 @@ class LDAPServers {
         for i in lines {
             if (i.containsString(attribute)) {
                 if myResult == "" {
-                myResult = i.stringByReplacingOccurrencesOfString( attribute + ": ", withString: "")
+                    myResult = i.stringByReplacingOccurrencesOfString( attribute + ": ", withString: "")
                 } else {
                     myResult = myResult.stringByAppendingString( ", " + i.stringByReplacingOccurrencesOfString( attribute + ": ", withString: ""))
                 }

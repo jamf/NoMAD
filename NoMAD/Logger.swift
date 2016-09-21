@@ -15,7 +15,6 @@ class Logger {
     
     init() {
         //loglevel = defaults.integerForKey("Verbose")
-        
         loglevel = 3
     }
     

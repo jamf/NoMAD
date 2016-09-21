@@ -106,7 +106,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     
     let myKeychainUtil = KeychainUtil()
     let GetCredentials: KerbUtil = KerbUtil()
-    let myShareMounter = ShareMounter()
+    //let myShareMounter = ShareMounter()
     
     var menuAnimationTimer = NSTimer()
     
@@ -181,9 +181,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         // Autologin if you can
         
-        userInformation.myTickets.getDetails()
+        userInformation.myLDAPServers.tickets.getDetails()
         
-        if ( defaults.boolForKey("UseKeychain")) && !userInformation.myTickets.state {
+        if ( defaults.boolForKey("UseKeychain")) && !userInformation.myLDAPServers.tickets.state {
             var myPass: String = ""
             // check if there's a last user
             if ( (defaults.stringForKey("LastUser") ?? "") != "" ) {
@@ -356,8 +356,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // if specified by the preferences, this shows a CLI one-liner
     
     @IBAction func NoMADMenuClickHiddenItem1(sender: NSMenuItem) {
+        myLogger.logit(0, message: "Executing command: " + defaults.stringForKey("userCommandTask1")! )
         let myResult = cliTask(defaults.stringForKey("userCommandTask1")!)
-        myLogger.logit(1, message:myResult)
+        myLogger.logit(0, message:myResult)
     }
 
     // shows the preferences window
@@ -395,7 +396,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         myLogger.logit(0, message:"User short name: " + getConsoleUser())
         myLogger.logit(0, message:"User long name: " + NSUserName())
         myLogger.logit(0, message:"User principal: " + userInformation.userPrincipal)
-        myLogger.logit(0, message:"TGT expires: " + String(userInformation.myTickets.expire))
+        myLogger.logit(0, message:"TGT expires: " + String(userInformation.myLDAPServers.tickets.expire))
         myLogger.logit(0, message:"User password set date: " + String(userInformation.userPasswordSetDate))
         myLogger.logit(0, message:"User password expire date: " + String(userInformation.userPasswordExpireDate))
         myLogger.logit(0, message:"User home share: " + userInformation.userHome)
@@ -403,7 +404,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         myLogger.logit(0, message:"---- User Record ----")
         logEntireUserRecord()
         myLogger.logit(0, message:"---- Kerberos Tickets ----")
-        myLogger.logit(0, message:(userInformation.myTickets.returnAllTickets()))
+        myLogger.logit(0, message:(userInformation.myLDAPServers.tickets.returnAllTickets()))
 
     }
     
@@ -431,7 +432,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             
             // twiddles what needs to be twiddled for connected but not logged in
             
-        } else if self.userInformation.loggedIn == false {
+        } else if self.userInformation.myLDAPServers.tickets.state == false {
             
             self.NoMADMenuLogIn.enabled = true
             self.NoMADMenuLogIn.title = "Log In"
@@ -481,8 +482,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     //    let backgroundQueue = dispatch_get_global_queue(qualityBackground, 0)
         dispatch_async(myWorkQueue, {
         if ( self.userInformation.myLDAPServers.getDomain() == "not set" ) {
-            self.userInformation.myTickets.getDetails()
-            self.userInformation.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!, loggedIn: self.userInformation.myTickets.state )
+            self.userInformation.myLDAPServers.tickets.getDetails()
+            self.userInformation.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")! )
         }
         
         self.updateUserInfo()
@@ -493,7 +494,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     
     func renewTickets(){
         cliTask("/usr/bin/kinit -R")
-        userInformation.myTickets.getDetails()
+        userInformation.myLDAPServers.tickets.getDetails()
         if defaults.integerForKey("Verbose") >= 1 {
             myLogger.logit(0, message:"Renewing tickets.")
         }
@@ -516,7 +517,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         // make sure the domain we're using is the domain we should be using
         
         if ( userInformation.myLDAPServers.getDomain() != defaults.stringForKey("ADDomain")!) {
-             userInformation.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!, loggedIn: self.userInformation.myTickets.state)
+             userInformation.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!)
         }
         
         // get the information on the current setup
@@ -550,7 +551,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     statusItem.toolTip = self.dateFormatter.stringFromDate(self.userInformation.userPasswordExpireDate)
                     self.NoMADMenuTicketLife.title = "Not logged in."
                 
-                } else if self.userInformation.status == "Logged In" && self.userInformation.connected {
+                } else if self.userInformation.status == "Logged In" && self.userInformation.myLDAPServers.tickets.state {
                     statusItem.image = self.iconOnOn
                     
                     // if we're logged in we enable some options
@@ -561,7 +562,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     if self.userInformation.passwordAging {
                         
                         statusItem.toolTip = self.dateFormatter.stringFromDate(self.userInformation.userPasswordExpireDate)
-                        self.NoMADMenuTicketLife.title = self.dateFormatter.stringFromDate(self.userInformation.myTickets.expire) + " " + self.userInformation.myLDAPServers.currentServer
+                        self.NoMADMenuTicketLife.title = self.dateFormatter.stringFromDate(self.userInformation.myLDAPServers.tickets.expire) + " " + self.userInformation.myLDAPServers.currentServer
                         
                         let daysToGo = Int(abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow)/86400)
                         // we do this twice b/c doing it only once seems to make it less than full width
@@ -580,7 +581,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         // we do this twice b/c doing it only once seems to make it less than full width
                         statusItem.title = ""
                         statusItem.title = ""
-                         self.NoMADMenuTicketLife.title = self.dateFormatter.stringFromDate(self.userInformation.myTickets.expire) + " " + self.userInformation.myLDAPServers.currentServer
+                         self.NoMADMenuTicketLife.title = self.dateFormatter.stringFromDate(self.userInformation.myLDAPServers.tickets.expire) + " " + self.userInformation.myLDAPServers.currentServer
                     }
                 } else {
                     statusItem.image = self.iconOffOff
@@ -644,14 +645,17 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         self.NoMADMenu.removeItem(self.NoMADMenuHome)
                         
                     }
-                    self.myShareMounter.asyncMountShare("smb:" + defaults.stringForKey("userHome")!)
-                    self.myShareMounter.mount()
+                    
+                    // Share Mounter setup taken out for now
+                    
+                    //self.myShareMounter.asyncMountShare("smb:" + defaults.stringForKey("userHome")!)
+                    //self.myShareMounter.mount()
                 }
             })
 
             // check if we need to renew the ticket
             
-            if defaults.integerForKey("RenewTickets") == 1 && self.userInformation.status == "Logged In" && ( abs(self.userInformation.myTickets.expire.timeIntervalSinceNow) >= Double(defaults.integerForKey("SecondsToRenew"))) {
+            if defaults.integerForKey("RenewTickets") == 1 && self.userInformation.status == "Logged In" && ( abs(self.userInformation.myLDAPServers.tickets.expire.timeIntervalSinceNow) >= Double(defaults.integerForKey("SecondsToRenew"))) {
                 self.renewTickets()
             }
             

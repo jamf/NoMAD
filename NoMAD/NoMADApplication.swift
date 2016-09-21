@@ -25,7 +25,7 @@ class NoMADApplication: NSApplication {
     
     override func sendEvent(event: NSEvent) {
         if event.type == NSEventType.KeyDown {
-            if (event.modifierFlags.rawValue & NSEventModifierFlags.DeviceIndependentModifierFlagsMask.rawValue == commandKey) {
+            if (event.modifierFlags.rawValue & NSEventModifierFlags.DeviceIndependentFlagsMask.rawValue == commandKey) {
                 switch event.charactersIgnoringModifiers!.lowercaseString {
                 case "x":
                     if NSApp.sendAction(#selector(NSText.cut(_:)), to:nil, from:self) { return }
@@ -43,7 +43,7 @@ class NoMADApplication: NSApplication {
                     break
                 }
             }
-            else if (event.modifierFlags.rawValue & NSEventModifierFlags.DeviceIndependentModifierFlagsMask.rawValue == commandShiftKey) {
+            else if (event.modifierFlags.rawValue & NSEventModifierFlags.DeviceIndependentFlagsMask.rawValue == commandShiftKey) {
                 if event.charactersIgnoringModifiers == "Z" {
                     if NSApp.sendAction(#selector(RedoActionRespondable.redo(_:)), to:nil, from:self) { return }
                 }
