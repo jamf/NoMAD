@@ -97,7 +97,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     
     // globals
     
- //   let userInfoAPI = UserInfoAPI()
+    // let userInfoAPI = UserInfoAPI()
+    
     let userInformation = UserInformation()
     
     var lastStatusCheck = NSDate().dateByAddingTimeInterval(-5000)
@@ -480,14 +481,15 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
      //   let qualityBackground = QOS_CLASS_BACKGROUND
     //    let backgroundQueue = dispatch_get_global_queue(qualityBackground, 0)
-        dispatch_async(myWorkQueue, {
+        //dispatch_async(myWorkQueue, {
+        
         if ( self.userInformation.myLDAPServers.getDomain() == "not set" ) {
-            self.userInformation.myLDAPServers.tickets.getDetails()
-            self.userInformation.myLDAPServers.setDomain(defaults.stringForKey("ADDomain")! )
+            //self.userInformation.myLDAPServers.tickets.getDetails()
+            self.userInformation.myLDAPServers.currentDomain = defaults.stringForKey("ADDomain")!
         }
         
         self.updateUserInfo()
-        })
+        // })
     }
     
     // simple function to renew tickets
@@ -533,7 +535,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             
             self.userInformation.getUserInfo()
             
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            dispatch_sync(dispatch_get_main_queue(), { () -> Void in
                 
                 // build the menu
                 
