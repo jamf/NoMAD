@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15G31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11198.2" systemVersion="16B2327e" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11198.2"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -121,6 +121,7 @@
                 <outlet property="NoMADMenuSpewLogs" destination="pC8-5a-Aec" id="trl-C0-H9J"/>
                 <outlet property="NoMADMenuTicketLife" destination="QYf-mL-9ta" id="o7R-O3-Ea9"/>
                 <outlet property="NoMADMenuUserName" destination="uQI-ol-UUw" id="yMX-60-SOW"/>
+                <outlet property="NoMadMenuSeperator" destination="vag-tC-mEc" id="e6T-Xx-j0P"/>
             </connections>
         </customObject>
         <customObject id="3MP-7Q-tZN" userLabel="Delegate" customClass="AppDelegate" customModule="NoMAD" customModuleProvider="target"/>

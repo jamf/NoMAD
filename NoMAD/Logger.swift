@@ -21,7 +21,11 @@ class Logger {
     func logit(level: Int, message: String) {
         
         if level <= loglevel {
+            if loglevel == 3 {
+            NSLog("level: " + String(level) + " - " + message)
+            } else {
             NSLog(message)
+            }
         }
     }
 }

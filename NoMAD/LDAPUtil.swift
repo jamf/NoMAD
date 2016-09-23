@@ -30,6 +30,8 @@ class LDAPServers {
     var site: String
     let store = SCDynamicStoreCreate(nil, NSBundle.mainBundle().bundleIdentifier!, nil, nil)
     
+    var lastNetwork = ""
+    
     let tickets = KlistUtil()
     
     var current: Int {
@@ -47,6 +49,7 @@ class LDAPServers {
         lookupServers = true
         site = ""
         current = 0
+        myLogger.logit(2, message:"Looking up tickets.")
         tickets.getDetails()
     }
     
@@ -77,6 +80,7 @@ class LDAPServers {
             if tickets.state {
                 testHosts()
             }
+            
         } else {
             
             // check if we're connected
@@ -287,7 +291,7 @@ class LDAPServers {
         let subnetCount = subnetNetworks.count
         
         myLogger.logit(2, message:"Total number of subnets: " + String(subnetCount))
-        
+        myLogger.logit(3, message:"Subnets: " + String(subnetNetworks))
         
         //  for index in 1...IPs.count {
         var subMask = countBits(network["mask"]![0])
@@ -313,6 +317,11 @@ class LDAPServers {
             
             let currentNetwork = IP + "/" + String(subMask)
             
+            if currentNetwork == lastNetwork {
+                myLogger.logit(1, message: "Network hasn't changed. Skipping site lookup")
+                break
+            }
+            
             if subnetNetworks.contains(currentNetwork) {
                 do {
                     myLogger.logit(3, message:"Trying site: cn=" + IP + "/" + String(subMask))
@@ -326,11 +335,13 @@ class LDAPServers {
             if site != "" {
                 found = true
                 let siteDomain = site.componentsSeparatedByString(",")[0].stringByReplacingOccurrencesOfString("CN=", withString: "") + "._sites." + currentDomain
+                lastNetwork = currentNetwork
                 getHosts(siteDomain)
                 testHosts()
             } else {
                 subMask -= 1
                 site = "No site found."
+                lastNetwork = currentNetwork
             }
             //   }
         }
@@ -344,8 +355,12 @@ class LDAPServers {
         
         var network = [String: [String]]()
         
+        myLogger.logit(3, message: "Looking for primary interface.")
+        
         let globalInterface = SCDynamicStoreCopyValue(store, "State:/Network/Global/IPv4")
         let interface = globalInterface!["PrimaryInterface"] as! String
+        
+        myLogger.logit(3, message: "Primary interface is " + interface)
         
         let val = SCDynamicStoreCopyValue(store, "State:/Network/Interface/" + interface + "/IPv4") as! NSDictionary
         

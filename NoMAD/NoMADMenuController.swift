@@ -49,7 +49,8 @@ let settings = [
     "RenewTickets"  :   1,
     "userPasswordExpireDate"    : "",
     "PasswordExpireAlertTime"   : 1296000,
-    "LastPasswordWarning"   : 1296000
+    "LastPasswordWarning"   : 1296000,
+    "HidePrefs"             : 0
 ]
 
 // set up a default defaults
@@ -170,7 +171,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 myLogger.logit(1, message:"Not using Self Service.")
             }
         }
-
         
         // listen for updates
         
@@ -336,7 +336,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     }
     
     
-    // opens up Casper Self Service - this should only be shown if Self Service exists on the machine
+    // opens up a self service portal - this should only be shown if Self Service exists on the machine
     
     @IBAction func NoMADMenuClickGetSoftware(sender: NSMenuItem) {
         switch SelfServiceType {
@@ -347,7 +347,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         }
     }
     
-    // this downloads the Bomgar client and launches it, passing in various bits of info
+    // this enagages help based upon preferences set
     
     @IBAction func NoMADMenuClickGetHelp(sender: NSMenuItem) {
     let myGetHelp = GetHelp()
@@ -450,6 +450,11 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.NoMADMenuLogOut.enabled = true
             self.NoMADMenuChangePassword.enabled = true
             self.NoMADMenuGetCertificate.enabled = true
+        }
+        
+        if defaults.boolForKey("HidePrefs") {
+                    self.NoMADMenuPreferences.enabled = false
+            myLogger.logit(2, message:"Preferences disabled")
         }
         
         return true
@@ -624,6 +629,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     self.NoMADMenuHiddenItem1.keyEquivalent = defaults.stringForKey("userCommandHotKey1")!
                 } else  {
                          self.NoMADMenuHiddenItem1.hidden = true
+                         self.NoMADMenuHiddenItem1.enabled = false
                 }
                 
                 // add home directory menu item
