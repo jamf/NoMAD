@@ -317,22 +317,27 @@ class LDAPServers {
             
             let currentNetwork = IP + "/" + String(subMask)
             
+            myLogger.logit(3, message:"Current Network: " + currentNetwork)
+            
             if currentNetwork == lastNetwork {
                 myLogger.logit(1, message: "Network hasn't changed. Skipping site lookup")
                 break
             }
             
             if subnetNetworks.contains(currentNetwork) {
+                myLogger.logit(3, message:"Current network found in subnet list.")
                 do {
                     myLogger.logit(3, message:"Trying site: cn=" + IP + "/" + String(subMask))
                     site = try getLDAPInformation("siteObject", baseSearch: false, searchTerm: "cn=" + currentNetwork, test: false)
                     myLogger.logit(1, message:"Using site: " + site.componentsSeparatedByString(",")[0].stringByReplacingOccurrencesOfString("CN=", withString: ""))
                 }
                 catch {
+                    myLogger.logit(0, message:"Error looking up site for network: " + currentNetwork)
                 }
             }
             
             if site != "" {
+                myLogger.logit(3, message:"Site found, looking up DCs for site.")
                 found = true
                 let siteDomain = site.componentsSeparatedByString(",")[0].stringByReplacingOccurrencesOfString("CN=", withString: "") + "._sites." + currentDomain
                 lastNetwork = currentNetwork
@@ -340,6 +345,7 @@ class LDAPServers {
                 testHosts()
             } else {
                 subMask -= 1
+                myLogger.logit(3, message:"No site found.")
                 site = "No site found."
                 lastNetwork = currentNetwork
             }
