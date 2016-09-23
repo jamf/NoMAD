@@ -5,6 +5,8 @@ Get all of AD, with none of the bind! From now on you'll have no mo' need of AD.
 NoMAD allows for all of the functionality you would want from a Mac bound to
 Active Directory without having to actually bind to AD.
 
+Supports macOS 10.10 and above.
+
 ***Features***
 
 - Get Kerberos credentials from AD to use for single sign on for all services using Windows Authentication.
@@ -56,7 +58,7 @@ Also you can find some of the team in #nomad on the Mac Admins Slack. If you're 
 
 ***Sierra Support***
 
-While not always tested on Sierra, it should work fine. Currently the project is in Swift 2.2. It almost nearly compiles in Swift 3.
+NoMAD is built and tested on Sierra using Swift 2.3. It almost nearly compiles in Swift 3.
 
 ***Experimental Branch***
 
