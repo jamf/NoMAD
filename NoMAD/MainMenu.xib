@@ -121,7 +121,6 @@
                 <outlet property="NoMADMenuSpewLogs" destination="pC8-5a-Aec" id="trl-C0-H9J"/>
                 <outlet property="NoMADMenuTicketLife" destination="QYf-mL-9ta" id="o7R-O3-Ea9"/>
                 <outlet property="NoMADMenuUserName" destination="uQI-ol-UUw" id="yMX-60-SOW"/>
-                <outlet property="NoMadMenuSeperator" destination="vag-tC-mEc" id="e6T-Xx-j0P"/>
             </connections>
         </customObject>
         <customObject id="3MP-7Q-tZN" userLabel="Delegate" customClass="AppDelegate" customModule="NoMAD" customModuleProvider="target"/>

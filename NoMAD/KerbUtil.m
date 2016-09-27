@@ -52,11 +52,6 @@ extern OSStatus SecKeychainChangePassword(SecKeychainRef keychainRef, UInt32 old
     return nil ;
 }
 
-- (NSInteger *)getKerbLifetimeForPrincipal:(NSString*)userPrincipal {
-    NSInteger *lifetime;
-    return lifetime;
-}
-
 - (NSString *)changeKerbPassword:(NSString *)oldPassword :(NSString *)newPassword :(NSString *)userPrincipal {
     
     OM_uint32 maj_stat ;

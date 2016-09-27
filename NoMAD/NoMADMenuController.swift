@@ -39,8 +39,6 @@ prefix func ~~(value: Int)->Bool{
 let settings = [
     "ADDomain" : "",
     "KerberosRealm" : "",
-    //"InternalSite"    : "",
-    //"InternalSiteIP" : "",
     "Verbose"   :   0,
     "userCommandHotKey1"    : "",
     "userCommandName1"  : "",
@@ -184,7 +182,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         userInformation.myLDAPServers.tickets.getDetails()
         
-        if ( defaults.boolForKey("UseKeychain")) && !userInformation.myLDAPServers.tickets.state {
+        autoLogin()
+        
+        // only autologin if 1) we're set to use the keychain, 2) we have don't already have a Kerb ticket and 3) we can contact the LDAP servers
+        
+        if ( defaults.boolForKey("UseKeychain")) && !userInformation.myLDAPServers.tickets.state && userInformation.myLDAPServers.currentState {
+            
             var myPass: String = ""
             // check if there's a last user
             if ( (defaults.stringForKey("LastUser") ?? "") != "" ) {
@@ -493,6 +496,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.userInformation.myLDAPServers.currentDomain = defaults.stringForKey("ADDomain")!
         }
         
+        autoLogin()
+        
         self.updateUserInfo()
         // })
     }
@@ -512,6 +517,33 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             statusItem.image = iconOffOff
         } else {
             statusItem.image = iconOnOn
+        }
+    }
+    
+    // function to see if we should autologin and then proceede accordingly
+    
+    func autoLogin()         {
+                // only autologin if 1) we're set to use the keychain, 2) we have don't already have a Kerb ticket and 3) we can contact the LDAP servers
+        if ( defaults.boolForKey("UseKeychain")) && !userInformation.myLDAPServers.tickets.state && userInformation.myLDAPServers.currentState {
+            myLogger.logit(1, message: "Attempting to auto-login")
+            
+                var myPass: String = ""
+            
+                // check if there's a last user
+            
+                if ( (defaults.stringForKey("LastUser") ?? "") != "" ) {
+                    var myErr: String? = ""
+                    do { myPass = try myKeychainUtil.findPassword(defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!) } catch {
+                        loginWindow.showWindow(nil)
+                    }
+                    myErr = GetCredentials.getKerbCredentials( myPass, defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!)
+                    if myErr != nil {
+                        myLogger.logit(0, message: "Error attempting to automatically log in.")
+                        loginWindow.showWindow(nil)
+                    } else {
+                        myLogger.logit(0, message:"Automatically logging in.")
+                        cliTask("/usr/bin/kswitch -p " +  defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!)}
+            }
         }
     }
     
@@ -540,7 +572,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             
             self.userInformation.getUserInfo()
             
-            dispatch_sync(dispatch_get_main_queue(), { () -> Void in
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 
                 // build the menu
                 
@@ -693,7 +725,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 defaults.setObject(Double(defaults.integerForKey("PasswordExpireAlertTime") ?? 1296000), forKey: "LastPasswordWarning")
             }
             
-        })
+                    })
             // mark the time and clear the update scheduled flag
             
             lastStatusCheck = NSDate()
