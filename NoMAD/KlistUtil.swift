@@ -31,23 +31,12 @@ class KlistUtil {
     var issue = NSDate()
     var dateFormatter = NSDateFormatter()
     var state = true
-    var rawTicket: NSData
+    var rawTicket: NSData = NSData()
     var realm = ""
     
     init() {
         dateFormatter.dateFormat = "yyyyMMddHHmmss"
-        myLogger.logit(3, message: "Getting list of tickets.")
-        let rawJSON = cliTask("/usr/bin/klist --json")
-        myLogger.logit(3, message: "Raw ticket cache: " + String(rawJSON))
-        rawTicket = rawJSON.dataUsingEncoding(NSUTF8StringEncoding)!
         realm = defaults.stringForKey("KerberosRealm") ?? ""
-        myLogger.logit(3, message:"Looking for tickets using realm: " + realm )
-        if returnAllTickets().containsString("cache") && returnAllTickets().containsString("@" + realm) {
-            myLogger.logit(0, message:"Tickets found.")
-        } else {
-            myLogger.logit(0, message:"No tickets found.")
-            state = false
-        }
     }
     
     func getTicketJSON() {
@@ -78,11 +67,11 @@ class KlistUtil {
         let rawCache = rawJSON.dataUsingEncoding(NSUTF8StringEncoding)!
         if returnAllTickets().containsString("cache") {
             myLogger.logit(0, message:"Tickets found.")
-            if returnAllTickets().containsString("@" + defaults.stringForKey("KerberosRealms")!) {
-                myLogger.logit(0, message:"Ticket found for domain: " + defaults.stringForKey("KerberosRealms")!)
+            if returnAllTickets().containsString("@" + defaults.stringForKey("KerberosRealm")!) {
+                myLogger.logit(0, message:"Ticket found for domain: " + defaults.stringForKey("KerberosRealm")!)
                 state = true
             } else {
-                myLogger.logit(0, message:"No ticket found for domain: " + defaults.stringForKey("KerberosRealms")!)
+                myLogger.logit(0, message:"No ticket found for domain: " + defaults.stringForKey("KerberosRealm")!)
                 state = false
             }
         } else {

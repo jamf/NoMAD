@@ -572,7 +572,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             
             self.userInformation.getUserInfo()
             
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            dispatch_sync(dispatch_get_main_queue(), { () -> Void in
                 
                 // build the menu
                 

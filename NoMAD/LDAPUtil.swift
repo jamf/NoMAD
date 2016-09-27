@@ -9,6 +9,7 @@
 import Foundation
 import Cocoa
 import SystemConfiguration
+import dnssd
 
 struct LDAPServer {
     var host: String
@@ -18,7 +19,7 @@ struct LDAPServer {
     var timeStamp: NSDate
 }
 
-class LDAPServers {
+class LDAPServers : NSObject {
     
     // defaults
     
@@ -42,7 +43,7 @@ class LDAPServers {
     
     // on init zero everything out
     
-    init() {
+    override init() {
         defaultNamingContext = ""
         currentState = false
         currentDomain = ""
@@ -326,9 +327,15 @@ class LDAPServers {
             
             if subnetNetworks.contains(currentNetwork) {
                 myLogger.logit(3, message:"Current network found in subnet list.")
+                myLogger.logit(3, message:"Using short list of sites.")
                 do {
                     myLogger.logit(3, message:"Trying site: cn=" + IP + "/" + String(subMask))
-                    site = try getLDAPInformation("siteObject", baseSearch: false, searchTerm: "cn=" + currentNetwork, test: false)
+                    let siteTemp = try getLDAPInformation("siteObject", baseSearch: false, searchTerm: "cn=" + currentNetwork, test: false)
+                    if siteTemp == "" {
+                        myLogger.logit(3, message: "Site was empty, ignoring site lookup.")
+                    } else {
+                        site = siteTemp
+                    }
                     myLogger.logit(1, message:"Using site: " + site.componentsSeparatedByString(",")[0].stringByReplacingOccurrencesOfString("CN=", withString: ""))
                 }
                 catch {
