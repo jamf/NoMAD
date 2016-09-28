@@ -39,6 +39,12 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
     }
     
     func windowWillClose(notification: NSNotification) {
+		// blank out the password fields
+		oldPassword.stringValue = ""
+		newPassword.stringValue = ""
+		newPasswordAgain.stringValue = ""
+		
+		// Update the Menubar info.
         delegate?.updateUserInfo()
     }
 	
@@ -107,7 +113,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 			myLogger.logit(1, message: "All fields are filled in, continuing")
 		}
 		// If the user entered the same value for both password fields.
-		if ( newPassword1 == newPassword2) {
+		if ( newPassword1 == newPassword2 ) {
 			let ChangePassword: KerbUtil = KerbUtil()
             myLogger.logit(0, message: "Change password for " + username )
             
@@ -160,6 +166,8 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 					myError = "Local password change failed"
 				}
 			}
+		} else {
+			myError = "New passwords don't match."
 		}
 		return myError
 	}

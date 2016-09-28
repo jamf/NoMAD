@@ -23,22 +23,22 @@ class GetHelp {
         getHelpType = ""
         getHelpOptions = ""
         enabled = false
-        
+		
         if let getHelpType = defaults.stringForKey("GetHelpType") {
             if let getHelpOptions = defaults.stringForKey("GetHelpOptions") {
                 self.getHelpOptions = getHelpOptions
                 self.getHelpType = getHelpType
 
                 enabled = true;
-            }
-            
-            else  {
+            } else {
                 print("Missing getHelpOptions key")
                 self.getHelpType = ""
                 self.getHelpOptions = ""
                 enabled = false
             }
-        }
+		} else {
+			print("Missing getHelpType key")
+		}
     }
     
     func getHelp() {
