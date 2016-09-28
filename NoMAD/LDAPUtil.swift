@@ -50,8 +50,8 @@ class LDAPServers : NSObject {
         lookupServers = true
         site = ""
         current = 0
-        myLogger.logit(2, message:"Looking up tickets.")
-        tickets.getDetails()
+        //myLogger.logit(2, message:"Looking up tickets.")
+        //tickets.getDetails()
     }
     
     // this sets the default domain, will take an optional value to determine if the user has a TGT for the domain
