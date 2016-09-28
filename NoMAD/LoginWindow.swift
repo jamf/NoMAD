@@ -142,8 +142,10 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                     self.Password.stringValue = ""
                     self.close()
                 })
-                
+				
             }
+			self.Password.stringValue = ""
+			self.close()
         } else {
             
             if defaults.integerForKey("Verbose") >= 1 {
