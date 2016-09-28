@@ -180,7 +180,7 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
         if ( KerberosRealmField.stringValue == "" ) {
             defaults.setObject(ADDomainTextField.stringValue.uppercaseString, forKey: "KerberosRealm")
         } else {
-            defaults.setObject(KerberosRealmField.stringValue, forKey: "KerberosRealm")
+            defaults.setObject(KerberosRealmField.stringValue.uppercaseString, forKey: "KerberosRealm")
         }
         //defaults.setObject(InternalSiteField.stringValue, forKey: "InternalSite")
         //defaults.setObject(InternalSiteIPField.stringValue, forKey: "InternalSiteIP")

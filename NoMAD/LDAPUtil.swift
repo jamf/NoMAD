@@ -332,7 +332,7 @@ class LDAPServers : NSObject {
                     myLogger.logit(3, message:"Trying site: cn=" + IP + "/" + String(subMask))
                     let siteTemp = try getLDAPInformation("siteObject", baseSearch: false, searchTerm: "cn=" + currentNetwork, test: false)
                     if siteTemp == "" {
-                        myLogger.logit(3, message: "Site was empty, ignoring site lookup.")
+                        myLogger.logit(3, message: "Site information was empty, ignoring site lookup.")
                     } else {
                         site = siteTemp
                     }
@@ -348,7 +348,15 @@ class LDAPServers : NSObject {
                 found = true
                 let siteDomain = site.componentsSeparatedByString(",")[0].stringByReplacingOccurrencesOfString("CN=", withString: "") + "._sites." + currentDomain
                 lastNetwork = currentNetwork
+                
+                // need to make sure the site has actual results
+                
+                let currentHosts = hosts
                 getHosts(siteDomain)
+                if hosts[0].host == "" {
+                    myLogger.logit(0, message: "Site has no DCs configured. Ignoring site. You should fix this.")
+                    hosts = currentHosts
+                }
                 testHosts()
             } else {
                 subMask -= 1
@@ -614,6 +622,7 @@ class LDAPServers : NSObject {
         }
         
         if hosts.last!.status == "dead" {
+            myLogger.logit(0, message: "All DCs in are dead! You should really fix this.")
             self.currentState = false
         } else {
             self.currentState = true
