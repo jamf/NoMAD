@@ -76,7 +76,21 @@ class GetHelp {
     
     private func subVariables( url: String ) -> String? {
         // TODO: get e-mail address as a variable
-        
+		var createdURL = url;
+		if let domain = defaults.stringForKey("ADDomain") {
+			createdURL = createdURL.stringByReplacingOccurrencesOfString("<<domain>>", withString: domain)
+		}
+		if let fullName = defaults.stringForKey("displayName")!.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet()) {
+			createdURL = createdURL.stringByReplacingOccurrencesOfString("<<fullname>>", withString: fullName)
+		}
+		if let serial = getSerial().stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet()) {
+			createdURL = createdURL.stringByReplacingOccurrencesOfString("<<serial>>", withString: serial)
+		}
+		let shortName = defaults.stringForKey("UserShortName") ?? ""
+		createdURL = createdURL.stringByReplacingOccurrencesOfString("<<shortname>>", withString: shortName)
+		
+		return createdURL
+        /*
         if let domain = defaults.stringForKey("ADDomain") {
             if let fullName = defaults.stringForKey("displayName")!.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet()) {
                 let shortName = defaults.stringForKey("UserShortName") ?? ""
@@ -100,5 +114,6 @@ class GetHelp {
         print("ADDomain key failure")
         
         return ""
+	*/
     }
 }
