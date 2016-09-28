@@ -220,6 +220,14 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 defaults.setObject(0, forKey: "Verbose")
             }
             
+            if ( ( defaults.stringForKey("KerberosRealm") ?? "") == "" ) {
+                myLogger.logit(1, message: "Realm not setting, so creating Realm from the Domain.")
+                defaults.setObject(defaults.stringForKey("ADDomain")?.uppercaseString, forKey: "KerberosRealm")
+            }
+            
+            //myLogger.logit(1, message: "Configuring Chrome.")
+            //configureChrome()
+            
             doTheNeedfull()
         }
         
@@ -545,6 +553,13 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         cliTask("/usr/bin/kswitch -p " +  defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!)}
             }
         }
+    }
+    
+    // function to configure Chrome
+    
+    func configureChrome() {
+        cliTask("defaults write com.google.Chrome AuthServerWhiteList \"*." + defaults.stringForKey("ADDomain")! + "\"")
+        cliTask("defaults write com.google.Chrome AuthNegotiateDelegateWhitelist \"*." + defaults.stringForKey("ADDomain")! + "\"")
     }
     
     // update the user info and build the actual menu

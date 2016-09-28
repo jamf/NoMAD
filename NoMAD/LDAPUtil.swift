@@ -327,7 +327,6 @@ class LDAPServers : NSObject {
             
             if subnetNetworks.contains(currentNetwork) {
                 myLogger.logit(3, message:"Current network found in subnet list.")
-                myLogger.logit(3, message:"Using short list of sites.")
                 do {
                     myLogger.logit(3, message:"Trying site: cn=" + IP + "/" + String(subMask))
                     let siteTemp = try getLDAPInformation("siteObject", baseSearch: false, searchTerm: "cn=" + currentNetwork, test: false)
@@ -361,10 +360,12 @@ class LDAPServers : NSObject {
             } else {
                 subMask -= 1
                 myLogger.logit(3, message:"No site found.")
-                site = "No site found."
-                lastNetwork = currentNetwork
             }
-            //   }
+
+        }
+        if site == "" {
+            site = "No site found"
+            myLogger.logit(0, message: "No matching sites found")
         }
         defaultNamingContext = tempDefaultNamingContext
         myLogger.logit(2, message:"Resetting default naming context to: " + defaultNamingContext)
