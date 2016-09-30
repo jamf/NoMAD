@@ -18,6 +18,8 @@
 		1A26AFF71D46E4BF000776A4 /* GetHelp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A26AFF61D46E4BF000776A4 /* GetHelp.swift */; };
 		1ADCEC621D75476D005D33F5 /* ShareMounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ADCEC611D75476D005D33F5 /* ShareMounter.swift */; };
 		1AFEAC361D68FEAF00B7FA88 /* UserInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AFEAC351D68FEAF00B7FA88 /* UserInformation.swift */; };
+		34E186BF1D9C681000265138 /* DNSResolver.m in Sources */ = {isa = PBXBuildFile; fileRef = 34E186BE1D9C681000265138 /* DNSResolver.m */; };
+		34E186C21D9E405400265138 /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 34E186C11D9E405400265138 /* libresolv.tbd */; };
 		8454EFDB1D34ADA600422D4E /* NSTaskWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454EFDA1D34ADA600422D4E /* NSTaskWrapper.swift */; };
 		8454EFDD1D34ADEE00422D4E /* PasswordChangeWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454EFDC1D34ADEE00422D4E /* PasswordChangeWindow.swift */; };
 		8454EFE51D35968100422D4E /* LoginWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454EFE41D35968100422D4E /* LoginWindow.swift */; };
@@ -56,6 +58,9 @@
 		1A26AFF61D46E4BF000776A4 /* GetHelp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetHelp.swift; sourceTree = "<group>"; };
 		1ADCEC611D75476D005D33F5 /* ShareMounter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareMounter.swift; sourceTree = "<group>"; };
 		1AFEAC351D68FEAF00B7FA88 /* UserInformation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInformation.swift; sourceTree = "<group>"; };
+		34E186BD1D9C681000265138 /* DNSResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DNSResolver.h; sourceTree = "<group>"; };
+		34E186BE1D9C681000265138 /* DNSResolver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DNSResolver.m; sourceTree = "<group>"; };
+		34E186C11D9E405400265138 /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
 		8454EFDA1D34ADA600422D4E /* NSTaskWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSTaskWrapper.swift; sourceTree = "<group>"; };
 		8454EFDC1D34ADEE00422D4E /* PasswordChangeWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordChangeWindow.swift; sourceTree = "<group>"; };
 		8454EFE41D35968100422D4E /* LoginWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginWindow.swift; sourceTree = "<group>"; };
@@ -84,6 +89,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34E186C21D9E405400265138 /* libresolv.tbd in Frameworks */,
 				84CC67EC1D30A1A500115C76 /* GSS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -98,13 +104,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		84CC67D21D30A18A00115C76 = {
+		34E186C01D9E405400265138 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				84CC67EB1D30A1A500115C76 /* GSS.framework */,
+				34E186C11D9E405400265138 /* libresolv.tbd */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		84CC67D21D30A18A00115C76 = {
+			isa = PBXGroup;
+			children = (
 				84CC67DD1D30A18A00115C76 /* NoMAD */,
 				BF34324B1D52844300CE8F89 /* NoMADTests */,
 				84CC67DC1D30A18A00115C76 /* Products */,
+				34E186C01D9E405400265138 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -147,6 +162,8 @@
 				1A206B2C1D58312800539FA6 /* KeychainUtil.swift */,
 				1AFEAC351D68FEAF00B7FA88 /* UserInformation.swift */,
 				1A24EF471D7F01B3006A1866 /* Logger.swift */,
+				34E186BD1D9C681000265138 /* DNSResolver.h */,
+				34E186BE1D9C681000265138 /* DNSResolver.m */,
 			);
 			path = NoMAD;
 			sourceTree = "<group>";
@@ -210,7 +227,6 @@
 				TargetAttributes = {
 					84CC67DA1D30A18A00115C76 = {
 						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = AAPZK3CB24;
 						LastSwiftMigration = 0800;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
@@ -287,6 +303,7 @@
 				1A24EF481D7F01B3006A1866 /* Logger.swift in Sources */,
 				1A08F1F11D36CEB800FA68C4 /* UserInfo.swift in Sources */,
 				1A08F1F31D36DA0900FA68C4 /* NoMADApplication.swift in Sources */,
+				34E186BF1D9C681000265138 /* DNSResolver.m in Sources */,
 				84996CAD1D503F9700793747 /* PreferencesWindow.swift in Sources */,
 				84CC68051D30A25500115C76 /* NoMADMenuController.swift in Sources */,
 			);
@@ -403,10 +420,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = NoMAD/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
@@ -425,10 +443,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = NoMAD/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
