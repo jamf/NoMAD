@@ -247,15 +247,15 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         }
         
         if baseSearch {
-            myResult = cleanLDAPResults(cliTask("/usr/bin/ldapsearch -Q -LLL -s base -H ldap://" + self.currentServer + " -b " + self.defaultNamingContext + " " + searchTerm + " " + attribute), attribute: attribute)
+            myResult = cleanLDAPResults(cliTask("/usr/bin/ldapsearch -N -Q -LLL -s base -H ldap://" + self.currentServer + " -b " + self.defaultNamingContext + " " + searchTerm + " " + attribute), attribute: attribute)
         } else {
-            myResult = cleanLDAPResultsMultiple(cliTask("/usr/bin/ldapsearch -Q -LLL -H ldap://" + self.currentServer + " -b " + self.defaultNamingContext + " " + searchTerm + " " + attribute), attribute: attribute)
+            myResult = cleanLDAPResultsMultiple(cliTask("/usr/bin/ldapsearch -N -Q -LLL -H ldap://" + self.currentServer + " -b " + self.defaultNamingContext + " " + searchTerm + " " + attribute), attribute: attribute)
         }
         return myResult
     }
     
     func returnFullRecord(searchTerm: String) -> String {
-        let myResult = cliTaskNoTerm("/usr/bin/ldapsearch -Q -LLL -H ldap://" + self.currentServer + " -b " + self.defaultNamingContext + " " + searchTerm )
+        let myResult = cliTaskNoTerm("/usr/bin/ldapsearch -N -Q -LLL -H ldap://" + self.currentServer + " -b " + self.defaultNamingContext + " " + searchTerm )
         return myResult
     }
     
@@ -515,7 +515,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
             myLogger.logit(1, message:"Testing " + host + ".")
         }
         
-        let myLDAPResult = cliTask("/usr/bin/ldapsearch -LLL -Q -l 3 -s base -H ldap://" + host + " defaultNamingContext")
+        let myLDAPResult = cliTask("/usr/bin/ldapsearch -N -LLL -Q -l 3 -s base -H ldap://" + host + " defaultNamingContext")
         if myLDAPResult != "" && !myLDAPResult.containsString("GSSAPI Error") && !myLDAPResult.containsString("Can't contact") {
             defaultNamingContext = cleanLDAPResults(myLDAPResult, attribute: "defaultNamingContext")
             return true
@@ -539,7 +539,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         }
         if (self.resolver.error == nil) {
             myLogger.logit(3, message: "Did Receive Query Result: " + self.resolver.queryResults.description)
-            let dnsResults = self.resolver.queryResults as! [[String:AnyObject]]
+            //let dnsResults = self.resolver.queryResults as! [[String:AnyObject]]
             currentState = true
             return true
         } else {
@@ -549,6 +549,30 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         }
     }
 	
+    func getSRVRecords(domain: String, srv_type: String="_ldap._tcp.") -> [String] {
+        self.resolver.queryType = "SRV"
+        self.resolver.queryValue = srv_type + domain
+        var results = [String]()
+
+        self.resolver.startQuery()
+        
+        while ( !self.resolver.finished ) {
+            NSRunLoop.currentRunLoop().runMode(NSDefaultRunLoopMode, beforeDate: NSDate.distantFuture())
+        }
+        
+        if (self.resolver.error == nil) {
+            myLogger.logit(3, message: "Did Receive Query Result: " + self.resolver.queryResults.description)
+            let records = self.resolver.queryResults as! [[String:AnyObject]]
+            for record: Dictionary in records {
+                let host = record["target"] as! String
+                results.append(host)
+            }
+            
+        } else {
+            myLogger.logit(3, message: "Query Error: " + self.resolver.error.description)
+        }
+        return results
+    }
 	
 	// get the list of LDAP servers from a SRV lookup
 	// Uses DNSResolver
@@ -662,7 +686,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
                         
                         // if socket test works, then attempt ldapsearch to get default naming context
                         
-                        let myResult = cliTaskNoTerm("/usr/bin/ldapsearch -LLL -Q -l 3 -s base -H ldap://" + hosts[i].host + " defaultNamingContext")
+                        let myResult = cliTaskNoTerm("/usr/bin/ldapsearch -N -LLL -Q -l 3 -s base -H ldap://" + hosts[i].host + " defaultNamingContext")
                         if myResult != "" {
                             defaultNamingContext = cleanLDAPResults(myResult, attribute: "defaultNamingContext")
                             hosts[i].status = "live"

@@ -201,6 +201,8 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
     // write out local krb5.conf file to ensure password change happens to the same kdc as we're using for LDAP
     
     private func checkKpasswdServer(writePref: Bool ) -> Bool {
+        
+        //let myKpasswdServers = delegate?.userInformation.myLDAPServers.getSRVRecords(domain: defaults.stringForKey("ADDomain")!, srv_type: "_kdc._tcp")
         let myKpasswdServers = cliTask("/usr/bin/dig +short -t SRV _kpasswd._tcp." + defaults.stringForKey("ADDomain")!)
         
         if myKpasswdServers.containsString(defaults.stringForKey("CurrentLDAPServer")!) {
