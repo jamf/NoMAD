@@ -527,18 +527,25 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     // this checks to see if we can get SRV records for the domain
     
     private func checkConnectivity( domain: String ) -> Bool {
-		
-		
-        let dnsResults = cliTask("/usr/bin/dig +short -t SRV _ldap._tcp." + domain).componentsSeparatedByString("\n")
+
+        //let dnsResults = cliTask("/usr/bin/dig +short -t SRV _ldap._tcp." + domain).componentsSeparatedByString("\n")
         
-        // check to make sure we got a result
+        self.resolver.queryType = "SRV"
+        self.resolver.queryValue = "_ldap._tcp." + domain
+        self.resolver.startQuery()
         
-        if dnsResults[0] == "" || dnsResults[0].containsString("connection timed out") {
-            currentState = false
-            return false
-        } else {
+        while ( !self.resolver.finished ) {
+            NSRunLoop.currentRunLoop().runMode(NSDefaultRunLoopMode, beforeDate: NSDate.distantFuture())
+        }
+        if (self.resolver.error == nil) {
+            myLogger.logit(3, message: "Did Receive Query Result: " + self.resolver.queryResults.description)
+            let dnsResults = self.resolver.queryResults as! [[String:AnyObject]]
             currentState = true
             return true
+        } else {
+             myLogger.logit(2, message: "Can't find any SRV records for domain.")
+            currentState = false
+            return false
         }
     }
 	
