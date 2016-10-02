@@ -13,7 +13,7 @@
 
 @interface DNSResolver : NSObject
 
-- initWithQueryTypeAndValue:(NSString*)queryType :(NSString*)queryValue;
+- initWithQueryType:(NSString*)queryType andValue:(NSString*)queryValue;
 
 // Setup by init...
 @property NSString *												queryType; //SRV,
@@ -22,8 +22,8 @@
 @property (nonatomic, weak,   readwrite) id<DNSResolverDelegate>	delegate;
 
 // Properties set by class methods.
-@property (nonatomic, assign, readonly, getter=isFinished) BOOL		finished;   // observable
-@property (nonatomic, copy,   readonly ) NSError *					error;      // observable
+@property (nonatomic, assign, readonly) BOOL						finished;   // observable
+@property (nonatomic, copy,   readonly) NSError *					error;      // observable
 @property (readonly) NSArray *										queryResults;
 
 -(void)startQuery;

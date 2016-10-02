@@ -12,11 +12,11 @@
 
 @interface DNSResolver ()
 
-@property (nonatomic, assign, readwrite, getter=isFinished) BOOL    finished;
-@property (nonatomic, copy,   readwrite) NSError					*error;
+@property (nonatomic, assign, readwrite) BOOL				finished;
+@property (nonatomic, copy,   readwrite) NSError			*error;
 
 // Private Properties
-@property (nonatomic, strong, readonly) NSMutableArray				*mutableQueryResponse;
+@property (nonatomic, strong, readonly) NSMutableArray		*mutableQueryResponse;
 
 @end
 
@@ -31,7 +31,15 @@
 @synthesize delegate = _delegate;
 
 
-- (id)initWithQueryTypeAndValue:(NSString *)queryType :(NSString *)queryValue {
+- init {
+	self = [super init];
+	if (self != nil) {
+		self->_mutableQueryResponse = [[NSMutableArray alloc] init];
+	}
+	return self;
+}
+
+- initWithQueryType:(NSString*)queryType andValue:(NSString*)queryValue {
 	assert(queryType != nil);
 	assert(queryValue != nil);
 	self = [super init];
@@ -57,7 +65,7 @@
 	}
 }
 
--(uint16_t)getType {
+-(uint16_t)getTypeAsInt {
 	uint16_t recordType;
 	if ([self.queryType isEqualToString:@"SRV"]) {
 		recordType = kDNSServiceType_SRV;
@@ -89,7 +97,7 @@
 	// Create a query for the type and value
 	if (err == kDNSServiceErr_NoError) {
 		// perform different types of query based on queryType...
-		uint16_t recordType = [self getType];
+		uint16_t recordType = [self getTypeAsInt];
 		
 		// Create the DNS Query and reference it in self->_dnsService
 		err = DNSServiceQueryRecord(
@@ -193,7 +201,7 @@ static void DNSSocketCallback(
 	u8 = 0;
 	[resourceRecordData appendBytes:&u8 length:sizeof(u8)];
 	// DNS Type
-	uint16_t recordType = [self getType];
+	uint16_t recordType = [self getTypeAsInt];
 	u16 = htons(recordType);
 	[resourceRecordData appendBytes:&u16 length:sizeof(u16)];
 	// DNS Class
@@ -211,9 +219,35 @@ static void DNSSocketCallback(
 	resourceRecord = dns_parse_resource_record([resourceRecordData bytes], (uint32_t) [resourceRecordData length]);
 	
 	if (resourceRecord != NULL) {
-		NSString *	target;
 		
-		NSLog(@"Resource Record data: %@", resourceRecord);
+		if ([self.queryType isEqualToString:@"SRV"]) {
+			NSString *	target = [NSString stringWithCString:resourceRecord->data.SRV->target encoding:NSASCIIStringEncoding];
+			if (target != nil) {
+				NSDictionary *  result;
+				NSIndexSet *    resultIndexSet;
+				
+				result = [NSDictionary dictionaryWithObjectsAndKeys:
+						  [NSNumber numberWithUnsignedInt:resourceRecord->data.SRV->priority], kSRVResolverPriority,
+						  [NSNumber numberWithUnsignedInt:resourceRecord->data.SRV->weight],   kSRVResolverWeight,
+						  [NSNumber numberWithUnsignedInt:resourceRecord->data.SRV->port],     kSRVResolverPort,
+						  target,                                                  kSRVResolverTarget,
+						  nil
+						  ];
+				assert(result != nil);
+				
+				resultIndexSet = [NSIndexSet indexSetWithIndex:self.queryResults.count];
+				assert(resultIndexSet != nil);
+				
+				[self willChange:NSKeyValueChangeInsertion valuesAtIndexes:resultIndexSet forKey:@"results"];
+				[self.mutableQueryResponse addObject:result];
+				[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:resultIndexSet forKey:@"results"];
+				
+				if ( (self.delegate != nil) && [self.delegate respondsToSelector:@selector(srvResolver:didReceiveResult:)] ) {
+					[self.delegate dnsResolver:self didReceiveQueryResult:result];
+				}
+			}
+			
+		}
 		
 		dns_free_resource_record(resourceRecord);
 	}

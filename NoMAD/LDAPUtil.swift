@@ -9,7 +9,7 @@
 import Foundation
 import Cocoa
 import SystemConfiguration
-import dnssd
+// import dnssd
 
 struct LDAPServer {
     var host: String
@@ -19,8 +19,7 @@ struct LDAPServer {
     var timeStamp: NSDate
 }
 
-class LDAPServers : NSObject {
-    
+class LDAPServers : NSObject, DNSResolverDelegate {
     // defaults
     
     var hosts = [LDAPServer]()
@@ -50,6 +49,8 @@ class LDAPServers : NSObject {
         lookupServers = true
         site = ""
         current = 0
+		
+		self.resolver = DNSResolver.init()
         //myLogger.logit(2, message:"Looking up tickets.")
         //tickets.getDetails()
     }
@@ -526,7 +527,8 @@ class LDAPServers : NSObject {
     // this checks to see if we can get SRV records for the domain
     
     private func checkConnectivity( domain: String ) -> Bool {
-        
+		
+		
         let dnsResults = cliTask("/usr/bin/dig +short -t SRV _ldap._tcp." + domain).componentsSeparatedByString("\n")
         
         // check to make sure we got a result
@@ -539,11 +541,69 @@ class LDAPServers : NSObject {
             return true
         }
     }
-    
-    // get the list of LDAP servers from an SRV lookup
-    
+	
+	
+	// get the list of LDAP servers from a SRV lookup
+	// Uses DNSResolver
+	func getHosts(domain: String ) {
+		self.resolver.queryType = "SRV"
+		self.resolver.queryValue = "_ldap._tcp." + domain
+		self.resolver.startQuery()
+		
+		while ( !self.resolver.finished ) {
+			NSRunLoop.currentRunLoop().runMode(NSDefaultRunLoopMode, beforeDate: NSDate.distantFuture())
+		}
+		
+		if (self.resolver.error == nil) {
+			myLogger.logit(3, message: "Did Receive Query Result: " + self.resolver.queryResults.description)
+			
+			var newHosts = [LDAPServer]()
+			let records = self.resolver.queryResults as! [[String:AnyObject]]
+			for record: Dictionary in records {
+				let host = record["target"] as! String
+				let priority = record["priority"] as! Int
+				let weight = record["weight"] as! Int
+				// let port = record["port"] as! Int
+				let currentServer = LDAPServer(host: host, status: "found", priority: priority, weight: weight, timeStamp: NSDate())
+				newHosts.append(currentServer)
+			}
+			
+			// now to sort them
+			
+			hosts = newHosts.sort { (x, y) -> Bool in
+				return ( x.priority <= y.priority )
+			}
+			self.currentState = true
+			
+		} else {
+			myLogger.logit(3, message: "Query Error: " + self.resolver.error.description)
+			self.currentState = false
+			hosts.removeAll()
+		}
+	}
+	
+	/*
+	// get the list of LDAP servers from an SRV lookup
+	// Uses cliTask
     func getHosts(domain: String ) {
-        
+		// Testing DNSResolver.
+		//self.resolver = DNSResolver.init(queryType: "SRV", andValue: "_ldap._tcp." + domain)
+		self.resolver.queryType = "SRV"
+		self.resolver.queryValue = "_ldap._tcp." + domain
+		self.resolver.startQuery()
+		
+		while ( !self.resolver.finished ) {
+			NSRunLoop.currentRunLoop().runMode(NSDefaultRunLoopMode, beforeDate: NSDate.distantFuture())
+		}
+		
+		if (self.resolver.error == nil) {
+			//print(self.resolver.queryResults.description)
+			myLogger.logit(3, message: "Did Receive Query Result: " + self.resolver.queryResults.description)
+		} else {
+			//print(self.resolver.error.description)
+			myLogger.logit(3, message: "Query Error: " + self.resolver.error.description)
+		}
+		
         var newHosts = [LDAPServer]()
         var dnsResults = cliTask("/usr/bin/dig +short -t SRV _ldap._tcp." + domain).componentsSeparatedByString("\n")
         
@@ -576,7 +636,8 @@ class LDAPServers : NSObject {
             self.currentState = true
         }
     }
-    
+    */
+	
     // test the list of LDAP servers by iterating through them
     
     func testHosts() {
@@ -629,4 +690,16 @@ class LDAPServers : NSObject {
             self.currentState = true
         }
     }
+	
+	// MARK: DNSResolver Delegate Methods
+	var resolver: DNSResolver;
+	
+	func dnsResolver(resolver: DNSResolver!, didReceiveQueryResult queryResult: [NSObject : AnyObject]!) {
+		myLogger.logit(3, message: "Did Recieve Query Result: " + queryResult.description);
+	}
+
+	func dnsResolver(resolver: DNSResolver!, didStopQueryWithError error: NSError!) {
+		myLogger.logit(3, message: "Did Recieve Query Result: " + error.description);
+	}
+	
 }

@@ -5,3 +5,4 @@
 //
 
 #import "KerbUtil.h"
+#import "DNSResolver.h"
