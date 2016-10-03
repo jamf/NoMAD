@@ -54,23 +54,22 @@ class GetHelp {
                 
             case "URL":
                 if let myURL = subVariables(getHelpOptions) {
-                    cliTask("/usr/bin/open " + myURL )
+					let url = NSURL(string: myURL)
+					NSWorkspace.sharedWorkspace().openURL( url! )
                 }
                 
             case "App":
                 cliTask("/usr/bin/open " + getHelpOptions.stringByReplacingOccurrencesOfString(" ", withString: "\\ ") )
             
             default:
-                
-                // we will most likely never get here...
-                cliTask("/usr/bin/open http://www.apple.com/support")
-                
+				let url = NSURL(string: "http://www.apple.com/support")!
+				NSWorkspace.sharedWorkspace().openURL( url )
             }
-        }
-        
-        else {
+        } else {
             NSLog("Invalid getHelpType or getHelpOptions, defaulting to www.apple.com/support")
-            cliTask("/usr/bin/open http://www.apple.com/support")
+			let url = NSURL(string: "http://www.apple.com/support")!
+			NSWorkspace.sharedWorkspace().openURL( url )
+			
         }
     }
     

@@ -29,7 +29,6 @@ class WindowsCATools {
         // we should return this in case there's an error 
         
         // TODO: Don't use certtool for this, but SecTransform to create the CSR
-        
         cliTask("/usr/bin/certtool r " + directoryURL.URLByAppendingPathComponent("new.csr")!.path! + " Z")
         
         let path = directoryURL.URLByAppendingPathComponent("new.csr")
@@ -49,28 +48,28 @@ class WindowsCATools {
         // do it all
         // set up the completion handler
         
-        let myCompletionHandler: (NSData?, NSURLResponse?, NSError?) -> Void = {(data, response, error) in
-            if (response != nil) {
+        let myCompletionHandler: (NSData?, NSURLResponse?, NSError?) -> Void = { (data, response, error) in
+			if (response != nil) {
 
-                let httpResponse = response as! NSHTTPURLResponse
-                
-                if (httpResponse.statusCode >= 200 && httpResponse.statusCode < 500) {
-                }
+				let httpResponse = response as! NSHTTPURLResponse
+				
+				if (httpResponse.statusCode >= 200 && httpResponse.statusCode < 500) {
+				}
 			}
-            
-            if (data != nil ) {
+			
+			if (data != nil ) {
 
-            }
-            
-            if (error != nil) {
-                print(error!)
-            }
-        }
+			}
+			
+			if (error != nil) {
+				print(error!)
+			}
+		}
         
         
         var myReqID = 0
         
-       submitCert(certTemplate, completionHandler: {(data, response, error) in
+		submitCert(certTemplate, completionHandler: { (data, response, error) in
             if (response != nil) {
 
                 let httpResponse = response as! NSHTTPURLResponse
@@ -80,34 +79,34 @@ class WindowsCATools {
             
             if (data != nil ) {
                 do {
-                myReqID = try self.findReqID(data!)} catch { }
-                self.getCert(myReqID, completionHandler:
-                    {(data, response, error) in
-                        if (response != nil) {
-                            let httpResponse = response as! NSHTTPURLResponse
-                            
-                            if (httpResponse.statusCode >= 200 && httpResponse.statusCode < 500) {
-                            }            }
-                        
-                        if (data != nil ) {
-                            
-                            let myCertRef = SecCertificateCreateWithData(nil, data!)
+					myReqID = try self.findReqID(data!)
+				} catch { }
+                self.getCert( myReqID, completionHandler: { (data, response, error) in
+					if (response != nil) {
+						let httpResponse = response as! NSHTTPURLResponse
+						
+						if (httpResponse.statusCode >= 200 && httpResponse.statusCode < 500) {
+						}            }
+					
+					if (data != nil ) {
+						
+						let myCertRef = SecCertificateCreateWithData(nil, data!)
 
-                            let dictionary: [NSString: AnyObject] = [
-                                kSecClass: kSecClassCertificate,
-                                kSecValueRef: myCertRef!,
-                            ];
-                            
-                            self.myImportError = SecItemAdd(dictionary, nil)
-                            
-                            print(self.myImportError)
-                            
-                            print(SecCopyErrorMessageString(self.myImportError, nil))
-                        }
-                        
-                        if (error != nil) {
-                            print(error!)
-                        }
+						let dictionary: [NSString: AnyObject] = [
+							kSecClass: kSecClassCertificate,
+							kSecValueRef: myCertRef!,
+						];
+						
+						self.myImportError = SecItemAdd(dictionary, nil)
+						
+						print(self.myImportError)
+						
+						print(SecCopyErrorMessageString(self.myImportError, nil))
+					}
+					
+					if (error != nil) {
+						print(error!)
+					}
                 })
                 
             }

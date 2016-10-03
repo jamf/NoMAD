@@ -10,6 +10,7 @@
 
 import Foundation
 import SystemConfiguration
+import IOKit
 
 public func cliTask( command: String) -> String {
     
@@ -140,7 +141,7 @@ public func getConsoleUser() -> String {
 
 
 // get serial number -- there's an IOKit way of doing this, but this is simpler
-
+/*
 public func getSerial() -> String {
     
     let mySerialOutput = cliTaskNoTerm("/usr/sbin/system_profiler SPHardwareDataType").componentsSeparatedByString("\n")
@@ -153,6 +154,21 @@ public func getSerial() -> String {
         }
     }
     return mySerial
+}
+*/
+
+public func getSerial() -> String {
+	
+	guard let platformExpert: io_service_t = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("IOPlatformExpertDevice")),
+	let platformSerialNumberKey: CFString = kIOPlatformSerialNumberKey else
+	{
+		return "Unknown"
+	}
+	
+	let serialNumberAsCFString = IORegistryEntryCreateCFProperty(platformExpert, platformSerialNumberKey, kCFAllocatorDefault, 0)
+	let serialNumber = serialNumberAsCFString.takeUnretainedValue() as! String
+	return serialNumber
+	
 }
 
 // get hardware MAC addresss

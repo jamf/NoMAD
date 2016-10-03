@@ -59,7 +59,7 @@ let userNotificationCenter = NSUserNotificationCenter.defaultUserNotificationCen
 var selfServiceExists = false
 let myLogger = Logger()
 
-class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate, PreferencesWindowDelegate {
+class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate, PreferencesWindowDelegate, NSMenuDelegate {
     
     // menu item connections
     
@@ -79,7 +79,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     @IBOutlet weak var NoMADMenuSpewLogs: NSMenuItem!
     @IBOutlet weak var NoMADMenuTicketLife: NSMenuItem!
     @IBOutlet weak var NoMADMenuLogInAlternate: NSMenuItem!
-    
+	
+	
+	
     let NoMADMenuHome = NSMenuItem()
     
     // menu bar icons
@@ -122,7 +124,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         menuAnimationTimer = NSTimer(timeInterval: 0.5, target: self, selector: #selector(animateMenuItem), userInfo: nil, repeats: true)
         statusItem.menu = NSMenu()
-           NSRunLoop.currentRunLoop().addTimer(menuAnimationTimer, forMode: NSDefaultRunLoopMode)
+		//statusItem.menu!.delegate = self
+		//self.NoMADMenu.delegate = self
+		NSRunLoop.currentRunLoop().addTimer(menuAnimationTimer, forMode: NSDefaultRunLoopMode)
         // menuAnimationTimer.fire()
         
         preferencesWindow = PreferencesWindow()
@@ -132,6 +136,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         loginWindow.delegate = self
         passwordChangeWindow.delegate = self
         preferencesWindow.delegate = self
+		
+		//Allows us to force windows to show when menu clicked.
+		self.NoMADMenu.delegate = self
         
         dateFormatter.dateStyle = .MediumStyle
         dateFormatter.timeStyle = .ShortStyle
@@ -236,9 +243,27 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         }
         menuAnimationTimer.invalidate()
     }
-    
-    // actions for the menu items
-    
+	
+	
+	// MARK: Menu Items' Actions
+	// User clicked on Menubar Icon
+	
+	func menuWillOpen(menu: NSMenu) {
+		// Show all windows.
+		NSApp.activateIgnoringOtherApps(true)
+		// Activate individual windows
+		// TODO: figure out why this doesn't work...
+		/*
+		for window in NSApp.windows {
+			if (window == self.loginWindow) {
+				window.makeKeyWindow()
+			}
+		}
+		*/
+		
+	}
+	
+	
     // show the login window when the menu item is clicked
     
     @IBAction func NoMADMenuClickLogIn(sender: NSMenuItem) {
@@ -272,7 +297,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // show the password change window when the menu item is clicked
     
     @IBAction func NoMADMenuClickChangePassword(sender: NSMenuItem) {
-             passwordChangeWindow.showWindow(nil)
+		passwordChangeWindow.showWindow(nil)
+		
     }
     
     // kill the Kerb ticket when clicked
@@ -281,24 +307,25 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         // remove their password from the keychain if they're logging out
         
-    if ( (defaults.stringForKey("LastUser") ?? "") != "" ) {
+		if ( (defaults.stringForKey("LastUser") ?? "") != "" ) {
         
-        if ( defaults.boolForKey("UseKeychain")) {
-            var myKeychainItem: SecKeychainItem?
-                
-                var myErr: OSStatus
-                let serviceName = "NoMAD"
-                var passLength: UInt32 = 0
-                var passPtr: UnsafeMutablePointer<Void> = nil
-                let name = defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!
-                
-                myErr = SecKeychainFindGenericPassword(nil, UInt32(serviceName.characters.count), serviceName, UInt32(name.characters.count), name, &passLength, &passPtr, &myKeychainItem)
-                
-               if ( myErr == 0 )
-               { SecKeychainItemDelete(myKeychainItem!) } else {
-                myLogger.logit(0, message:"Error deleting Keychain entry.")
-                }
-            }
+			if ( defaults.boolForKey("UseKeychain")) {
+				var myKeychainItem: SecKeychainItem?
+					
+					var myErr: OSStatus
+					let serviceName = "NoMAD"
+					var passLength: UInt32 = 0
+					var passPtr: UnsafeMutablePointer<Void> = nil
+					let name = defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!
+					
+					myErr = SecKeychainFindGenericPassword(nil, UInt32(serviceName.characters.count), serviceName, UInt32(name.characters.count), name, &passLength, &passPtr, &myKeychainItem)
+					
+					if ( myErr == 0 ) {
+						SecKeychainItemDelete(myKeychainItem!)
+					} else {
+						myLogger.logit(0, message:"Error deleting Keychain entry.")
+					}
+			}
         } else {
             loginWindow.showWindow(nil)
         }
@@ -351,9 +378,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     
     @IBAction func NoMADMenuClickGetSoftware(sender: NSMenuItem) {
         switch SelfServiceType {
-        case "Casper" :     cliTask("/usr/bin/open /Applications/Self\\ Service.app")
-        case "LANRev" :     cliTask("/Library/Application\\ Support/LANrev\\ Agent/LANrev\\ Agent.app/Contents/MacOS/LANrev\\ Agent --ShowOnDemandPackages")
-        case "Munki"  :     cliTask("/usr/bin/open /Applications/Managed\\ Software\\ Center.app")
+        case "Casper" :	NSWorkspace.sharedWorkspace().launchApplication("/Applications/Self Service.app")
+        case "LANRev" : cliTask("/Library/Application\\ Support/LANrev\\ Agent/LANrev\\ Agent.app/Contents/MacOS/LANrev\\ Agent --ShowOnDemandPackages")
+        case "Munki"  :	NSWorkspace.sharedWorkspace().launchApplication("/Applications/Managed Software Center.app")
         default :  return
         }
     }
@@ -421,13 +448,14 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     }
     
     @IBAction func NoMADMenuClickLogInAlternate(sender: AnyObject) {
-                        loginWindow.showWindow(nil)
+		loginWindow.showWindow(nil)
     }
-    
+	
     // this will update the menu when it's clicked
-    
     override func validateMenuItem(menuItem: NSMenuItem) -> Bool {
-        
+		// Makes all NoMAD windows come to top
+        // NSApp.activateIgnoringOtherApps(true)
+		
         if menuItem.title == "Lock Screen" {
             updateUserInfo()
         }
@@ -437,7 +465,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         if self.userInformation.connected == false {
             
             self.NoMADMenuLogIn.enabled = false
-            self.NoMADMenuLogIn.title = "Log In"
+			self.NoMADMenuLogIn.title = NSLocalizedString("LogIn", comment: "Menu button - Log In");
             self.NoMADMenuLogOut.enabled = false
             self.NoMADMenuChangePassword.enabled = false
             self.NoMADMenuGetCertificate.enabled = false
@@ -447,7 +475,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         } else if self.userInformation.myLDAPServers.tickets.state == false {
             
             self.NoMADMenuLogIn.enabled = true
-            self.NoMADMenuLogIn.title = "Log In"
+			self.NoMADMenuLogIn.title = NSLocalizedString("LogIn", comment: "Menu button - Log In");
             self.NoMADMenuLogIn.action = #selector(self.NoMADMenuClickLogIn)
             self.NoMADMenuLogOut.enabled = false
             self.NoMADMenuChangePassword.enabled = false
@@ -456,7 +484,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             }
         else {
             self.NoMADMenuLogIn.enabled = true
-            self.NoMADMenuLogIn.title = "Renew Tickets"
+			self.NoMADMenuLogIn.title = NSLocalizedString("RenewTickets", comment: "Menu Button - Renew Kerberos Ticket")
             self.NoMADMenuLogIn.action = #selector(self.renewTickets)
             self.NoMADMenuLogOut.enabled = true
             self.NoMADMenuChangePassword.enabled = true
@@ -479,7 +507,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         notification.informativeText = text
         //notification.deliveryDate = date
         notification.hasActionButton = true
-        notification.actionButtonTitle = "Change Password"
+		notification.actionButtonTitle = NSLocalizedString("ChangePassword", comment: "Menu Button - Change Password")
         notification.soundName = NSUserNotificationDefaultSoundName
         userNotificationCenter.deliverNotification(notification)
     }
