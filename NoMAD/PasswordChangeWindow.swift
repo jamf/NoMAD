@@ -137,6 +137,17 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 			// If there wasn't an error and Sync Local Password is set
 			// Check if the old password entered matches the current local password
 			if (localPasswordSync == 1 ) && myError == "" {
+                var UserPasswordSetDates = [String:AnyObject]()
+                
+                // update the password set database
+                
+                if defaults.dictionaryForKey("UserPasswordSetDates") != nil {
+                    UserPasswordSetDates = defaults.dictionaryForKey("UserPasswordSetDates")!
+                }
+                
+                UserPasswordSetDates[username] = "just set"
+                defaults.setObject(UserPasswordSetDates, forKey: "UserPasswordSetDates")
+                
 				do { try testLocalPassword(currentPassword) }
 				catch {
 					myLogger.logit(1, message: "Local password check Swift = no")

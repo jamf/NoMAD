@@ -50,7 +50,7 @@ let settings = [
     "LastPasswordWarning"   : 1296000,
     "HidePrefs"             : 0,
     "ExpeditedLookup"       : 0,
-    "UserExpirationDates"   : NSDictionary()
+    "UserPasswordSetDates"   : NSDictionary()
 ]
 
 // set up a default defaults

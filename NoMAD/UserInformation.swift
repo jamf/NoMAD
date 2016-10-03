@@ -40,7 +40,7 @@ class UserInformation {
     
     let myLDAPServers = LDAPServers()
     
-    var userExpirationDates = [String : AnyObject ]()
+    var UserPasswordSetDates = [String : AnyObject ]()
     
     init() {
         // zero everything out
@@ -55,8 +55,8 @@ class UserInformation {
         userCertDate = NSDate()
         serverPasswordExpirationDefault = Double(0)
         userDisplayName = ""
-        if defaults.dictionaryForKey("UserExpirationDates") != nil {
-            userExpirationDates = defaults.dictionaryForKey("UserExpirationDates")!
+        if defaults.dictionaryForKey("UserPasswordSetDates") != nil {
+            UserPasswordSetDates = defaults.dictionaryForKey("UserPasswordSetDates")!
         }
     }
     
@@ -175,25 +175,25 @@ class UserInformation {
                 }
             }
             
-            // now to see if hte password has changed without NoMAD knowing
+            // now to see if the password has changed without NoMAD knowing
             
-            if (userExpirationDates[userPrincipal] != nil) {
+            if (UserPasswordSetDates[userPrincipal] != nil) || (String(UserPasswordSetDates[userPrincipal]) != "just set" ){
                 
-                // user has been previously set
+                // user has been previously set so we can check it
                 
-            if ((userExpirationDates[userPrincipalShort] as? NSDate ?? NSDate()) != userPasswordSetDate) {
+            if ((UserPasswordSetDates[userPrincipalShort] as? NSDate ?? NSDate()) != userPasswordSetDate) {
                 myLogger.logit(0, message: "Password was changed underneath us.")
                 // TODO: Do something if we get here
                 
                 // record the new password set date
                 
-                userExpirationDates[userPrincipal] = userPasswordSetDate
-                defaults.setObject(userExpirationDates, forKey: "UserExpirationDates")
+                UserPasswordSetDates[userPrincipal] = userPasswordSetDate
+                defaults.setObject(UserPasswordSetDates, forKey: "UserPasswordSetDates")
                 
                 }
             } else {
-                userExpirationDates[userPrincipal] = userPasswordSetDate
-                defaults.setObject(userExpirationDates, forKey: "UserExpirationDates")
+                UserPasswordSetDates[userPrincipal] = userPasswordSetDate
+                defaults.setObject(UserPasswordSetDates, forKey: "UserPasswordSetDates")
             }
         }
         
