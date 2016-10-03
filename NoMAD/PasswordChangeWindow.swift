@@ -23,7 +23,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
     override var windowNibName: String! {
         return "PasswordChangeWindow"
     }
-    
+
     override func windowDidLoad() {
         super.windowDidLoad()
         
@@ -137,6 +137,17 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 			// If there wasn't an error and Sync Local Password is set
 			// Check if the old password entered matches the current local password
 			if (localPasswordSync == 1 ) && myError == "" {
+                var UserPasswordSetDates = [String:AnyObject]()
+                
+                // update the password set database
+                
+                if defaults.dictionaryForKey("UserPasswordSetDates") != nil {
+                    UserPasswordSetDates = defaults.dictionaryForKey("UserPasswordSetDates")!
+                }
+                
+                UserPasswordSetDates[username] = "just set"
+                defaults.setObject(UserPasswordSetDates, forKey: "UserPasswordSetDates")
+                
 				do { try testLocalPassword(currentPassword) }
 				catch {
 					myLogger.logit(1, message: "Local password check Swift = no")
@@ -145,6 +156,9 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 			}
             
             if kerbPrefFile {
+                let kerbDefaults = NSUserDefaults(suiteName: "com.apple.Kerberos")
+                
+                // this needs to be replaced
                 cliTask("/usr/bin/defaults delete com.apple.Kerberos")
             }
 			
@@ -203,9 +217,13 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
     private func checkKpasswdServer(writePref: Bool ) -> Bool {
         
         //let myKpasswdServers = delegate?.userInformation.myLDAPServers.getSRVRecords(domain: defaults.stringForKey("ADDomain")!, srv_type: "_kdc._tcp")
-        let myKpasswdServers = cliTask("/usr/bin/dig +short -t SRV _kpasswd._tcp." + defaults.stringForKey("ADDomain")!)
+        //let myKpasswdServers = getSRVRecords(defaults.stringForKey("ADDomain")!, srv_type: "_kpasswd._tcp.")
         
-        if myKpasswdServers.containsString(defaults.stringForKey("CurrentLDAPServer")!) {
+        let myLDAPServers = LDAPServers()
+        myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!)
+        let myKpasswdServers = myLDAPServers.getSRVRecords(defaults.stringForKey("ADDomain")!, srv_type: "_kpasswd._tcp.")
+        
+        if myKpasswdServers.contains(defaults.stringForKey("CurrentLDAPServer")!) {
             
             if writePref {
                 // check to see if a file exists already
@@ -236,5 +254,4 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
             return false
         }
     }
-    
 }

@@ -48,7 +48,9 @@ let settings = [
     "userPasswordExpireDate"    : "",
     "PasswordExpireAlertTime"   : 1296000,
     "LastPasswordWarning"   : 1296000,
-    "HidePrefs"             : 0
+    "HidePrefs"             : 0,
+    "ExpeditedLookup"       : 0,
+    "UserPasswordSetDates"   : NSDictionary()
 ]
 
 // set up a default defaults
