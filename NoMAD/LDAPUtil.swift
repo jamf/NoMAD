@@ -287,20 +287,31 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         let tempDefaultNamingContext = defaultNamingContext
         defaultNamingContext = "cn=Subnets,cn=Sites,cn=Configuration," + tempDefaultNamingContext
         
-        // is there more than one subnet?, we don't check for that at this time
+        let expeditedLookup = defaults.boolForKey("ExpeditedLookup")
+        var subnetCount = 1000
+        var subnetNetworks = [String]()
         
-        let subnetNetworks = try! getLDAPInformation("cn", baseSearch: false, searchTerm: "objectClass=subnet", test: false).componentsSeparatedByString(", ")
-        let subnetCount = subnetNetworks.count
+        if expeditedLookup {
+            myLogger.logit(0, message:"Performing expedited site lookup.")
+            subnetNetworks = try! getLDAPInformation("cn", baseSearch: false, searchTerm: "objectClass=subnet", test: false).componentsSeparatedByString(", ")
+            subnetCount = subnetNetworks.count
         
-        myLogger.logit(2, message:"Total number of subnets: " + String(subnetCount))
-        myLogger.logit(3, message:"Subnets: " + String(subnetNetworks))
+            myLogger.logit(2, message:"Total number of subnets: " + String(subnetCount))
+            myLogger.logit(3, message:"Subnets: " + String(subnetNetworks))
+        } else {
+            
+        }
         
+        // TODO: Support more than 1 local IP address
         //  for index in 1...IPs.count {
+        
         var subMask = countBits(network["mask"]![0])
         let IPOctets = network["IP"]![0].componentsSeparatedByString(".")
         var IP = ""
         
         myLogger.logit(1, message:"Starting site lookups")
+        
+        // loop through all of the possible networks until we get a match, or fall through
         
         while subMask >= 0 && !found && subnetCount >= 2 {
             
@@ -326,8 +337,26 @@ class LDAPServers : NSObject, DNSResolverDelegate {
                 break
             }
             
-            if subnetNetworks.contains(currentNetwork) {
-                myLogger.logit(3, message:"Current network found in subnet list.")
+            // if we are in expited mode we do the lookups locally
+            if expeditedLookup {
+                if subnetNetworks.contains(currentNetwork) {
+                    myLogger.logit(3, message:"Current network found in subnet list.")
+                    do {
+                        myLogger.logit(3, message:"Trying site: cn=" + IP + "/" + String(subMask))
+                        let siteTemp = try getLDAPInformation("siteObject", baseSearch: false, searchTerm: "cn=" + currentNetwork, test: false)
+                        if siteTemp == "" {
+                            myLogger.logit(3, message: "Site information was empty, ignoring site lookup.")
+                        } else {
+                            site = siteTemp
+                        }
+                        myLogger.logit(1, message:"Using site: " + site.componentsSeparatedByString(",")[0].stringByReplacingOccurrencesOfString("CN=", withString: ""))
+                    }
+                    catch {
+                        myLogger.logit(0, message:"Error looking up site for network: " + currentNetwork)
+                    }
+                }
+            } else {
+                // see if we can find the network in AD
                 do {
                     myLogger.logit(3, message:"Trying site: cn=" + IP + "/" + String(subMask))
                     let siteTemp = try getLDAPInformation("siteObject", baseSearch: false, searchTerm: "cn=" + currentNetwork, test: false)
@@ -337,12 +366,12 @@ class LDAPServers : NSObject, DNSResolverDelegate {
                         site = siteTemp
                     }
                     myLogger.logit(1, message:"Using site: " + site.componentsSeparatedByString(",")[0].stringByReplacingOccurrencesOfString("CN=", withString: ""))
-                }
+                    }
                 catch {
                     myLogger.logit(0, message:"Error looking up site for network: " + currentNetwork)
                 }
             }
-            
+        
             if site != "" {
                 myLogger.logit(3, message:"Site found, looking up DCs for site.")
                 found = true
@@ -364,6 +393,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
             }
 
         }
+        
         if site == "" {
             site = "No site found"
             myLogger.logit(0, message: "No matching sites found")
@@ -387,12 +417,12 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         
         let val = SCDynamicStoreCopyValue(store, "State:/Network/Interface/" + interface + "/IPv4") as! NSDictionary
         
-        network["IP"] = val["Addresses"] as! [String]
+        network["IP"] = (val["Addresses"] as! [String])
         guard (( val["SubnetMasks"] ) != nil) else {
             network["mask"] = ["255.255.255.254"]
             return network
         }
-        network["mask"] = val["SubnetMasks"] as! [String]
+        network["mask"] = (val["SubnetMasks"] as! [String])
         return network
     }
     

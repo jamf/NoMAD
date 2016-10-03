@@ -40,6 +40,8 @@ class UserInformation {
     
     let myLDAPServers = LDAPServers()
     
+    var userExpirationDates = [String : AnyObject ]()
+    
     init() {
         // zero everything out
         
@@ -53,6 +55,9 @@ class UserInformation {
         userCertDate = NSDate()
         serverPasswordExpirationDefault = Double(0)
         userDisplayName = ""
+        if defaults.dictionaryForKey("UserExpirationDates") != nil {
+            userExpirationDates = defaults.dictionaryForKey("UserExpirationDates")!
+        }
     }
     
     func checkNetwork() -> Bool {
@@ -146,7 +151,7 @@ class UserInformation {
                     let passwordExpirationLength = try! myLDAPServers.getLDAPInformation("maxPwdAge", baseSearch: true )
                     
                     if ( passwordExpirationLength.characters.count > 15 ) {
-                        let serverPasswordExpirationDefault = Double(0)
+                        //serverPasswordExpirationDefault = Double(0)
                         passwordAging = false
                     } else if ( passwordExpirationLength != "" ){
                         
@@ -169,9 +174,28 @@ class UserInformation {
                     userPasswordExpireDate = userPasswordSetDate.dateByAddingTimeInterval(serverPasswordExpirationDefault)
                 }
             }
+            
+            // now to see if hte password has changed without NoMAD knowing
+            
+            if (userExpirationDates[userPrincipal] != nil) {
+                
+                // user has been previously set
+                
+            if ((userExpirationDates[userPrincipalShort] as? NSDate ?? NSDate()) != userPasswordSetDate) {
+                myLogger.logit(0, message: "Password was changed underneath us.")
+                // TODO: Do something if we get here
+                
+                // record the new password set date
+                
+                userExpirationDates[userPrincipal] = userPasswordSetDate
+                defaults.setObject(userExpirationDates, forKey: "UserExpirationDates")
+                
+                }
+            } else {
+                userExpirationDates[userPrincipal] = userPasswordSetDate
+                defaults.setObject(userExpirationDates, forKey: "UserExpirationDates")
+            }
         }
-        
-        // TODO: figure out if the password changed without us knowing
         
         // 4. if connected and with tickets, get all of user information
         
