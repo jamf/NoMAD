@@ -52,6 +52,14 @@ let settings = [
     "ExpeditedLookup"       : 0,
     "UserPasswordSetDates"   : NSDictionary()
 ]
+// Add method that forces Window to Front
+extension NSWindow {
+	func forceToFrontAndFocus(sender: AnyObject?) {
+		NSApp.activateIgnoringOtherApps(true)
+		self.makeKeyAndOrderFront(sender);
+	}
+}
+
 
 // set up a default defaults
 
@@ -117,7 +125,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     let myWorkQueue = dispatch_queue_create("com.trusourcelabs.NoMAD.background_work_queue", nil)
     
     var SelfServiceType: String = ""
-    
+	
+	
+	
     // on startup we check for preferences
     
     override func awakeFromNib() {
@@ -203,12 +213,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 var myErr: String? = ""
                 
                 do { myPass = try myKeychainUtil.findPassword(defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!) } catch {
-                    loginWindow.showWindow(nil)
+                    loginWindow.window!.forceToFrontAndFocus(nil)
                 }
                 myErr = GetCredentials.getKerbCredentials( myPass, defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!)
                 if myErr != nil {
                     myLogger.logit(0, message: "Error attempting to automatically log in.")
-                    loginWindow.showWindow(nil)
+                    loginWindow.window!.forceToFrontAndFocus(nil)
                 } else {
                     myLogger.logit(0, message:"Automatically logging in.")
                     cliTask("/usr/bin/kswitch -p " +  defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!)}
@@ -218,7 +228,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         // if no preferences are set, we show the preferences pane
         
         if ( (defaults.stringForKey("ADDomain") ?? "") == "" ) {
-             preferencesWindow.showWindow(nil)
+             preferencesWindow.window!.forceToFrontAndFocus(nil)
         } else {
             
             if  ( defaults.stringForKey("LastPasswordWaring") == nil ) {
@@ -249,22 +259,20 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 	
 	// MARK: Menu Items' Actions
 	// User clicked on Menubar Icon
-	
+	/*
 	func menuWillOpen(menu: NSMenu) {
 		// Show all windows.
-		NSApp.activateIgnoringOtherApps(true)
+		//NSApp.activateIgnoringOtherApps(true)
 		// Activate individual windows
 		// TODO: figure out why this doesn't work...
-		/*
+		
 		for window in NSApp.windows {
-			if (window == self.loginWindow) {
-				window.makeKeyWindow()
+			if ( window == loginWindow.window && window.visible ) {
+				bringWindowToFront(window)
 			}
 		}
-		*/
-		
 	}
-	
+	*/
 	
     // show the login window when the menu item is clicked
     
@@ -278,20 +286,29 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             if ( (defaults.stringForKey("LastUser") ?? "") != "" ) {
                 
                 do { myPass = try myKeychainUtil.findPassword(defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!) } catch {
-                    loginWindow.showWindow(nil)
+					//bringWindowToFront(loginWindow.window!, focus: true)
+					//loginWindow.showWindow(nil)
+					loginWindow.window!.forceToFrontAndFocus(nil)
                 }
                 let GetCredentials: KerbUtil = KerbUtil()
                 myErr = GetCredentials.getKerbCredentials( myPass, defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!)
                 if myErr != nil {
                     myLogger.logit(0, message:"Error attempting to automatically log in.")
-                    loginWindow.showWindow(nil)
+					//bringWindowToFront(loginWindow.window!, focus: true)
+                    //loginWindow.showWindow(nil)
+					loginWindow.window!.forceToFrontAndFocus(nil)
                 } else {
                     myLogger.logit(0, message:"Automatically logging in.") }
                     cliTask("/usr/bin/kswitch -p " +  defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!)
             } else {
-                loginWindow.showWindow(nil) }
+				//bringWindowToFront(loginWindow.window!, focus: true)
+                //loginWindow.showWindow(nil)
+				loginWindow.window!.forceToFrontAndFocus(nil)
+			}
         } else {
-            loginWindow.showWindow(nil)
+			//bringWindowToFront(loginWindow.window!, focus: true)
+            //loginWindow.showWindow(nil)
+			loginWindow.window!.forceToFrontAndFocus(nil)
 
         }
     }
@@ -299,7 +316,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // show the password change window when the menu item is clicked
     
     @IBAction func NoMADMenuClickChangePassword(sender: NSMenuItem) {
-		passwordChangeWindow.showWindow(nil)
+		//passwordChangeWindow.showWindow(nil)
+		passwordChangeWindow.window!.forceToFrontAndFocus(nil)
 		
     }
     
@@ -330,6 +348,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 			}
         } else {
             loginWindow.showWindow(nil)
+			loginWindow.window!.forceToFrontAndFocus(nil)
         }
         
         cliTask("/usr/bin/kdestroy")
@@ -405,7 +424,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // shows the preferences window
     
     @IBAction func NoMADMenuClickPreferences(sender: NSMenuItem) {
-        preferencesWindow.showWindow(nil)
+        //preferencesWindow.showWindow(nil)
+		preferencesWindow.window!.forceToFrontAndFocus(nil)
     }
     
     // quit when asked
@@ -450,7 +470,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     }
     
     @IBAction func NoMADMenuClickLogInAlternate(sender: AnyObject) {
-		loginWindow.showWindow(nil)
+		//loginWindow.showWindow(nil)
+		loginWindow.window!.forceToFrontAndFocus(nil)
     }
 	
     // this will update the menu when it's clicked
@@ -572,12 +593,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 if ( (defaults.stringForKey("LastUser") ?? "") != "" ) {
                     var myErr: String? = ""
                     do { myPass = try myKeychainUtil.findPassword(defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!) } catch {
-                        loginWindow.showWindow(nil)
+                        loginWindow.window!.forceToFrontAndFocus(nil)
                     }
                     myErr = GetCredentials.getKerbCredentials( myPass, defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!)
                     if myErr != nil {
                         myLogger.logit(0, message: "Error attempting to automatically log in.")
-                        loginWindow.showWindow(nil)
+                        loginWindow.window!.forceToFrontAndFocus(nil)
                     } else {
                         myLogger.logit(0, message:"Automatically logging in.")
                         cliTask("/usr/bin/kswitch -p " +  defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!)}
