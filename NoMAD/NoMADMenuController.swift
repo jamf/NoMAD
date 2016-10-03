@@ -129,7 +129,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         preferencesWindow = PreferencesWindow()
         loginWindow = LoginWindow()
-        passwordChangeWindow = PasswordChangeWindow(coder: NSCoder())
+        passwordChangeWindow = PasswordChangeWindow()
         
         loginWindow.delegate = self
         passwordChangeWindow.delegate = self
