@@ -114,8 +114,10 @@ class UserInformation {
             }
             
             if canary {
-                userPasswordSetDate = NSDate(timeIntervalSince1970: (Double(Int(passwordSetDate)!))/10000000-11644473600)
-                
+				if (passwordSetDate != "") {
+					userPasswordSetDate = NSDate(timeIntervalSince1970: (Double(Int(passwordSetDate)!))/10000000-11644473600)
+				}
+				
                 // Now get default password expiration time - this may not be set for environments with no password cycling requirements
                 
                 myLogger.logit(1, message: "Getting password aging info")
@@ -177,18 +179,18 @@ class UserInformation {
             
             // now to see if the password has changed without NoMAD knowing
             
-            if (UserPasswordSetDates[userPrincipal] != nil) && (String(UserPasswordSetDates[userPrincipal]) != "just set" ){
+            if (UserPasswordSetDates[userPrincipal] != nil) && (String(UserPasswordSetDates[userPrincipal]) != "just set" ) {
                 
                 // user has been previously set so we can check it
                 
-            if ((UserPasswordSetDates[userPrincipal] as? NSDate )! != userPasswordSetDate) {
-                myLogger.logit(0, message: "Password was changed underneath us.")
-                // TODO: Do something if we get here
-                
-                // record the new password set date
-                
-                UserPasswordSetDates[userPrincipal] = userPasswordSetDate
-                defaults.setObject(UserPasswordSetDates, forKey: "UserPasswordSetDates")
+				if ((UserPasswordSetDates[userPrincipal] as? NSDate )! != userPasswordSetDate) {
+					myLogger.logit(0, message: "Password was changed underneath us.")
+					// TODO: Do something if we get here
+					
+					// record the new password set date
+					
+					UserPasswordSetDates[userPrincipal] = userPasswordSetDate
+					defaults.setObject(UserPasswordSetDates, forKey: "UserPasswordSetDates")
                 
                 }
             } else {

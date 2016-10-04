@@ -281,12 +281,27 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         
         myLogger.logit(2, message:"IPs: " + network["IP"]![0])
         myLogger.logit(2, message:"Subnets: " + network["mask"]![0])
-        
-        // Now look for sites
-        
-        let tempDefaultNamingContext = defaultNamingContext
-        defaultNamingContext = "cn=Subnets,cn=Sites,cn=Configuration," + tempDefaultNamingContext
-        
+		
+		// Save the normal naming context to a temp variable 
+		// so we can restore it later
+		let tempDefaultNamingContext = defaultNamingContext
+		
+		// Get Configuration Naming Context from LDAP
+		var configurationNamingContext = ""
+		let configurationLDAPResult = cliTask("/usr/bin/ldapsearch -N -LLL -Q -l 3 -s base -H ldap://" + currentServer + " configurationNamingContext")
+		if configurationLDAPResult != "" && !configurationLDAPResult.containsString("GSSAPI Error") && !configurationLDAPResult.containsString("Can't contact") && !configurationLDAPResult.containsString("ldap_sasl_interactive_bind_s") {
+			configurationNamingContext = cleanLDAPResults(configurationLDAPResult, attribute: "configurationNamingContext")
+		}
+		
+		// If we were able to get the configuration naming context, then use it...
+		if (configurationNamingContext != "") {
+			myLogger.logit(2, message:"Using Configuration Naming Context")
+			defaultNamingContext = "cn=Subnets,cn=Sites," + configurationNamingContext
+		} else {
+			myLogger.logit(2, message:"Using Default Naming Context")
+			defaultNamingContext = "cn=Subnets,cn=Sites,cn=Configuration," + tempDefaultNamingContext
+		}
+		// Now look for sites
         let expeditedLookup = defaults.boolForKey("ExpeditedLookup")
         var subnetCount = 1000
         var subnetNetworks = [String]()

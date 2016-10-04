@@ -158,7 +158,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
             if kerbPrefFile {
                 let kerbDefaults = NSUserDefaults(suiteName: "com.apple.Kerberos")
                 
-                // this needs to be replaced
+                // TODO: Replace defaults delete.
                 cliTask("/usr/bin/defaults delete com.apple.Kerberos")
             }
 			
