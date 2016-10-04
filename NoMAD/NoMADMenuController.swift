@@ -488,7 +488,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         if self.userInformation.connected == false {
             
             self.NoMADMenuLogIn.enabled = false
-			self.NoMADMenuLogIn.title = NSLocalizedString("LogIn", comment: "Menu button - Log In");
+			self.NoMADMenuLogIn.title = NSLocalizedString("NoMADMenuController-LogIn", comment: "Menu; Button; Log In");
             self.NoMADMenuLogOut.enabled = false
             self.NoMADMenuChangePassword.enabled = false
             self.NoMADMenuGetCertificate.enabled = false
@@ -498,7 +498,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         } else if self.userInformation.myLDAPServers.tickets.state == false {
             
             self.NoMADMenuLogIn.enabled = true
-			self.NoMADMenuLogIn.title = NSLocalizedString("LogIn", comment: "Menu button - Log In");
+			self.NoMADMenuLogIn.title = NSLocalizedString("NoMADMenuController-LogIn", comment: "Menu; Button; Log In");
             self.NoMADMenuLogIn.action = #selector(self.NoMADMenuClickLogIn)
             self.NoMADMenuLogOut.enabled = false
             self.NoMADMenuChangePassword.enabled = false
@@ -507,7 +507,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             }
         else {
             self.NoMADMenuLogIn.enabled = true
-			self.NoMADMenuLogIn.title = NSLocalizedString("RenewTickets", comment: "Menu Button - Renew Kerberos Ticket")
+			self.NoMADMenuLogIn.title = NSLocalizedString("NoMADMenuController-RenewTickets", comment: "Menu; Button; Renew Tickets")
             self.NoMADMenuLogIn.action = #selector(self.renewTickets)
             self.NoMADMenuLogOut.enabled = true
             self.NoMADMenuChangePassword.enabled = true
@@ -516,7 +516,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         if defaults.boolForKey("HidePrefs") {
                     self.NoMADMenuPreferences.enabled = false
-            myLogger.logit(2, message:"Preferences disabled")
+			myLogger.logit(2, message:NSLocalizedString("NoMADMenuController-PreferencesDisabled", comment: "Log; Text; Preferences Disabled"))
         }
         
         return true
@@ -530,7 +530,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         notification.informativeText = text
         //notification.deliveryDate = date
         notification.hasActionButton = true
-		notification.actionButtonTitle = NSLocalizedString("ChangePassword", comment: "Menu Button - Change Password")
+		notification.actionButtonTitle = NSLocalizedString("NoMADMenuController-ChangePassword", comment: "Menu; Button; Change Password")
         notification.soundName = NSUserNotificationDefaultSoundName
         userNotificationCenter.deliverNotification(notification)
     }
@@ -706,7 +706,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     self.NoMADMenuPasswordExpires.title = "Password does not expire."
                 } else if ( defaults.stringForKey("LastUser")) != "" {
                     let myDaysToGo = String(abs((defaults.objectForKey("LastPasswordExpireDate")!.timeIntervalSinceNow)!)/86400)
-                    self.NoMADMenuPasswordExpires.title = "Password expires in: " + myDaysToGo.componentsSeparatedByString(".")[0] + " days"
+                    //self.NoMADMenuPasswordExpires.title = "Password expires in: " + myDaysToGo.componentsSeparatedByString(".")[0] + " days"
+					let title = String.localizedStringWithFormat(
+						NSLocalizedString("NoMADMenuController-PasswordExpiresInDays", comment: "Menu Text; Password expires in: %@ days"),
+						myDaysToGo.componentsSeparatedByString(".")[0]
+					)
+					self.NoMADMenuPasswordExpires.title = title
                 } else {
                     self.NoMADMenuPasswordExpires.title = ""
                 }
