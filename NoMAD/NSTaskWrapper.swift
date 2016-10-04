@@ -139,24 +139,6 @@ public func getConsoleUser() -> String {
     return userName
 }
 
-
-// get serial number -- there's an IOKit way of doing this, but this is simpler
-/*
-public func getSerial() -> String {
-    
-    let mySerialOutput = cliTaskNoTerm("/usr/sbin/system_profiler SPHardwareDataType").componentsSeparatedByString("\n")
-    var mySerial = ""
-    
-    for line in mySerialOutput {
-        if line.containsString("Serial Number (system)") {
-            mySerial = line.stringByReplacingOccurrencesOfString("Serial Number (system):", withString: "").stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
-            break
-        }
-    }
-    return mySerial
-}
-*/
-
 public func getSerial() -> String {
 	
 	guard let platformExpert: io_service_t = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("IOPlatformExpertDevice")),
@@ -201,5 +183,10 @@ private func which(command: String) -> String {
     let data = whichPipe.fileHandleForReading.readDataToEndOfFile()
     let output = NSString(data: data, encoding: NSUTF8StringEncoding) as! String
     
+    if output == "" {
+        NSLog("Binary doesn't exist")
+    }
+    
     return output.componentsSeparatedByString("\n").first!
+    
 }
