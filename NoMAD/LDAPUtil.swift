@@ -329,16 +329,21 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         // loop through all of the possible networks until we get a match, or fall through
         
         while subMask >= 0 && !found && subnetCount >= 2 {
+            var networkBit = 0
             
             let octet = subMask / 8
             let octetMask = subMask % 8
-            let network = Int(IPOctets[octet])! - (Int(IPOctets[octet])! % binToDecimal(octetMask))
-            
+            if octetMask == 4 {
+                networkBit = Int(IPOctets[3])!
+        } else {
+            networkBit = Int(IPOctets[octet])! - (Int(IPOctets[octet])! % binToDecimal(octetMask))
+        }
+        
             switch octet {
-            case 0  : IP = String(network) + ".0.0.0"
-            case 1  : IP = IPOctets[0] + "." + String(network) + ".0.0"
-            case 2  : IP = IPOctets[0] + "." + IPOctets[1] + "." + String(network) + ".0"
-            case 3  : IP = IPOctets[0] + "." + IPOctets[1] + "." + IPOctets[2] + "." + String(network)
+            case 0  : IP = String(networkBit) + ".0.0.0"
+            case 1  : IP = IPOctets[0] + "." + String(networkBit) + ".0.0"
+            case 2  : IP = IPOctets[0] + "." + IPOctets[1] + "." + String(networkBit) + ".0"
+            case 3  : IP = IPOctets[0] + "." + IPOctets[1] + "." + IPOctets[2] + "." + String(networkBit)
             case 4  : IP = IPOctets[0] + "." + IPOctets[1] + "." + IPOctets[2] + "." + IPOctets[3]
             default : IP = IPOctets[0] + "." + IPOctets[1] + "." + IPOctets[2] + "." + IPOctets[3]
             }

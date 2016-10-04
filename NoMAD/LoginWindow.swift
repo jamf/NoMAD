@@ -38,8 +38,6 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         super.windowDidLoad()
         guard (( defaults.stringForKey("LastUser") ) != nil) else {
             self.window?.center()
-            NSApp.activateIgnoringOtherApps(true)
-            self.window?.makeKeyAndOrderFront(nil)
             setWindowToLogin()
             return
         }
@@ -50,8 +48,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         setWindowToLogin()
         
         self.window?.center()
-        NSApp.activateIgnoringOtherApps(true)
-        self.window?.makeKeyAndOrderFront(nil)
+
     }
     
     func windowWillClose(notification: NSNotification) {
@@ -61,7 +58,6 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         
         notificationCenter.postNotification(notificationKey)
         delegate?.updateUserInfo()
-        
     }
     
     @IBAction func LogInClick(sender: AnyObject) {

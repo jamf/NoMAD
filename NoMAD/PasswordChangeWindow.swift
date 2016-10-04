@@ -28,8 +28,6 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
         super.windowDidLoad()
         
         self.window?.center()
-        self.window?.makeKeyAndOrderFront(nil)
-        NSApp.activateIgnoringOtherApps(true)
         
         // blank out the password fields
         oldPassword.stringValue = ""
@@ -39,6 +37,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
     }
     
     func windowWillClose(notification: NSNotification) {
+        
 		// blank out the password fields
 		oldPassword.stringValue = ""
 		newPassword.stringValue = ""
@@ -215,9 +214,6 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
     // write out local krb5.conf file to ensure password change happens to the same kdc as we're using for LDAP
     
     private func checkKpasswdServer(writePref: Bool ) -> Bool {
-        
-        //let myKpasswdServers = delegate?.userInformation.myLDAPServers.getSRVRecords(domain: defaults.stringForKey("ADDomain")!, srv_type: "_kdc._tcp")
-        //let myKpasswdServers = getSRVRecords(defaults.stringForKey("ADDomain")!, srv_type: "_kpasswd._tcp.")
         
         let myLDAPServers = LDAPServers()
         myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!)

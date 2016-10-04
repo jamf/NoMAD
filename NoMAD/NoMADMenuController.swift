@@ -52,7 +52,9 @@ let settings = [
     "ExpeditedLookup"       : 0,
     "UserPasswordSetDates"   : NSDictionary()
 ]
+
 // Add method that forces Window to Front
+
 extension NSWindow {
 	func forceToFrontAndFocus(sender: AnyObject?) {
 		NSApp.activateIgnoringOtherApps(true)

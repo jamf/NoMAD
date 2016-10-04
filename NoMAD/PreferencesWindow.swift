@@ -41,8 +41,6 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
         super.windowDidLoad()
         
         self.window?.center()
-        self.window?.makeKeyAndOrderFront(nil)
-        NSApp.activateIgnoringOtherApps(true)
         
         // set the fields and disable them if they're managed
         
