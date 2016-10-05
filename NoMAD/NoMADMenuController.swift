@@ -50,6 +50,7 @@ let settings = [
     "LastPasswordWarning"   : 1296000,
     "HidePrefs"             : 0,
     "ExpeditedLookup"       : 0,
+    "displayName"           : "",
     "UserPasswordSetDates"   : NSDictionary()
 ]
 
@@ -136,12 +137,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         myLogger.logit(0, message:"---Starting NoMAD---")
         
-        menuAnimationTimer = NSTimer(timeInterval: 0.5, target: self, selector: #selector(animateMenuItem), userInfo: nil, repeats: true)
-        statusItem.menu = NSMenu()
-		//statusItem.menu!.delegate = self
-		//self.NoMADMenu.delegate = self
-		NSRunLoop.currentRunLoop().addTimer(menuAnimationTimer, forMode: NSDefaultRunLoopMode)
-        // menuAnimationTimer.fire()
+        startMenuAnimationTimer()
         
         preferencesWindow = PreferencesWindow()
         loginWindow = LoginWindow()
@@ -255,7 +251,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         if defaults.integerForKey("Verbose") >= 1 {
             myLogger.logit(0, message:"Starting up NoMAD")
         }
-        menuAnimationTimer.invalidate()
+        
+        stopMenuAnimationTimer()
     }
 	
 	
@@ -608,6 +605,19 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         }
     }
     
+    // function to start the menu throbbing
+    
+    func startMenuAnimationTimer() {
+        menuAnimationTimer = NSTimer(timeInterval: 1, target: self, selector: #selector(animateMenuItem), userInfo: nil, repeats: true)
+        statusItem.menu = NSMenu()
+        NSRunLoop.currentRunLoop().addTimer(menuAnimationTimer, forMode: NSDefaultRunLoopMode)
+        menuAnimationTimer.fire()
+    }
+    
+    func stopMenuAnimationTimer() {
+        menuAnimationTimer.invalidate()
+    }
+    
     // function to configure Chrome
     
     func configureChrome() {
@@ -620,6 +630,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     func updateUserInfo() {
         
         myLogger.logit(0, message:"Updating User Info")
+        
         
         // make sure the domain we're using is the domain we should be using
         
@@ -637,13 +648,16 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         // through the magic of code blocks we'll update in the background
         
         dispatch_async(myWorkQueue, {
-            
+            self.startMenuAnimationTimer()
+
             self.userInformation.getUserInfo()
             
+            self.menuAnimationTimer.invalidate()
+            
             dispatch_sync(dispatch_get_main_queue(), { () -> Void in
-                
+            
                 // build the menu
-                
+
                 statusItem.menu = self.NoMADMenu
                 
                 // set the menu icon

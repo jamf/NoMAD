@@ -333,7 +333,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
             
             let octet = subMask / 8
             let octetMask = subMask % 8
-            if octetMask == 4 {
+            if subMask == 32 {
                 networkBit = Int(IPOctets[3])!
         } else {
             networkBit = Int(IPOctets[octet])! - (Int(IPOctets[octet])! % binToDecimal(octetMask))
@@ -381,7 +381,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
                     myLogger.logit(3, message:"Trying site: cn=" + IP + "/" + String(subMask))
                     let siteTemp = try getLDAPInformation("siteObject", baseSearch: false, searchTerm: "cn=" + currentNetwork, test: false)
                     if siteTemp == "" {
-                        myLogger.logit(3, message: "Site information was empty, ignoring site lookup.")
+                        myLogger.logit(3, message: "Site information was empty, ignoring site.")
                     } else {
                         site = siteTemp
                     }
@@ -626,6 +626,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 	
 	// get the list of LDAP servers from a SRV lookup
 	// Uses DNSResolver
+    
 	func getHosts(domain: String ) {
 		self.resolver.queryType = "SRV"
 		self.resolver.queryValue = "_ldap._tcp." + domain
@@ -662,7 +663,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 			hosts.removeAll()
 		}
 	}
-	
+
 	/*
 	// get the list of LDAP servers from an SRV lookup
 	// Uses cliTask

@@ -79,6 +79,8 @@ class GetHelp {
 		if let domain = defaults.stringForKey("ADDomain") {
 			createdURL = createdURL.stringByReplacingOccurrencesOfString("<<domain>>", withString: domain)
 		}
+        
+        //TODO: this crashes if displayName is empty
 		if let fullName = defaults.stringForKey("displayName")!.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet()) {
 			createdURL = createdURL.stringByReplacingOccurrencesOfString("<<fullname>>", withString: fullName)
 		}
