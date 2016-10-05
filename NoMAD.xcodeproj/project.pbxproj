@@ -20,6 +20,7 @@
 		1AFEAC361D68FEAF00B7FA88 /* UserInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AFEAC351D68FEAF00B7FA88 /* UserInformation.swift */; };
 		346CD2711DA205B500255F66 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 346CD2731DA205B500255F66 /* MainMenu.xib */; };
 		346CD2751DA2065D00255F66 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 346CD2741DA2065D00255F66 /* Localizable.strings */; };
+		346CD27F1DA4776600255F66 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346CD27E1DA4776600255F66 /* Extensions.swift */; };
 		34E186BF1D9C681000265138 /* DNSResolver.m in Sources */ = {isa = PBXBuildFile; fileRef = 34E186BE1D9C681000265138 /* DNSResolver.m */; };
 		34E186C21D9E405400265138 /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 34E186C11D9E405400265138 /* libresolv.tbd */; };
 		8454EFDB1D34ADA600422D4E /* NSTaskWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454EFDA1D34ADA600422D4E /* NSTaskWrapper.swift */; };
@@ -60,7 +61,8 @@
 		1ADCEC611D75476D005D33F5 /* ShareMounter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareMounter.swift; sourceTree = "<group>"; };
 		1AFEAC351D68FEAF00B7FA88 /* UserInformation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInformation.swift; sourceTree = "<group>"; };
 		346CD2721DA205B500255F66 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		346CD2741DA2065D00255F66 /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
+		346CD2741DA2065D00255F66 /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
+		346CD27E1DA4776600255F66 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		34E186BD1D9C681000265138 /* DNSResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DNSResolver.h; sourceTree = "<group>"; };
 		34E186BE1D9C681000265138 /* DNSResolver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DNSResolver.m; sourceTree = "<group>"; };
 		34E186C11D9E405400265138 /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
@@ -167,6 +169,7 @@
 				1A24EF471D7F01B3006A1866 /* Logger.swift */,
 				34E186BD1D9C681000265138 /* DNSResolver.h */,
 				34E186BE1D9C681000265138 /* DNSResolver.m */,
+				346CD27E1DA4776600255F66 /* Extensions.swift */,
 			);
 			path = NoMAD;
 			sourceTree = "<group>";
@@ -304,6 +307,7 @@
 				1A26AFF71D46E4BF000776A4 /* GetHelp.swift in Sources */,
 				84F93A2B1D3886FA00ED2070 /* AutoConfigure.swift in Sources */,
 				84996CA81D503F8400793747 /* LDAPUtil.swift in Sources */,
+				346CD27F1DA4776600255F66 /* Extensions.swift in Sources */,
 				1A24EF481D7F01B3006A1866 /* Logger.swift in Sources */,
 				1A08F1F11D36CEB800FA68C4 /* UserInfo.swift in Sources */,
 				1A08F1F31D36DA0900FA68C4 /* NoMADApplication.swift in Sources */,

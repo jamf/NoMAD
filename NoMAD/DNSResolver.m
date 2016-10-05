@@ -9,6 +9,7 @@
 #import "DNSResolver.h"
 
 #include <dns_util.h>
+#include <net/if.h>
 
 @interface DNSResolver ()
 
@@ -99,6 +100,8 @@
 		// perform different types of query based on queryType...
 		uint16_t recordType = [self getTypeAsInt];
 		
+		//uint32_t interfaceIndex = if_nametoindex("utun1");
+		
 		// Create the DNS Query and reference it in self->_dnsService
 		err = DNSServiceQueryRecord(
 			&self->_dnsService,
@@ -160,7 +163,14 @@ static void DNSServiceRecordCallback(
 	obj = (__bridge DNSResolver *)context;
 	
 	if (errorCode == kDNSServiceErr_NoError) {
+		// Get Interface Name
+		char *interfaceNamePtr = alloca(IF_NAMESIZE);
+		char *interfaceName = if_indextoname(interfaceIndex, interfaceNamePtr);
+		NSLog(@"Interface Index is: %u. Interface Name is: %s", interfaceIndex, interfaceName);
+		
+		//Process Record
 		[obj processRecord:recordData length:recordLength];
+		
 		
 		if ( ! (flags & kDNSServiceFlagsMoreComing) ) {
 			[obj stopQueryWithError:nil];
@@ -242,7 +252,7 @@ static void DNSSocketCallback(
 				[self.mutableQueryResponse addObject:result];
 				[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:resultIndexSet forKey:@"results"];
 				
-				if ( (self.delegate != nil) && [self.delegate respondsToSelector:@selector(srvResolver:didReceiveResult:)] ) {
+				if ( (self.delegate != nil) && [self.delegate respondsToSelector:@selector(dnsResolver:didReceiveQueryResult:)] ) {
 					[self.delegate dnsResolver:self didReceiveQueryResult:result];
 				}
 			}
