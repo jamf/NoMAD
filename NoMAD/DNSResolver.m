@@ -252,7 +252,7 @@ static void DNSSocketCallback(
 				[self.mutableQueryResponse addObject:result];
 				[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:resultIndexSet forKey:@"results"];
 				
-				if ( (self.delegate != nil) && [self.delegate respondsToSelector:@selector(srvResolver:didReceiveResult:)] ) {
+				if ( (self.delegate != nil) && [self.delegate respondsToSelector:@selector(dnsResolver:didReceiveQueryResult:)] ) {
 					[self.delegate dnsResolver:self didReceiveQueryResult:result];
 				}
 			}

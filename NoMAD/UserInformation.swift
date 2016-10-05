@@ -222,7 +222,7 @@ class UserInformation {
             
             defaults.setObject(userHome, forKey: "userHome")
             defaults.setObject(userDisplayName, forKey: "displayName")
-            defaults.setObject(userPrincipalShort, forKey: "userPrincipal")
+            defaults.setObject(userPrincipal, forKey: "userPrincipal")
             defaults.setObject(userPrincipalShort, forKey: "LastUser")
             defaults.setObject(userPasswordExpireDate, forKey: "LastPasswordExpireDate")
             defaults.setObject(groups, forKey: "Groups")

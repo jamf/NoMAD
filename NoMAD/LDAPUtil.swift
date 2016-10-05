@@ -434,7 +434,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
                     myLogger.logit(3, message:"Trying site: cn=" + IP + "/" + String(subMask))
                     let siteTemp = try getLDAPInformation("siteObject", baseSearch: false, searchTerm: "cn=" + currentNetwork, test: false)
                     if siteTemp == "" {
-                        myLogger.logit(3, message: "Site information was empty, ignoring site lookup.")
+                        myLogger.logit(3, message: "Site information was empty, ignoring site.")
                     } else {
                         site = siteTemp
                     }
@@ -500,10 +500,43 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 		return Network(ip: ip, mask: mask)
 	}
 
-	/*
+	// TODO: Remove after verifying new method.
     private func getIPandMask() -> [String: [String]] {
         
         var network = [String: [String]]()
+        
+        // look for interface associated with a search domain of the AD domain
+        
+        let searchDomainKeysRaw = SCDynamicStoreCopyKeyList(store, "State:/Network/Service/.*/DNS")
+        let searchDomainKeys: [AnyObject] = searchDomainKeysRaw! as [AnyObject]
+        
+        for key in searchDomainKeys {
+            let myValues = SCDynamicStoreCopyValue(store, String(key) as CFString)
+            
+            if let searchDomain = myValues!["SupplementalMatchDomains"] {
+                if searchDomain != nil {
+                    
+                    let searchDomain2 = myValues!["SupplementalMatchDomains"] as! [String]
+                    if searchDomain2.contains(currentDomain) {
+                        myLogger.logit(2, message: "Using domain-specific interface.")
+                        
+                        // get the interface GUID
+                        let interfaceGUID = myValues!["ConfirmedServiceID"]
+                        
+                        // look up the service 
+                        
+                        let interfaceKey = "State:/Network/Service/" + (interfaceGUID!! as! String) + "/IPv4"
+                        let domainInterface = SCDynamicStoreCopyValue(store, interfaceKey as CFString)
+                        
+                        // get the local IPs for it
+                        
+                        network["IP"] = domainInterface!["Addresses"] as! [String]
+                        network["mask"] = ["255.255.255.254"]
+                        return network
+                    }
+                }
+            }
+        }
         
         myLogger.logit(3, message: "Looking for primary interface.")
         
@@ -522,7 +555,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         network["mask"] = (val["SubnetMasks"] as! [String])
         return network
     }
-	*/
+	
     // private function to determine subnet mask for site determination
     
     private func countBits(mask: String) -> Int {
@@ -703,6 +736,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 	
 	// get the list of LDAP servers from a SRV lookup
 	// Uses DNSResolver
+    
 	func getHosts(domain: String ) {
 		self.resolver.queryType = "SRV"
 		self.resolver.queryValue = "_ldap._tcp." + domain
@@ -739,7 +773,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 			hosts.removeAll()
 		}
 	}
-	
+
 	/*
 	// get the list of LDAP servers from an SRV lookup
 	// Uses cliTask

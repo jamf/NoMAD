@@ -79,8 +79,12 @@ class GetHelp {
 		if let domain = defaults.stringForKey("ADDomain") {
 			createdURL = createdURL.stringByReplacingOccurrencesOfString("<<domain>>", withString: domain)
 		}
-		if let fullName = defaults.stringForKey("displayName")!.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet()) {
-			createdURL = createdURL.stringByReplacingOccurrencesOfString("<<fullname>>", withString: fullName)
+        
+        //TODO: this crashes if displayName is empty
+		// Should be fixed... needs to be tested.
+		if (defaults.stringForKey("diplayName") != nil) {
+			let fullName = defaults.stringForKey("displayName")!.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())
+			createdURL = createdURL.stringByReplacingOccurrencesOfString("<<fullname>>", withString: fullName!)
 		}
 		if let serial = getSerial().stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet()) {
 			createdURL = createdURL.stringByReplacingOccurrencesOfString("<<serial>>", withString: serial)

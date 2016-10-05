@@ -118,7 +118,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
             
             // check to see we can match the kpasswd server with the LDAP server
             
-            let kerbPrefFile = checkKpasswdServer(true)
+            //let kerbPrefFile = checkKpasswdServer(true)
             
 			myError = ChangePassword.changeKerbPassword(currentPassword, newPassword1, username)
             
@@ -153,14 +153,14 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 					myError = "Your current local password does not match your AD password."
 				}
 			}
-            
+            /*
             if kerbPrefFile {
                 let kerbDefaults = NSUserDefaults(suiteName: "com.apple.Kerberos")
                 
                 // TODO: Replace defaults delete.
                 cliTask("/usr/bin/defaults delete com.apple.Kerberos")
             }
-			
+			*/
 			// If there wasn't an error and Sync Local Password is set
 			// Update the keychain password
 			if (localPasswordSync == 1 ) && myError == "" {
