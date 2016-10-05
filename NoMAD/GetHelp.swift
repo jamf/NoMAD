@@ -82,7 +82,7 @@ class GetHelp {
         
         //TODO: this crashes if displayName is empty
 		// Should be fixed... needs to be tested.
-		if (defaults.stringForKey("diplayName") != nil) {
+		if (defaults.stringForKey("displayName") != nil) {
 			let fullName = defaults.stringForKey("displayName")!.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())
 			createdURL = createdURL.stringByReplacingOccurrencesOfString("<<fullname>>", withString: fullName!)
 		}
