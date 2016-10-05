@@ -19,6 +19,48 @@ struct LDAPServer {
     var timeStamp: NSDate
 }
 
+internal struct Network {
+	let ip: String
+	let mask: String
+	var cidr: Int {
+		let maskOctets = mask.componentsSeparatedByString(".")
+		var numBits: Int = 0
+		for maskOctet in maskOctets {
+			numBits += Int( log2(Double(maskOctet)!+1) )
+		}
+		return numBits
+	}
+	var networkAddress: String {
+		//should create an array of the octets that match up to each x in x.x.x.x
+		let octets = ip.componentsSeparatedByString(".")
+		let numberNetworkOctets: Int = cidr / 8
+		let numberSubnetBits: Int = cidr % 8
+		let subnetOctet: Int
+		if ( cidr == 32 ) {
+			subnetOctet = Int(octets[3])!
+		} else {
+			subnetOctet = Int(octets[numberNetworkOctets])! - ( Int(octets[numberNetworkOctets])! % Int(pow(Double(2), Double(8 - numberSubnetBits))) )
+		}
+		let networkAddressValue: String
+		switch numberNetworkOctets {
+		case 0:
+			networkAddressValue = String(subnetOctet) + ".0.0.0"
+		case 1:
+			networkAddressValue = octets[0] + "." + String(subnetOctet) + ".0.0"
+		case 2:
+			networkAddressValue = octets[0] + "." + octets[1] + "." + String(subnetOctet) + ".0"
+		case 3:
+			networkAddressValue = octets[0] + "." + octets[1] + "." + octets[2] + "." + String(subnetOctet)
+		default:
+			networkAddressValue = octets[0] + "." + octets[1] + "." + octets[2] + "." + octets[3]
+		}
+		return networkAddressValue
+	}
+	var cidrNotation: String {
+		return networkAddress + "/" + String(cidr)
+	}
+}
+
 class LDAPServers : NSObject, DNSResolverDelegate {
     // defaults
     
@@ -264,7 +306,14 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     private func getSRV() {
         
     }
-    
+	/*
+	private func getListOfPossibleCIDRAddressesForNetwork(network: [String: [String]]) -> Array {
+		let ipAddress: String = network["IP"]
+		let subnetMask: String = network["mask"]
+		var cidrAddresses = [String]()
+		
+	}
+	*/
     // private function to get the AD site
     
     private func findSite() throws {
@@ -276,11 +325,15 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         
         // first grab IPv4
         // TODO: fix for IPv6
-        
-        let network = getIPandMask()
-        
-        myLogger.logit(2, message:"IPs: " + network["IP"]![0])
-        myLogger.logit(2, message:"Subnets: " + network["mask"]![0])
+        let primaryInterface = getPrimaryInterface()
+        let network = getIPandMaskForInterface( primaryInterface )
+		
+		myLogger.logit(2, message:"NETWORK INFO")
+        myLogger.logit(2, message:"IPs: " + network.ip)
+        myLogger.logit(2, message:"Subnet Mask: " + network.mask)
+		myLogger.logit(2, message:"CIDR: " + String(network.cidr))
+		myLogger.logit(2, message:"Network Address: " + network.networkAddress)
+		myLogger.logit(2, message:"CIDR Notation: " + network.cidrNotation)
 		
 		// Save the normal naming context to a temp variable 
 		// so we can restore it later
@@ -320,8 +373,8 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         // TODO: Support more than 1 local IP address
         //  for index in 1...IPs.count {
         
-        var subMask = countBits(network["mask"]![0])
-        let IPOctets = network["IP"]![0].componentsSeparatedByString(".")
+        var subMask = countBits(network.mask)
+        let IPOctets = network.ip.componentsSeparatedByString(".")
         var IP = ""
         
         myLogger.logit(1, message:"Starting site lookups")
@@ -329,16 +382,21 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         // loop through all of the possible networks until we get a match, or fall through
         
         while subMask >= 0 && !found && subnetCount >= 2 {
+            var networkBit = 0
             
             let octet = subMask / 8
             let octetMask = subMask % 8
-            let network = Int(IPOctets[octet])! - (Int(IPOctets[octet])! % binToDecimal(octetMask))
-            
+            if subMask == 32 {
+                networkBit = Int(IPOctets[3])!
+			} else {
+				networkBit = Int(IPOctets[octet])! - (Int(IPOctets[octet])! % binToDecimal(octetMask))
+			}
+        
             switch octet {
-            case 0  : IP = String(network) + ".0.0.0"
-            case 1  : IP = IPOctets[0] + "." + String(network) + ".0.0"
-            case 2  : IP = IPOctets[0] + "." + IPOctets[1] + "." + String(network) + ".0"
-            case 3  : IP = IPOctets[0] + "." + IPOctets[1] + "." + IPOctets[2] + "." + String(network)
+            case 0  : IP = String(networkBit) + ".0.0.0"
+            case 1  : IP = IPOctets[0] + "." + String(networkBit) + ".0.0"
+            case 2  : IP = IPOctets[0] + "." + IPOctets[1] + "." + String(networkBit) + ".0"
+            case 3  : IP = IPOctets[0] + "." + IPOctets[1] + "." + IPOctets[2] + "." + String(networkBit)
             case 4  : IP = IPOctets[0] + "." + IPOctets[1] + "." + IPOctets[2] + "." + IPOctets[3]
             default : IP = IPOctets[0] + "." + IPOctets[1] + "." + IPOctets[2] + "." + IPOctets[3]
             }
@@ -416,9 +474,33 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         defaultNamingContext = tempDefaultNamingContext
         myLogger.logit(2, message:"Resetting default naming context to: " + defaultNamingContext)
     }
-    
+	
+	
+	// MARK: IP/Subnet Stuff
+	private func getPrimaryInterface() -> String {
+		let globalInterface = SCDynamicStoreCopyValue(store, "State:/Network/Global/IPv4")
+		let interface = globalInterface!["PrimaryInterface"] as! String
+		return interface
+	}
+	
     // private function to get IP and mask
-    
+	private func getIPandMaskForInterface( interface:String) -> Network {
+		myLogger.logit(3, message: "Looking for interface " + interface)
+		
+		let val = SCDynamicStoreCopyValue(store, "State:/Network/Interface/" + interface + "/IPv4") as! [String: [String]]
+		
+		let ip: String = ( val["Addresses"]![0] )
+		let mask: String
+		if ( val["SubnetMasks"] != nil) {
+			mask = val["SubnetMasks"]![0]
+		} else {
+			mask = "255.255.255.254"
+		}
+		
+		return Network(ip: ip, mask: mask)
+	}
+
+	/*
     private func getIPandMask() -> [String: [String]] {
         
         var network = [String: [String]]()
@@ -440,7 +522,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         network["mask"] = (val["SubnetMasks"] as! [String])
         return network
     }
-    
+	*/
     // private function to determine subnet mask for site determination
     
     private func countBits(mask: String) -> Int {
@@ -662,24 +744,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 	// get the list of LDAP servers from an SRV lookup
 	// Uses cliTask
     func getHosts(domain: String ) {
-		// Testing DNSResolver.
-		//self.resolver = DNSResolver.init(queryType: "SRV", andValue: "_ldap._tcp." + domain)
-		self.resolver.queryType = "SRV"
-		self.resolver.queryValue = "_ldap._tcp." + domain
-		self.resolver.startQuery()
-		
-		while ( !self.resolver.finished ) {
-			NSRunLoop.currentRunLoop().runMode(NSDefaultRunLoopMode, beforeDate: NSDate.distantFuture())
-		}
-		
-		if (self.resolver.error == nil) {
-			//print(self.resolver.queryResults.description)
-			myLogger.logit(3, message: "Did Receive Query Result: " + self.resolver.queryResults.description)
-		} else {
-			//print(self.resolver.error.description)
-			myLogger.logit(3, message: "Query Error: " + self.resolver.error.description)
-		}
-		
+	
         var newHosts = [LDAPServer]()
         var dnsResults = cliTask("/usr/bin/dig +short -t SRV _ldap._tcp." + domain).componentsSeparatedByString("\n")
         
