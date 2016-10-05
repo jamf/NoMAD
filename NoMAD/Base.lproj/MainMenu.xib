@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11198.2" systemVersion="16B2327e" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11201" systemVersion="16B2338c" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11198.2"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -31,7 +31,7 @@
                         <action selector="NoMADMenuClickLogIn:" target="Gp4-Xp-pEc" id="wVm-5I-piH"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Log In" alternate="YES" id="Wa6-S1-lXm">
+                <menuItem title="Sign In" alternate="YES" id="Wa6-S1-lXm">
                     <modifierMask key="keyEquivalentModifierMask" control="YES" option="YES"/>
                     <connections>
                         <action selector="NoMADMenuClickLogInAlternate:" target="Gp4-Xp-pEc" id="Ght-9J-Q4Q"/>
@@ -43,7 +43,7 @@
                         <action selector="NoMADMenuClickChangePassword:" target="Gp4-Xp-pEc" id="lgn-ZO-gUO"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Log Out" id="w1A-iF-wAU">
+                <menuItem title="Sign Out" id="w1A-iF-wAU">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="NoMADMenuClickLogOut:" target="Gp4-Xp-pEc" id="DXe-en-Xqw"/>

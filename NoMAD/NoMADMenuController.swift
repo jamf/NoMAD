@@ -377,6 +377,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         // TODO: check to see if the SSL Certs are trusted, otherwise we'll fail
         // TODO: check if a valid cert is already present and then warn
         
+        // start the animation
+        
+        startMenuAnimationTimer()
+        
         // need pre-flight to ensure valid URL and template
         
         let certCATest = defaults.stringForKey("x509CA") ?? ""
@@ -391,6 +395,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             certAlertController.messageText = "Please ensure your Certificate Authority settings are correct."
             certAlertController.runModal()
         }
+        
+        // stop the animation
+        
+        stopMenuAnimationTimer()
     }
     
     
@@ -408,8 +416,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // this enagages help based upon preferences set
     
     @IBAction func NoMADMenuClickGetHelp(sender: NSMenuItem) {
+        startMenuAnimationTimer()
     let myGetHelp = GetHelp()
         myGetHelp.getHelp()
+        stopMenuAnimationTimer()
     }
      
     // if specified by the preferences, this shows a CLI one-liner
@@ -648,11 +658,11 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         // through the magic of code blocks we'll update in the background
         
         dispatch_async(myWorkQueue, {
-            self.startMenuAnimationTimer()
+            //self.startMenuAnimationTimer()
 
             self.userInformation.getUserInfo()
             
-            self.menuAnimationTimer.invalidate()
+            //self.menuAnimationTimer.invalidate()
             
             dispatch_sync(dispatch_get_main_queue(), { () -> Void in
             
