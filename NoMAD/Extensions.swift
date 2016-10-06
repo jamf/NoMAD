@@ -14,3 +14,9 @@ extension NSWindow {
 		self.makeKeyAndOrderFront(sender);
 	}
 }
+
+extension String {
+	var translate: String {
+		return Localizator.sharedInstance.translate(self)
+	}
+}

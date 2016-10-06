@@ -34,11 +34,7 @@ prefix func ~~(value: Int)->Bool{
     return (value>0) ? true : false
 }
 
-extension String {
-    var translate: String {
-        return Localizator.sharedInstance.translate(self)
-    }
-}
+
 
 // default settings
 
@@ -840,7 +836,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 }
 
 // pragma mark: Localization bits
-
+/*
 private class Localizator {
     
     static let sharedInstance = Localizator()
@@ -860,3 +856,4 @@ private class Localizator {
         return localizedString
     }
 }
+*/
