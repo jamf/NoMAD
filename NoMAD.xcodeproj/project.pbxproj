@@ -17,6 +17,8 @@
 		1A26AFF51D3BE620000776A4 /* WindowsCATools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A26AFF41D3BE620000776A4 /* WindowsCATools.swift */; };
 		1A26AFF71D46E4BF000776A4 /* GetHelp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A26AFF61D46E4BF000776A4 /* GetHelp.swift */; };
 		1ADCEC621D75476D005D33F5 /* ShareMounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ADCEC611D75476D005D33F5 /* ShareMounter.swift */; };
+		1AE1DFC01DA6AF5700456E3E /* Localizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AE1DFBF1DA6AF5700456E3E /* Localizer.swift */; };
+		1AE1DFC11DA6B1E100456E3E /* Languages.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1AE1DFC31DA6B1E100456E3E /* Languages.plist */; };
 		1AFEAC361D68FEAF00B7FA88 /* UserInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AFEAC351D68FEAF00B7FA88 /* UserInformation.swift */; };
 		346CD2711DA205B500255F66 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 346CD2731DA205B500255F66 /* MainMenu.xib */; };
 		346CD2751DA2065D00255F66 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 346CD2741DA2065D00255F66 /* Localizable.strings */; };
@@ -59,6 +61,9 @@
 		1A26AFF41D3BE620000776A4 /* WindowsCATools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WindowsCATools.swift; sourceTree = "<group>"; };
 		1A26AFF61D46E4BF000776A4 /* GetHelp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetHelp.swift; sourceTree = "<group>"; };
 		1ADCEC611D75476D005D33F5 /* ShareMounter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareMounter.swift; sourceTree = "<group>"; };
+		1AE1DFBF1DA6AF5700456E3E /* Localizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Localizer.swift; sourceTree = "<group>"; };
+		1AE1DFC21DA6B1E100456E3E /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Base; path = Base.lproj/Languages.plist; sourceTree = "<group>"; };
+		1AE1DFC51DA6B52300456E3E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = en; path = en.lproj/Languages.plist; sourceTree = "<group>"; };
 		1AFEAC351D68FEAF00B7FA88 /* UserInformation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInformation.swift; sourceTree = "<group>"; };
 		346CD2721DA205B500255F66 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		346CD2741DA2065D00255F66 /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
@@ -108,6 +113,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1AE1DFBC1DA69CF100456E3E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				1AE1DFC31DA6B1E100456E3E /* Languages.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		34E186C01D9E405400265138 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -139,6 +152,7 @@
 		84CC67DD1D30A18A00115C76 /* NoMAD */ = {
 			isa = PBXGroup;
 			children = (
+				1AE1DFBC1DA69CF100456E3E /* Resources */,
 				346CD2741DA2065D00255F66 /* Localizable.strings */,
 				84F93A2A1D3886FA00ED2070 /* AutoConfigure.swift */,
 				1A26AFF61D46E4BF000776A4 /* GetHelp.swift */,
@@ -170,6 +184,7 @@
 				34E186BD1D9C681000265138 /* DNSResolver.h */,
 				34E186BE1D9C681000265138 /* DNSResolver.m */,
 				346CD27E1DA4776600255F66 /* Extensions.swift */,
+				1AE1DFBF1DA6AF5700456E3E /* Localizer.swift */,
 			);
 			path = NoMAD;
 			sourceTree = "<group>";
@@ -273,6 +288,7 @@
 			files = (
 				84CC67E11D30A18A00115C76 /* Assets.xcassets in Resources */,
 				346CD2751DA2065D00255F66 /* Localizable.strings in Resources */,
+				1AE1DFC11DA6B1E100456E3E /* Languages.plist in Resources */,
 				346CD2711DA205B500255F66 /* MainMenu.xib in Resources */,
 				1A08F1EF1D36CE0C00FA68C4 /* PreferencesWindow.xib in Resources */,
 				1A08F1EB1D36CDC200FA68C4 /* LoginWindow.xib in Resources */,
@@ -306,6 +322,7 @@
 				84847A671D3DDF5600FAE468 /* KlistUtil.swift in Sources */,
 				1A26AFF71D46E4BF000776A4 /* GetHelp.swift in Sources */,
 				84F93A2B1D3886FA00ED2070 /* AutoConfigure.swift in Sources */,
+				1AE1DFC01DA6AF5700456E3E /* Localizer.swift in Sources */,
 				84996CA81D503F8400793747 /* LDAPUtil.swift in Sources */,
 				346CD27F1DA4776600255F66 /* Extensions.swift in Sources */,
 				1A24EF481D7F01B3006A1866 /* Logger.swift in Sources */,
@@ -336,6 +353,15 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		1AE1DFC31DA6B1E100456E3E /* Languages.plist */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1AE1DFC21DA6B1E100456E3E /* Base */,
+				1AE1DFC51DA6B52300456E3E /* en */,
+			);
+			name = Languages.plist;
+			sourceTree = "<group>";
+		};
 		346CD2731DA205B500255F66 /* MainMenu.xib */ = {
 			isa = PBXVariantGroup;
 			children = (

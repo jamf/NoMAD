@@ -34,6 +34,12 @@ prefix func ~~(value: Int)->Bool{
     return (value>0) ? true : false
 }
 
+extension String {
+    var translate: String {
+        return Localizator.sharedInstance.translate(self)
+    }
+}
+
 // default settings
 
 let settings = [
@@ -54,17 +60,6 @@ let settings = [
     "UserPasswordSetDates"   : NSDictionary()
 ]
 
-// Add method that forces Window to Front
-/*
-extension NSWindow {
-	func forceToFrontAndFocus(sender: AnyObject?) {
-		NSApp.activateIgnoringOtherApps(true)
-		self.makeKeyAndOrderFront(sender);
-	}
-}
-*/
-
-
 // set up a default defaults
 
 let defaults = NSUserDefaults.init()
@@ -72,6 +67,8 @@ let statusItem = NSStatusBar.systemStatusBar().statusItemWithLength(NSVariableSt
 let userNotificationCenter = NSUserNotificationCenter.defaultUserNotificationCenter()
 var selfServiceExists = false
 let myLogger = Logger()
+
+let myLanguage = NSLocale.currentLocale()
 
 class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate, PreferencesWindowDelegate, NSMenuDelegate {
     
@@ -93,9 +90,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     @IBOutlet weak var NoMADMenuSpewLogs: NSMenuItem!
     @IBOutlet weak var NoMADMenuTicketLife: NSMenuItem!
     @IBOutlet weak var NoMADMenuLogInAlternate: NSMenuItem!
-	
-	
-	
+    
     let NoMADMenuHome = NSMenuItem()
     
     // menu bar icons
@@ -254,6 +249,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         }
         
         stopMenuAnimationTimer()
+        
+        // set up menu titles w/translation
+        
+        NoMADMenuLockScreen.title = "Lock Screen".translate
     }
 	
 	
@@ -489,7 +488,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 		// Makes all NoMAD windows come to top
         // NSApp.activateIgnoringOtherApps(true)
 		
-        if menuItem.title == "Lock Screen" {
+        if menuItem.title == "Lock Screen".translate {
             updateUserInfo()
         }
         
@@ -838,4 +837,26 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         }
     }
 
+}
+
+// pragma mark: Localization bits
+
+private class Localizator {
+    
+    static let sharedInstance = Localizator()
+    
+    lazy var localizableDictionary: NSDictionary! = {
+        if let path = NSBundle.mainBundle().pathForResource("Languages", ofType: "plist") {
+            return NSDictionary(contentsOfFile: path)
+        }
+        fatalError("Localizable file NOT found")
+    }()
+    
+    func translate(string: String) -> String {
+        guard let localizedString = localizableDictionary.valueForKey(string)?.valueForKey("value") as? String else {
+            assertionFailure("Missing translation for: \(string)")
+            return ""
+        }
+        return localizedString
+    }
 }
