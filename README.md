@@ -40,9 +40,9 @@ Sample screen shot:
 
 ***Current Version***
 
-v. .9 Public Beta 2 - Most things work, but we need some testing.
+v. .9 Public Beta 6.1 - Note these are coming fast and furious. The preffered release mechanism is on the #nomad Slack channel.
 
-[NoMAD-PB2.zip](/uploads/68b3c828d9622b3f86affddc9dc1687f/NoMAD-PB2.zip)
+[NoMAD-PB6.1.zip](/uploads/0861935fbb93fad46d570b9ae096d347/NoMAD-PB6.1.zip)
 
 ***Video Walkthrough***
 
