@@ -509,6 +509,20 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 	}
 
 	private func getInterfaceMatchingDomain(domain: String) -> String? {
+        
+        // TODO: Replace cliTask
+        // not the best looking code, but it works
+        
+        let interfaceRaw = cliTask("/sbin/route get " + domain )
+        
+        if interfaceRaw.containsString("interface") {
+            for line in interfaceRaw.componentsSeparatedByString("\n") {
+            if line.containsString("interface") {
+                myLogger.logit(3, message: line)
+                return line.stringByReplacingOccurrencesOfString("  interface: ", withString: "").stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                }
+            }
+        }
 		var interfaceName: String? = nil
 		myLogger.logit(2, message: "Trying to get interface with search domain of \(domain)")
 		let searchDomainKeys = SCDynamicStoreCopyKeyList(store, "State:/Network/Service/.*/DNS")! as Array
