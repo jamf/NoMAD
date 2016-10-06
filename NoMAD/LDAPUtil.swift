@@ -59,6 +59,15 @@ internal struct Network {
 	var cidrNotation: String {
 		return networkAddress + "/" + String(cidr)
 	}
+	var description: String {
+		var descriptionValue = "\n== NETWORK INFO ==\n"
+		descriptionValue += "IP: \(ip)\n"
+		descriptionValue += "Subnet Mask: \(mask)\n"
+		descriptionValue += "CIDR: \(cidr)\n"
+		descriptionValue += "Network Address: \(networkAddress)\n"
+		descriptionValue += "CIDR Notation: \(cidrNotation)\n"
+		return descriptionValue
+	}
 }
 
 class LDAPServers : NSObject, DNSResolverDelegate {
@@ -325,15 +334,11 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         
         // first grab IPv4
         // TODO: fix for IPv6
-        let primaryInterface = getPrimaryInterface()
-        let network = getIPandMaskForInterface( primaryInterface )
+		let interface = getInterfaceMatchingDomain(currentDomain) ?? getPrimaryInterface()
+		//let interface = getIPandMask()["IP"]![0]
+        let network = getNetworkInfoForInterface( interface )
 		
-		myLogger.logit(2, message:"NETWORK INFO")
-        myLogger.logit(2, message:"IPs: " + network.ip)
-        myLogger.logit(2, message:"Subnet Mask: " + network.mask)
-		myLogger.logit(2, message:"CIDR: " + String(network.cidr))
-		myLogger.logit(2, message:"Network Address: " + network.networkAddress)
-		myLogger.logit(2, message:"CIDR Notation: " + network.cidrNotation)
+		myLogger.logit(2, message:network.description)
 		
 		// Save the normal naming context to a temp variable 
 		// so we can restore it later
@@ -478,14 +483,17 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 	
 	// MARK: IP/Subnet Stuff
 	private func getPrimaryInterface() -> String {
+		myLogger.logit(2, message: "Getting the primary interface.")
 		let globalInterface = SCDynamicStoreCopyValue(store, "State:/Network/Global/IPv4")
 		let interface = globalInterface!["PrimaryInterface"] as! String
 		return interface
 	}
 	
+	
+	
     // private function to get IP and mask
-	private func getIPandMaskForInterface( interface:String) -> Network {
-		myLogger.logit(3, message: "Looking for interface " + interface)
+	private func getNetworkInfoForInterface( interface:String ) -> Network {
+		myLogger.logit(3, message: "Getting network info for interface " + interface)
 		
 		let val = SCDynamicStoreCopyValue(store, "State:/Network/Interface/" + interface + "/IPv4") as! [String: [String]]
 		
@@ -500,6 +508,36 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 		return Network(ip: ip, mask: mask)
 	}
 
+	private func getInterfaceMatchingDomain(domain: String) -> String? {
+		var interfaceName: String? = nil
+		myLogger.logit(2, message: "Trying to get interface with search domain of \(domain)")
+		let searchDomainKeys = SCDynamicStoreCopyKeyList(store, "State:/Network/Service/.*/DNS")! as Array
+		var i = 0, j = searchDomainKeys.count
+		
+		while ( i < j ) {
+			
+			let keyPtr = CFArrayGetValueAtIndex( searchDomainKeys, i )
+			let key = Unmanaged<CFString>.fromOpaque(COpaquePointer(keyPtr)).takeUnretainedValue()
+			let value = SCDynamicStoreCopyValue(store, key) as! [String:AnyObject]
+			
+			if let searchDomains = value["SearchDomains"] as? [String] {
+				if searchDomains.contains(currentDomain.lowercaseString) {
+					// get the interface GUID
+					guard let dnsGUID = searchDomainKeys[i] as? String else { return interfaceName }
+					let interfaceGUID = dnsGUID.stringByReplacingOccurrencesOfString("DNS", withString: "IPv4")
+					// look up the service
+					guard let interfaceList = SCDynamicStoreCopyValue(store, interfaceGUID) as? [String:AnyObject] else { return interfaceName }
+					interfaceName = interfaceList["InterfaceName"] as? String
+					break;
+				}
+			}
+			i += 1
+		}
+		
+		return interfaceName
+		
+	}
+	
 	// TODO: Remove after verifying new method.
     private func getIPandMask() -> [String: [String]] {
         
@@ -557,7 +595,6 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     }
 	
     // private function to determine subnet mask for site determination
-    
     private func countBits(mask: String) -> Int {
         var bits: Int
         switch mask {
