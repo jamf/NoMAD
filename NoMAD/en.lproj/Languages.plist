@@ -5,7 +5,7 @@
 	<key>NoMADMenuController-ChangePassword</key>
 	<dict>
 		<key>value</key>
-		<string>Change-Password</string>
+		<string>Change Password</string>
 		<key>comment</key>
 		<string>Menu item to Change Password</string>
 	</dict>
@@ -26,14 +26,14 @@
 	<key>NoMADMenuController-Connected</key>
 	<dict>
 		<key>value</key>
-		<string>Connected</string>
+		<string></string>
 		<key>comment</key>
 		<string>Text in the menu bar to show that NoMAD can find the Domain</string>
 	</dict>
 	<key>NoMADMenuController-NotConnected</key>
 	<dict>
 		<key>value</key>
-		<string>Nope!</string>
+		<string>Not Connected</string>
 		<key>comment</key>
 		<string>Text in the menu bar to show that NoMAD can not find the Domain</string>
 	</dict>
