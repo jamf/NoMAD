@@ -54,7 +54,7 @@ If you want to get a better idea of what NoMAD can do for you, here's a quick wa
 
 Feel free to report any issues that you're having or feature requests in the Issues section of the project page.
 
-Also you can find some of the teawm in #nomad on the Mac Admins Slack. If you're not already a member you can join [here](http://macadmins.org).
+You can find some of the team in #nomad on the Mac Admins Slack. If you're not already a member you can join [here](http://macadmins.org).
 
 You can also discuss the development and get notified of new commits in #nomad-dev.
 
