@@ -12,7 +12,7 @@ class UserInformation {
     
     // set up defaults for the domain
     
-    var status = "Not Connected"
+    var status = "NoMADMenuController-NotConnected"
     var domain = ""
     var realm = ""
     
@@ -75,10 +75,10 @@ class UserInformation {
         //myLDAPServers.tickets.getDetails()
         
         if myLDAPServers.currentState {
-            status = "Connected"
+            status = "NoMADMenuController-Connected"
             connected = true
         } else {
-            status = "Not connected"
+            status = "NoMADMenuController-NotConnected"
             connected = false
             myLogger.logit(0, message: "Not connected to the network")
         }
@@ -185,7 +185,12 @@ class UserInformation {
                 
 				if ((UserPasswordSetDates[userPrincipal] as? NSDate )! != userPasswordSetDate) {
 					myLogger.logit(0, message: "Password was changed underneath us.")
+                    
 					// TODO: Do something if we get here
+                    
+                    let alertController = NSAlert()
+                    alertController.messageText = "Your Password Changed"
+                    alertController.runModal()
 					
 					// record the new password set date
 					

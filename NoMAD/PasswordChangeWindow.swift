@@ -19,12 +19,15 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
     @IBOutlet weak var newPassword: NSSecureTextField!
     @IBOutlet weak var oldPassword: NSSecureTextField!
     @IBOutlet weak var newPasswordAgain: NSSecureTextField!
+    @IBOutlet weak var passwordChangeButton: NSButton!
+    
     
     override var windowNibName: String! {
         return "PasswordChangeWindow"
     }
 
     override func windowDidLoad() {
+
         super.windowDidLoad()
         
         self.window?.center()
@@ -33,6 +36,10 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
         oldPassword.stringValue = ""
         newPassword.stringValue = ""
         newPasswordAgain.stringValue = ""
+        
+        // set the button text
+        passwordChangeButton.title = "NoMADMenuController-ChangePassword".translate
+        self.window?.title = "NoMADMenuController-ChangePassword".translate
         
     }
     
