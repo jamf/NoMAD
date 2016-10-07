@@ -45,7 +45,7 @@ let settings = [
     "userCommandHotKey1"    : "",
     "userCommandName1"  : "",
     "userCommandTask1"  : "",
-    "secondsToRenew"    : 7200,
+    "SecondsToRenew"    : 7200,
     "RenewTickets"  :   1,
     "userPasswordExpireDate"    : "",
     "PasswordExpireAlertTime"   : 1296000,
