@@ -162,8 +162,17 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
         
         if ADDomainTextField.stringValue == "" {
             let alertController = NSAlert()
+            var close: Bool = true
+            
             alertController.messageText = "The AD Domain needs to be filled out."
-            alertController.beginSheetModalForWindow(self.window!, completionHandler: nil)
+            alertController.addButtonWithTitle("OK")
+            alertController.addButtonWithTitle("Quit NoMAD")
+            alertController.beginSheetModalForWindow(self.window!, completionHandler: {( response ) in
+                if ( response == 1001 ) {
+                    NSApp.terminate(self)
+                } else {
+                }
+            })
             return false
         } else {
             return true
