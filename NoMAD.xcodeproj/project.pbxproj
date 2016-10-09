@@ -20,6 +20,7 @@
 		1AE1DFC11DA6B1E100456E3E /* Languages.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1AE1DFC31DA6B1E100456E3E /* Languages.plist */; };
 		1AFEAC361D68FEAF00B7FA88 /* UserInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AFEAC351D68FEAF00B7FA88 /* UserInformation.swift */; };
 		345226E41DAA052C0066C922 /* ADNetlogon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345226E31DAA052C0066C922 /* ADNetlogon.swift */; };
+		345226E91DAA266B0066C922 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345226E81DAA266B0066C922 /* Network.swift */; };
 		346CD2711DA205B500255F66 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 346CD2731DA205B500255F66 /* MainMenu.xib */; };
 		346CD2751DA2065D00255F66 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 346CD2741DA2065D00255F66 /* Localizable.strings */; };
 		346CD27F1DA4776600255F66 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346CD27E1DA4776600255F66 /* Extensions.swift */; };
@@ -66,6 +67,7 @@
 		1AE1DFC51DA6B52300456E3E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = en; path = en.lproj/Languages.plist; sourceTree = "<group>"; };
 		1AFEAC351D68FEAF00B7FA88 /* UserInformation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInformation.swift; sourceTree = "<group>"; };
 		345226E31DAA052C0066C922 /* ADNetlogon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ADNetlogon.swift; sourceTree = "<group>"; };
+		345226E81DAA266B0066C922 /* Network.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 		346CD2721DA205B500255F66 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		346CD2741DA2065D00255F66 /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		346CD27E1DA4776600255F66 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -154,9 +156,9 @@
 		84CC67DD1D30A18A00115C76 /* NoMAD */ = {
 			isa = PBXGroup;
 			children = (
-				345226E31DAA052C0066C922 /* ADNetlogon.swift */,
 				1AE1DFBC1DA69CF100456E3E /* Resources */,
 				346CD2741DA2065D00255F66 /* Localizable.strings */,
+				345226E31DAA052C0066C922 /* ADNetlogon.swift */,
 				84F93A2A1D3886FA00ED2070 /* AutoConfigure.swift */,
 				1A26AFF61D46E4BF000776A4 /* GetHelp.swift */,
 				84CC68041D30A25500115C76 /* NoMADMenuController.swift */,
@@ -188,6 +190,7 @@
 				34E186BE1D9C681000265138 /* DNSResolver.m */,
 				34B9B7091DA6E9C500FCCFE3 /* Localizator.swift */,
 				346CD27E1DA4776600255F66 /* Extensions.swift */,
+				345226E81DAA266B0066C922 /* Network.swift */,
 			);
 			path = NoMAD;
 			sourceTree = "<group>";
@@ -335,6 +338,7 @@
 				34E186BF1D9C681000265138 /* DNSResolver.m in Sources */,
 				84996CAD1D503F9700793747 /* PreferencesWindow.swift in Sources */,
 				84CC68051D30A25500115C76 /* NoMADMenuController.swift in Sources */,
+				345226E91DAA266B0066C922 /* Network.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

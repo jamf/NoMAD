@@ -19,57 +19,6 @@ struct LDAPServer {
     var timeStamp: NSDate
 }
 
-internal struct Network {
-	let ip: String
-	let mask: String
-	var cidr: Int {
-		let maskOctets = mask.componentsSeparatedByString(".")
-		var numBits: Int = 0
-		for maskOctet in maskOctets {
-			numBits += Int( log2(Double(maskOctet)!+1) )
-		}
-		return numBits
-	}
-	var networkAddress: String {
-		//should create an array of the octets that match up to each x in x.x.x.x
-		let octets = ip.componentsSeparatedByString(".")
-		let numberNetworkOctets: Int = cidr / 8
-		let numberSubnetBits: Int = cidr % 8
-		let subnetOctet: Int
-		if ( cidr == 32 ) {
-			subnetOctet = Int(octets[3])!
-		} else {
-			subnetOctet = Int(octets[numberNetworkOctets])! - ( Int(octets[numberNetworkOctets])! % Int(pow(Double(2), Double(8 - numberSubnetBits))) )
-		}
-		let networkAddressValue: String
-		switch numberNetworkOctets {
-		case 0:
-			networkAddressValue = String(subnetOctet) + ".0.0.0"
-		case 1:
-			networkAddressValue = octets[0] + "." + String(subnetOctet) + ".0.0"
-		case 2:
-			networkAddressValue = octets[0] + "." + octets[1] + "." + String(subnetOctet) + ".0"
-		case 3:
-			networkAddressValue = octets[0] + "." + octets[1] + "." + octets[2] + "." + String(subnetOctet)
-		default:
-			networkAddressValue = octets[0] + "." + octets[1] + "." + octets[2] + "." + octets[3]
-		}
-		return networkAddressValue
-	}
-	var cidrNotation: String {
-		return networkAddress + "/" + String(cidr)
-	}
-	var description: String {
-		var descriptionValue = "\n== NETWORK INFO ==\n"
-		descriptionValue += "IP: \(ip)\n"
-		descriptionValue += "Subnet Mask: \(mask)\n"
-		descriptionValue += "CIDR: \(cidr)\n"
-		descriptionValue += "Network Address: \(networkAddress)\n"
-		descriptionValue += "CIDR Notation: \(cidrNotation)\n"
-		return descriptionValue
-	}
-}
-
 class LDAPServers : NSObject, DNSResolverDelegate {
     // defaults
     
@@ -144,10 +93,15 @@ class LDAPServers : NSObject, DNSResolverDelegate {
                 
                 if self.currentState && tickets.state {
                     testHosts()
+					/*
+					if ( findSite() ) {
+						myLogger.logit(0, message: "Site lookup failed")
+					}
+					*/
                     do {
                         try findSite()
                     } catch {
-                        myLogger.logit(0, message: "Site lookup failed")
+						myLogger.logit(0, message: "Site lookup failed")
                     }
             }
         }
@@ -298,43 +252,34 @@ class LDAPServers : NSObject, DNSResolverDelegate {
             testHosts()
         }
 		
-        if baseSearch {
-			let ldapQuery = "/usr/bin/ldapsearch -N -Q -LLL -s base -H ldap://" + self.currentServer + " -b " + self.defaultNamingContext + " " + searchTerm + " " + attribute
-			/*
-			let command = "/usr/bin/ldapsearch"
-			var arguments: [String] = [String]()
-			arguments.append("-N")
-			arguments.append("-Q")
-			arguments.append("-LLL")
+		let command = "/usr/bin/ldapsearch"
+		var arguments: [String] = [String]()
+		arguments.append("-N")
+		arguments.append("-Q")
+		arguments.append("-LLL")
+		arguments.append("-o")
+		arguments.append("nettimeout=1")
+		if baseSearch {
 			arguments.append("-s")
 			arguments.append("base")
-			arguments.append("-H")
-			arguments.append("ldap://" + self.currentServer)
-			arguments.append("-b")
-			arguments.append(self.defaultNamingContext)
-			if ( searchTerm != "") {
-				arguments.append(searchTerm)
-			}
-			arguments.append(attribute)
-			
-			let ldapResult = cliTask(command, arguments: arguments)
+		}
+		arguments.append("-H")
+		arguments.append("ldap://" + self.currentServer)
+		arguments.append("-b")
+		arguments.append(self.defaultNamingContext)
+		if ( searchTerm != "") {
+			arguments.append(searchTerm)
+		}
+		arguments.append(attribute)
+		let ldapResult = cliTask(command, arguments: arguments)
+		
+		if baseSearch {
 			myResult = cleanLDAPResults(ldapResult, attribute: attribute)
-			*/
-			myResult = cleanLDAPResults(cliTask(ldapQuery), attribute: attribute)
-        } else {
-			let ldapQuery = "/usr/bin/ldapsearch -N -Q -LLL -H ldap://" + self.currentServer + " -b " + self.defaultNamingContext + " " + searchTerm + " " + attribute
-            myResult = cleanLDAPResultsMultiple(cliTask(ldapQuery), attribute: attribute)
-        }
+		} else {
+			myResult = cleanLDAPResultsMultiple(ldapResult, attribute: attribute)
+		}
         return myResult
     }
-	
-	func encapsulated(value: String) -> String {
-		if(value != "") {
-			return "\"\(value)\""
-		} else {
-			return ""
-		}
-	}
     
     func returnFullRecord(searchTerm: String) -> String {
         let myResult = cliTaskNoTerm("/usr/bin/ldapsearch -N -Q -LLL -H ldap://" + self.currentServer + " -b " + self.defaultNamingContext + " " + searchTerm )
@@ -346,17 +291,11 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     private func getSRV() {
         
     }
-	/*
-	private func getListOfPossibleCIDRAddressesForNetwork(network: [String: [String]]) -> Array {
-		let ipAddress: String = network["IP"]
-		let subnetMask: String = network["mask"]
-		var cidrAddresses = [String]()
-		
-	}
-	*/
+	
     // private function to get the AD site
-	/*
+	
 	private func findSite() {
+		var found: Bool
 		// backup the defaultNamingContext so we can restore it at the end.
 		let tempDefaultNamingContext = defaultNamingContext
 		
@@ -369,19 +308,46 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 		let attribute = "netlogon"
 		// not sure if we need: (AAC=\00\00\00\00)
 		let searchTerm = "(&(DnsDomain=\(currentDomain))(NtVer=\\06\\00\\00\\00))" //NETLOGON_NT_VERSION_WITH_CLOSEST_SITE
-		//let searchTerm = "(&(DnsDomain=\(tempDefaultNamingContext))(NtVer=\(NETLOGON_NT_VERSION_WITH_CLOSEST_SITE))(AAC=\(AAC)))"
 		
 		let netlogon = try! getLDAPInformation(attribute, baseSearch: true, searchTerm: searchTerm, test: false)
 		
-		myLogger.logit(2, message:"Netlogon: " + netlogon)
+		if (netlogon != "") {
 		
-		defaultNamingContext = tempDefaultNamingContext
-		myLogger.logit(2, message:"Resetting default naming context to: " + defaultNamingContext)
+			myLogger.logit(2, message:"Netlogon: " + netlogon)
+			
+			let serverIsClosest = true
+			let site = ""
+			
+			
+			if (serverIsClosest) {
+				myLogger.logit(2, message:"The current server is the closest server.")
+				found = true
+				
+			} else {
+				if (site != "") {
+					myLogger.logit(3, message:"Site found, looking up DCs for site.")
+					found = true
+					let siteDomain = site.componentsSeparatedByString(",")[0].stringByReplacingOccurrencesOfString("CN=", withString: "") + "._sites." + currentDomain
+					let currentHosts = hosts
+					getHosts(siteDomain)
+					if (hosts[0].host == "") {
+						myLogger.logit(0, message: "Site has no DCs configured. Ignoring site. You should fix this.")
+						hosts = currentHosts
+					}
+					testHosts()
+				} else {
+					myLogger.logit(3, message: "Unable to find site")
+				}
+			}
+			
+			myLogger.logit(2, message:"Resetting default naming context to: " + defaultNamingContext)
+			defaultNamingContext = tempDefaultNamingContext
+		}
 	}
-	*/
 	
+	/*
     private func findSite() throws {
-        
+	
         myLogger.logit(2, message:"Looking for local IP")
         
         var found = false
@@ -534,8 +500,26 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         defaultNamingContext = tempDefaultNamingContext
         myLogger.logit(2, message:"Resetting default naming context to: " + defaultNamingContext)
     }
+	*/
 	
-	
+	private func getInterfaceMatchingDomain() -> String? {
+		// TODO: Replace cliTask
+		// not the best looking code, but it works
+		myLogger.logit(2, message: "Trying to get interface with search domain of \(currentServer)")
+		let interfaceRaw = cliTask("/sbin/route get " + currentServer )
+		
+		
+		if interfaceRaw.containsString("interface") {
+			for line in interfaceRaw.componentsSeparatedByString("\n") {
+				if line.containsString("interface") {
+					myLogger.logit(3, message: line)
+					return line.stringByReplacingOccurrencesOfString("  interface: ", withString: "").stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+				}
+			}
+		}
+		return ""
+		
+	}
 	
 	// MARK: IP/Subnet Stuff
 	private func getPrimaryInterface() -> String {
@@ -563,63 +547,18 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 		return Network(ip: ip, mask: mask)
 	}
 
-	private func getInterfaceMatchingDomain(domain: String) -> String? {
-		var interfaceName: String? = nil
-		
-        // TODO: Replace cliTask
-        // not the best looking code, but it works
-		
-        let interfaceRaw = cliTask("/sbin/route get " + domain )
-        
-        if interfaceRaw.containsString("interface") {
-            for line in interfaceRaw.componentsSeparatedByString("\n") {
-            if line.containsString("interface") {
-                myLogger.logit(3, message: line)
-                return line.stringByReplacingOccurrencesOfString("  interface: ", withString: "").stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
-                }
-            }
-        }
-		return ""
-		
-		
-		myLogger.logit(2, message: "Trying to get interface with search domain of \(domain)")
 	
-	//	let searchDomainKeys = SCDynamicStoreCopyKeyList(store, "State:/Network/Service/.*/DNS")! as Array
-	/*	var i = 0, j = searchDomainKeys.count
-		
-		while ( i < j ) {
-			
-			let keyPtr = CFArrayGetValueAtIndex( searchDomainKeys, i )
-			let key = Unmanaged<CFString>.fromOpaque(COpaquePointer(keyPtr)).takeUnretainedValue()
-			let value = SCDynamicStoreCopyValue(store, key) as! [String:AnyObject]
-			
-			if let searchDomains = value["SearchDomains"] as? [String] {
-				if searchDomains.contains(currentDomain.lowercaseString) {
-					// get the interface GUID
-					guard let dnsGUID = searchDomainKeys[i] as? String else { return interfaceName }
-					let interfaceGUID = dnsGUID.stringByReplacingOccurrencesOfString("DNS", withString: "IPv4")
-					// look up the service
-					guard let interfaceList = SCDynamicStoreCopyValue(store, interfaceGUID) as? [String:AnyObject] else { return interfaceName }
-					interfaceName = interfaceList["InterfaceName"] as? String
-					break;
-				}
-			}
-			i += 1
-		}
-		
-		return interfaceName
-	*/
-	}
 	
 	// TODO: Remove after verifying new method.
+	/*
     private func getIPandMask() -> [String: [String]] {
         
         var network = [String: [String]]()
         
         // look for interface associated with a search domain of the AD domain
-        
-        let searchDomainKeysRaw = SCDynamicStoreCopyKeyList(store, "State:/Network/Service/.*/DNS")
-        let searchDomainKeys: [AnyObject] = searchDomainKeysRaw! as [AnyObject]
+        */
+        //let searchDomainKeysRaw = SCDynamicStoreCopyKeyList(store, "State:/Network/Service/.*/DNS")
+        /*let searchDomainKeys: [AnyObject] = searchDomainKeysRaw! as [AnyObject]
         
         for key in searchDomainKeys {
             let myValues = SCDynamicStoreCopyValue(store, String(key) as CFString)
@@ -666,8 +605,10 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         network["mask"] = (val["SubnetMasks"] as! [String])
         return network
     }
+	*/
 	
     // private function to determine subnet mask for site determination
+	/*
     private func countBits(mask: String) -> Int {
         var bits: Int
         switch mask {
@@ -727,6 +668,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         }
         return dec
     }
+	*/
     
     // private function to clean the LDAP results
     
@@ -884,44 +826,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 		}
 	}
 
-	/*
-	// get the list of LDAP servers from an SRV lookup
-	// Uses cliTask
-    func getHosts(domain: String ) {
 	
-        var newHosts = [LDAPServer]()
-        var dnsResults = cliTask("/usr/bin/dig +short -t SRV _ldap._tcp." + domain).componentsSeparatedByString("\n")
-        
-        // check to make sure we got a result
-        
-        if dnsResults[0] == "" || dnsResults[0].containsString("connection timed out") {
-            self.currentState = false
-            hosts.removeAll()
-        } else {
-            
-            // check to make sure we didn't get a long TCP response
-            
-            if dnsResults[0].containsString("Truncated") {
-                dnsResults.removeAtIndex(0)
-            }
-            
-            for line in dnsResults {
-                let host = line.componentsSeparatedByString(" ")
-                if host[0] != "" {
-                    let currentServer: LDAPServer = LDAPServer(host: host[3], status: "found", priority: Int(host[0])!, weight: Int(host[1])!, timeStamp: NSDate())
-                    newHosts.append(currentServer)
-                }
-            }
-            
-            // now to sort them
-            
-            hosts = newHosts.sort { (x, y) -> Bool in
-                return ( x.priority <= y.priority )
-            }
-            self.currentState = true
-        }
-    }
-    */
 	
     // test the list of LDAP servers by iterating through them
     
