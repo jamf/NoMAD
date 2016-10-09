@@ -12,30 +12,35 @@ import Foundation
 import SystemConfiguration
 import IOKit
 
-public func cliTask( command: String) -> String {
-    
-    // turn the command into an array and get the first element as the launch path
-    
-    var commandPieces = command.componentsSeparatedByString(" ")
-    
-    // loop through the components and see if any end in \
-    
-    if command.containsString("\\") {
-        
-        // we need to rebuild the string with the right components
-        var x = 0
-        
-        for line in commandPieces {
-            if line.characters.last == "\\" {
-                commandPieces[x] = commandPieces[x].stringByReplacingOccurrencesOfString("\\", withString: " ") + commandPieces.removeAtIndex(x+1)
-                x -= 1
-            }
-            x += 1
-        }
-    }
-    
-    var commandLaunchPath = commandPieces.removeAtIndex(0)
-    
+public func cliTask( command: String, arguments: [String]? = nil) -> String {
+	
+
+	var commandLaunchPath: String
+	var commandPieces: [String]
+	
+	if ( arguments == nil ) {
+		// turn the command into an array and get the first element as the launch path
+		commandPieces = command.componentsSeparatedByString(" ")
+		// loop through the components and see if any end in \
+		if command.containsString("\\") {
+			
+			// we need to rebuild the string with the right components
+			var x = 0
+			
+			for line in commandPieces {
+				if line.characters.last == "\\" {
+					commandPieces[x] = commandPieces[x].stringByReplacingOccurrencesOfString("\\", withString: " ") + commandPieces.removeAtIndex(x+1)
+					x -= 1
+				}
+				x += 1
+			}
+		}
+		commandLaunchPath = commandPieces.removeAtIndex(0)
+	} else {
+		commandLaunchPath = command
+		commandPieces = arguments!
+	}
+	
     // make sure the launch path is the full path -- think we're going down a rabbit hole here
     
     if !commandLaunchPath.containsString("/") {

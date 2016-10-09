@@ -292,18 +292,49 @@ class LDAPServers : NSObject, DNSResolverDelegate {
                 throw NoADError.LDAPServerLookup
             }
         }
-        
+		
+		// TODO: We need to un-comment this and figure out another way to pass a valid empty defaultNamingContext
         if (defaultNamingContext == "") || (defaultNamingContext.containsString("GSSAPI Error")) {
             testHosts()
         }
-        
+		
         if baseSearch {
-            myResult = cleanLDAPResults(cliTask("/usr/bin/ldapsearch -N -Q -LLL -s base -H ldap://" + self.currentServer + " -b " + self.defaultNamingContext + " " + searchTerm + " " + attribute), attribute: attribute)
+			let ldapQuery = "/usr/bin/ldapsearch -N -Q -LLL -s base -H ldap://" + self.currentServer + " -b " + self.defaultNamingContext + " " + searchTerm + " " + attribute
+			/*
+			let command = "/usr/bin/ldapsearch"
+			var arguments: [String] = [String]()
+			arguments.append("-N")
+			arguments.append("-Q")
+			arguments.append("-LLL")
+			arguments.append("-s")
+			arguments.append("base")
+			arguments.append("-H")
+			arguments.append("ldap://" + self.currentServer)
+			arguments.append("-b")
+			arguments.append(self.defaultNamingContext)
+			if ( searchTerm != "") {
+				arguments.append(searchTerm)
+			}
+			arguments.append(attribute)
+			
+			let ldapResult = cliTask(command, arguments: arguments)
+			myResult = cleanLDAPResults(ldapResult, attribute: attribute)
+			*/
+			myResult = cleanLDAPResults(cliTask(ldapQuery), attribute: attribute)
         } else {
-            myResult = cleanLDAPResultsMultiple(cliTask("/usr/bin/ldapsearch -N -Q -LLL -H ldap://" + self.currentServer + " -b " + self.defaultNamingContext + " " + searchTerm + " " + attribute), attribute: attribute)
+			let ldapQuery = "/usr/bin/ldapsearch -N -Q -LLL -H ldap://" + self.currentServer + " -b " + self.defaultNamingContext + " " + searchTerm + " " + attribute
+            myResult = cleanLDAPResultsMultiple(cliTask(ldapQuery), attribute: attribute)
         }
         return myResult
     }
+	
+	func encapsulated(value: String) -> String {
+		if(value != "") {
+			return "\"\(value)\""
+		} else {
+			return ""
+		}
+	}
     
     func returnFullRecord(searchTerm: String) -> String {
         let myResult = cliTaskNoTerm("/usr/bin/ldapsearch -N -Q -LLL -H ldap://" + self.currentServer + " -b " + self.defaultNamingContext + " " + searchTerm )
@@ -324,7 +355,31 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 	}
 	*/
     // private function to get the AD site
-    
+	/*
+	private func findSite() {
+		// backup the defaultNamingContext so we can restore it at the end.
+		let tempDefaultNamingContext = defaultNamingContext
+		
+		// Setting defaultNamingContext to "" because we're doing a search against the RootDSE
+		defaultNamingContext = ""
+		
+		
+		// For info on LDAP Ping: https://msdn.microsoft.com/en-us/library/cc223811.aspx
+		// For information on the values: https://msdn.microsoft.com/en-us/library/cc223122.aspx
+		let attribute = "netlogon"
+		// not sure if we need: (AAC=\00\00\00\00)
+		let searchTerm = "(&(DnsDomain=\(currentDomain))(NtVer=\\06\\00\\00\\00))" //NETLOGON_NT_VERSION_WITH_CLOSEST_SITE
+		//let searchTerm = "(&(DnsDomain=\(tempDefaultNamingContext))(NtVer=\(NETLOGON_NT_VERSION_WITH_CLOSEST_SITE))(AAC=\(AAC)))"
+		
+		let netlogon = try! getLDAPInformation(attribute, baseSearch: true, searchTerm: searchTerm, test: false)
+		
+		myLogger.logit(2, message:"Netlogon: " + netlogon)
+		
+		defaultNamingContext = tempDefaultNamingContext
+		myLogger.logit(2, message:"Resetting default naming context to: " + defaultNamingContext)
+	}
+	*/
+	
     private func findSite() throws {
         
         myLogger.logit(2, message:"Looking for local IP")
@@ -481,6 +536,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     }
 	
 	
+	
 	// MARK: IP/Subnet Stuff
 	private func getPrimaryInterface() -> String {
 		myLogger.logit(2, message: "Getting the primary interface.")
@@ -488,7 +544,6 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 		let interface = globalInterface!["PrimaryInterface"] as! String
 		return interface
 	}
-	
 	
 	
     // private function to get IP and mask
@@ -509,10 +564,11 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 	}
 
 	private func getInterfaceMatchingDomain(domain: String) -> String? {
-        
+		var interfaceName: String? = nil
+		
         // TODO: Replace cliTask
         // not the best looking code, but it works
-        
+		
         let interfaceRaw = cliTask("/sbin/route get " + domain )
         
         if interfaceRaw.containsString("interface") {
@@ -523,10 +579,13 @@ class LDAPServers : NSObject, DNSResolverDelegate {
                 }
             }
         }
-		var interfaceName: String? = nil
+		return ""
+		
+		
 		myLogger.logit(2, message: "Trying to get interface with search domain of \(domain)")
-		let searchDomainKeys = SCDynamicStoreCopyKeyList(store, "State:/Network/Service/.*/DNS")! as Array
-		var i = 0, j = searchDomainKeys.count
+	
+	//	let searchDomainKeys = SCDynamicStoreCopyKeyList(store, "State:/Network/Service/.*/DNS")! as Array
+	/*	var i = 0, j = searchDomainKeys.count
 		
 		while ( i < j ) {
 			
@@ -549,7 +608,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 		}
 		
 		return interfaceName
-		
+	*/
 	}
 	
 	// TODO: Remove after verifying new method.
