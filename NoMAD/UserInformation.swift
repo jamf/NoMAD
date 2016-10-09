@@ -39,6 +39,7 @@ class UserInformation {
     var groups = [String]()
     
     let myLDAPServers = LDAPServers()
+    let myKeychainUtil = KeychainUtil()
     
     var UserPasswordSetDates = [String : AnyObject ]()
     
@@ -223,6 +224,12 @@ class UserInformation {
             }
             
             myLogger.logit(1, message: "You are a member of: " + groups.joinWithSeparator(", ") )
+            
+            // look at local certs
+            
+            let myCerts = myKeychainUtil.findCerts(userDisplayName, defaultNamingContext: myLDAPServers.defaultNamingContext)
+            
+            print(myCerts)
             // set defaults for these
             
             defaults.setObject(userHome, forKey: "userHome")

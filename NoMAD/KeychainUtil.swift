@@ -20,6 +20,11 @@ class KeychainUtil {
     
     var myKeychainItem: SecKeychainItem?
     
+    struct certDates {
+        var serial : String
+        var expireDate : NSDate
+    }
+    
     init() {
         myErr = 0
     }
@@ -67,5 +72,112 @@ class KeychainUtil {
         } else {
             return false
         }
+    }
+    
+    // return a Dictionary of all the certs a user has that match their name and domain
+    
+    func findCerts(user: String, defaultNamingContext: String) -> NSDictionary {
+        
+        var myCert: SecCertificate? = nil
+        var out: AnyObject? = nil
+        
+        // create a search dictionary to find Identitys with Private Keys and returning all matches
+        // TODO: Tweak this to find the best mix
+        
+        /*
+ @constant kSecMatchIssuers Specifies a dictionary key whose value is a
+ CFArray of X.500 names (of type CFDataRef). If provided, returned
+ certificates or identities will be limited to those whose
+ certificate chain contains one of the issuers provided in this list.
+ */
+ 
+        let identitySearchDict: [String:AnyObject] = [
+            kSecClass as String: kSecClassIdentity,
+            kSecAttrKeyClass as String: kSecAttrKeyClassPrivate as String as String as AnyObject,
+            // this matches e-mail address
+            //kSecMatchEmailAddressIfPresent as String : email as CFString,
+            
+            // this matches Common Name
+            kSecMatchSubjectContains as String : user as CFString,
+            
+            kSecReturnRef as String: true as AnyObject,
+            kSecMatchLimit as String : kSecMatchLimitAll as AnyObject
+        ]
+        var myCerts = [certDates]()
+        
+        myErr = 0
+        var lastExpire: NSDate = NSDate()
+        
+        // look for all matches
+        
+        myErr = SecItemCopyMatching(identitySearchDict as CFDictionary, &out)
+        
+        if myErr != 0 {
+            myLogger.logit(0, message: "Error getting Certificates.")
+            EXIT_FAILURE
+        }
+        
+        let myArray = out as! CFArray as Array
+        
+        //var emails: CFArray? = nil
+        
+        for item in myArray {
+            
+            myErr = SecIdentityCopyCertificate(item as! SecIdentity, &myCert)
+            
+            if myErr != 0 {
+                myLogger.logit(0, message: "Error getting Certificate references.")
+                EXIT_FAILURE
+            }
+                    
+                    // get the full OID set for the cert
+                    
+                    let myOIDs : NSDictionary = SecCertificateCopyValues(myCert!, nil, nil)!
+            
+                    // find the LDAP URI to see if it matches our current defaultNamingContex
+            
+            if myOIDs["1.3.6.1.5.5.7.1.1"] != nil {
+                 let URI : NSDictionary = myOIDs["1.3.6.1.5.5.7.1.1"] as! NSDictionary
+                    let URIValue = URI["value"]! as! NSArray
+                    for values in URIValue {
+                        let value = values as! NSDictionary
+                        
+                        if String(_cocoaString: value["label"]!) == "URI" {
+
+                            if String(value["value"]!).containsString(defaultNamingContext){
+                                
+                                // we have a match now gather the expire date and the serial
+                                
+                                let expireOID : NSDictionary = myOIDs["2.5.29.24"]! as! NSDictionary
+                                let expireDate = expireOID["value"]! as! NSDate
+                                let serialDict : NSDictionary = myOIDs["2.16.840.1.113741.2.1.1.1.3"]! as! NSDictionary
+                                let serial = serialDict["value"]! as! String
+                                
+                                // pack the data up into a certDate
+                                
+                                let certificate = certDates( serial: serial, expireDate: expireDate)
+                                
+                                if lastExpire.timeIntervalSinceNow < expireDate.timeIntervalSinceNow {
+                                    lastExpire = expireDate
+                                }
+                                
+                                // append to the list
+                                
+                                myCerts.append(certificate)
+                            }
+                        }
+                    }
+                }
+            }
+    // }
+        let myResults = NSMutableDictionary() //= [String : AnyObject ]()
+        myResults["User"] = user
+        if myCerts.count == 0 {
+            myResults["Last Certificate Expiration Date"] = "No Certs"
+        } else {
+            myResults["Last Certificate Expiration Date"] = lastExpire
+            myResults["Certificates"] = myCerts as! AnyObject
+        }
+        return myResults
     }
 }

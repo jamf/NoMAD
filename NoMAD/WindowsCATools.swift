@@ -99,9 +99,9 @@ class WindowsCATools {
 						
 						self.myImportError = SecItemAdd(dictionary, nil)
 						
-						print(self.myImportError)
+                        myLogger.logit(0, message: String(self.myImportError))
 						
-						print(SecCopyErrorMessageString(self.myImportError, nil))
+                        myLogger.logit(0, message: SecCopyErrorMessageString(self.myImportError, nil) as! String)
 					}
 					
 					if (error != nil) {
