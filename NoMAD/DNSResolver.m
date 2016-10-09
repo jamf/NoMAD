@@ -164,9 +164,9 @@ static void DNSServiceRecordCallback(
 	
 	if (errorCode == kDNSServiceErr_NoError) {
 		// Get Interface Name
-		char *interfaceNamePtr = alloca(IF_NAMESIZE);
-		char *interfaceName = if_indextoname(interfaceIndex, interfaceNamePtr);
-		NSLog(@"Interface Index is: %u. Interface Name is: %s", interfaceIndex, interfaceName);
+		//char *interfaceNamePtr = alloca(IF_NAMESIZE);
+		//char *interfaceName = if_indextoname(interfaceIndex, interfaceNamePtr);
+		//NSLog(@"Interface Index is: %u. Interface Name is: %s", interfaceIndex, interfaceName);
 		
 		//Process Record
 		[obj processRecord:recordData length:recordLength];

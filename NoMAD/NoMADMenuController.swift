@@ -253,21 +253,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 	
 	
 	// MARK: Menu Items' Actions
-	// User clicked on Menubar Icon
-	/*
-	func menuWillOpen(menu: NSMenu) {
-		// Show all windows.
-		//NSApp.activateIgnoringOtherApps(true)
-		// Activate individual windows
-		// TODO: figure out why this doesn't work...
-		
-		for window in NSApp.windows {
-			if ( window == loginWindow.window && window.visible ) {
-				bringWindowToFront(window)
-			}
-		}
-	}
-	*/
 	
     // show the login window when the menu item is clicked
     
@@ -327,19 +312,19 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 			if ( defaults.boolForKey("UseKeychain")) {
 				var myKeychainItem: SecKeychainItem?
 					
-					var myErr: OSStatus
-					let serviceName = "NoMAD"
-					var passLength: UInt32 = 0
-					var passPtr: UnsafeMutablePointer<Void> = nil
-					let name = defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!
-					
-					myErr = SecKeychainFindGenericPassword(nil, UInt32(serviceName.characters.count), serviceName, UInt32(name.characters.count), name, &passLength, &passPtr, &myKeychainItem)
-					
-					if ( myErr == 0 ) {
-						SecKeychainItemDelete(myKeychainItem!)
-					} else {
-						myLogger.logit(0, message:"Error deleting Keychain entry.")
-					}
+				var myErr: OSStatus
+				let serviceName = "NoMAD"
+				var passLength: UInt32 = 0
+				var passPtr: UnsafeMutablePointer<Void> = nil
+				let name = defaults.stringForKey("LastUser")! + "@" + defaults.stringForKey("KerberosRealm")!
+				
+				myErr = SecKeychainFindGenericPassword(nil, UInt32(serviceName.characters.count), serviceName, UInt32(name.characters.count), name, &passLength, &passPtr, &myKeychainItem)
+				
+				if ( myErr == 0 ) {
+					SecKeychainItemDelete(myKeychainItem!)
+				} else {
+					myLogger.logit(0, message:"Error deleting Keychain entry.")
+				}
 			}
         } else {
             loginWindow.showWindow(nil)
@@ -413,7 +398,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     
     @IBAction func NoMADMenuClickGetHelp(sender: NSMenuItem) {
         startMenuAnimationTimer()
-    let myGetHelp = GetHelp()
+		let myGetHelp = GetHelp()
         myGetHelp.getHelp()
         stopMenuAnimationTimer()
     }
@@ -436,12 +421,13 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // quit when asked
     
     @IBAction func NoMADMenuClickQuit(sender: NSMenuItem) {
-                NSApplication.sharedApplication().terminate(self)
+		NSApplication.sharedApplication().terminate(self)
     }
 
     // connect to the Home share if it's available
     
     @IBAction func homeClicked(send: AnyObject) {
+		// TODO: I think NSWorkspace can do this...
         cliTask("open smb:" + defaults.stringForKey("userHome")!)
     }
     
