@@ -35,31 +35,10 @@ public func cliTask( command: String, arguments: [String]? = nil) -> String {
 				x += 1
 			}
 		}
-		
-		if command.containsString("\'\'") {
-			var x = 0
-			for commandPiece in commandPieces {
-				if commandPiece.containsString("\'\'") {
-					commandPieces[x] = commandPieces[x].stringByReplacingOccurrencesOfString("\'\'", withString: "", options: NSStringCompareOptions.LiteralSearch, range: nil)
-				}
-			}
-			x += 1
-		}
-		
 		commandLaunchPath = commandPieces.removeAtIndex(0)
 	} else {
 		commandLaunchPath = command
 		commandPieces = arguments!
-		var x = 0
-		for commandPiece in commandPieces {
-			if commandPiece.containsString("\'\'") {
-				commandPieces[x] = commandPieces[x].stringByReplacingOccurrencesOfString("\'\'", withString: "''", options: NSStringCompareOptions.LiteralSearch, range: nil)
-			}
-			if commandPiece.containsString("\\0") {
-				commandPieces[x] = commandPieces[x].stringByReplacingOccurrencesOfString("\\0", withString: "\0", options: NSStringCompareOptions.LiteralSearch, range: nil)
-			}
-		}
-		x += 1
 	}
 	
     // make sure the launch path is the full path -- think we're going down a rabbit hole here
