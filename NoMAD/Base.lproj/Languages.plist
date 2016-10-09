@@ -6,8 +6,36 @@
 	<dict>
 		<key>value</key>
 		<string>Lock Screen</string>
-		<key>Comment</key>
+		<key>comment</key>
 		<string>Menu Item to Lock the Screen</string>
+	</dict>
+	<key>NoMADMenuController-LogIn</key>
+	<dict>
+		<key>value</key>
+		<string>Sign In</string>
+		<key>comment</key>
+		<string>Menu item to Sign In</string>
+	</dict>
+	<key>NoMADMenuController-Connected</key>
+	<dict>
+		<key>value</key>
+		<string></string>
+		<key>comment</key>
+		<string>Text in the menu bar to show that NoMAD can find the Domain</string>
+	</dict>
+	<key>NoMADMenuController-NotConnected</key>
+	<dict>
+		<key>value</key>
+		<string>Not Connected</string>
+		<key>comment</key>
+		<string>Text in the menu bar to show that NoMAD can not find the Domain</string>
+	</dict>
+	<key>NoMADMenuController-ChangePassword</key>
+	<dict>
+		<key>value</key>
+		<string>Change Password</string>
+		<key>comment</key>
+		<string>Menu Item to Change Password</string>
 	</dict>
 	<key>New item</key>
 	<string></string>

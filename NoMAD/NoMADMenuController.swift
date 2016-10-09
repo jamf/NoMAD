@@ -45,7 +45,7 @@ let settings = [
     "userCommandHotKey1"    : "",
     "userCommandName1"  : "",
     "userCommandTask1"  : "",
-    "secondsToRenew"    : 7200,
+    "SecondsToRenew"    : 7200,
     "RenewTickets"  :   1,
     "userPasswordExpireDate"    : "",
     "PasswordExpireAlertTime"   : 1296000,
@@ -63,8 +63,6 @@ let statusItem = NSStatusBar.systemStatusBar().statusItemWithLength(NSVariableSt
 let userNotificationCenter = NSUserNotificationCenter.defaultUserNotificationCenter()
 var selfServiceExists = false
 let myLogger = Logger()
-
-let myLanguage = NSLocale.currentLocale()
 
 class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate, PreferencesWindowDelegate, NSMenuDelegate {
     
@@ -249,6 +247,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         // set up menu titles w/translation
         
         NoMADMenuLockScreen.title = "Lock Screen".translate
+        NoMADMenuChangePassword.title = "NoMADMenuController-ChangePassword".translate
     }
 	
 	
@@ -479,7 +478,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         if self.userInformation.connected == false {
             
             self.NoMADMenuLogIn.enabled = false
-			self.NoMADMenuLogIn.title = NSLocalizedString("NoMADMenuController-LogIn", comment: "Menu; Button; Log In");
+			self.NoMADMenuLogIn.title = "NoMADMenuController-LogIn".translate
             self.NoMADMenuLogOut.enabled = false
             self.NoMADMenuChangePassword.enabled = false
             self.NoMADMenuGetCertificate.enabled = false
@@ -489,7 +488,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         } else if self.userInformation.myLDAPServers.tickets.state == false {
             
             self.NoMADMenuLogIn.enabled = true
-			self.NoMADMenuLogIn.title = NSLocalizedString("NoMADMenuController-LogIn", comment: "Menu; Button; Log In");
+			self.NoMADMenuLogIn.title = "NoMADMenuController-LogIn".translate
             self.NoMADMenuLogIn.action = #selector(self.NoMADMenuClickLogIn)
             self.NoMADMenuLogOut.enabled = false
             self.NoMADMenuChangePassword.enabled = false
@@ -521,7 +520,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         notification.informativeText = text
         //notification.deliveryDate = date
         notification.hasActionButton = true
-		notification.actionButtonTitle = NSLocalizedString("NoMADMenuController-ChangePassword", comment: "Menu; Button; Change Password")
+		notification.actionButtonTitle = "NoMADMenuController-ChangePassword".translate
         notification.soundName = NSUserNotificationDefaultSoundName
         userNotificationCenter.deliverNotification(notification)
     }
@@ -656,8 +655,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 if self.userInformation.status == "Connected" {
                     statusItem.image = self.iconOnOff
                    // we do this twice b/c doing it only once seems to make it less than full width
-                    statusItem.title = self.userInformation.status
-                    statusItem.title = self.userInformation.status
+                    statusItem.title = self.userInformation.status.translate
+                    statusItem.title = self.userInformation.status.translate
                     
                     // if we're not logged in we disable some options
                     
@@ -700,8 +699,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     statusItem.image = self.iconOffOff
                     
                     // we do this twice b/c doing it only once seems to make it less than full width
-                    statusItem.title = self.userInformation.status
-                    statusItem.title = self.userInformation.status
+                    statusItem.title = self.userInformation.status.translate
+                    statusItem.title = self.userInformation.status.translate
                 }
                 
                 if ( self.userInformation.userPrincipalShort != "No User" ) {
@@ -820,26 +819,3 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     }
 
 }
-
-// pragma mark: Localization bits
-/*
-private class Localizator {
-    
-    static let sharedInstance = Localizator()
-    
-    lazy var localizableDictionary: NSDictionary! = {
-        if let path = NSBundle.mainBundle().pathForResource("Languages", ofType: "plist") {
-            return NSDictionary(contentsOfFile: path)
-        }
-        fatalError("Localizable file NOT found")
-    }()
-    
-    func translate(string: String) -> String {
-        guard let localizedString = localizableDictionary.valueForKey(string)?.valueForKey("value") as? String else {
-            assertionFailure("Missing translation for: \(string)")
-            return ""
-        }
-        return localizedString
-    }
-}
-*/
