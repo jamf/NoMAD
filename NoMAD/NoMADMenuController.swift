@@ -127,11 +127,11 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         myLogger.logit(0, message:"---Starting NoMAD---")
         
-        let version = String(NSBundle.mainBundle().infoDictionary!["CFBundleShortVersionString"])
-        let build = String(NSBundle.mainBundle().infoDictionary!["CFBundleVersion"])
+        let version = String(NSBundle.mainBundle().infoDictionary!["CFBundleShortVersionString"]!)
+        let build = String(NSBundle.mainBundle().infoDictionary!["CFBundleVersion"]!)
         
-        myLogger.logit(0, message:"NoMAD version: " + version! )
-        myLogger.logit(0, message:"NoMAD build: " + build! )
+        myLogger.logit(0, message:"NoMAD version: " + version )
+        myLogger.logit(0, message:"NoMAD build: " + build )
         
         startMenuAnimationTimer()
         

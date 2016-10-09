@@ -569,7 +569,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         // TODO: Replace cliTask
         // not the best looking code, but it works
 		
-        let interfaceRaw = cliTask("/sbin/route get " + domain )
+        let interfaceRaw = cliTask("/sbin/route get " + currentServer )
         
         if interfaceRaw.containsString("interface") {
             for line in interfaceRaw.componentsSeparatedByString("\n") {
