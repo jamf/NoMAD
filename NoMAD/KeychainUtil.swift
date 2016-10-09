@@ -11,6 +11,11 @@
 import Foundation
 import Security
 
+struct certDates {
+    var serial : String
+    var expireDate : NSDate
+}
+
 class KeychainUtil {
     
     var myErr: OSStatus
@@ -19,11 +24,6 @@ class KeychainUtil {
     var passPtr: UnsafeMutablePointer<Void> = nil
     
     var myKeychainItem: SecKeychainItem?
-    
-    struct certDates {
-        var serial : String
-        var expireDate : NSDate
-    }
     
     init() {
         myErr = 0
@@ -76,7 +76,7 @@ class KeychainUtil {
     
     // return a Dictionary of all the certs a user has that match their name and domain
     
-    func findCerts(user: String, defaultNamingContext: String) -> NSDictionary {
+    func findCerts(user: String, defaultNamingContext: String) -> NSDate {
         
         var myCert: SecCertificate? = nil
         var out: AnyObject? = nil
@@ -103,10 +103,10 @@ class KeychainUtil {
             kSecReturnRef as String: true as AnyObject,
             kSecMatchLimit as String : kSecMatchLimitAll as AnyObject
         ]
-        var myCerts = [certDates]()
+        //var myCerts = [certDates]()
         
         myErr = 0
-        var lastExpire: NSDate = NSDate()
+        var lastExpire: NSDate = NSDate.distantPast()
         
         // look for all matches
         
@@ -150,12 +150,12 @@ class KeychainUtil {
                                 
                                 let expireOID : NSDictionary = myOIDs["2.5.29.24"]! as! NSDictionary
                                 let expireDate = expireOID["value"]! as! NSDate
-                                let serialDict : NSDictionary = myOIDs["2.16.840.1.113741.2.1.1.1.3"]! as! NSDictionary
-                                let serial = serialDict["value"]! as! String
+                                //let serialDict : NSDictionary = myOIDs["2.16.840.1.113741.2.1.1.1.3"]! as! NSDictionary
+                                //let serial = serialDict["value"]! as! String
                                 
                                 // pack the data up into a certDate
                                 
-                                let certificate = certDates( serial: serial, expireDate: expireDate)
+                                //let certificate = certDates( serial: serial, expireDate: expireDate)
                                 
                                 if lastExpire.timeIntervalSinceNow < expireDate.timeIntervalSinceNow {
                                     lastExpire = expireDate
@@ -163,21 +163,14 @@ class KeychainUtil {
                                 
                                 // append to the list
                                 
-                                myCerts.append(certificate)
+                                //myCerts.append(certificate)
                             }
                         }
                     }
                 }
             }
     // }
-        let myResults = NSMutableDictionary() //= [String : AnyObject ]()
-        myResults["User"] = user
-        if myCerts.count == 0 {
-            myResults["Last Certificate Expiration Date"] = "No Certs"
-        } else {
-            myResults["Last Certificate Expiration Date"] = lastExpire
-            myResults["Certificates"] = myCerts as! AnyObject
-        }
-        return myResults
+
+            return lastExpire
     }
 }

@@ -227,11 +227,28 @@ class UserInformation {
             
             // look at local certs
             
-            let myCerts = myKeychainUtil.findCerts(userDisplayName, defaultNamingContext: myLDAPServers.defaultNamingContext)
+            let myCertExpire = myKeychainUtil.findCerts(userDisplayName, defaultNamingContext: myLDAPServers.defaultNamingContext )
             
-            print(myCerts)
+            if myCertExpire != 0 {
+                myLogger.logit(1, message: "Last certificate will expire on: " + String(myCertExpire) )
+            }
+            
+            // Act on Cert expiration
+            
+            if myCertExpire.timeIntervalSinceNow < 2592000 && myCertExpire.timeIntervalSinceNow > 0 {
+                myLogger.logit(0, message: "Your certificate will expire in less than 30 days.")
+                
+                // TODO: Trigger an action
+                
+            }
+            
+            if myCertExpire.timeIntervalSinceNow < 0 && myCertExpire != NSDate.distantPast() {
+                myLogger.logit(0, message: "Your certificate has already expired.")
+            }
+            
             // set defaults for these
             
+            defaults.setObject(myCertExpire, forKey: "LastCertificateExpiration")
             defaults.setObject(userHome, forKey: "userHome")
             defaults.setObject(userDisplayName, forKey: "displayName")
             defaults.setObject(userPrincipal, forKey: "userPrincipal")
@@ -239,7 +256,7 @@ class UserInformation {
             defaults.setObject(userPasswordExpireDate, forKey: "LastPasswordExpireDate")
             defaults.setObject(groups, forKey: "Groups")
         }
+        
+        myLogger.logit(0, message: "User information update done.")
     }
-    
-    
 }
