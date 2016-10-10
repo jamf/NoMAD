@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11201" systemVersion="16B2338c" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11201" systemVersion="16B2333a" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
     </dependencies>
@@ -62,6 +62,9 @@
                         <action selector="NoMADMenuClickGetCertificate:" target="Gp4-Xp-pEc" id="Ux3-1h-v3f"/>
                     </connections>
                 </menuItem>
+                <menuItem title="CertificateDate" alternate="YES" toolTip="Certificate expire date." id="A9U-v2-LiT">
+                    <modifierMask key="keyEquivalentModifierMask" option="YES"/>
+                </menuItem>
                 <menuItem isSeparatorItem="YES" id="wcV-DA-kNE"/>
                 <menuItem title="Get Software" id="fuo-5h-NuR">
                     <modifierMask key="keyEquivalentModifierMask"/>
@@ -108,6 +111,7 @@
                 <outlet property="NoMADMenu" destination="eKu-sI-x3b" id="Wyg-fq-yBG"/>
                 <outlet property="NoMADMenuChangePassword" destination="0IM-ZO-KLA" id="iVk-Xe-XSm"/>
                 <outlet property="NoMADMenuGetCertificate" destination="AlW-9M-CK2" id="3Dc-Wx-115"/>
+                <outlet property="NoMADMenuGetCertificateDate" destination="A9U-v2-LiT" id="bJZ-l5-Dcn"/>
                 <outlet property="NoMADMenuGetHelp" destination="rbx-v6-fJx" id="1bd-6M-fUQ"/>
                 <outlet property="NoMADMenuGetSoftware" destination="fuo-5h-NuR" id="rPu-zt-iBj"/>
                 <outlet property="NoMADMenuHiddenItem1" destination="kql-Bl-QJE" id="ehL-Ac-Qlb"/>

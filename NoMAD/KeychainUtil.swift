@@ -178,6 +178,7 @@ class KeychainUtil {
                     }
                 }
             }
+        myLogger.logit(3, message: "Found " + String(matchingCerts.count) + " certificates.")
         myLogger.logit(3, message: "Found certificates: " + String(matchingCerts) )
         return lastExpire
     }
