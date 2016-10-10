@@ -225,9 +225,11 @@ class UserInformation {
             
             myLogger.logit(1, message: "You are a member of: " + groups.joinWithSeparator(", ") )
             
-            // look at local certs
+            // look at local certs if an x509 CA has been set
             
-            let myCertExpire = myKeychainUtil.findCerts(userDisplayName, defaultNamingContext: myLDAPServers.defaultNamingContext )
+            if (defaults.stringForKey("x509CA") ?? "" != "") {
+            
+            let myCertExpire = myKeychainUtil.findCertExpiration(userDisplayName, defaultNamingContext: myLDAPServers.defaultNamingContext )
             
             if myCertExpire != 0 {
                 myLogger.logit(1, message: "Last certificate will expire on: " + String(myCertExpire) )
@@ -240,15 +242,19 @@ class UserInformation {
                 
                 // TODO: Trigger an action
                 
+                }
+                
+                if myCertExpire.timeIntervalSinceNow < 0 && myCertExpire != NSDate.distantPast() {
+                    myLogger.logit(0, message: "Your certificate has already expired.")
+                }
+                
+                defaults.setObject(myCertExpire, forKey: "LastCertificateExpiration")
+
             }
             
-            if myCertExpire.timeIntervalSinceNow < 0 && myCertExpire != NSDate.distantPast() {
-                myLogger.logit(0, message: "Your certificate has already expired.")
-            }
-            
+
             // set defaults for these
             
-            defaults.setObject(myCertExpire, forKey: "LastCertificateExpiration")
             defaults.setObject(userHome, forKey: "userHome")
             defaults.setObject(userDisplayName, forKey: "displayName")
             defaults.setObject(userPrincipal, forKey: "userPrincipal")

@@ -74,12 +74,13 @@ class KeychainUtil {
         }
     }
     
-    // return a Dictionary of all the certs a user has that match their name and domain
+    // return the last expiration date for any certs that match the domain and user
     
-    func findCerts(user: String, defaultNamingContext: String) -> NSDate {
+    func findCertExpiration(user: String, defaultNamingContext: String) -> NSDate {
         
+        var matchingCerts = [certDates]()
         var myCert: SecCertificate? = nil
-        var out: AnyObject? = nil
+        var searchReturn: AnyObject? = nil
         
         // create a search dictionary to find Identitys with Private Keys and returning all matches
         // TODO: Tweak this to find the best mix
@@ -91,9 +92,12 @@ class KeychainUtil {
  certificate chain contains one of the issuers provided in this list.
  */
  
+        // build our search dictionary
+        
         let identitySearchDict: [String:AnyObject] = [
             kSecClass as String: kSecClassIdentity,
             kSecAttrKeyClass as String: kSecAttrKeyClassPrivate as String as String as AnyObject,
+            
             // this matches e-mail address
             //kSecMatchEmailAddressIfPresent as String : email as CFString,
             
@@ -103,31 +107,33 @@ class KeychainUtil {
             kSecReturnRef as String: true as AnyObject,
             kSecMatchLimit as String : kSecMatchLimitAll as AnyObject
         ]
-        //var myCerts = [certDates]()
         
         myErr = 0
         var lastExpire: NSDate = NSDate.distantPast()
         
         // look for all matches
         
-        myErr = SecItemCopyMatching(identitySearchDict as CFDictionary, &out)
+        myErr = SecItemCopyMatching(identitySearchDict as CFDictionary, &searchReturn)
         
         if myErr != 0 {
             myLogger.logit(0, message: "Error getting Certificates.")
-            EXIT_FAILURE
+            return lastExpire
         }
         
-        let myArray = out as! CFArray as Array
+        let foundCerts = searchReturn as! CFArray as Array
         
-        //var emails: CFArray? = nil
+        if foundCerts.count == 0 {
+            myLogger.logit(1, message: "No certificates found.")
+            return lastExpire
+        }
         
-        for item in myArray {
+        for cert in foundCerts {
             
-            myErr = SecIdentityCopyCertificate(item as! SecIdentity, &myCert)
+            myErr = SecIdentityCopyCertificate(cert as! SecIdentity, &myCert)
             
             if myErr != 0 {
                 myLogger.logit(0, message: "Error getting Certificate references.")
-                EXIT_FAILURE
+                return lastExpire
             }
                     
                     // get the full OID set for the cert
@@ -150,12 +156,15 @@ class KeychainUtil {
                                 
                                 let expireOID : NSDictionary = myOIDs["2.5.29.24"]! as! NSDictionary
                                 let expireDate = expireOID["value"]! as! NSDate
-                                //let serialDict : NSDictionary = myOIDs["2.16.840.1.113741.2.1.1.1.3"]! as! NSDictionary
-                                //let serial = serialDict["value"]! as! String
+                                
+                                // this finds the serial
+                                
+                                let serialDict : NSDictionary = myOIDs["2.16.840.1.113741.2.1.1.1.3"]! as! NSDictionary
+                                let serial = serialDict["value"]! as! String
                                 
                                 // pack the data up into a certDate
                                 
-                                //let certificate = certDates( serial: serial, expireDate: expireDate)
+                                let certificate = certDates( serial: serial, expireDate: expireDate)
                                 
                                 if lastExpire.timeIntervalSinceNow < expireDate.timeIntervalSinceNow {
                                     lastExpire = expireDate
@@ -163,14 +172,13 @@ class KeychainUtil {
                                 
                                 // append to the list
                                 
-                                //myCerts.append(certificate)
+                                matchingCerts.append(certificate)
                             }
                         }
                     }
                 }
             }
-    // }
-
-            return lastExpire
+        myLogger.logit(3, message: "Found certificates: " + String(matchingCerts) )
+        return lastExpire
     }
 }
