@@ -20,7 +20,8 @@ enum NoADError: ErrorType {
     case LDAPServerLookup
     case LDAPNamingContext
     case LDAPServerPasswordExpiration
-    case UserPasswordSetDate
+	case LDAPConnectionError
+	case UserPasswordSetDate
     case UserHome
     case NoStoredPassword
     case StoredPasswordWrong
