@@ -39,6 +39,7 @@ class UserInformation {
     var groups = [String]()
     
     let myLDAPServers = LDAPServers()
+    let myKeychainUtil = KeychainUtil()
     
     var UserPasswordSetDates = [String : AnyObject ]()
     
@@ -421,6 +422,35 @@ class UserInformation {
             }
             
             myLogger.logit(1, message: "You are a member of: " + groups.joinWithSeparator(", ") )
+            
+            // look at local certs if an x509 CA has been set
+            
+            if (defaults.stringForKey("x509CA") ?? "" != "") {
+            
+            let myCertExpire = myKeychainUtil.findCertExpiration(userDisplayName, defaultNamingContext: myLDAPServers.defaultNamingContext )
+            
+            if myCertExpire != 0 {
+                myLogger.logit(1, message: "Last certificate will expire on: " + String(myCertExpire) )
+            }
+            
+            // Act on Cert expiration
+            
+            if myCertExpire.timeIntervalSinceNow < 2592000 && myCertExpire.timeIntervalSinceNow > 0 {
+                myLogger.logit(0, message: "Your certificate will expire in less than 30 days.")
+                
+                // TODO: Trigger an action
+                
+                }
+                
+                if myCertExpire.timeIntervalSinceNow < 0 && myCertExpire != NSDate.distantPast() {
+                    myLogger.logit(0, message: "Your certificate has already expired.")
+                }
+                
+                defaults.setObject(myCertExpire, forKey: "LastCertificateExpiration")
+
+            }
+            
+
             // set defaults for these
             
             defaults.setObject(userHome, forKey: "userHome")
@@ -430,6 +460,8 @@ class UserInformation {
             defaults.setObject(userPasswordExpireDate, forKey: "LastPasswordExpireDate")
             defaults.setObject(groups, forKey: "Groups")
         }
+        
+        myLogger.logit(0, message: "User information update done.")
     }
     */
     

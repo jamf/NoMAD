@@ -83,6 +83,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     @IBOutlet weak var NoMADMenuPreferences: NSMenuItem!
     @IBOutlet weak var NoMADMenuQuit: NSMenuItem!
     @IBOutlet weak var NoMADMenuSpewLogs: NSMenuItem!
+    @IBOutlet weak var NoMADMenuGetCertificateDate: NSMenuItem!
     @IBOutlet weak var NoMADMenuTicketLife: NSMenuItem!
     @IBOutlet weak var NoMADMenuLogInAlternate: NSMenuItem!
     
@@ -127,6 +128,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     override func awakeFromNib() {
         
         myLogger.logit(0, message:"---Starting NoMAD---")
+        
+        let version = String(NSBundle.mainBundle().infoDictionary!["CFBundleShortVersionString"]!)
+        let build = String(NSBundle.mainBundle().infoDictionary!["CFBundleVersion"]!)
+        
+        myLogger.logit(0, message:"NoMAD version: " + version )
+        myLogger.logit(0, message:"NoMAD build: " + build )
         
         startMenuAnimationTimer()
         
@@ -353,10 +360,26 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     
     // gets a cert from the Windows CA
     
-    @IBAction func NoMADMenuClickGetCertificate(sender: NSMenuItem) {
+    @IBAction func NoMADMenuClickGetCertificate(sender: NSMenuItem) -> Void {
+        
+        var myResponse : Int? = nil
         
         // TODO: check to see if the SSL Certs are trusted, otherwise we'll fail
-        // TODO: check if a valid cert is already present and then warn
+        
+        let lastExpire = defaults.objectForKey("LastCertificateExpiration") as! NSDate ?? NSDate.distantPast()
+
+        if lastExpire.timeIntervalSinceNow > 2592000 {
+            let alertController = NSAlert()
+            alertController.messageText = "You already have a valid certificate."
+            alertController.addButtonWithTitle("Cancel")
+            alertController.addButtonWithTitle("Request anyway")
+
+            myResponse = alertController.runModal()
+            
+            if myResponse == 1000 {
+                return
+            }
+        }
         
         // start the animation
         
@@ -809,6 +832,11 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             
             lastStatusCheck = NSDate()
             updateScheduled = false
+            
+            dateFormatter.dateStyle = .MediumStyle
+            dateFormatter.timeStyle = .ShortStyle
+            
+            NoMADMenuGetCertificateDate.title = dateFormatter.stringFromDate(defaults.objectForKey("LastCertificateExpiration") as! NSDate) ?? "No certs"
             
         } else {
             myLogger.logit(1, message:"Time between system checks is too short, delaying")
