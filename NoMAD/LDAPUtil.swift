@@ -19,57 +19,6 @@ struct LDAPServer {
     var timeStamp: NSDate
 }
 
-internal struct Network {
-	let ip: String
-	let mask: String
-	var cidr: Int {
-		let maskOctets = mask.componentsSeparatedByString(".")
-		var numBits: Int = 0
-		for maskOctet in maskOctets {
-			numBits += Int( log2(Double(maskOctet)!+1) )
-		}
-		return numBits
-	}
-	var networkAddress: String {
-		//should create an array of the octets that match up to each x in x.x.x.x
-		let octets = ip.componentsSeparatedByString(".")
-		let numberNetworkOctets: Int = cidr / 8
-		let numberSubnetBits: Int = cidr % 8
-		let subnetOctet: Int
-		if ( cidr == 32 ) {
-			subnetOctet = Int(octets[3])!
-		} else {
-			subnetOctet = Int(octets[numberNetworkOctets])! - ( Int(octets[numberNetworkOctets])! % Int(pow(Double(2), Double(8 - numberSubnetBits))) )
-		}
-		let networkAddressValue: String
-		switch numberNetworkOctets {
-		case 0:
-			networkAddressValue = String(subnetOctet) + ".0.0.0"
-		case 1:
-			networkAddressValue = octets[0] + "." + String(subnetOctet) + ".0.0"
-		case 2:
-			networkAddressValue = octets[0] + "." + octets[1] + "." + String(subnetOctet) + ".0"
-		case 3:
-			networkAddressValue = octets[0] + "." + octets[1] + "." + octets[2] + "." + String(subnetOctet)
-		default:
-			networkAddressValue = octets[0] + "." + octets[1] + "." + octets[2] + "." + octets[3]
-		}
-		return networkAddressValue
-	}
-	var cidrNotation: String {
-		return networkAddress + "/" + String(cidr)
-	}
-	var description: String {
-		var descriptionValue = "\n== NETWORK INFO ==\n"
-		descriptionValue += "IP: \(ip)\n"
-		descriptionValue += "Subnet Mask: \(mask)\n"
-		descriptionValue += "CIDR: \(cidr)\n"
-		descriptionValue += "Network Address: \(networkAddress)\n"
-		descriptionValue += "CIDR Notation: \(cidrNotation)\n"
-		return descriptionValue
-	}
-}
-
 class LDAPServers : NSObject, DNSResolverDelegate {
     // defaults
     
@@ -137,19 +86,15 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         } else {
             
             // check if we're connected
+			
+			getHosts(domain)
+			
+			// now to sort them if we received results
                 
-                getHosts(domain)
-                
-                // now to sort them if we received results
-                
-                if self.currentState && tickets.state {
-                    testHosts()
-                    do {
-                        try findSite()
-                    } catch {
-                        myLogger.logit(0, message: "Site lookup failed")
-                    }
-            }
+			if self.currentState && tickets.state {
+				testHosts()
+				findSite()
+			}
         }
     }
     
@@ -211,11 +156,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
             getHosts(currentDomain)
             if self.currentState && tickets.state {
                 testHosts()
-                do {
-                    try findSite()
-                } catch {
-                    myLogger.logit(0, message: "Site lookup failed")
-                }
+                findSite()
             }
         }
     }
@@ -266,11 +207,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
             if  defaultNamingContext != "" && site != "" {
                 myLogger.logit(0, message:"Using same LDAP server: " + self.currentServer)
             } else {
-                do {
-                    try findSite()
-                } catch {
-                    myLogger.logit(0, message: "Site lookup failed")
-                }
+                findSite()
             }
         } else {
             if tickets.state {
@@ -283,9 +220,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     
     // do an LDAP lookup with the current naming context
     
-    func getLDAPInformation( attribute: String, baseSearch: Bool=false, searchTerm: String="", test: Bool=true) throws -> String {
-        
-        var myResult: String
+	func getLDAPInformation( attributes: [String], baseSearch: Bool=false, searchTerm: String="", test: Bool=true, overrideDefaultNamingContext: Bool=false) throws -> [[String:String]] {
         
         if test {
             guard testSocket(self.currentServer) else {
@@ -294,47 +229,49 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         }
 		
 		// TODO: We need to un-comment this and figure out another way to pass a valid empty defaultNamingContext
-        if (defaultNamingContext == "") || (defaultNamingContext.containsString("GSSAPI Error")) {
-            testHosts()
-        }
-		
-        if baseSearch {
-			let ldapQuery = "/usr/bin/ldapsearch -N -Q -LLL -s base -H ldap://" + self.currentServer + " -b " + self.defaultNamingContext + " " + searchTerm + " " + attribute
-			/*
-			let command = "/usr/bin/ldapsearch"
-			var arguments: [String] = [String]()
-			arguments.append("-N")
-			arguments.append("-Q")
-			arguments.append("-LLL")
+		if (overrideDefaultNamingContext == false) {
+			if (defaultNamingContext == "") || (defaultNamingContext.containsString("GSSAPI Error")) {
+				testHosts()
+			}
+		}
+		let command = "/usr/bin/ldapsearch"
+		var arguments: [String] = [String]()
+		arguments.append("-N")
+		arguments.append("-Q")
+		arguments.append("-LLL")
+		arguments.append("-o")
+		arguments.append("nettimeout=1")
+		arguments.append("-o")
+		arguments.append("ldif-wrap=no")
+		if baseSearch {
 			arguments.append("-s")
 			arguments.append("base")
-			arguments.append("-H")
-			arguments.append("ldap://" + self.currentServer)
-			arguments.append("-b")
-			arguments.append(self.defaultNamingContext)
-			if ( searchTerm != "") {
-				arguments.append(searchTerm)
-			}
-			arguments.append(attribute)
-			
-			let ldapResult = cliTask(command, arguments: arguments)
-			myResult = cleanLDAPResults(ldapResult, attribute: attribute)
-			*/
-			myResult = cleanLDAPResults(cliTask(ldapQuery), attribute: attribute)
-        } else {
-			let ldapQuery = "/usr/bin/ldapsearch -N -Q -LLL -H ldap://" + self.currentServer + " -b " + self.defaultNamingContext + " " + searchTerm + " " + attribute
-            myResult = cleanLDAPResultsMultiple(cliTask(ldapQuery), attribute: attribute)
-        }
+		}
+		arguments.append("-H")
+		arguments.append("ldap://" + self.currentServer)
+		arguments.append("-b")
+		arguments.append(self.defaultNamingContext)
+		if ( searchTerm != "") {
+			arguments.append(searchTerm)
+		}
+		arguments.appendContentsOf(attributes)
+		let ldapResult = cliTask(command, arguments: arguments)
+		
+		if (ldapResult.containsString("GSSAPI Error") || ldapResult.containsString("Can't contact")) {
+			throw NoADError.LDAPConnectionError
+		}
+		
+		let myResult = cleanLDIF(ldapResult)
+	
+		/*
+		if baseSearch {
+			myResult = cleanLDAPResults(ldapResult, attributesFilter: attributes)
+		} else {
+			myResult = cleanLDAPResultsMultiple(ldapResult, attribute: attributes[0])
+		}
+		*/
         return myResult
     }
-	
-	func encapsulated(value: String) -> String {
-		if(value != "") {
-			return "\"\(value)\""
-		} else {
-			return ""
-		}
-	}
     
     func returnFullRecord(searchTerm: String) -> String {
         let myResult = cliTaskNoTerm("/usr/bin/ldapsearch -N -Q -LLL -H ldap://" + self.currentServer + " -b " + self.defaultNamingContext + " " + searchTerm )
@@ -346,406 +283,213 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     private func getSRV() {
         
     }
-	/*
-	private func getListOfPossibleCIDRAddressesForNetwork(network: [String: [String]]) -> Array {
-		let ipAddress: String = network["IP"]
-		let subnetMask: String = network["mask"]
-		var cidrAddresses = [String]()
-		
-	}
-	*/
+	
     // private function to get the AD site
-	/*
+	
 	private func findSite() {
 		// backup the defaultNamingContext so we can restore it at the end.
 		let tempDefaultNamingContext = defaultNamingContext
 		
 		// Setting defaultNamingContext to "" because we're doing a search against the RootDSE
 		defaultNamingContext = ""
-		
+
 		
 		// For info on LDAP Ping: https://msdn.microsoft.com/en-us/library/cc223811.aspx
 		// For information on the values: https://msdn.microsoft.com/en-us/library/cc223122.aspx
 		let attribute = "netlogon"
 		// not sure if we need: (AAC=\00\00\00\00)
 		let searchTerm = "(&(DnsDomain=\(currentDomain))(NtVer=\\06\\00\\00\\00))" //NETLOGON_NT_VERSION_WITH_CLOSEST_SITE
-		//let searchTerm = "(&(DnsDomain=\(tempDefaultNamingContext))(NtVer=\(NETLOGON_NT_VERSION_WITH_CLOSEST_SITE))(AAC=\(AAC)))"
 		
-		let netlogon = try! getLDAPInformation(attribute, baseSearch: true, searchTerm: searchTerm, test: false)
+		guard let ldifResult = try? getLDAPInformation([attribute], baseSearch: true, searchTerm: searchTerm, test: false, overrideDefaultNamingContext: true) else {
+			myLogger.logit(2, message: "LDAP Query failed.")
+			defaultNamingContext = tempDefaultNamingContext
+			return
+		}
+		let netlogonBase64 = getAttributeForSingleRecordFromCleanedLDIF(attribute, ldif: ldifResult)
 		
-		myLogger.logit(2, message:"Netlogon: " + netlogon)
-		
-		defaultNamingContext = tempDefaultNamingContext
-		myLogger.logit(2, message:"Resetting default naming context to: " + defaultNamingContext)
-	}
-	*/
-	
-    private func findSite() throws {
-        
-        myLogger.logit(2, message:"Looking for local IP")
-        
-        var found = false
-        site = ""
-        
-        // first grab IPv4
-        // TODO: fix for IPv6
-		let interface = getInterfaceMatchingDomain(currentDomain) ?? getPrimaryInterface()
-		//let interface = getIPandMask()["IP"]![0]
-        let network = getNetworkInfoForInterface( interface )
-		
-		myLogger.logit(2, message:network.description)
-		
-		// Save the normal naming context to a temp variable 
-		// so we can restore it later
-		let tempDefaultNamingContext = defaultNamingContext
-		
-		// Get Configuration Naming Context from LDAP
-		var configurationNamingContext = ""
-		let configurationLDAPResult = cliTask("/usr/bin/ldapsearch -N -LLL -Q -l 3 -s base -H ldap://" + currentServer + " configurationNamingContext")
-		if configurationLDAPResult != "" && !configurationLDAPResult.containsString("GSSAPI Error") && !configurationLDAPResult.containsString("Can't contact") && !configurationLDAPResult.containsString("ldap_sasl_interactive_bind_s") {
-			configurationNamingContext = cleanLDAPResults(configurationLDAPResult, attribute: "configurationNamingContext")
+		if netlogonBase64 == "" {
+			myLogger.logit(2, message: "netlogonbase64 is empty.")
+			defaultNamingContext = tempDefaultNamingContext
+			return
 		}
 		
-		// If we were able to get the configuration naming context, then use it...
-		if (configurationNamingContext != "") {
-			myLogger.logit(2, message:"Using Configuration Naming Context")
-			defaultNamingContext = "cn=Subnets,cn=Sites," + configurationNamingContext
+		guard let ldapPing: ADLDAPPing = ADLDAPPing(netlogonBase64String: netlogonBase64) else {
+			myLogger.logit(2, message:"Resetting default naming context to: " + defaultNamingContext)
+			defaultNamingContext = tempDefaultNamingContext
+			return
+		}
+		
+		site = ldapPing.clientSite ?? ""
+		
+		
+		if (ldapPing.flags.contains(.DS_CLOSEST_FLAG)) {
+			myLogger.logit(2, message:"The current server is the closest server.")
 		} else {
-			myLogger.logit(2, message:"Using Default Naming Context")
-			defaultNamingContext = "cn=Subnets,cn=Sites,cn=Configuration," + tempDefaultNamingContext
-		}
-		// Now look for sites
-        let expeditedLookup = defaults.boolForKey("ExpeditedLookup")
-        var subnetCount = 1000
-        var subnetNetworks = [String]()
-        
-        if expeditedLookup {
-            myLogger.logit(0, message:"Performing expedited site lookup.")
-            subnetNetworks = try! getLDAPInformation("cn", baseSearch: false, searchTerm: "objectClass=subnet", test: false).componentsSeparatedByString(", ")
-            subnetCount = subnetNetworks.count
-        
-            myLogger.logit(2, message:"Total number of subnets: " + String(subnetCount))
-            myLogger.logit(3, message:"Subnets: " + String(subnetNetworks))
-        } else {
-            
-        }
-        
-        // TODO: Support more than 1 local IP address
-        //  for index in 1...IPs.count {
-        
-        var subMask = countBits(network.mask)
-        let IPOctets = network.ip.componentsSeparatedByString(".")
-        var IP = ""
-        
-        myLogger.logit(1, message:"Starting site lookups")
-        
-        // loop through all of the possible networks until we get a match, or fall through
-        
-        while subMask >= 0 && !found && subnetCount >= 2 {
-            var networkBit = 0
-            
-            let octet = subMask / 8
-            let octetMask = subMask % 8
-            if subMask == 32 {
-                networkBit = Int(IPOctets[3])!
+			if ( site != "") {
+				myLogger.logit(3, message:"Site found, looking up DCs for site.")
+				let siteDomain = site + "._sites." + currentDomain
+				let currentHosts = hosts
+				getHosts(siteDomain)
+				if (hosts[0].host == "") {
+					myLogger.logit(0, message: "Site has no DCs configured. Ignoring site. You should fix this.")
+					hosts = currentHosts
+				}
+				testHosts()
 			} else {
-				networkBit = Int(IPOctets[octet])! - (Int(IPOctets[octet])! % binToDecimal(octetMask))
+				myLogger.logit(3, message: "Unable to find site")
 			}
-        
-            switch octet {
-            case 0  : IP = String(networkBit) + ".0.0.0"
-            case 1  : IP = IPOctets[0] + "." + String(networkBit) + ".0.0"
-            case 2  : IP = IPOctets[0] + "." + IPOctets[1] + "." + String(networkBit) + ".0"
-            case 3  : IP = IPOctets[0] + "." + IPOctets[1] + "." + IPOctets[2] + "." + String(networkBit)
-            case 4  : IP = IPOctets[0] + "." + IPOctets[1] + "." + IPOctets[2] + "." + IPOctets[3]
-            default : IP = IPOctets[0] + "." + IPOctets[1] + "." + IPOctets[2] + "." + IPOctets[3]
-            }
-            
-            let currentNetwork = IP + "/" + String(subMask)
-            
-            myLogger.logit(3, message:"Current Network: " + currentNetwork)
-            
-            if currentNetwork == lastNetwork {
-                myLogger.logit(1, message: "Network hasn't changed. Skipping site lookup")
-                break
-            }
-            
-            // if we are in expited mode we do the lookups locally
-            if expeditedLookup {
-                if subnetNetworks.contains(currentNetwork) {
-                    myLogger.logit(3, message:"Current network found in subnet list.")
-                    do {
-                        myLogger.logit(3, message:"Trying site: cn=" + IP + "/" + String(subMask))
-                        let siteTemp = try getLDAPInformation("siteObject", baseSearch: false, searchTerm: "cn=" + currentNetwork, test: false)
-                        if siteTemp == "" {
-                            myLogger.logit(3, message: "Site information was empty, ignoring site lookup.")
-                        } else {
-                            site = siteTemp
-                        }
-                        myLogger.logit(1, message:"Using site: " + site.componentsSeparatedByString(",")[0].stringByReplacingOccurrencesOfString("CN=", withString: ""))
-                    }
-                    catch {
-                        myLogger.logit(0, message:"Error looking up site for network: " + currentNetwork)
-                    }
-                }
-            } else {
-                // see if we can find the network in AD
-                do {
-                    myLogger.logit(3, message:"Trying site: cn=" + IP + "/" + String(subMask))
-                    let siteTemp = try getLDAPInformation("siteObject", baseSearch: false, searchTerm: "cn=" + currentNetwork, test: false)
-                    if siteTemp == "" {
-                        myLogger.logit(3, message: "Site information was empty, ignoring site.")
-                    } else {
-                        site = siteTemp
-                    }
-                    myLogger.logit(1, message:"Using site: " + site.componentsSeparatedByString(",")[0].stringByReplacingOccurrencesOfString("CN=", withString: ""))
-                    }
-                catch {
-                    myLogger.logit(0, message:"Error looking up site for network: " + currentNetwork)
-                }
-            }
-        
-            if site != "" {
-                myLogger.logit(3, message:"Site found, looking up DCs for site.")
-                found = true
-                let siteDomain = site.componentsSeparatedByString(",")[0].stringByReplacingOccurrencesOfString("CN=", withString: "") + "._sites." + currentDomain
-                lastNetwork = currentNetwork
-                
-                // need to make sure the site has actual results
-                
-                let currentHosts = hosts
-                getHosts(siteDomain)
-                if hosts[0].host == "" {
-                    myLogger.logit(0, message: "Site has no DCs configured. Ignoring site. You should fix this.")
-                    hosts = currentHosts
-                }
-                testHosts()
-            } else {
-                subMask -= 1
-                myLogger.logit(3, message:"No site found.")
-            }
-
-        }
-        
-        if site == "" {
-            site = "No site found"
-            myLogger.logit(0, message: "No matching sites found")
-        }
-        defaultNamingContext = tempDefaultNamingContext
-        myLogger.logit(2, message:"Resetting default naming context to: " + defaultNamingContext)
-    }
-	
-	
-	
-	// MARK: IP/Subnet Stuff
-	private func getPrimaryInterface() -> String {
-		myLogger.logit(2, message: "Getting the primary interface.")
-		let globalInterface = SCDynamicStoreCopyValue(store, "State:/Network/Global/IPv4")
-		let interface = globalInterface!["PrimaryInterface"] as! String
-		return interface
+		}
+		myLogger.logit(2, message:"Resetting default naming context to: " + defaultNamingContext)
+		defaultNamingContext = tempDefaultNamingContext
 	}
 	
 	
-    // private function to get IP and mask
-	private func getNetworkInfoForInterface( interface:String ) -> Network {
-		myLogger.logit(3, message: "Getting network info for interface " + interface)
+	
+	private func cleanLDIF(ldif: String) -> [[String:String]] {
+		//var myResult = [[String:String]]()
 		
-		let val = SCDynamicStoreCopyValue(store, "State:/Network/Interface/" + interface + "/IPv4") as! [String: [String]]
+		var ldifLines: [String] = ldif.componentsSeparatedByCharactersInSet(NSCharacterSet.newlineCharacterSet())
 		
-		let ip: String = ( val["Addresses"]![0] )
-		let mask: String
-		if ( val["SubnetMasks"] != nil) {
-			mask = val["SubnetMasks"]![0]
-		} else {
-			mask = "255.255.255.254"
+		var records = [[String:String]]()
+		var record = [String:String]()
+		var attributes = Set<String>()
+		
+		for var i in 0..<ldifLines.count {
+			// save current lineIndex
+			let lineIndex = i
+			ldifLines[lineIndex] = ldifLines[lineIndex].trim()
+			
+			// skip version
+			if i == 0 && ldifLines[lineIndex].hasPrefix("version") {
+				continue
+			}
+			
+			if !ldifLines[lineIndex].isEmpty {
+				// fold lines
+				
+				while i+1 < ldifLines.count && ldifLines[i+1].hasPrefix(" ") {
+					ldifLines[lineIndex] += ldifLines[i+1].trim()
+					i += 1
+				}
+			} else {
+				// end of record
+				if (record.count > 0) {
+					records.append(record)
+				}
+				record = [String:String]()
+			}
+			
+			// skip comment
+			if ldifLines[lineIndex].hasPrefix("#") {
+				continue
+			}
+			
+			var attribute = ldifLines[lineIndex].characters.split(":", maxSplit: 1, allowEmptySlices: true).map(String.init)
+			if attribute.count == 2 {
+				
+				// Get the attribute name (before ;),
+				// then add to attributes array if it doesn't exist.
+				var attributeName = attribute[0].trim()
+				if let index = attributeName.characters.indexOf(";") {
+					attributeName = attributeName.substringToIndex(index)
+				}
+				if !attributes.contains(attributeName) {
+					attributes.insert(attributeName)
+				}
+				
+				// Get the attribute value.
+				// Check if it is a URL (<), or base64 string (:)
+				var attributeValue = attribute[1].trim()
+				// If
+				if attributeValue.hasPrefix("<") {
+					// url
+					attributeValue = attributeValue.substringFromIndex(attributeValue.startIndex.successor()).trim()
+				} else if attributeValue.hasPrefix(":") {
+					// base64
+					let tempAttributeValue = attributeValue.substringFromIndex(attributeValue.startIndex.successor()).trim()
+					if (NSData(base64EncodedString: tempAttributeValue, options: NSDataBase64DecodingOptions.init(rawValue: 0)) != nil) {
+						attributeValue = tempAttributeValue
+					} else {
+						attributeValue = ""
+					}
+				}
+				
+				// escape double quote
+				attributeValue = attributeValue.stringByReplacingOccurrencesOfString("\"", withString: "\"\"")
+				
+				// save attribute value or append it to the existing
+				if let val = record[attributeName] {
+					//record[attributeName] = "\"" + val.substringWithRange(Range<String.Index>(start: val.startIndex.successor(), end: val.endIndex.predecessor())) + ";" + attributeValue + "\""
+					record[attributeName] = val + ";" + attributeValue
+				} else {
+					record[attributeName] = attributeValue
+				}
+			}
+		}
+		// save last record
+		if record.count > 0 {
+			records.append(record)
 		}
 		
-		return Network(ip: ip, mask: mask)
+		return records
 	}
-
-	private func getInterfaceMatchingDomain(domain: String) -> String? {
-		var interfaceName: String? = nil
-		
-        // TODO: Replace cliTask
-        // not the best looking code, but it works
-		
-        let interfaceRaw = cliTask("/sbin/route get " + currentServer )
-        
-        if interfaceRaw.containsString("interface") {
-            for line in interfaceRaw.componentsSeparatedByString("\n") {
-            if line.containsString("interface") {
-                myLogger.logit(3, message: line)
-                return line.stringByReplacingOccurrencesOfString("  interface: ", withString: "").stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
-                }
-            }
-        }
-		return ""
-		
-		
-		myLogger.logit(2, message: "Trying to get interface with search domain of \(domain)")
 	
-	//	let searchDomainKeys = SCDynamicStoreCopyKeyList(store, "State:/Network/Service/.*/DNS")! as Array
-	/*	var i = 0, j = searchDomainKeys.count
+	func getAttributeForSingleRecordFromCleanedLDIF(attribute: String, ldif: [[String:String]]) -> String {
+		var result: String = ""
 		
-		while ( i < j ) {
-			
-			let keyPtr = CFArrayGetValueAtIndex( searchDomainKeys, i )
-			let key = Unmanaged<CFString>.fromOpaque(COpaquePointer(keyPtr)).takeUnretainedValue()
-			let value = SCDynamicStoreCopyValue(store, key) as! [String:AnyObject]
-			
-			if let searchDomains = value["SearchDomains"] as? [String] {
-				if searchDomains.contains(currentDomain.lowercaseString) {
-					// get the interface GUID
-					guard let dnsGUID = searchDomainKeys[i] as? String else { return interfaceName }
-					let interfaceGUID = dnsGUID.stringByReplacingOccurrencesOfString("DNS", withString: "IPv4")
-					// look up the service
-					guard let interfaceList = SCDynamicStoreCopyValue(store, interfaceGUID) as? [String:AnyObject] else { return interfaceName }
-					interfaceName = interfaceList["InterfaceName"] as? String
+		var foundAttribute = false
+		
+		for record in ldif {
+			for (key, value) in record {
+				if attribute == key {
+					foundAttribute = true
+					result = value
 					break;
 				}
 			}
-			i += 1
+			if (foundAttribute == true) {
+				break;
+			}
 		}
-		
-		return interfaceName
-	*/
+		return result
 	}
 	
-	// TODO: Remove after verifying new method.
-    private func getIPandMask() -> [String: [String]] {
-        
-        var network = [String: [String]]()
-        
-        // look for interface associated with a search domain of the AD domain
-        
-        let searchDomainKeysRaw = SCDynamicStoreCopyKeyList(store, "State:/Network/Service/.*/DNS")
-        let searchDomainKeys: [AnyObject] = searchDomainKeysRaw! as [AnyObject]
-        
-        for key in searchDomainKeys {
-            let myValues = SCDynamicStoreCopyValue(store, String(key) as CFString)
-            
-            if let searchDomain = myValues!["SupplementalMatchDomains"] {
-                if searchDomain != nil {
-                    
-                    let searchDomain2 = myValues!["SupplementalMatchDomains"] as! [String]
-                    if searchDomain2.contains(currentDomain) {
-                        myLogger.logit(2, message: "Using domain-specific interface.")
-                        
-                        // get the interface GUID
-                        let interfaceGUID = myValues!["ConfirmedServiceID"]
-                        
-                        // look up the service 
-                        
-                        let interfaceKey = "State:/Network/Service/" + (interfaceGUID!! as! String) + "/IPv4"
-                        let domainInterface = SCDynamicStoreCopyValue(store, interfaceKey as CFString)
-                        
-                        // get the local IPs for it
-                        
-                        network["IP"] = domainInterface!["Addresses"] as! [String]
-                        network["mask"] = ["255.255.255.254"]
-                        return network
-                    }
-                }
-            }
-        }
-        
-        myLogger.logit(3, message: "Looking for primary interface.")
-        
-        let globalInterface = SCDynamicStoreCopyValue(store, "State:/Network/Global/IPv4")
-        let interface = globalInterface!["PrimaryInterface"] as! String
-        
-        myLogger.logit(3, message: "Primary interface is " + interface)
-        
-        let val = SCDynamicStoreCopyValue(store, "State:/Network/Interface/" + interface + "/IPv4") as! NSDictionary
-        
-        network["IP"] = (val["Addresses"] as! [String])
-        guard (( val["SubnetMasks"] ) != nil) else {
-            network["mask"] = ["255.255.255.254"]
-            return network
-        }
-        network["mask"] = (val["SubnetMasks"] as! [String])
-        return network
-    }
+	func getAttributesForSingleRecordFromCleanedLDIF(attributes: [String], ldif: [[String:String]]) -> [String:String] {
+		var results = [String: String]()
+		
+		var foundAttribute = false
+		for record in ldif {
+			for (key, value) in record {
+				if attributes.contains(key) {
+					foundAttribute = true
+					results[key] = value
+				}
+			}
+			if (foundAttribute == true) {
+				break;
+			}
+		}
+		return results
+	}
 	
-    // private function to determine subnet mask for site determination
-    private func countBits(mask: String) -> Int {
-        var bits: Int
-        switch mask {
-        case "255.255.255.255": bits = 32
-        case "255.255.255.254": bits = 31
-        case "255.255.255.252": bits = 30
-        case "255.255.255.248": bits = 29
-        case "255.255.255.240": bits = 28
-        case "255.255.255.224": bits = 27
-        case "255.255.255.192": bits = 26
-        case "255.255.255.128": bits = 25
-        case "255.255.255.0"  : bits = 24
-        case "255.255.254.0"  : bits = 23
-        case "255.255.252.0"  : bits = 22
-        case "255.255.248.0"  : bits = 21
-        case "255.255.240.0"  : bits = 20
-        case "255.255.224.0"  : bits = 19
-        case "255.255.192.0"  : bits = 18
-        case "255.255.128.0"  : bits = 17
-        case "255.255.0.0"    : bits = 16
-        case "255.254.0.0"    : bits = 15
-        case "255.252.0.0"    : bits = 14
-        case "255.248.0.0"    : bits = 13
-        case "255.240.0.0"    : bits = 12
-        case "255.224.0.0"    : bits = 11
-        case "255.192.0.0"    : bits = 10
-        case "255.128.0.0"    : bits = 9
-        case "255.0.0.0"      : bits = 8
-        case "254.0.0.0"      : bits = 7
-        case "252.0.0.0"      : bits = 6
-        case "248.0.0.0"      : bits = 5
-        case "240.0.0.0"      : bits = 4
-        case "224.0.0.0"      : bits = 3
-        case "192.0.0.0"      : bits = 2
-        case "128.0.0.0"      : bits = 1
-        case "0.0.0.0"        : bits = 0
-        default               : bits = 0
-        }
-        return bits
-    }
-    
-    // private function to convert the mask length to a decimal
-    
-    private func binToDecimal(mask: Int) -> Int {
-        var dec: Int
-        switch mask {
-        case 0  : dec = 256
-        case 1  : dec = 128
-        case 2  : dec = 64
-        case 3  : dec = 32
-        case 4  : dec = 16
-        case 5  : dec = 8
-        case 6  : dec = 4
-        case 7  : dec = 2
-        case 8  : dec = 1
-        default : dec = 0
-        }
-        return dec
-    }
-    
-    // private function to clean the LDAP results
-    
+	/*
     private func cleanLDAPResults(result: String, attribute: String) -> String {
-        let lines = result.componentsSeparatedByString("\n")
-        
         var myResult = ""
-        
-        for i in lines {
-            if (i.containsString(attribute)) {
-                myResult = i.stringByReplacingOccurrencesOfString( attribute + ": ", withString: "")
+	
+		let lines = result.componentsSeparatedByString("\n")
+	
+		for i in lines {
+		if (i.containsString(attribute)) {
+                myResult = line.stringByReplacingOccurrencesOfString( attribute + ": ", withString: "")
                 break
             }
+	
         }
         return myResult
     }
-    
+    */
     // private function to clean the LDAP results if we're looking for multiple returns
-    
+	
     private func cleanLDAPResultsMultiple(result: String, attribute: String) -> String {
         let lines = result.componentsSeparatedByString("\n")
         
@@ -784,15 +528,17 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         if defaults.integerForKey("Verbose") >= 1 {
             myLogger.logit(1, message:"Testing " + host + ".")
         }
-        
-        let myLDAPResult = cliTask("/usr/bin/ldapsearch -N -LLL -Q -l 3 -s base -H ldap://" + host + " defaultNamingContext")
-        if myLDAPResult != "" && !myLDAPResult.containsString("GSSAPI Error") && !myLDAPResult.containsString("Can't contact") {
-            defaultNamingContext = cleanLDAPResults(myLDAPResult, attribute: "defaultNamingContext")
-            return true
-        } else {
-            return false
-        }
-    }
+        let attribute = "defaultNamingContext"
+        let myLDAPResult = cliTask("/usr/bin/ldapsearch -N -LLL -Q -l 3 -s base -H ldap://" + host + " " + attribute)
+		if myLDAPResult != "" && !myLDAPResult.containsString("GSSAPI Error") && !myLDAPResult.containsString("Can't contact") {
+			let ldifResult = cleanLDIF(myLDAPResult)
+			if ( ldifResult.count > 0 ) {
+				defaultNamingContext = getAttributeForSingleRecordFromCleanedLDIF(attribute, ldif: ldifResult)
+				return true
+			}
+		}
+		return false
+	}
     
     // this checks to see if we can get SRV records for the domain
     
@@ -884,44 +630,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 		}
 	}
 
-	/*
-	// get the list of LDAP servers from an SRV lookup
-	// Uses cliTask
-    func getHosts(domain: String ) {
 	
-        var newHosts = [LDAPServer]()
-        var dnsResults = cliTask("/usr/bin/dig +short -t SRV _ldap._tcp." + domain).componentsSeparatedByString("\n")
-        
-        // check to make sure we got a result
-        
-        if dnsResults[0] == "" || dnsResults[0].containsString("connection timed out") {
-            self.currentState = false
-            hosts.removeAll()
-        } else {
-            
-            // check to make sure we didn't get a long TCP response
-            
-            if dnsResults[0].containsString("Truncated") {
-                dnsResults.removeAtIndex(0)
-            }
-            
-            for line in dnsResults {
-                let host = line.componentsSeparatedByString(" ")
-                if host[0] != "" {
-                    let currentServer: LDAPServer = LDAPServer(host: host[3], status: "found", priority: Int(host[0])!, weight: Int(host[1])!, timeStamp: NSDate())
-                    newHosts.append(currentServer)
-                }
-            }
-            
-            // now to sort them
-            
-            hosts = newHosts.sort { (x, y) -> Bool in
-                return ( x.priority <= y.priority )
-            }
-            self.currentState = true
-        }
-    }
-    */
 	
     // test the list of LDAP servers by iterating through them
     
@@ -939,22 +648,26 @@ class LDAPServers : NSObject, DNSResolverDelegate {
                     if mySocketResult.containsString("succeeded!") {
                         
                         // if socket test works, then attempt ldapsearch to get default naming context
-                        
-                        let myResult = cliTaskNoTerm("/usr/bin/ldapsearch -N -LLL -Q -l 3 -s base -H ldap://" + hosts[i].host + " defaultNamingContext")
-                        if myResult != "" {
-                            defaultNamingContext = cleanLDAPResults(myResult, attribute: "defaultNamingContext")
-                            hosts[i].status = "live"
-                            hosts[i].timeStamp = NSDate()
-                            myLogger.logit(0, message:"Current LDAP Server is: " + hosts[i].host )
-                            myLogger.logit(0, message:"Current default naming context: " + defaultNamingContext )
-                            current = i
-                            break
-                        } else {
-                            myLogger.logit(1, message:"Server is dead by way of ldap test: " + hosts[i].host)
-                            hosts[i].status = "dead"
-                            hosts[i].timeStamp = NSDate()
-                            break
-                        }
+                        let attribute = "defaultNamingContext"
+                        let myLDAPResult = cliTaskNoTerm("/usr/bin/ldapsearch -N -LLL -Q -l 3 -s base -H ldap://" + hosts[i].host + " " + attribute)
+                        if myLDAPResult != "" && !myLDAPResult.containsString("GSSAPI Error") && !myLDAPResult.containsString("Can't contact") {
+							let ldifResult = cleanLDIF(myLDAPResult)
+							if ( ldifResult.count > 0 ) {
+								defaultNamingContext = getAttributeForSingleRecordFromCleanedLDIF(attribute, ldif: ldifResult)
+								hosts[i].status = "live"
+								hosts[i].timeStamp = NSDate()
+								myLogger.logit(0, message:"Current LDAP Server is: " + hosts[i].host )
+								myLogger.logit(0, message:"Current default naming context: " + defaultNamingContext )
+								current = i
+								break
+							}
+						}
+						// We didn't get an actual LDIF Result... so LDAP isn't working.
+						myLogger.logit(1, message:"Server is dead by way of ldap test: " + hosts[i].host)
+						hosts[i].status = "dead"
+						hosts[i].timeStamp = NSDate()
+						break
+						
                     } else {
                         myLogger.logit(1, message:"Server is dead by way of socket test: " + hosts[i].host)
                         hosts[i].status = "dead"

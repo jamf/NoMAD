@@ -65,16 +65,190 @@ class UserInformation {
         myLDAPServers.check()
         return myLDAPServers.returnState()
     }
-    
+	
+	func getUserInfo() {
+		
+		// 1. check if AD can be reached
+		
+		var canary = true
+		checkNetwork()
+		
+		//myLDAPServers.tickets.getDetails()
+		
+		if myLDAPServers.currentState {
+			status = "NoMADMenuController-Connected"
+			connected = true
+		} else {
+			status = "NoMADMenuController-NotConnected"
+			connected = false
+			myLogger.logit(0, message: "Not connected to the network")
+		}
+		
+		// 2. check for tickets
+		
+		if myLDAPServers.tickets.state {
+			userPrincipal = myLDAPServers.tickets.principal
+			realm = defaults.stringForKey("KerberosRealm")!
+			if userPrincipal.containsString(realm) {
+				userPrincipalShort = userPrincipal.stringByReplacingOccurrencesOfString("@" + realm, withString: "")
+				status = "Logged In"
+				myLogger.logit(0, message: "Logged in.")
+			} else {
+				myLogger.logit(0, message: "No ticket for realm.")
+			}
+		} else {
+			myLogger.logit(0, message: "No tickets")
+		}
+		
+		// 3. if connected and with tickets, get password aging information
+		var passwordSetDate: String?
+		var computedExpireDateRaw: String?
+		var userPasswordUACFlag: String = ""
+		var userHomeTemp: String = ""
+		var userDisplayNameTemp: String = ""
+		var userDisplayName: String = ""
+		var groupsTemp: String?
+		
+		if connected && myLDAPServers.tickets.state {
+			
+			let attributes = ["pwdLastSet", "msDS-UserPasswordExpiryTimeComputed", "userAccountControl", "homeDirectory", "displayName", "memberOf"] // passwordSetDate, computedExpireDateRaw, userPasswordUACFlag, userHomeTemp, userDisplayName, groupTemp
+			// "maxPwdAge" // passwordExpirationLength
+			
+			let searchTerm = "sAMAccountName=" + userPrincipalShort
+			
+			if let ldifResult = try? myLDAPServers.getLDAPInformation(attributes, searchTerm: searchTerm) {
+				let ldapResult = myLDAPServers.getAttributesForSingleRecordFromCleanedLDIF(attributes, ldif: ldifResult)
+				passwordSetDate = ldapResult["pwdLastSet"]
+				computedExpireDateRaw = ldapResult["msDS-UserPasswordExpiryTimeComputed"]
+				userPasswordUACFlag = ldapResult["userAccountControl"] ?? ""
+				userHomeTemp = ldapResult["homeDirectory"] ?? ""
+				userDisplayNameTemp = ldapResult["displayName"] ?? ""
+				groupsTemp = ldapResult["memberOf"]
+			} else {
+				myLogger.logit(0, message: "Unable to find user.")
+				canary = false
+			}
+			if canary {
+				if (passwordSetDate != nil) {
+					userPasswordSetDate = NSDate(timeIntervalSince1970: (Double(passwordSetDate!)!)/10000000-11644473600)
+				}
+				if ( computedExpireDateRaw != nil) {
+					// Windows Server 2008 and Newer
+					if ( Int(computedExpireDateRaw!) == 9223372036854775807) {
+						// Password doesn't expire
+						passwordAging = false
+						defaults.setObject(false, forKey: "UserAging")
+						
+						// Set expiration to set date
+						userPasswordExpireDate = NSDate()
+					} else {
+						// Password expires
+						
+						passwordAging = true
+						defaults.setObject(true, forKey: "UserAging")
+						
+						// TODO: Change all Double() to NumberFormatter().number(from: myString)?.doubleValue
+						//       when we switch to Swift 3
+						let computedExpireDate = NSDate(timeIntervalSince1970: (Double(computedExpireDateRaw!)!)/10000000-11644473600)
+						
+						// Set expiration to the computed date.
+						userPasswordExpireDate = computedExpireDate
+					}
+				} else {
+					// Older then Windows Server 2008
+					// need to go old skool
+					var passwordExpirationLength: String
+					let attribute = "maxPwdAge"
+					if let ldifResult = try? myLDAPServers.getLDAPInformation([attribute], baseSearch: true) {
+						passwordExpirationLength = myLDAPServers.getAttributeForSingleRecordFromCleanedLDIF(attribute, ldif: ldifResult)
+					} else {
+						passwordExpirationLength = ""
+					}
+					
+					if ( passwordExpirationLength.characters.count > 15 ) {
+						passwordAging = false
+					} else if ( passwordExpirationLength != "" ) {
+						if ~~( Int(userPasswordUACFlag)! & 0x10000 ) {
+							passwordAging = false
+							defaults.setObject(false, forKey: "UserAging")
+						} else {
+							serverPasswordExpirationDefault = Double(abs(Int(passwordExpirationLength)!)/10000000)
+							passwordAging = true
+							defaults.setObject(true, forKey: "UserAging")
+						}
+					} else {
+						serverPasswordExpirationDefault = Double(0)
+						passwordAging = false
+					}
+					userPasswordExpireDate = userPasswordSetDate.dateByAddingTimeInterval(serverPasswordExpirationDefault)
+				}
+				
+			}
+			// Check if the password was changed without NoMAD knowing.
+			if (UserPasswordSetDates[userPrincipal] != nil) && (String(UserPasswordSetDates[userPrincipal]) != "just set" ) {
+				// user has been previously set so we can check it
+				
+				if ((UserPasswordSetDates[userPrincipal] as? NSDate )! != userPasswordSetDate) {
+					myLogger.logit(0, message: "Password was changed underneath us.")
+					
+					// TODO: Do something if we get here
+					
+					let alertController = NSAlert()
+					alertController.messageText = "Your Password Changed"
+					alertController.runModal()
+					
+					// record the new password set date
+					
+					UserPasswordSetDates[userPrincipal] = userPasswordSetDate
+					defaults.setObject(UserPasswordSetDates, forKey: "UserPasswordSetDates")
+					
+				}
+			} else {
+				UserPasswordSetDates[userPrincipal] = userPasswordSetDate
+				defaults.setObject(UserPasswordSetDates, forKey: "UserPasswordSetDates")
+			}
+			
+			
+		}
+		
+		// 4. if connected and with tickets, get all of user information
+		if connected && myLDAPServers.tickets.state && canary {
+			userHome = userHomeTemp.stringByReplacingOccurrencesOfString("\\", withString: "/")
+			userDisplayName = userDisplayNameTemp
+			
+			groups.removeAll()
+			
+			if groupsTemp != nil {
+				let groupsArray = groupsTemp!.componentsSeparatedByString(";")
+				for group in groupsArray {
+					let a = group.componentsSeparatedByString(",")
+					let b = a[0].stringByReplacingOccurrencesOfString("CN=", withString: "") as String
+					if b != "" {
+						groups.append(b)
+					}
+				}
+				myLogger.logit(1, message: "You are a member of: " + groups.joinWithSeparator(", ") )
+			}
+			
+			defaults.setObject(userHome, forKey: "userHome")
+			defaults.setObject(userDisplayName, forKey: "displayName")
+			defaults.setObject(userPrincipal, forKey: "userPrincipal")
+			defaults.setObject(userPrincipalShort, forKey: "LastUser")
+			defaults.setObject(userPasswordExpireDate, forKey: "LastPasswordExpireDate")
+			defaults.setObject(groups, forKey: "Groups")
+		}
+	}
+	
+	/*
     func getUserInfo() {
-        
+		
         // 1. check if AD can be reached
-        
+		
         var canary = true
         checkNetwork()
-        
+		
         //myLDAPServers.tickets.getDetails()
-        
+		
         if myLDAPServers.currentState {
             status = "NoMADMenuController-Connected"
             connected = true
@@ -83,9 +257,9 @@ class UserInformation {
             connected = false
             myLogger.logit(0, message: "Not connected to the network")
         }
-        
+		
         // 2. check for tickets
-        
+		
         if myLDAPServers.tickets.state {
             userPrincipal = myLDAPServers.tickets.principal
             realm = defaults.stringForKey("KerberosRealm")!
@@ -99,21 +273,24 @@ class UserInformation {
         } else {
             myLogger.logit(0, message: "No tickets")
         }
-        
+		
         // 3. if connected and with tickets, get password aging information
-        
+		
         if connected && myLDAPServers.tickets.state {
-            
+			
             var passwordSetDate = ""
-            
-            do {
-                passwordSetDate = try myLDAPServers.getLDAPInformation("pwdLastSet", searchTerm: "sAMAccountName=" + userPrincipalShort)
-            } catch {
-                passwordSetDate = ""
-                myLogger.logit(0, message: "We shouldn't have gotten here... tell Joel")
-                canary = false
-            }
-            
+			let attributes = ["pwdLastSet", "msDS-UserPasswordExpiryTimeComputed", "userAccountControl", "homeDirectory", "displayName", "memberOf"]
+			
+			let attribute = "pwdLastSet"
+			let searchTerm = "sAMAccountName=" + userPrincipalShort
+			
+			guard let ldifResult = try? myLDAPServers.getLDAPInformation([attribute], searchTerm: searchTerm) else {
+				passwordSetDate = ""
+				myLogger.logit(0, message: "We shouldn't have gotten here... tell Joel")
+				canary = false
+			}
+			passwordSetDate = myLDAPServers.getAttributeForSingleRecordFromCleanedLDIF(attribute, ldif: ldifResult)
+			
             if canary {
 				if (passwordSetDate != "") {
 					userPasswordSetDate = NSDate(timeIntervalSince1970: (Double(Int(passwordSetDate)!))/10000000-11644473600)
@@ -124,9 +301,16 @@ class UserInformation {
                 myLogger.logit(1, message: "Getting password aging info")
                 
                 // First try msDS-UserPasswordExpiryTimeComputed
-                
-                let computedExpireDateRaw = try! myLDAPServers.getLDAPInformation("msDS-UserPasswordExpiryTimeComputed", searchTerm: "sAMAccountName=" + userPrincipalShort)
-                
+				var computedExpireDateRaw: String
+                let attribute = "msDS-UserPasswordExpiryTimeComputed"
+				let searchTerm = "sAMAccountName=" + userPrincipalShort
+				if let ldifResult = try? myLDAPServers.getLDAPInformation([attribute], searchTerm: searchTerm) {
+					computedExpireDateRaw = myLDAPServers.getAttributeForSingleRecordFromCleanedLDIF(attribute, ldif: ldifResult)
+				} else {
+					computedExpireDateRaw = ""
+				}
+				
+					
                 if ( Int(computedExpireDateRaw) == 9223372036854775807 ) {
                     
                     // password doesn't expire
@@ -150,8 +334,15 @@ class UserInformation {
                 } else {
                     
                     // need to go old skool
-                    
-                    let passwordExpirationLength = try! myLDAPServers.getLDAPInformation("maxPwdAge", baseSearch: true )
+					var passwordExpirationLength: String
+					let attribute = "maxPwdAge"
+					
+					if let ldifResult = try? myLDAPServers.getLDAPInformation([attribute], baseSearch: true) {
+						passwordExpirationLength = myLDAPServers.getAttributeForSingleRecordFromCleanedLDIF(attribute, ldif: ldifResult)
+					} else {
+						passwordExpirationLength = ""
+					}
+                    //let passwordExpirationLength = try! myLDAPServers.getLDAPInformation("maxPwdAge", baseSearch: true )
                     
                     if ( passwordExpirationLength.characters.count > 15 ) {
                         //serverPasswordExpirationDefault = Double(0)
@@ -159,8 +350,15 @@ class UserInformation {
                     } else if ( passwordExpirationLength != "" ){
                         
                         // now check the users uAC to see if they are exempt
-                        
-                        let userPasswordUACFlag = try! myLDAPServers.getLDAPInformation("userAccountControl", searchTerm: "sAMAccountName=" + userPrincipalShort)
+						var userPasswordUACFlag: String
+						let attribute = "userAccountControl"
+						let searchTerm = "sAMAccountName=" + userPrincipalShort
+						
+						if let ldifResult = try? myLDAPServers.getLDAPInformation([attribute], searchTerm: searchTerm) {
+							userPasswordUACFlag = myLDAPServers.getAttributeForSingleRecordFromCleanedLDIF(attribute, ldif: ldifResult)
+						} else {
+							userPasswordUACFlag = ""
+						}
                         
                         if ~~( Int(userPasswordUACFlag)! & 0x10000 ) {
                             passwordAging = false
@@ -265,4 +463,6 @@ class UserInformation {
         
         myLogger.logit(0, message: "User information update done.")
     }
+    */
+    
 }

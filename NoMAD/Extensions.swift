@@ -19,4 +19,7 @@ extension String {
 	var translate: String {
 		return Localizator.sharedInstance.translate(self)
 	}
+	func trim() -> String {
+		return self.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
+	}
 }
