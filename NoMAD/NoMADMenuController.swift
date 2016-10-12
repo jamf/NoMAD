@@ -836,7 +836,11 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             dateFormatter.dateStyle = .MediumStyle
             dateFormatter.timeStyle = .ShortStyle
             
-            NoMADMenuGetCertificateDate.title = dateFormatter.stringFromDate(defaults.objectForKey("LastCertificateExpiration") as! NSDate) ?? "No certs"
+            if let expireDate = defaults.objectForKey("LastCertificateExpiration") as? NSDate {
+                NoMADMenuGetCertificateDate.title = dateFormatter.stringFromDate(expireDate)
+            } else {
+                NoMADMenuGetCertificateDate.title = "No Certs"
+            }
             
         } else {
             myLogger.logit(1, message:"Time between system checks is too short, delaying")
