@@ -101,7 +101,7 @@ class WindowsCATools {
                         						
                         myLogger.logit(0, message: String(self.myImportError))
 						
-                        myLogger.logit(0, message: SecCopyErrorMessageString(self.myImportError, nil) as! String)
+                        //myLogger.logit(0, message: SecCopyErrorMessageString(self.myImportError, nil) as! String)
 					}
 					
 					if (error != nil) {

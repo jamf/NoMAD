@@ -384,7 +384,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         // start the animation
         
-        startMenuAnimationTimer()
+        //startMenuAnimationTimer()
         
         // need pre-flight to ensure valid URL and template
         
@@ -403,7 +403,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         // stop the animation
         
-        stopMenuAnimationTimer()
+        //stopMenuAnimationTimer()
     }
     
     
@@ -421,10 +421,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // this enagages help based upon preferences set
     
     @IBAction func NoMADMenuClickGetHelp(sender: NSMenuItem) {
-        startMenuAnimationTimer()
+        //startMenuAnimationTimer()
 		let myGetHelp = GetHelp()
         myGetHelp.getHelp()
-        stopMenuAnimationTimer()
+        //stopMenuAnimationTimer()
     }
      
     // if specified by the preferences, this shows a CLI one-liner
