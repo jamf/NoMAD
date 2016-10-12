@@ -53,6 +53,7 @@ let settings = [
     "HidePrefs"             : 0,
     "ExpeditedLookup"       : 0,
     "displayName"           : "",
+    "LastCertificateExpiration"   : "",
     "UserPasswordSetDates"   : NSDictionary()
 ]
 
