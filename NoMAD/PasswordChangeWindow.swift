@@ -108,7 +108,6 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 	
 	// username must be of the format username@kerberosRealm
 	func performPasswordChange(username: String, currentPassword: String, newPassword1: String, newPassword2: String) -> String {
-		let localPasswordSync = defaults.integerForKey("LocalPasswordSync")
 		var myError: String = ""
 		
 		if (currentPassword.isEmpty || newPassword1.isEmpty || newPassword2.isEmpty) {
@@ -118,27 +117,29 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 		} else {
 			myLogger.logit(1, message: "All fields are filled in, continuing")
 		}
+		
 		// If the user entered the same value for both password fields.
 		if ( newPassword1 == newPassword2 ) {
+			let localPasswordSync = defaults.integerForKey("LocalPasswordSync")
+			
 			let ChangePassword: KerbUtil = KerbUtil()
             myLogger.logit(0, message: "Change password for " + username )
             
             // check to see we can match the kpasswd server with the LDAP server
-            
             let kerbPrefFile = checkKpasswdServer(true)
             
 			myError = ChangePassword.changeKerbPassword(currentPassword, newPassword1, username)
             
-            
             if ( defaults.boolForKey("UseKeychain") ) {
-                // check if keychain item exists
-                
-                let myKeychainUtil = KeychainUtil()
-                
-                do { try myKeychainUtil.findPassword(username) } catch {
-                    myKeychainUtil.setPassword(username, pass: newPassword1)
-                }
-                
+				
+				// check if keychain item exists
+				let myKeychainUtil = KeychainUtil()
+				
+				do {
+					try myKeychainUtil.findPassword(username)
+				} catch {
+					myKeychainUtil.setPassword(username, pass: newPassword1)
+				}
             }
 			// If there wasn't an error and Sync Local Password is set
 			// Check if the old password entered matches the current local password
@@ -146,17 +147,17 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
                 var UserPasswordSetDates = [String:AnyObject]()
                 
                 // update the password set database
-                
                 if defaults.dictionaryForKey("UserPasswordSetDates") != nil {
                     UserPasswordSetDates = defaults.dictionaryForKey("UserPasswordSetDates")!
                 }
                 
                 UserPasswordSetDates[username] = "just set"
                 defaults.setObject(UserPasswordSetDates, forKey: "UserPasswordSetDates")
-                
-				do { try testLocalPassword(currentPassword) }
-				catch {
-					myLogger.logit(1, message: "Local password check Swift = no")
+				
+				do {
+					try testLocalPassword(currentPassword)
+				} catch {
+					myLogger.logit(LogLevel.info, message: "Local password check Swift = no")
 					myError = "Your current local password does not match your AD password."
 				}
 			}
@@ -199,7 +200,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
         let query = try ODQuery.init(node: node, forRecordTypes: kODRecordTypeUsers, attribute: kODAttributeTypeRecordName, matchType: UInt32(kODMatchEqualTo), queryValues: myUser, returnAttributes: kODAttributeTypeNativeOnly, maximumResults: 0)
         let result = try query.resultsAllowingPartial(false)
         let record: ODRecord = result[0] as! ODRecord
-        try record.verifyPassword(password)
+		try record.verifyPassword(password)
     }
     // Needed to attempt to sync local password with AD on login.
     private func changeLocalPassword(oldPassword: String, newPassword: String) throws -> Bool {
@@ -225,7 +226,8 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
         let myLDAPServers = LDAPServers()
         myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!)
         let myKpasswdServers = myLDAPServers.getSRVRecords(defaults.stringForKey("ADDomain")!, srv_type: "_kpasswd._tcp.")
-        
+		
+		
         if myKpasswdServers.contains(myLDAPServers.currentServer) {
             
             if writePref {
@@ -241,8 +243,8 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
                     let realms = NSMutableDictionary()
                     let realm = NSMutableDictionary()
                     
-                    realm.setValue(defaults.stringForKey("CurrentLDAPServer")!, forKey: "kdc")
-                    realm.setValue(defaults.stringForKey("CurrentLDAPServer")!, forKey: "kpasswd")
+                    realm.setValue(myLDAPServers.currentServer, forKey: "kdc")
+                    realm.setValue(myLDAPServers.currentServer, forKey: "kpasswd")
                     
                     realms.setObject(realm, forKey: defaults.stringForKey("KerberosRealm")!)
                     data.setObject(realms, forKey: "realms")

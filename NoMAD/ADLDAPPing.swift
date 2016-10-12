@@ -116,9 +116,9 @@ class ADLDAPPing {
 		return (final, cursor)
 	}
 	
-	init?( netlogonBase64String: String ) {
+	init?( ldapPingBase64String: String ) {
 		//let cleanedNetlogonBase64String = netlogonBase64String.componentsSeparatedByString(": ")[1]
-		guard let netlogonData = NSData(base64EncodedString: netlogonBase64String, options: []) else {
+		guard let netlogonData = NSData(base64EncodedString: ldapPingBase64String, options: []) else {
 			myLogger.logit(2, message: "Netlogon base64 encoded string is invalid.")
 			return nil
 		}
