@@ -94,14 +94,17 @@ class WindowsCATools {
 
 						let dictionary: [NSString: AnyObject] = [
 							kSecClass: kSecClassCertificate,
+                            kSecReturnRef : kCFBooleanTrue,
 							kSecValueRef: myCertRef!,
 						];
+                        
+                        var mySecRef : AnyObject? = nil
 						
-						self.myImportError = SecItemAdd(dictionary, nil)
+						self.myImportError = SecItemAdd(dictionary, &mySecRef)
                         						
                         myLogger.logit(0, message: String(self.myImportError))
 						
-                        //myLogger.logit(0, message: SecCopyErrorMessageString(self.myImportError, nil) as! String)
+                        myLogger.logit(0, message: SecCopyErrorMessageString(self.myImportError, nil) as! String)
 					}
 					
 					if (error != nil) {

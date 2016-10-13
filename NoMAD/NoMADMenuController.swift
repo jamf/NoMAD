@@ -367,7 +367,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         // TODO: check to see if the SSL Certs are trusted, otherwise we'll fail
         
-        let lastExpire = defaults.objectForKey("LastCertificateExpiration") as! NSDate ?? NSDate.distantPast()
+        let certCATest = defaults.stringForKey("x509CA") ?? ""
+        let certTemplateTest = defaults.stringForKey("Template") ?? ""
+        
+        if ( certCATest != "" && certTemplateTest != "" ) {
+        
+            let lastExpire = defaults.objectForKey("LastCertificateExpiration") as! NSDate ?? NSDate.distantPast()
 
         if lastExpire.timeIntervalSinceNow > 2592000 {
             let alertController = NSAlert()
@@ -388,13 +393,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         // need pre-flight to ensure valid URL and template
         
-        let certCATest = defaults.stringForKey("x509CA") ?? ""
-        let certTemplateTest = defaults.stringForKey("Template") ?? ""
-        
-        if ( certCATest != "" && certTemplateTest != "" ) {
-        
         let certCARequest = WindowsCATools(serverURL: certCATest, template: certTemplateTest)
         certCARequest.certEnrollment()
+            
         } else {
             let certAlertController = NSAlert()
             certAlertController.messageText = "Please ensure your Certificate Authority settings are correct."
