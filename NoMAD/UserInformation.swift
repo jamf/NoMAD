@@ -185,10 +185,11 @@ class UserInformation {
 				
 			}
 			// Check if the password was changed without NoMAD knowing.
-			if (UserPasswordSetDates[userPrincipal] != nil) && (String(UserPasswordSetDates[userPrincipal]) != "just set" ) {
+			myLogger.logit(LogLevel.debug, message: String(UserPasswordSetDates[userPrincipal]))
+			if (UserPasswordSetDates[userPrincipal] != nil) && ( (UserPasswordSetDates[userPrincipal] as? String) != "just set" ) {
 				// user has been previously set so we can check it
 				
-				if ((UserPasswordSetDates[userPrincipal] as? NSDate )! != userPasswordSetDate) {
+				if ((UserPasswordSetDates[userPrincipal] as? NSDate ) != userPasswordSetDate) {
 					myLogger.logit(0, message: "Password was changed underneath us.")
 					
 					// TODO: Do something if we get here

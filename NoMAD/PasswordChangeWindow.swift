@@ -193,6 +193,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 		return myError
 	}
 	
+	// Verifies the entered old Password matches the local password so it can change it.
 	private func testLocalPassword(password: String) throws {
         let myUser = NSUserName()
         let session = ODSession.defaultSession()
@@ -202,21 +203,34 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
         let record: ODRecord = result[0] as! ODRecord
 		try record.verifyPassword(password)
     }
+	
     // Needed to attempt to sync local password with AD on login.
     private func changeLocalPassword(oldPassword: String, newPassword: String) throws -> Bool {
         let myUser = NSUserName()
         let session = ODSession.defaultSession()
         let node = try ODNode.init(session: session, type: UInt32(kODNodeTypeAuthentication))
         let query = try ODQuery.init(node: node, forRecordTypes: kODRecordTypeUsers, attribute: kODAttributeTypeRecordName, matchType: UInt32(kODMatchEqualTo), queryValues: myUser, returnAttributes: kODAttributeTypeNativeOnly, maximumResults: 0)
-        let result = try query.resultsAllowingPartial(false)
-        let recordRef: ODRecordRef = result[0] as! ODRecordRef
-        if ODRecordChangePassword(recordRef, oldPassword, newPassword, nil) {
-            print("Password changed!")
-            return true
-        } else {
-            return false
-        }
-
+        //let result = try query.resultsAllowingPartial(false)
+		var result: [ODRecord] = []
+		do {
+			result = try query.resultsAllowingPartial(false) as! [ODRecord]
+		} catch let error as NSErrorPointer {
+			myLogger.logit(LogLevel.base, message: "Recieved error getting change local password results: " + error.debugDescription)
+			return false
+		}
+		if (result.count > 0) {
+			let record: ODRecord = result[0]
+			do {
+				try record.changePassword(oldPassword, toPassword: newPassword)
+				//ODRecordChangePassword(<#T##record: ODRecordRef!##ODRecordRef!#>, <#T##oldPassword: CFString!##CFString!#>, <#T##newPassword: CFString!##CFString!#>, <#T##error: UnsafeMutablePointer<Unmanaged<CFError>?>##UnsafeMutablePointer<Unmanaged<CFError>?>#>)
+			} catch let error as NSErrorPointer {
+				myLogger.logit(LogLevel.base, message: "Recieved error getting change local password results: " + error.debugDescription)
+				return false
+			}
+			return true
+		} else  {
+			return false
+		}
     }
     
     // write out local krb5.conf file to ensure password change happens to the same kdc as we're using for LDAP
