@@ -130,8 +130,8 @@ class UserInformation {
 		var computedExpireDateRaw: String?
 		var userPasswordUACFlag: String = ""
 		var userHomeTemp: String = ""
-		var userDisplayNameTemp: String = ""
-		var userDisplayName: String = ""
+        //var userDisplayNameTemp: String = ""
+        //var userDisplayName: String = ""
 		var groupsTemp: String?
 		
 		if connected && myLDAPServers.tickets.state {
@@ -147,7 +147,7 @@ class UserInformation {
 				computedExpireDateRaw = ldapResult["msDS-UserPasswordExpiryTimeComputed"]
 				userPasswordUACFlag = ldapResult["userAccountControl"] ?? ""
 				userHomeTemp = ldapResult["homeDirectory"] ?? ""
-				userDisplayNameTemp = ldapResult["displayName"] ?? ""
+				userDisplayName = ldapResult["displayName"] ?? ""
 				groupsTemp = ldapResult["memberOf"]
 			} else {
 				myLogger.logit(0, message: "Unable to find user.")
@@ -239,7 +239,6 @@ class UserInformation {
 		// 4. if connected and with tickets, get all of user information
 		if connected && myLDAPServers.tickets.state && canary {
 			userHome = userHomeTemp.stringByReplacingOccurrencesOfString("\\", withString: "/")
-			userDisplayName = userDisplayNameTemp
 			
 			groups.removeAll()
 			

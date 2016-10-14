@@ -367,7 +367,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         // TODO: check to see if the SSL Certs are trusted, otherwise we'll fail
         
-        let certCATest = defaults.stringForKey("x509CA") ?? ""
+        // pre-flight to ensure valid URL and template
+        
+        var certCATest = defaults.stringForKey("x509CA") ?? ""
         let certTemplateTest = defaults.stringForKey("Template") ?? ""
         
         if ( certCATest != "" && certTemplateTest != "" ) {
@@ -389,9 +391,13 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         // start the animation
         
-        //startMenuAnimationTimer()
-        
-        // need pre-flight to ensure valid URL and template
+        startMenuAnimationTimer()
+            
+            // check for http://
+            
+            if !certCATest.containsString("http://") || !certCATest.containsString("https://") {
+                certCATest = "https://" + certCATest
+            }
         
         let certCARequest = WindowsCATools(serverURL: certCATest, template: certTemplateTest)
         certCARequest.certEnrollment()
@@ -404,7 +410,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         // stop the animation
         
-        //stopMenuAnimationTimer()
+        stopMenuAnimationTimer()
     }
     
     

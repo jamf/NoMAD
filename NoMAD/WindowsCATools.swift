@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Security
 
 class WindowsCATools {
     
@@ -17,7 +18,7 @@ class WindowsCATools {
     var myImportError: OSStatus
     
     init(serverURL: String, template: String) {
-        self.api = "https://\(serverURL)/certsrv/"
+        self.api = "\(serverURL)/certsrv/"
         
         directoryURL = NSURL(fileURLWithPath: NSTemporaryDirectory()).URLByAppendingPathComponent(NSProcessInfo.processInfo().globallyUniqueString, isDirectory: true)!
         do {
@@ -101,10 +102,27 @@ class WindowsCATools {
                         var mySecRef : AnyObject? = nil
 						
 						self.myImportError = SecItemAdd(dictionary, &mySecRef)
+                        
+                        // update the name of the private key 
+                        // first get a reference to the private key from the identity we just imported
+                        
+                        var myKey : SecKey? = nil
+                        
+                        //self.myImportError = SecIdentityCopyPrivateKey(mySecRef as! SecIdentity, &myKey)
+                        
+                        // now get the attributes of the key, create a query dictionary to hold all the attributes first
+                        
+                        var keychain : SecKeychain? = nil
+                        self.myImportError = SecKeychainCopyDefault(&keychain)
+                        
+                        var info : UnsafeMutablePointer<SecKeychainAttributeInfo>? = nil
+                        //self.myImportError = SecKeychainAttributeInfoForItemID(keychain, UInt32(kSecClassKey as String)!, &info!)
+                        
+                        
                         						
-                        myLogger.logit(0, message: String(self.myImportError))
+                        //myLogger.logit(0, message: String(self.myImportError))
 						
-                        myLogger.logit(0, message: SecCopyErrorMessageString(self.myImportError, nil) as! String)
+                        //myLogger.logit(0, message: SecCopyErrorMessageString(self.myImportError, nil) as! String)
 					}
 					
 					if (error != nil) {
