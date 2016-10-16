@@ -10,9 +10,21 @@ import Foundation
 
 // simple class to handle logging in a semi-sane way
 struct LogLevel {
+	/**
+	Lots and lots and lots of details.
+	*/
 	static let debug = 3
+	/**
+	Nice to know
+	*/
 	static let notice = 2
+	/**
+	Positive info
+	*/
 	static let info = 1
+	/**
+	Errors
+	*/
 	static let base = 0
 }
 

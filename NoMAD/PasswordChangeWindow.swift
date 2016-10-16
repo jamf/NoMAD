@@ -106,7 +106,128 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
         }
     }
 	
+	/**
+	Changes the remote and current console user's password based on if the
+	current console user is an AD account, and if localPasswordSync is enabled.
+	
+	- parameters:
+		- username: (String) Must be in the format username@REALM
+		- currentPassword: (String) The user's current password
+		- newPassword1: (String) The new password for the user.
+		- newPassword2: (String) Must match newPassword1.
+	
+	*/
+	func performPasswordChange(username: String, currentPassword: String, newPassword1: String, newPassword2: String) -> String {
+		var myError: String = ""
+		guard ( !currentPassword.isEmpty && !newPassword1.isEmpty && !newPassword2.isEmpty ) else {
+			myLogger.logit(LogLevel.base, message: "Some of the fields are empty")
+			myError = "All fields must be filled in"
+			return myError
+		}
+		myLogger.logit(LogLevel.info, message: "All fields are filled in, continuing")
+		guard (newPassword1 == newPassword2) else {
+			myLogger.logit(LogLevel.base, message: "New passwords do not match.")
+			myError = "New passwords do not match."
+			return myError
+		}
+		
+		//var noMADUserTemp: NoMADUser? = nil
+		
+		do {
+			let noMADUser = try NoMADUser(kerberosPrincipal: username)
+			
+			//
+			let remoteUserPasswordIsCorrect = noMADUser.checkRemoteUserPassword(currentPassword)
+			// Checks if console password is correct
+			let consoleUserPasswordIsCorrect = noMADUser.checkCurrentConsoleUserPassword(currentPassword)
+			// Checks if keychain password is cofrect
+			let keychainPasswordIsCorrect = try noMADUser.checkKeychainPassword(currentPassword)
+			//
+			var doLocalPasswordSync = false
+			if defaults.integerForKey("LocalPasswordSync") == 1 {
+				doLocalPasswordSync = true
+			}
+			
+			let consoleUserIsAD = noMADUser.currentConsoleUserIsADuser()
+			
+			
+			if !consoleUserIsAD {
+				myLogger.logit(LogLevel.debug, message: "Console user is not AD, trying to change using remote password.")
+				// Check if the current password entered matches the remote user.
+				guard remoteUserPasswordIsCorrect else {
+					myError = "Current password does not match remote user's password. Can't perform change."
+					return myError
+				}
+				
+				// Try to change the password using the remote method
+				// Because the current console user is not AD.
+				do {
+					try noMADUser.changeRemotePassword(currentPassword, newPassword1: newPassword1, newPassword2: newPassword2)
+				} catch let error as NoMADUserError {
+					myLogger.logit(LogLevel.base, message: error.description)
+					return error.description
+				} catch {
+					return "Unknown error"
+				}
+			}
+			
+			
+			if consoleUserIsAD || doLocalPasswordSync {
+				myLogger.logit(LogLevel.debug, message: "Console user is AD, trying to change using console password.")
+				// Check if the current password entered matches the console user.
+				guard consoleUserPasswordIsCorrect else {
+					myError = "Current password does not match console user's password. Can't change console user's password."
+					return myError
+				}
+				
+				// Try to change the password using the remote method
+				// Because the current console user is not AD.
+				do {
+					try noMADUser.changeCurrentConsoleUserPassword(currentPassword, newPassword1: newPassword1, newPassword2: newPassword2, forceChange: true)
+				} catch let error as NoMADUserError {
+					myLogger.logit(LogLevel.base, message: error.description)
+					return error.description
+				} catch {
+					return "Unknown error"
+				}
+				
+				myLogger.logit(LogLevel.debug, message: "Now that we've changed the console user's password, let's try to change the keychain password.")
+				guard keychainPasswordIsCorrect else {
+					myError = "Current password does not match the keychain's password. Can't change keychain password."
+					return myError
+				}
+				
+				// Try to change the password using the remote method
+				// Because the current console user is not AD.
+				do {
+					try noMADUser.changeKeychainPassword(currentPassword, newPassword1: newPassword1, newPassword2: newPassword2)
+				} catch let error as NoMADUserError {
+					myLogger.logit(LogLevel.base, message: error.description)
+					return error.description
+				} catch {
+					return "Unknown error"
+				}
+			}
+			
+			
+			
+		} catch let error as NoMADUserError {
+			myLogger.logit(LogLevel.base, message: error.description)
+			return error.description
+		} catch let error as NSError {
+			myLogger.logit(LogLevel.base, message: error.description)
+			return error.description
+		} catch {
+			return "Unknown error"
+		}
+		
+		return myError
+	}
+	
+	
 	// username must be of the format username@kerberosRealm
+	// TODO: Old Method. Delete
+	/*
 	func performPasswordChange(username: String, currentPassword: String, newPassword1: String, newPassword2: String) -> String {
 		var myError: String = ""
 		
@@ -192,8 +313,10 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 		}
 		return myError
 	}
+	*/
 	
 	// Verifies the entered old Password matches the local password so it can change it.
+	/*
 	private func testLocalPassword(password: String) throws {
         let myUser = NSUserName()
         let session = ODSession.defaultSession()
@@ -234,13 +357,17 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
     }
     
     // write out local krb5.conf file to ensure password change happens to the same kdc as we're using for LDAP
-    
     private func checkKpasswdServer(writePref: Bool ) -> Bool {
         
         let myLDAPServers = LDAPServers()
-        myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!)
-        let myKpasswdServers = myLDAPServers.getSRVRecords(defaults.stringForKey("ADDomain")!, srv_type: "_kpasswd._tcp.")
+		myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!)
 		
+		guard let adDomain = defaults.stringForKey("ADDomain") else {
+			myLogger.logit(LogLevel.base, message: "Preferences does not contain a value for the AD Domain.")
+			return false
+		}
+		
+		let myKpasswdServers = myLDAPServers.getSRVRecords(adDomain, srv_type: "_kpasswd._tcp.")
 		
         if myKpasswdServers.contains(myLDAPServers.currentServer) {
             
@@ -273,4 +400,5 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
             return false
         }
     }
+	*/
 }
