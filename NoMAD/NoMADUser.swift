@@ -10,6 +10,7 @@ import Foundation
 import SystemConfiguration
 import SecurityFoundation
 
+
 enum NoMADUserError: ErrorType {
 	case ItemNotFound(String)
 	case InvalidParamater(String)
@@ -18,26 +19,37 @@ enum NoMADUserError: ErrorType {
 }
 
 class NoMADUser {
-	
-	var userName: String // the username that was used to Sign In
+	var kerberosPrincipal: String // the Kerberos principal that is currently signed in to NoMAD.
+	var userName: String// the username that was used to Sign In
 	var realm: String // the realm that NoMAD is connected to.
 	
 	static let currentConsoleUserName: String = NSUserName()
 	static let uid: String = String(getuid())
 	private let currentConsoleUserRecord: ODRecord
 	
-	init?(kerberosPrincipal: String) {
-		let kerberosPrincipalArray = kerberosPrincipal.componentsSeparatedByString("@")
+	init?(_kerberosPrincipal: String) {
+		kerberosPrincipal = _kerberosPrincipal
+		let kerberosPrincipalArray = _kerberosPrincipal.componentsSeparatedByString("@")
+		guard kerberosPrincipalArray.count == 2 else {
+			myLogger.logit(LogLevel.debug, message: "Kerberos principal is in the wrong format, should be username@REALM")
+			return nil
+		}
 		userName = kerberosPrincipalArray[0]
 		realm = kerberosPrincipalArray[1]
 		guard let unwrappedCurrentConsoleUserRecord = NoMADUser.getCurrentConsoleUserRecord() else {
+			myLogger.logit(LogLevel.debug, message: "Unable to get ODRecord for the current console user.")
 			return nil
 		}
 		currentConsoleUserRecord = unwrappedCurrentConsoleUserRecord
-		
 	}
 	
-	//Read-Only Functions
+	// MARK: Read-Only Functions
+	/**
+	 Checks if the current console user is an AD account
+	
+	 - returns:
+	 A bool
+	*/
 	func currentConsoleUserIsADuser() -> Bool {
 		if let originalNodeName = try? String(currentConsoleUserRecord.valuesForAttribute(kODAttributeTypeOriginalNodeName)[0]) {
 			if ( originalNodeName.contains("/Active Directory")) {
@@ -51,6 +63,32 @@ class NoMADUser {
 		return false
 	}
 	
+	
+	func getCurrentConsoleUserKerberosPrincipal() -> String {
+		if currentConsoleUserIsADuser() {
+			
+			if let originalAuthenticationAuthority = try? String(currentConsoleUserRecord.valuesForAttribute("dsAttrTypeStandard:OriginalAuthenticationAuthority")[0]) {
+				let range = originalAuthenticationAuthority.rangeOfString("(?<=Kerberosv5;;).+@[^;]+", options:.RegularExpressionSearch)
+				if range != nil {
+					return originalAuthenticationAuthority.substringWithRange(range!)
+				}
+				myLogger.logit(LogLevel.debug, message: "Somehow an AD user does not have OriginalAuthenticationAuthority")
+			}
+			return ""
+		} else {
+			return ""
+		}
+	}
+	
+	/**
+	Checks if the password submitted is correct for the current console user.
+	
+	- returns:
+	A bool
+	
+	- parameters:
+		- password: The user's current password as a String.
+	*/
 	func checkCurrentConsoleUserPassword(password: String) -> Bool {
 		do {
 			try currentConsoleUserRecord.verifyPassword(password)
@@ -61,38 +99,168 @@ class NoMADUser {
 		}
 	}
 	
+	// Checks if the password entered matches the password
+	// for the current console user's default keychain.
 	func checkKeychainPassword(password: String) throws -> Bool {
 		var getDefaultKeychain: OSStatus
 		var myDefaultKeychain: SecKeychain?
 		var err: OSStatus
 		
-		// get the default keychain path, then attempt to change the password on it
-		
+		// get the user's default keychain. (Typically login.keychain)
 		getDefaultKeychain = SecKeychainCopyDefault(&myDefaultKeychain)
-		
 		if ( getDefaultKeychain == errSecNoDefaultKeychain ) {
 			throw NoMADUserError.ItemNotFound("Could not find Default Keychain")
 		}
 		
+		// Test if the keychain password is correct by trying to unlock it.
 		let passwordLength = UInt32(password.characters.count)
-		
 		err = SecKeychainUnlock(myDefaultKeychain, passwordLength, password, true)
-		
 		if (err == noErr) {
 			return true
 		} else if ( err == errSecAuthFailed ) {
 			myLogger.logit(LogLevel.base, message: "Authentication failed." + err.description)
 			return false
 		} else {
+			// If we got any other error, we don't know if the password is good or not because we probably couldn't find the keychain.
 			myLogger.logit(LogLevel.base, message: "Unknown error: " + err.description)
 			throw NoMADUserError.UnknownError("Unknown error: " + err.description)
 		}
 		
 	}
 	
-	//Class Functions
+	// MARK: Write Functions
+	/**
+	Changes the password for the user currently signed into NoMAD.
+	
+	- important: You should not try to use this method when the current console user is an AD Account and is the same as the user currently signed into NoMAD.
+	
+	- parameters:
+		- oldPassword: (String) The user's current password
+		- newPassword1: (String) The new password for the user.
+		- newPassword2: (String) Must match newPassword1.
+	
+	- throws: An error of type NoMADUserError.InvalidParameter
+	
+	- returns:
+	A string containing any error text from KerbUtil
+	*/
+	func changeRemotePassword(oldPassword: String, newPassword1: String, newPassword2: String) throws -> String {
+		var error: String = ""
+		
+		if (newPassword1 != newPassword2) {
+			myLogger.logit(LogLevel.info, message: "New passwords do not match.")
+			throw NoMADUserError.InvalidParamater("New passwords do not match.")
+		}
+		
+		let currentConsoleUserKerberosPrincipal = getCurrentConsoleUserKerberosPrincipal()
+		if currentConsoleUserIsADuser() {
+			if ( kerberosPrincipal == currentConsoleUserKerberosPrincipal ) {
+				myLogger.logit(LogLevel.base, message: "User signed into NoMAD is the same as user logged onto console. Console user is AD user. Can't use changeRemotePassword.")
+				throw NoMADUserError.InvalidParamater("NoMAD User = Console User. Console user is AD user. Can't use changeRemotePassword. Use changeCurrentConsoleUserPassword() instead.")
+			} else {
+				myLogger.logit(LogLevel.notice, message: "NoMAD User != Console User. Console user is AD user. You should prompt the user to change the local password.")
+			}
+		}
+		
+		let kerbPrefFile = checkKpasswdServer(true)
+		
+		let remotePasswordChanger: KerbUtil = KerbUtil()
+		error = remotePasswordChanger.changeKerbPassword(oldPassword, newPassword1, kerberosPrincipal)
+		
+		if (error == "") {
+			myLogger.logit(LogLevel.info, message: "Successfully changed remote password.")
+		} else {
+			myLogger.logit(LogLevel.info, message: "Unable to change remote password. Error: " + error)
+		}
+		
+		if kerbPrefFile {
+			//let kerbDefaults = NSUserDefaults(suiteName: "com.apple.Kerberos")
+			
+			// TODO: Replace defaults delete.
+			cliTask("/usr/bin/defaults delete com.apple.Kerberos")
+		}
+		
+		return error
+	}
+	
+	/**
+	Changes the password of the user currently logged into the computer.
+	
+	- parameters:
+		- oldPassword: (String) The user's current password
+		- newPassword1: (String) The new password for the user.
+		- newPassword2: (String) Must match newPassword1.
+	
+	*/
+	func changeCurrentConsoleUserPassword(oldPassword: String, newPassword1: String, newPassword2: String, forceChange: Bool) throws -> Bool {
+		if (newPassword1 != newPassword2) {
+			myLogger.logit(LogLevel.info, message: "New passwords do not match.")
+			throw NoMADUserError.InvalidParamater("New passwords do not match.")
+		}
+		
+		let currentConsoleUserKerberosPrincipal = getCurrentConsoleUserKerberosPrincipal()
+		if currentConsoleUserIsADuser() && ( kerberosPrincipal != currentConsoleUserKerberosPrincipal ){
+			if ( forceChange ) {
+				myLogger.logit(LogLevel.debug, message: "NoMAD User != Console User. Console user is AD user. Hopefully you prompted the user.")
+			} else {
+				myLogger.logit(LogLevel.debug, message: "NoMAD User != Console User. Console user is AD user. Preventing change as safety precaution.")
+				throw NoMADUserError.InvalidParamater("Console user is an AD account, you need to force change the password. You should prompt the user before doing this.")
+			}
+		}
+		
+		do {
+			try currentConsoleUserRecord.changePassword(oldPassword, toPassword: newPassword1)
+			return true
+		} catch let unknownError as NSError {
+			myLogger.logit(LogLevel.base, message: "Local User Password is incorrect. Error: " + unknownError.description)
+			return false
+		}
+	}
+	
+	func changeKeychainPassword(oldPassword: String, newPassword1: String, newPassword2: String) throws {
+		var getDefaultKeychain: OSStatus
+		var myDefaultKeychain: SecKeychain?
+		var err: OSStatus
+		
+		if (newPassword1 != newPassword2) {
+			myLogger.logit(LogLevel.info, message: "New passwords do not match.")
+			throw NoMADUserError.InvalidParamater("New passwords do not match.")
+		}
+		
+		// get the user's default keychain. (Typically login.keychain)
+		getDefaultKeychain = SecKeychainCopyDefault(&myDefaultKeychain)
+		if ( getDefaultKeychain == errSecNoDefaultKeychain ) {
+			throw NoMADUserError.ItemNotFound("Could not find Default Keychain")
+		}
+		
+		// Test if the keychain password is correct by trying to unlock it.
+		let oldPasswordLength = UInt32(oldPassword.characters.count)
+		let newPasswordLength = UInt32(newPassword1.characters.count)
+		
+		err = SecKeychainChangePassword(myDefaultKeychain, oldPasswordLength, oldPassword, newPasswordLength, newPassword1)
+		if (err == noErr) {
+			myLogger.logit(LogLevel.info, message: "Changed keychain password successfully.")
+			return
+		} else if ( err == errSecAuthFailed ) {
+			myLogger.logit(LogLevel.base, message: "Keychain password was incorrect.")
+			return
+		} else {
+			// If we got any other error, we don't know if the password is good or not because we probably couldn't find the keychain.
+			myLogger.logit(LogLevel.base, message: "Unknown error: " + err.description)
+			throw NoMADUserError.UnknownError("Unknown error: " + err.description)
+		}
+	}
+	
+	func updateKeychainItem() {
+		
+	}
+	
+	
+	
+	// MARK: Class Functions
+	// Get ODRecord for the user that is currently logged in to the computer.
 	class func getCurrentConsoleUserRecord() -> ODRecord? {
-		// Get ODRecords
+		// Get ODRecords where record name is equal to the Current Console User's username
 		let session = ODSession.defaultSession()
 		var records = [ODRecord]?()
 		do {
@@ -105,7 +273,8 @@ class NoMADUser {
 		}
 		
 		
-		// Get the ODRecord that matches the current user's username and UID.
+		// We may have gotten multiple ODRecords that match username,
+		// So make sure it also matches the UID.
 		if ( records != nil ) {
 			for case let record in records! {
 				let attribute = "dsAttrTypeStandard:UniqueID"
@@ -121,164 +290,51 @@ class NoMADUser {
 	
 	
 }
-/*
-enum PasswordError: ErrorType {
-	case ItemNotFound(String)
-	case InvalidParamater(String)
-	case InvalidODInfo(String)
-}
 
-extension ODRecord {
-	func isFromAD() -> Bool {
-		if let originalNodeName = try? String(self.valuesForAttribute(kODAttributeTypeOriginalNodeName)[0]) {
-			return originalNodeName.contains("/Active Directory")
-		} else {
+
+
+
+
+
+
+
+
+
+private func checkKpasswdServer(writePref: Bool ) -> Bool {
+	
+	let myLDAPServers = LDAPServers()
+	myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!)
+	let myKpasswdServers = myLDAPServers.getSRVRecords(defaults.stringForKey("ADDomain")!, srv_type: "_kpasswd._tcp.")
+	
+	
+	if myKpasswdServers.contains(myLDAPServers.currentServer) {
+		
+		if writePref {
+			// check to see if a file exists already
+			
+			let myFileManager = NSFileManager()
+			let myPrefFile = NSHomeDirectory().stringByAppendingString("/Library/Preferences/com.apple.Kerberos.plist")
+			
+			if ( !myFileManager.fileExistsAtPath(myPrefFile)) {
+				// no existing pref file
+				
+				let data = NSMutableDictionary()
+				let realms = NSMutableDictionary()
+				let realm = NSMutableDictionary()
+				
+				realm.setValue(myLDAPServers.currentServer, forKey: "kdc")
+				realm.setValue(myLDAPServers.currentServer, forKey: "kpasswd")
+				
+				realms.setObject(realm, forKey: defaults.stringForKey("KerberosRealm")!)
+				data.setObject(realms, forKey: "realms")
+				
+				return data.writeToFile(myPrefFile, atomically: true)
+				
+			}
 			return false
 		}
-	}
-}
-
-// MARK: Read Functions
-func checkLocalPassword(currentPassword: String) {
-
-	do {
-		let record: ODRecord = try getLocalUserAccountRecord()
-		try record.verifyPassword(currentPassword)
-	} catch let error as NSError {
-		myLogger.logit(LogLevel.base, message: "Error: " + error.description)
-	}
-
-}
-func checkKeychainPassword(userPrincipal: String, currentPassword: String) {
-	
-}
-
-// MARK: Write Functions
-
-func changeLocalPassword(kerberosPrincipal: String, oldPassword: String, newPassword1: String, newPassword2: String) {
-	do {
-		let record: ODRecord = try getLocalUserAccountRecord()
-		// OD Attributes
-		let attributesFilter = ["dsAttrTypeStandard:AuthenticationAuthority", "samAccountName"]
-		let attributesResult = try record.recordDetailsForAttributes(attributesFilter)
-		guard let samAccountName = attributesResult["samAccountName"] as? String else {
-			throw PasswordError.InvalidODInfo("Unable to get samAccountName")
-		}
-		guard let authenticationAuthority = attributesResult["dsAttrTypeStandard:AuthenticationAuthority"] as? String else {
-			throw PasswordError.InvalidODInfo("Unable to get Authentication Authority")
-		}
-		
-		var username: String = ""
-		var realm: String = ""
-		// Passed Attributes
-		let kerberosPrincipalArray = kerberosPrincipal.componentsSeparatedByString("@")
-		if ( kerberosPrincipalArray.count == 2) {
-			username = kerberosPrincipalArray[0]
-			realm = kerberosPrincipalArray[1]
-		} else {
-			throw PasswordError.InvalidParamater("Kerberos Principal is invalid. Must be username@REALM")
-		}
-		
-		if samAccountName.lowercaseString == username.lowercaseString && authenticationAuthority.contains(realm) {
-			
-		}
-		
-		
-	} catch let error as NSError {
-		myLogger.logit(LogLevel.base, message: "Error: " + error.description)
-	}
-	
-}
-*/
-/*
-func changeADPassword(kerberosPrincipal: String, oldPassword: String, newPassword1: String, newPassword2: String) -> Bool {
-	guard let localAccountRecord = getLocalUserAccountRecord() else {
-		myLogger.logit(LogLevel.base, message: "Unable to find Local Account ODRecord, so we don't know if this an actual local account, or an AD mobile account.")
+		return false
+	} else {
 		return false
 	}
-	if ( localAccountRecord.isFromAD() ) {
-		myLogger.logit(LogLevel.info, message: "Local Account is from AD. We'll change the password using OD.")
-	
-	} else {
-		myLogger.logit(LogLevel.info, message: "Local Account is from Local. We'll change the password using KerbUtil.")
-		
-	}
 }
-func changeLoginKeychainPassword(oldPassword: String, newPassword1: String, newPassword2: String) {
-	
-}
-func changeKeychainItemPassword(kerberosPrincipal: String, oldPassword: String, newPassword1: String, newPassword2: String) {
-	
-}
-
-// TODO: create this.
-func fixLoginKeychainPassword(oldPassword: String, newPassword1: String, newPassword2: String) {
-	
-}
-*/
-//MARK: Helper Functions
-/*
-func getLocalUserAccountRecord() -> ODRecord? {
-	// Get localUserName and UID to find the correct
-	/*
-	// Get localUserName and UID to find the correct
-	let store = SCDynamicStoreCreate(nil, "blah" as CFString, nil, nil)
-	var uid: uid_t = 0
-	let localUserName = SCDynamicStoreCopyConsoleUser(store, &uid, nil)
-	*/
-	// Get localUserName and UID to find the correct ODRecord
-	let localUserName = NSUserName()
-	let uid = String(getuid())
-	
-	// Get ODRecords
-	let session = ODSession.defaultSession()
-	var records = [ODRecord]?()
-	do {
-		//let node = try ODNode.init(session: session, type: UInt32(kODNodeTypeAuthentication))
-		let node = try ODNode.init(session: session, type: UInt32(kODNodeTypeLocalNodes))
-		let query = try ODQuery.init(node: node, forRecordTypes: kODRecordTypeUsers, attribute: kODAttributeTypeRecordName, matchType: UInt32(kODMatchEqualTo), queryValues: localUserName, returnAttributes: kODAttributeTypeNativeOnly, maximumResults: 0)
-		records = try query.resultsAllowingPartial(false) as? [ODRecord]
-	} catch {
-		myLogger.logit(LogLevel.base, message: "Unable to get local user account ODRecords")
-	}
-		
-	
-	// Get the ODRecord that matches the current user's username and UID.
-	if ( records != nil ) {
-		for case let record in records! {
-			let attribute = "dsAttrTypeStandard:UniqueID"
-			if let odUid = try? String(record.valuesForAttribute(attribute)[0]) {
-				if ( odUid == uid) {
-					return record
-				}
-			}
-		}
-	}
-	return nil
-}
-
-extension ODRecord {
-	func isFromAD() -> Bool {
-		if let originalNodeName = try? String(self.valuesForAttribute(kODAttributeTypeOriginalNodeName)[0]) {
-			return originalNodeName.contains("/Active Directory")
-		} else {
-			return false
-		}
-	}
-}
-
-func localAccountIsAD() -> Bool {
-	do {
-		let record: ODRecord = try getLocalUserAccountRecord()
-		if let originalNodeName = try? record.valuesForAttribute(kODAttributeTypeOriginalNodeName)[0] {
-			let originalNodeNameString = String(originalNodeName)
-			return originalNodeNameString.contains("/Active Directory")
-		}
-	} catch let error as NSError {
-		myLogger.logit(LogLevel.base, message: "Error: " + error.description)
-		
-	}
-	return false
-}
-*/
-

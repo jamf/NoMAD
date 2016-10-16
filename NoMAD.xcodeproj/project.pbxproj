@@ -72,6 +72,7 @@
 		346CD2721DA205B500255F66 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		346CD2741DA2065D00255F66 /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		346CD27E1DA4776600255F66 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		34B345831DB2F0ED007154A8 /* SecurityPrivateAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecurityPrivateAPI.h; sourceTree = "<group>"; };
 		34B9B7091DA6E9C500FCCFE3 /* Localizator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Localizator.swift; sourceTree = "<group>"; };
 		34BBA63E1DAF09CE005E4633 /* NoMADUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NoMADUser.swift; sourceTree = "<group>"; };
 		34E186BD1D9C681000265138 /* DNSResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DNSResolver.h; sourceTree = "<group>"; };
@@ -193,6 +194,7 @@
 				34B9B7091DA6E9C500FCCFE3 /* Localizator.swift */,
 				346CD27E1DA4776600255F66 /* Extensions.swift */,
 				345226E81DAA266B0066C922 /* Network.swift */,
+				34B345831DB2F0ED007154A8 /* SecurityPrivateAPI.h */,
 				34BBA63E1DAF09CE005E4633 /* NoMADUser.swift */,
 			);
 			path = NoMAD;
