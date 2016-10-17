@@ -200,6 +200,10 @@ class NoMADUser {
 		}
 		
 		let kerbPrefFile = checkKpasswdServer(true)
+		guard kerbPrefFile else {
+			myLogger.logit(LogLevel.base, message: "Unable to create Kerberos preference file.")
+			throw NoMADUserError.ItemNotFound("Unable to create Kerberos preference file.")
+		}
 		
 		let remotePasswordChanger: KerbUtil = KerbUtil()
 		let error = remotePasswordChanger.changeKerbPassword(oldPassword, newPassword1, kerberosPrincipal)
@@ -504,7 +508,7 @@ private func checkKpasswdServer(writePref: Bool ) -> Bool {
 			let myPrefFile = NSHomeDirectory().stringByAppendingString("/Library/Preferences/com.apple.Kerberos.plist")
 			
 			if ( !myFileManager.fileExistsAtPath(myPrefFile)) {
-				myLogger.logit(LogLevel.debug, message: "Developer says we should write the preference file.")
+				myLogger.logit(LogLevel.debug, message: "The Kerberos plist doesn't exist already, so we're going to create it now.")
 				// no existing pref file
 				
 				let data = NSMutableDictionary()
