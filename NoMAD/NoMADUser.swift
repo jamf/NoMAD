@@ -349,26 +349,31 @@ class NoMADUser {
 
 private func checkKpasswdServer(writePref: Bool ) -> Bool {
 	
-	let myLDAPServers = LDAPServers()
-	myLDAPServers.setDomain(defaults.stringForKey("ADDomain")!)
-	
 	guard let adDomain = defaults.stringForKey("ADDomain") else {
 		myLogger.logit(LogLevel.base, message: "Preferences does not contain a value for the AD Domain.")
 		return false
 	}
 	
-	let myKpasswdServers = myLDAPServers.getSRVRecords(adDomain, srv_type: "_kpasswd._tcp.")
+	let myLDAPServers = LDAPServers()
+	myLDAPServers.setDomain(adDomain)
 	
+	
+	
+	let myKpasswdServers = myLDAPServers.getSRVRecords(adDomain, srv_type: "_kpasswd._tcp.")
+	myLogger.logit(LogLevel.debug, message: "Current Server is: " + myLDAPServers.currentServer)
+	myLogger.logit(LogLevel.debug, message: "Current Server is: " + myKpasswdServers.description)
 	
 	if myKpasswdServers.contains(myLDAPServers.currentServer) {
-		
+		myLogger.logit(LogLevel.debug, message: "Found kpasswd server that matches current LDAP server.")
 		if writePref {
+			myLogger.logit(LogLevel.debug, message: "Developer says we should write the preference file.")
 			// check to see if a file exists already
 			
 			let myFileManager = NSFileManager()
 			let myPrefFile = NSHomeDirectory().stringByAppendingString("/Library/Preferences/com.apple.Kerberos.plist")
 			
 			if ( !myFileManager.fileExistsAtPath(myPrefFile)) {
+				myLogger.logit(LogLevel.debug, message: "Developer says we should write the preference file.")
 				// no existing pref file
 				
 				let data = NSMutableDictionary()
@@ -388,6 +393,7 @@ private func checkKpasswdServer(writePref: Bool ) -> Bool {
 		}
 		return false
 	} else {
+		myLogger.logit(LogLevel.base, message: "Couldn't find kpasswd server that matches current LDAP server.")
 		return false
 	}
 }
