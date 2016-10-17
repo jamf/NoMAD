@@ -86,7 +86,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         }
         
         // put password in keychain, but only if there was no error
-        
+        // TODO: Re-vamp this.
         if ( defaults.boolForKey("UseKeychain") && myError == nil ) {
             
             // check if keychain item exists and delete it if it does
@@ -100,8 +100,9 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         }
         
         if ( myError == nil  && defaults.integerForKey("LocalPasswordSync") == 1 ) {
-            do { try testLocalPassword( Password.stringValue) }
-            catch {
+            do {
+				try testLocalPassword( Password.stringValue)
+			} catch {
                 
                 myLogger.logit(0, message:"Local password check failed. Attempting to sync.")
                 let alertController = NSAlert()
@@ -113,19 +114,20 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                 alertController.accessoryView = localPassword
                 alertController.beginSheetModalForWindow(self.window!, completionHandler: { (response) -> Void in
                     if response == 1001 {
-                        do { try self.testLocalPassword(localPassword.stringValue)
+                        do {
+							try self.testLocalPassword(localPassword.stringValue)
                             myLogger.logit(0, message:"Local password is right. Syncing.")
                             if (GetCredentials.changeKeychainPassword(self.Password.stringValue, localPassword.stringValue) == 0) {
                                 myLogger.logit(0, message:"Error changing local keychain")
                                 myError = "Could not change your local keychain password."
                             }
-                            do { try self.changeLocalPassword( localPassword.stringValue, newPassword: self.Password.stringValue) }
-                            catch {
+                            do {
+								try self.changeLocalPassword( localPassword.stringValue, newPassword: self.Password.stringValue)
+							} catch {
                                 myLogger.logit(0, message:"Local password change failed")
                                 myError = "Local password change failed"
                             }
-                        }
-                        catch {
+                        } catch {
                             let alertController = NSAlert()
                             alertController.messageText = "Invalid password. Please try again."
                             alertController.beginSheetModalForWindow(self.window!, completionHandler: nil)
@@ -197,7 +199,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             myError = performPasswordChange(userPrincipal, currentPassword: currentPassword, newPassword1: newPassword1, newPassword2: newPassword2)
             
             // put password in keychain, but only if there was no error
-            
+            /*
             if ( defaults.boolForKey("UseKeychain") && myError != "" ) {
                 
                 // check if keychain item exists and delete it if it does
@@ -209,7 +211,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                 myKeychainUtil.setPassword(userName.stringValue + "@" + defaults.stringForKey("KerberosRealm")!, pass: Password.stringValue)
                 
             }
-            
+            */
             if myError != "" {
                 let alertController = NSAlert()
                 alertController.messageText = myError
@@ -314,6 +316,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
     }
     
     // username must be of the format username@kerberosRealm
+	/*
     func performPasswordChange(username: String, currentPassword: String, newPassword1: String, newPassword2: String) -> String {
         let localPasswordSync = defaults.integerForKey("LocalPasswordSync")
         var myError: String = ""
@@ -374,7 +377,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         }
         return myError
     }
-    
+	*/
+    // TODO: Clean this up.
     private func testLocalPassword(password: String) throws {
         let myUser = NSUserName()
         let session = ODSession.defaultSession()
@@ -384,7 +388,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         let record: ODRecord = result[0] as! ODRecord
         try record.verifyPassword(password)
     }
-    
+	
+	// TODO: Clean this up.
     // Needed to attempt to sync local password with AD on login.
     private func changeLocalPassword(oldPassword: String, newPassword: String) throws -> Bool {
         let myUser = NSUserName()
