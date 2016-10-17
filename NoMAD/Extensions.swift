@@ -22,4 +22,11 @@ extension String {
 	func trim() -> String {
 		return self.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
 	}
+	func contains(find: String) -> Bool {
+		return self.rangeOfString(find) != nil
+	}
+	func containsIgnoringCase(find: String) -> Bool {
+		return self.rangeOfString(find, options: NSStringCompareOptions.CaseInsensitiveSearch) != nil
+	}
+
 }

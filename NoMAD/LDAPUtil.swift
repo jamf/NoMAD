@@ -301,20 +301,22 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 		let searchTerm = "(&(DnsDomain=\(currentDomain))(NtVer=\\06\\00\\00\\00))" //NETLOGON_NT_VERSION_WITH_CLOSEST_SITE
 		
 		guard let ldifResult = try? getLDAPInformation([attribute], baseSearch: true, searchTerm: searchTerm, test: false, overrideDefaultNamingContext: true) else {
-			myLogger.logit(2, message: "LDAP Query failed.")
+			myLogger.logit(LogLevel.base, message: "LDAP Query failed.")
+			myLogger.logit(LogLevel.debug, message:"Resetting default naming context to: " + tempDefaultNamingContext)
 			defaultNamingContext = tempDefaultNamingContext
 			return
 		}
-		let netlogonBase64 = getAttributeForSingleRecordFromCleanedLDIF(attribute, ldif: ldifResult)
+		let ldapPingBase64 = getAttributeForSingleRecordFromCleanedLDIF(attribute, ldif: ldifResult)
 		
-		if netlogonBase64 == "" {
-			myLogger.logit(2, message: "netlogonbase64 is empty.")
+		if ldapPingBase64 == "" {
+			myLogger.logit(LogLevel.base, message: "ldapPingBase64 is empty.")
+			myLogger.logit(LogLevel.debug, message:"Resetting default naming context to: " + tempDefaultNamingContext)
 			defaultNamingContext = tempDefaultNamingContext
 			return
 		}
 		
-		guard let ldapPing: ADLDAPPing = ADLDAPPing(netlogonBase64String: netlogonBase64) else {
-			myLogger.logit(2, message:"Resetting default naming context to: " + defaultNamingContext)
+		guard let ldapPing: ADLDAPPing = ADLDAPPing(ldapPingBase64String: ldapPingBase64) else {
+			myLogger.logit(LogLevel.debug, message:"Resetting default naming context to: " + tempDefaultNamingContext)
 			defaultNamingContext = tempDefaultNamingContext
 			return
 		}
@@ -323,23 +325,24 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 		
 		
 		if (ldapPing.flags.contains(.DS_CLOSEST_FLAG)) {
-			myLogger.logit(2, message:"The current server is the closest server.")
+			myLogger.logit(LogLevel.info, message:"The current server is the closest server.")
 		} else {
 			if ( site != "") {
-				myLogger.logit(3, message:"Site found, looking up DCs for site.")
-				let siteDomain = site + "._sites." + currentDomain
+				myLogger.logit(LogLevel.info, message:"Site \"\(site)\" found.")
+				myLogger.logit(LogLevel.notice, message: "Looking up DCs for site.")
+				//let domain = currentDomain
 				let currentHosts = hosts
-				getHosts(siteDomain)
+				getHosts(currentDomain)
 				if (hosts[0].host == "") {
-					myLogger.logit(0, message: "Site has no DCs configured. Ignoring site. You should fix this.")
+					myLogger.logit(LogLevel.base, message: "Site \"\(site)\" has no DCs configured. Ignoring site. You should fix this.")
 					hosts = currentHosts
 				}
 				testHosts()
 			} else {
-				myLogger.logit(3, message: "Unable to find site")
+				myLogger.logit(LogLevel.base, message: "Unable to find site")
 			}
 		}
-		myLogger.logit(2, message:"Resetting default naming context to: " + defaultNamingContext)
+		myLogger.logit(LogLevel.debug, message:"Resetting default naming context to: " + tempDefaultNamingContext)
 		defaultNamingContext = tempDefaultNamingContext
 	}
 	
@@ -543,11 +546,13 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     // this checks to see if we can get SRV records for the domain
     
     private func checkConnectivity( domain: String ) -> Bool {
-
-        //let dnsResults = cliTask("/usr/bin/dig +short -t SRV _ldap._tcp." + domain).componentsSeparatedByString("\n")
         
         self.resolver.queryType = "SRV"
-        self.resolver.queryValue = "_ldap._tcp." + domain
+		self.resolver.queryValue = "_ldap._tcp." + domain
+		if (site != "") {
+			self.resolver.queryValue = "_ldap._tcp." + site + "._sites." + domain
+		}
+		
         self.resolver.startQuery()
         
         while ( !self.resolver.finished ) {
@@ -567,7 +572,11 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 	
     func getSRVRecords(domain: String, srv_type: String="_ldap._tcp.") -> [String] {
         self.resolver.queryType = "SRV"
-        self.resolver.queryValue = srv_type + domain
+		
+		self.resolver.queryValue = srv_type + domain
+		if (site != "") {
+			self.resolver.queryValue = srv_type + site + "._sites." + domain
+		}
         var results = [String]()
 
         self.resolver.startQuery()
@@ -595,7 +604,11 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     
 	func getHosts(domain: String ) {
 		self.resolver.queryType = "SRV"
+		
 		self.resolver.queryValue = "_ldap._tcp." + domain
+		if (site != "") {
+			self.resolver.queryValue = "_ldap._tcp." + site + "._sites." + domain
+		}
 		self.resolver.startQuery()
 		
 		while ( !self.resolver.finished ) {

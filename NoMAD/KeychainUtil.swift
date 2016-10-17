@@ -51,6 +51,19 @@ class KeychainUtil {
         
         return myErr
     }
+	
+	func updatePassword(name: String, pass: String) -> Bool {
+		if (try? findPassword(name)) != nil {
+			deletePassword()
+		}
+		myErr = setPassword(name, pass: pass)
+		if myErr == OSStatus(errSecSuccess) {
+			return true
+		} else {
+			myLogger.logit(LogLevel.base, message: "Unable to update keychain password.")
+			return false
+		}
+	}
     
     // delete the password from the keychain
     

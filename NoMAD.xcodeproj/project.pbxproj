@@ -24,6 +24,7 @@
 		346CD2751DA2065D00255F66 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 346CD2741DA2065D00255F66 /* Localizable.strings */; };
 		346CD27F1DA4776600255F66 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346CD27E1DA4776600255F66 /* Extensions.swift */; };
 		34B9B70A1DA6E9C500FCCFE3 /* Localizator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B9B7091DA6E9C500FCCFE3 /* Localizator.swift */; };
+		34BBA63F1DAF09CE005E4633 /* NoMADUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BBA63E1DAF09CE005E4633 /* NoMADUser.swift */; };
 		34E186BF1D9C681000265138 /* DNSResolver.m in Sources */ = {isa = PBXBuildFile; fileRef = 34E186BE1D9C681000265138 /* DNSResolver.m */; };
 		34E186C21D9E405400265138 /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 34E186C11D9E405400265138 /* libresolv.tbd */; };
 		8454EFDB1D34ADA600422D4E /* NSTaskWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454EFDA1D34ADA600422D4E /* NSTaskWrapper.swift */; };
@@ -69,7 +70,9 @@
 		346CD2721DA205B500255F66 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		346CD2741DA2065D00255F66 /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		346CD27E1DA4776600255F66 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		34B345831DB2F0ED007154A8 /* SecurityPrivateAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecurityPrivateAPI.h; sourceTree = "<group>"; };
 		34B9B7091DA6E9C500FCCFE3 /* Localizator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Localizator.swift; sourceTree = "<group>"; };
+		34BBA63E1DAF09CE005E4633 /* NoMADUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NoMADUser.swift; sourceTree = "<group>"; };
 		34E186BD1D9C681000265138 /* DNSResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DNSResolver.h; sourceTree = "<group>"; };
 		34E186BE1D9C681000265138 /* DNSResolver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DNSResolver.m; sourceTree = "<group>"; };
 		34E186C11D9E405400265138 /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
@@ -188,6 +191,8 @@
 				34B9B7091DA6E9C500FCCFE3 /* Localizator.swift */,
 				346CD27E1DA4776600255F66 /* Extensions.swift */,
 				345226E81DAA266B0066C922 /* Network.swift */,
+				34B345831DB2F0ED007154A8 /* SecurityPrivateAPI.h */,
+				34BBA63E1DAF09CE005E4633 /* NoMADUser.swift */,
 			);
 			path = NoMAD;
 			sourceTree = "<group>";
@@ -251,7 +256,6 @@
 				TargetAttributes = {
 					84CC67DA1D30A18A00115C76 = {
 						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = AAPZK3CB24;
 						LastSwiftMigration = 0800;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
@@ -262,9 +266,7 @@
 					};
 					BF3432491D52844300CE8F89 = {
 						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = AAPZK3CB24;
 						LastSwiftMigration = 0800;
-						ProvisioningStyle = Automatic;
 						TestTargetID = 84CC67DA1D30A18A00115C76;
 					};
 				};
@@ -329,6 +331,7 @@
 				8454EFDB1D34ADA600422D4E /* NSTaskWrapper.swift in Sources */,
 				8454EFE51D35968100422D4E /* LoginWindow.swift in Sources */,
 				84847A671D3DDF5600FAE468 /* KlistUtil.swift in Sources */,
+				34BBA63F1DAF09CE005E4633 /* NoMADUser.swift in Sources */,
 				1A26AFF71D46E4BF000776A4 /* GetHelp.swift in Sources */,
 				84F93A2B1D3886FA00ED2070 /* AutoConfigure.swift in Sources */,
 				84996CA81D503F8400793747 /* LDAPUtil.swift in Sources */,
@@ -474,10 +477,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = AAPZK3CB24;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = NoMAD/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
@@ -497,10 +500,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = AAPZK3CB24;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = NoMAD/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
@@ -517,9 +520,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = AAPZK3CB24;
 				INFOPLIST_FILE = NoMADTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.trusourcelabs.NoMADTests;
@@ -533,9 +534,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = AAPZK3CB24;
 				INFOPLIST_FILE = NoMADTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.trusourcelabs.NoMADTests;
