@@ -10,7 +10,6 @@
 		1A08F1EB1D36CDC200FA68C4 /* LoginWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A08F1EA1D36CDC200FA68C4 /* LoginWindow.xib */; };
 		1A08F1ED1D36CDF700FA68C4 /* PasswordChangeWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A08F1EC1D36CDF700FA68C4 /* PasswordChangeWindow.xib */; };
 		1A08F1EF1D36CE0C00FA68C4 /* PreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A08F1EE1D36CE0C00FA68C4 /* PreferencesWindow.xib */; };
-		1A08F1F11D36CEB800FA68C4 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A08F1F01D36CEB800FA68C4 /* UserInfo.swift */; };
 		1A08F1F31D36DA0900FA68C4 /* NoMADApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A08F1F21D36DA0900FA68C4 /* NoMADApplication.swift */; };
 		1A206B2D1D58312800539FA6 /* KeychainUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A206B2C1D58312800539FA6 /* KeychainUtil.swift */; };
 		1A24EF481D7F01B3006A1866 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A24EF471D7F01B3006A1866 /* Logger.swift */; };
@@ -57,7 +56,6 @@
 		1A08F1EA1D36CDC200FA68C4 /* LoginWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoginWindow.xib; sourceTree = "<group>"; };
 		1A08F1EC1D36CDF700FA68C4 /* PasswordChangeWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PasswordChangeWindow.xib; sourceTree = "<group>"; };
 		1A08F1EE1D36CE0C00FA68C4 /* PreferencesWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PreferencesWindow.xib; sourceTree = "<group>"; };
-		1A08F1F01D36CEB800FA68C4 /* UserInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
 		1A08F1F21D36DA0900FA68C4 /* NoMADApplication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NoMADApplication.swift; sourceTree = "<group>"; };
 		1A206B2C1D58312800539FA6 /* KeychainUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainUtil.swift; sourceTree = "<group>"; };
 		1A24EF471D7F01B3006A1866 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
@@ -181,7 +179,6 @@
 				84996CAC1D503F9700793747 /* PreferencesWindow.swift */,
 				1A08F1EE1D36CE0C00FA68C4 /* PreferencesWindow.xib */,
 				84CC67DE1D30A18A00115C76 /* AppDelegate.swift */,
-				1A08F1F01D36CEB800FA68C4 /* UserInfo.swift */,
 				84CC67E01D30A18A00115C76 /* Assets.xcassets */,
 				84CC67E51D30A18A00115C76 /* Info.plist */,
 				1A08F1F21D36DA0900FA68C4 /* NoMADApplication.swift */,
@@ -260,6 +257,7 @@
 					84CC67DA1D30A18A00115C76 = {
 						CreatedOnToolsVersion = 7.3.1;
 						LastSwiftMigration = 0800;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
 								enabled = 0;
@@ -339,7 +337,6 @@
 				84996CA81D503F8400793747 /* LDAPUtil.swift in Sources */,
 				346CD27F1DA4776600255F66 /* Extensions.swift in Sources */,
 				1A24EF481D7F01B3006A1866 /* Logger.swift in Sources */,
-				1A08F1F11D36CEB800FA68C4 /* UserInfo.swift in Sources */,
 				1A08F1F31D36DA0900FA68C4 /* NoMADApplication.swift in Sources */,
 				34E186BF1D9C681000265138 /* DNSResolver.m in Sources */,
 				84996CAD1D503F9700793747 /* PreferencesWindow.swift in Sources */,
@@ -479,7 +476,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -502,7 +499,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;

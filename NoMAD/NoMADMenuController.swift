@@ -367,7 +367,14 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         // TODO: check to see if the SSL Certs are trusted, otherwise we'll fail
         
-        let lastExpire = defaults.objectForKey("LastCertificateExpiration") as! NSDate ?? NSDate.distantPast()
+        // pre-flight to ensure valid URL and template
+        
+        var certCATest = defaults.stringForKey("x509CA") ?? ""
+        let certTemplateTest = defaults.stringForKey("Template") ?? ""
+        
+        if ( certCATest != "" && certTemplateTest != "" ) {
+        
+            let lastExpire = defaults.objectForKey("LastCertificateExpiration") as! NSDate ?? NSDate.distantPast()
 
         if lastExpire.timeIntervalSinceNow > 2592000 {
             let alertController = NSAlert()
@@ -384,17 +391,17 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         // start the animation
         
-        //startMenuAnimationTimer()
-        
-        // need pre-flight to ensure valid URL and template
-        
-        let certCATest = defaults.stringForKey("x509CA") ?? ""
-        let certTemplateTest = defaults.stringForKey("Template") ?? ""
-        
-        if ( certCATest != "" && certTemplateTest != "" ) {
+        startMenuAnimationTimer()
+            
+            // check for http://
+            
+            if !certCATest.containsString("http://") || !certCATest.containsString("https://") {
+                certCATest = "https://" + certCATest
+            }
         
         let certCARequest = WindowsCATools(serverURL: certCATest, template: certTemplateTest)
         certCARequest.certEnrollment()
+            
         } else {
             let certAlertController = NSAlert()
             certAlertController.messageText = "Please ensure your Certificate Authority settings are correct."
@@ -403,7 +410,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         // stop the animation
         
-        //stopMenuAnimationTimer()
+        stopMenuAnimationTimer()
     }
     
     

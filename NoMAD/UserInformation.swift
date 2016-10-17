@@ -65,6 +65,31 @@ class UserInformation {
         myLDAPServers.check()
         return myLDAPServers.returnState()
     }
+    
+    // Determine what certs are available locally
+    
+    func getCertDate() {
+        let myCertExpire = myKeychainUtil.findCertExpiration(userDisplayName, defaultNamingContext: myLDAPServers.defaultNamingContext )
+        
+        if myCertExpire != 0 {
+            myLogger.logit(1, message: "Last certificate will expire on: " + String(myCertExpire) )
+        }
+        
+        // Act on Cert expiration
+        
+        if myCertExpire.timeIntervalSinceNow < 2592000 && myCertExpire.timeIntervalSinceNow > 0 {
+            myLogger.logit(0, message: "Your certificate will expire in less than 30 days.")
+            
+            // TODO: Trigger an action
+            
+        }
+        
+        if myCertExpire.timeIntervalSinceNow < 0 && myCertExpire != NSDate.distantPast() {
+            myLogger.logit(0, message: "Your certificate has already expired.")
+        }
+        
+        defaults.setObject(myCertExpire, forKey: "LastCertificateExpiration")
+    }
 	
 	func getUserInfo() {
 		
@@ -105,8 +130,8 @@ class UserInformation {
 		var computedExpireDateRaw: String?
 		var userPasswordUACFlag: String = ""
 		var userHomeTemp: String = ""
-		var userDisplayNameTemp: String = ""
-		var userDisplayName: String = ""
+        //var userDisplayNameTemp: String = ""
+        //var userDisplayName: String = ""
 		var groupsTemp: String?
 		
 		if connected && myLDAPServers.tickets.state {
@@ -122,7 +147,7 @@ class UserInformation {
 				computedExpireDateRaw = ldapResult["msDS-UserPasswordExpiryTimeComputed"]
 				userPasswordUACFlag = ldapResult["userAccountControl"] ?? ""
 				userHomeTemp = ldapResult["homeDirectory"] ?? ""
-				userDisplayNameTemp = ldapResult["displayName"] ?? ""
+				userDisplayName = ldapResult["displayName"] ?? ""
 				groupsTemp = ldapResult["memberOf"]
 			} else {
 				myLogger.logit(0, message: "Unable to find user.")
@@ -215,7 +240,6 @@ class UserInformation {
 		// 4. if connected and with tickets, get all of user information
 		if connected && myLDAPServers.tickets.state && canary {
 			userHome = userHomeTemp.stringByReplacingOccurrencesOfString("\\", withString: "/")
-			userDisplayName = userDisplayNameTemp
 			
 			groups.removeAll()
 			
@@ -230,6 +254,12 @@ class UserInformation {
 				}
 				myLogger.logit(1, message: "You are a member of: " + groups.joinWithSeparator(", ") )
 			}
+            
+            // look at local certs if an x509 CA has been set
+            
+            if (defaults.stringForKey("x509CA") ?? "" != "") {
+                getCertDate()
+            }
 			
 			defaults.setObject(userHome, forKey: "userHome")
 			defaults.setObject(userDisplayName, forKey: "displayName")

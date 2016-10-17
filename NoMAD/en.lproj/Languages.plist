@@ -37,5 +37,12 @@
 		<key>comment</key>
 		<string>Text in the menu bar to show that NoMAD can not find the Domain</string>
 	</dict>
+	<key>UserName</key>
+	<dict>
+		<key>value</key>
+		<string>User Name</string>
+		<key>comment</key>
+		<string>User&apos;s full name</string>
+	</dict>
 </dict>
 </plist>

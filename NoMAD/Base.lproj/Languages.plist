@@ -37,6 +37,13 @@
 		<key>comment</key>
 		<string>Menu Item to Change Password</string>
 	</dict>
+	<key>UserName</key>
+	<dict>
+		<key>value</key>
+		<string>User Name</string>
+		<key>comment</key>
+		<string>Users&apos;s full name.</string>
+	</dict>
 	<key>New item</key>
 	<string></string>
 </dict>
