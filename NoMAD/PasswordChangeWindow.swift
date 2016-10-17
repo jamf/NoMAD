@@ -131,17 +131,20 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 			return myError
 		}
 		
-		//var noMADUserTemp: NoMADUser? = nil
-		
 		do {
 			let noMADUser = try NoMADUser(kerberosPrincipal: username)
 			
-			//
+			// Checks if the remote users's password is correct.
+			// If it is and the current console user is not an
+			// AD account, then we'll change it.
 			let remoteUserPasswordIsCorrect = noMADUser.checkRemoteUserPassword(currentPassword)
-			// Checks if console password is correct
+			// Checks if console password is correct. If it is,
+			// then change tha
 			let consoleUserPasswordIsCorrect = noMADUser.checkCurrentConsoleUserPassword(currentPassword)
 			// Checks if keychain password is cofrect
 			let keychainPasswordIsCorrect = try noMADUser.checkKeychainPassword(currentPassword)
+			//
+			let useKeychain = defaults.boolForKey("UseKeychain")
 			//
 			var doLocalPasswordSync = false
 			if defaults.integerForKey("LocalPasswordSync") == 1 {
@@ -167,7 +170,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 					myLogger.logit(LogLevel.base, message: error.description)
 					return error.description
 				} catch {
-					return "Unknown error"
+					return "Unknown error changing remote password"
 				}
 			}
 			
@@ -188,7 +191,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 					myLogger.logit(LogLevel.base, message: error.description)
 					return error.description
 				} catch {
-					return "Unknown error"
+					return "Unknown error changing current console user password"
 				}
 				
 				myLogger.logit(LogLevel.debug, message: "Now that we've changed the console user's password, let's try to change the keychain password.")
@@ -205,10 +208,20 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 					myLogger.logit(LogLevel.base, message: error.description)
 					return error.description
 				} catch {
-					return "Unknown error"
+					return "Unknown error changing keychain password"
 				}
 			}
 			
+			if useKeychain {
+				do {
+					try noMADUser.updateKeychainItem(newPassword1, newPassword2: newPassword2)
+				} catch let error as NoMADUserError {
+					myLogger.logit(LogLevel.base, message: error.description)
+					return error.description
+				} catch {
+					return "Unknown error updating keychain item"
+				}
+			}
 			
 			
 		} catch let error as NoMADUserError {
