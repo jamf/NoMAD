@@ -96,19 +96,32 @@ class WindowsCATools {
 						let dictionary: [NSString: AnyObject] = [
 							kSecClass: kSecClassCertificate,
                             kSecReturnRef : kCFBooleanTrue,
-							kSecValueRef: myCertRef!,
+							kSecValueRef: myCertRef!
 						];
                         
                         var mySecRef : AnyObject? = nil
 						
 						self.myImportError = SecItemAdd(dictionary, &mySecRef)
                         
+                        
+                        print(mySecRef)
+                        
+                        print(self.myImportError)
+                        
+                        var myIdentityRef : SecIdentity? = nil
+                        
+                        SecIdentityCreateWithCertificate(nil, myCertRef!, &myIdentityRef)
+                        /*
+                        
                         // update the name of the private key 
                         // first get a reference to the private key from the identity we just imported
                         
                         var myKey : SecKey? = nil
                         
-                        //self.myImportError = SecIdentityCopyPrivateKey(mySecRef as! SecIdentity, &myKey)
+                        self.myImportError = SecIdentityCopyPrivateKey(myIdentityRef!, &myKey)
+                        
+                        print(self.myImportError)
+                        print(myKey)
                         
                         // now get the attributes of the key, create a query dictionary to hold all the attributes first
                         
@@ -116,9 +129,56 @@ class WindowsCATools {
                         self.myImportError = SecKeychainCopyDefault(&keychain)
                         
                         var info : UnsafeMutablePointer<SecKeychainAttributeInfo>? = nil
-                        //self.myImportError = SecKeychainAttributeInfoForItemID(keychain, UInt32(kSecClassKey as String)!, &info!)
                         
+                        let keyRefDict = NSArray()
+                        let keyArray = keyRefDict.arrayByAddingObject(myKey!)
                         
+                        let itemSearchDict: [String:AnyObject] = [
+                            kSecClass as String: kSecClassKey,
+                            kSecMatchItemList as String : keyArray as! AnyObject,
+                            kSecReturnRef as String: true as AnyObject,
+                            kSecReturnAttributes as String : true as AnyObject,
+                            kSecReturnData as String : true as AnyObject
+                        ]
+                        
+                        var copyReturn : CFTypeRef? = nil
+                        
+                        self.myImportError = SecItemCopyMatching(itemSearchDict, &copyReturn)
+                        
+                         print(self.myImportError)
+                        print(copyReturn)
+                        
+                        let itemDeleteDict: [String:AnyObject] = [
+                            kSecClass as String: kSecClassKey,
+                            kSecMatchItemList as String : keyArray as! AnyObject,
+                        ]
+                        
+                        self.myImportError = SecItemDelete(itemDeleteDict)
+                        
+                        let myAttrs = copyReturn! as! NSMutableDictionary
+                        myAttrs["labl"] = (defaults.stringForKey("userPrincipal")! + "\n"
+                        //myAttrs["kSecAttrIsExtractable as String"] = false as AnyObject
+                        
+                        var keyResult: AnyObject? = nil
+                    
+                        
+                        self.myImportError = SecItemAdd(myAttrs, &keyResult)
+                         print(self.myImportError)
+                        
+                        let itemUpdateDict: [String:AnyObject] = [
+                            kSecClass as String: kSecClassKey,
+                            kSecMatchItemList as String : keyArray as! AnyObject,
+                        ]
+                         print(self.myImportError)
+                        
+                        let attributesToUpdate = NSMutableDictionary()
+                        attributesToUpdate["labl"] = defaults.stringForKey("userPrincipal")! as AnyObject?
+                        
+                        self.myImportError = SecItemUpdate(itemUpdateDict as CFDictionary, attributesToUpdate as CFDictionary)
+                        print(SecCopyErrorMessageString(self.myImportError, nil))
+                        
+                        print(attributesToUpdate)
+ */
                         						
                         //myLogger.logit(0, message: String(self.myImportError))
 						
