@@ -361,7 +361,7 @@ private func checkKpasswdServer(writePref: Bool ) -> Bool {
 	
 	let myKpasswdServers = myLDAPServers.getSRVRecords(adDomain, srv_type: "_kpasswd._tcp.")
 	myLogger.logit(LogLevel.debug, message: "Current Server is: " + myLDAPServers.currentServer)
-	myLogger.logit(LogLevel.debug, message: "Current Server is: " + myKpasswdServers.description)
+	myLogger.logit(LogLevel.debug, message: "Kpasswd Servers are: " + myKpasswdServers.description)
 	
 	if myKpasswdServers.contains(myLDAPServers.currentServer) {
 		myLogger.logit(LogLevel.debug, message: "Found kpasswd server that matches current LDAP server.")

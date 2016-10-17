@@ -302,7 +302,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 		
 		guard let ldifResult = try? getLDAPInformation([attribute], baseSearch: true, searchTerm: searchTerm, test: false, overrideDefaultNamingContext: true) else {
 			myLogger.logit(LogLevel.base, message: "LDAP Query failed.")
-			myLogger.logit(LogLevel.debug, message:"Resetting default naming context to: " + defaultNamingContext)
+			myLogger.logit(LogLevel.debug, message:"Resetting default naming context to: " + tempDefaultNamingContext)
 			defaultNamingContext = tempDefaultNamingContext
 			return
 		}
@@ -310,13 +310,13 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 		
 		if ldapPingBase64 == "" {
 			myLogger.logit(LogLevel.base, message: "ldapPingBase64 is empty.")
-			myLogger.logit(LogLevel.debug, message:"Resetting default naming context to: " + defaultNamingContext)
+			myLogger.logit(LogLevel.debug, message:"Resetting default naming context to: " + tempDefaultNamingContext)
 			defaultNamingContext = tempDefaultNamingContext
 			return
 		}
 		
 		guard let ldapPing: ADLDAPPing = ADLDAPPing(ldapPingBase64String: ldapPingBase64) else {
-			myLogger.logit(LogLevel.debug, message:"Resetting default naming context to: " + defaultNamingContext)
+			myLogger.logit(LogLevel.debug, message:"Resetting default naming context to: " + tempDefaultNamingContext)
 			defaultNamingContext = tempDefaultNamingContext
 			return
 		}
@@ -342,7 +342,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 				myLogger.logit(LogLevel.base, message: "Unable to find site")
 			}
 		}
-		myLogger.logit(LogLevel.debug, message:"Resetting default naming context to: " + defaultNamingContext)
+		myLogger.logit(LogLevel.debug, message:"Resetting default naming context to: " + tempDefaultNamingContext)
 		defaultNamingContext = tempDefaultNamingContext
 	}
 	
