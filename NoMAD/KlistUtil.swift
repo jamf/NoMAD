@@ -14,8 +14,8 @@ import Foundation
 // TODO: pack everything into one structure
 
 struct Ticket {
-    var Issued: NSDate
-    var Expires: NSDate
+    var Issued: Date
+    var Expires: Date
     var Principal: String
 }
 
@@ -27,28 +27,28 @@ class KlistUtil {
     var principal = ""
     var short = ""
     var cache = ""
-    var expire = NSDate()
-    var issue = NSDate()
-    var dateFormatter = NSDateFormatter()
+    var expire = Date()
+    var issue = Date()
+    var dateFormatter = DateFormatter()
     var state = true
-    var rawTicket: NSData = NSData()
+    var rawTicket: Data = Data()
     var realm = ""
     
     init() {
         dateFormatter.dateFormat = "yyyyMMddHHmmss"
-        realm = defaults.stringForKey("KerberosRealm") ?? ""
+        realm = defaults.string(forKey: "KerberosRealm") ?? ""
     }
     
     func getTicketJSON() {
         
-        realm = defaults.stringForKey("KerberosRealm") ?? ""
+        realm = defaults.string(forKey: "KerberosRealm") ?? ""
         myLogger.logit(3, message:"Looking for tickets using realm: " + realm )
         dateFormatter.dateFormat = "yyyyMMddHHmmss"
         let rawJSON = cliTask("/usr/bin/klist --json")
         myLogger.logit(3, message: "Raw ticket cache: " + String(rawJSON))
-        rawTicket = rawJSON.dataUsingEncoding(NSUTF8StringEncoding)!
-        if returnAllTickets().containsString("cache") {
-            if returnAllTickets().containsString("@" + realm ) {
+        rawTicket = rawJSON.data(using: String.Encoding.utf8)!
+        if returnAllTickets().contains("cache") {
+            if returnAllTickets().contains("@" + realm ) {
                 myLogger.logit(0, message:"Ticket found for domain: " + realm)
                 state = true
             } else {
@@ -64,14 +64,14 @@ class KlistUtil {
     func getCacheListJSON() {
         dateFormatter.dateFormat = "yyyyMMddHHmmss"
         let rawJSON = cliTask("/usr/bin/klist -l --json")
-        let rawCache = rawJSON.dataUsingEncoding(NSUTF8StringEncoding)!
-        if returnAllTickets().containsString("cache") {
+        let rawCache = rawJSON.data(using: String.Encoding.utf8)!
+        if returnAllTickets().contains("cache") {
             myLogger.logit(0, message:"Tickets found.")
-            if returnAllTickets().containsString("@" + defaults.stringForKey("KerberosRealm")!) {
-                myLogger.logit(0, message:"Ticket found for domain: " + defaults.stringForKey("KerberosRealm")!)
+            if returnAllTickets().contains("@" + defaults.string(forKey: "KerberosRealm")!) {
+                myLogger.logit(0, message:"Ticket found for domain: " + defaults.string(forKey: "KerberosRealm")!)
                 state = true
             } else {
-                myLogger.logit(0, message:"No ticket found for domain: " + defaults.stringForKey("KerberosRealm")!)
+                myLogger.logit(0, message:"No ticket found for domain: " + defaults.string(forKey: "KerberosRealm")!)
                 state = false
             }
         } else {
@@ -91,26 +91,25 @@ class KlistUtil {
         allTickets.removeAll()
         
         do {
-            let jsonDict = try NSJSONSerialization.JSONObjectWithData(rawTicket, options: .AllowFragments)
+            let jsonDict = try JSONSerialization.jsonObject(with: rawTicket, options: .allowFragments) as? [String: AnyObject]
             
             // ye haw lets downcast and iterate!
             
-            cache = jsonDict["cache"] as! String
-            principal = jsonDict["principal"] as! String
+            cache = jsonDict?["cache"] as! String
+            principal = jsonDict?["principal"] as! String
             
-            short = principal.stringByReplacingOccurrencesOfString("@" + defaults.stringForKey("KerberosRealm")!, withString: "").stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+            short = principal.replacingOccurrences(of: "@" + defaults.string(forKey: "KerberosRealm")!, with: "").trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
             state = false
             
-            if let tickets = jsonDict["tickets"] as? [[String: AnyObject]] {
+            if let tickets = jsonDict?["tickets"] as? [[String: AnyObject]] {
                 for ticket in tickets {
-                    
-                    myLogger.logit(3, message: "Looking at ticket: " + String(ticket))
+                    myLogger.logit(3, message: "Looking at ticket: " + String(describing: ticket))
                     
                     if let tick = ticket["Principal"] as? String {
-                        let issue = dateFormatter.dateFromString((ticket["Issued"] as? String)!)
-                        let expire = dateFormatter.dateFromString((ticket["Expires"] as? String)!)
+                        let issue = dateFormatter.date(from: (ticket["Issued"] as? String)!)
+                        let expire = dateFormatter.date(from: (ticket["Expires"] as? String)!)
                         let myTicket = Ticket(Issued: issue!, Expires: expire!, Principal: tick )
-                        myLogger.logit(3, message: "Appending ticket: " + String(myTicket))
+                        myLogger.logit(3, message: "Appending ticket: " + String(describing: myTicket))
                         allTickets.append(myTicket)
                         state = true
                     }
@@ -134,12 +133,12 @@ class KlistUtil {
     func getExpiration() {
         if state {
             for ticket in allTickets {
-                if ticket.Principal.containsString("krbtgt") {
+                if ticket.Principal.contains("krbtgt") {
                     expire = ticket.Expires
                     myLogger.logit(3, message:"Checking for expired tickets.")
                     // we need to check for an expired TGT and set state to false if we are
                     
-                    if expire.compare(NSDate()) == NSComparisonResult.OrderedAscending {
+                    if expire.compare(Date()) == ComparisonResult.orderedAscending {
                         myLogger.logit(0, message:"Tickets are expired")
                         state = false
                     }
@@ -151,10 +150,10 @@ class KlistUtil {
         }
     }
     
-    func getIssue() -> NSDate {
+    func getIssue() -> Date {
         if state {
             for ticket in allTickets {
-                if ticket.Principal.containsString("krbtgt") {
+                if ticket.Principal.contains("krbtgt") {
                     issue = ticket.Issued
                     return issue
                 }
@@ -166,7 +165,7 @@ class KlistUtil {
     }
     
     func returnAllTickets() -> String {
-        return String(data: rawTicket, encoding: NSUTF8StringEncoding)!
+        return String(data: rawTicket, encoding: String.Encoding.utf8)!
     }
     
     func returnCacheID() -> String {
