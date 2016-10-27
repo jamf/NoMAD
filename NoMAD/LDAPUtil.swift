@@ -603,6 +603,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 	// Uses DNSResolver
     
 	func getHosts(domain: String ) {
+		myLogger.logit(LogLevel.debug, message: "Looking up LDAP Hosts")
 		self.resolver.queryType = "SRV"
 		
 		self.resolver.queryValue = "_ldap._tcp." + domain
@@ -637,7 +638,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 			self.currentState = true
 			
 		} else {
-			myLogger.logit(3, message: "Query Error: " + self.resolver.error.description)
+			myLogger.logit(LogLevel.debug, message: "Query Error: " + self.resolver.error.description)
 			self.currentState = false
 			hosts.removeAll()
 		}
