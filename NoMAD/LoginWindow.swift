@@ -139,7 +139,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 			// Check if we want to sync the console user's password with the remote AD password.
 			// Only used if console user is not AD.
 			var doLocalPasswordSync = false
-			if defaults.integerForKey("LocalPasswordSync") == 1 {
+			if defaults.boolForKey("LocalPasswordSync") {
 				doLocalPasswordSync = true
 			}
 			
@@ -177,6 +177,55 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 				
 				let localPassword = NSSecureTextField(frame: CGRectMake(0, 0, 200, 24))
 				alertController.accessoryView = localPassword
+				let response = alertController.runModal()
+				// TODO: @mactroll: what is 1001?
+				// I see "NSModalResponseStop" which is supposedly the default
+				// and "NSModalResponseAbort" which I assume is what happens when someone presses cancel.
+				if response == NSAlertSecondButtonReturn {
+					let currentLocalPassword = localPassword.stringValue
+					let newPassword = self.Password.stringValue
+					let localPasswordIsCorrect = noMADUser.checkCurrentConsoleUserPassword(currentLocalPassword)
+					
+					// Making sure the password entered is correct,
+					// if it's not, let's exit.
+					guard localPasswordIsCorrect else {
+						let alertController = NSAlert()
+						alertController.messageText = "Invalid password. Please try again."
+						alertController.beginSheetModalForWindow(self.window!, completionHandler: nil)
+						myLogger.logit(0, message:myError!)
+						EXIT_FAILURE
+						myLogger.logit(0, message:"Local password wrong.")
+						// TODO: figure out if this is the proper way to handle this.
+						return
+					}
+					myLogger.logit(0, message:"Local password is right. Syncing.")
+					
+					do {
+						try noMADUser.changeCurrentConsoleUserPassword(currentLocalPassword, newPassword1: newPassword, newPassword2: newPassword, forceChange: true)
+					} catch {
+						myError = "Could not change the current console user's password."
+					}
+					// Check if we were able to change the local account password.
+					guard myError != nil else {
+						let alertController = NSAlert()
+						alertController.messageText = myError!
+						alertController.beginSheetModalForWindow(self.window!, completionHandler: nil)
+						myLogger.logit(LogLevel.debug, message:myError!)
+						EXIT_FAILURE
+						// TODO: figure out if this is the proper way to handle this.
+						return
+					}
+					
+					do {
+						try noMADUser.changeKeychainPassword(currentLocalPassword, newPassword1: newPassword, newPassword2: newPassword)
+					} catch {
+						myLogger.logit(LogLevel.base, message: "Error changing keychain password")
+						myError = "Could not change your local keychain password."
+					}
+				} else {
+					myLogger.logit(0, message:"Local sync cancelled by user.")
+				}
+				/*
 				alertController.beginSheetModalForWindow(self.window!, completionHandler: {
 					(response) -> Void in
 					// TODO: @mactroll: what is 1001? 
@@ -227,6 +276,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 						myLogger.logit(0, message:"Local sync cancelled by user.")
 					}
 				})
+				*/
 			} else {
 				myLogger.logit(LogLevel.info, message: "Not syncing local account because: ")
 				if consoleUserPasswordIsCorrect {
