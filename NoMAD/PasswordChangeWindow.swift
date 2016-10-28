@@ -67,7 +67,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 			myError = performPasswordChange(userPrincipal, currentPassword: currentPassword, newPassword1: newPassword1, newPassword2: newPassword2)
             
             // put password in keychain, but only if there was no error
-            
+            /*
             if ( defaults.boolForKey("UseKeychain") && myError != "" ) {
                 
                 // check if keychain item exists and delete it if it does
@@ -78,7 +78,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
                 
                 myKeychainUtil.setPassword(userPrincipal, pass: newPassword1)
             }
-            
+            */
             if myError != "" {
                 let alertController = NSAlert()
                 alertController.messageText = myError
@@ -117,6 +117,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 		- newPassword2: (String) Must match newPassword1.
 	
 	*/
+	/*
 	func performPasswordChange(username: String, currentPassword: String, newPassword1: String, newPassword2: String) -> String {
 		var myError: String = ""
 		guard ( !currentPassword.isEmpty && !newPassword1.isEmpty && !newPassword2.isEmpty ) else {
@@ -236,6 +237,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 		
 		return myError
 	}
+	*/
 	
 	
 	// username must be of the format username@kerberosRealm
