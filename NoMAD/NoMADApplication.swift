@@ -12,21 +12,21 @@
 import Cocoa
 
 @objc protocol UndoActionRespondable {
-    func undo(sender: AnyObject)
+    func undo(_ sender: AnyObject)
 }
 
 @objc protocol RedoActionRespondable {
-    func redo(sender: AnyObject)
+    func redo(_ sender: AnyObject)
 }
 
 class NoMADApplication: NSApplication {
-    private let commandKey = NSEventModifierFlags.Command.rawValue
-    private let commandShiftKey = NSEventModifierFlags.Command.rawValue | NSEventModifierFlags.Shift.rawValue
+    fileprivate let commandKey = NSEventModifierFlags.command.rawValue
+    fileprivate let commandShiftKey = NSEventModifierFlags.command.rawValue | NSEventModifierFlags.shift.rawValue
     
-    override func sendEvent(event: NSEvent) {
-        if event.type == NSEventType.KeyDown {
-            if (event.modifierFlags.rawValue & NSEventModifierFlags.DeviceIndependentFlagsMask.rawValue == commandKey) {
-                switch event.charactersIgnoringModifiers!.lowercaseString {
+    override func sendEvent(_ event: NSEvent) {
+        if event.type == NSEventType.keyDown {
+            if (event.modifierFlags.rawValue & NSEventModifierFlags.deviceIndependentFlagsMask.rawValue == commandKey) {
+                switch event.charactersIgnoringModifiers!.lowercased() {
                 case "x":
                     if NSApp.sendAction(#selector(NSText.cut(_:)), to:nil, from:self) { return }
                 case "c":
@@ -43,7 +43,7 @@ class NoMADApplication: NSApplication {
                     break
                 }
             }
-            else if (event.modifierFlags.rawValue & NSEventModifierFlags.DeviceIndependentFlagsMask.rawValue == commandShiftKey) {
+            else if (event.modifierFlags.rawValue & NSEventModifierFlags.deviceIndependentFlagsMask.rawValue == commandShiftKey) {
                 if event.charactersIgnoringModifiers == "Z" {
                     if NSApp.sendAction(#selector(RedoActionRespondable.redo(_:)), to:nil, from:self) { return }
                 }

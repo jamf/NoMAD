@@ -24,8 +24,8 @@ class GetHelp {
         getHelpOptions = ""
         enabled = false
 		
-        if let getHelpType = defaults.stringForKey("GetHelpType") {
-            if let getHelpOptions = defaults.stringForKey("GetHelpOptions") {
+        if let getHelpType = defaults.string(forKey: "GetHelpType") {
+            if let getHelpOptions = defaults.string(forKey: "GetHelpOptions") {
                 self.getHelpOptions = getHelpOptions
                 self.getHelpType = getHelpType
 
@@ -54,43 +54,43 @@ class GetHelp {
                 
             case "URL":
                 if let myURL = subVariables(getHelpOptions) {
-					let url = NSURL(string: myURL)
-					NSWorkspace.sharedWorkspace().openURL( url! )
+					let url = URL(string: myURL)
+					NSWorkspace.shared().open( url! )
                 }
                 
             case "App":
-                cliTask("/usr/bin/open " + getHelpOptions.stringByReplacingOccurrencesOfString(" ", withString: "\\ ") )
+                cliTask("/usr/bin/open " + getHelpOptions.replacingOccurrences(of: " ", with: "\\ ") )
             
             default:
-				let url = NSURL(string: "http://www.apple.com/support")!
-				NSWorkspace.sharedWorkspace().openURL( url )
+				let url = URL(string: "http://www.apple.com/support")!
+				NSWorkspace.shared().open( url )
             }
         } else {
             NSLog("Invalid getHelpType or getHelpOptions, defaulting to www.apple.com/support")
-			let url = NSURL(string: "http://www.apple.com/support")!
-			NSWorkspace.sharedWorkspace().openURL( url )
+			let url = URL(string: "http://www.apple.com/support")!
+			NSWorkspace.shared().open( url )
 			
         }
     }
     
-    private func subVariables( url: String ) -> String? {
+    fileprivate func subVariables( _ url: String ) -> String? {
         // TODO: get e-mail address as a variable
 		var createdURL = url;
-		if let domain = defaults.stringForKey("ADDomain") {
-			createdURL = createdURL.stringByReplacingOccurrencesOfString("<<domain>>", withString: domain)
+		if let domain = defaults.string(forKey: "ADDomain") {
+			createdURL = createdURL.replacingOccurrences(of: "<<domain>>", with: domain)
 		}
         
         //TODO: this crashes if displayName is empty
 		// Should be fixed... needs to be tested.
-		if (defaults.stringForKey("displayName") != nil) {
-			let fullName = defaults.stringForKey("displayName")!.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())
-			createdURL = createdURL.stringByReplacingOccurrencesOfString("<<fullname>>", withString: fullName!)
+		if (defaults.string(forKey: "displayName") != nil) {
+			let fullName = defaults.string(forKey: "displayName")!.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)
+			createdURL = createdURL.replacingOccurrences(of: "<<fullname>>", with: fullName!)
 		}
-		if let serial = getSerial().stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet()) {
-			createdURL = createdURL.stringByReplacingOccurrencesOfString("<<serial>>", withString: serial)
+		if let serial = getSerial().addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) {
+			createdURL = createdURL.replacingOccurrences(of: "<<serial>>", with: serial)
 		}
-		let shortName = defaults.stringForKey("UserShortName") ?? ""
-		createdURL = createdURL.stringByReplacingOccurrencesOfString("<<shortname>>", withString: shortName)
+		let shortName = defaults.string(forKey: "UserShortName") ?? ""
+		createdURL = createdURL.replacingOccurrences(of: "<<shortname>>", with: shortName)
 		
 		return createdURL
         /*
