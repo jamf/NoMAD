@@ -89,11 +89,12 @@ class KeychainUtil {
     
     // return the last expiration date for any certs that match the domain and user
     
-    func findCertExpiration(_ user: String, defaultNamingContext: String) -> Date {
+    func findCertExpiration(_ user: String, defaultNamingContext: String) -> Date? {
         
         var matchingCerts = [certDates]()
         var myCert: SecCertificate? = nil
         var searchReturn: AnyObject? = nil
+        var lastExpire = Date.distantPast
         
         // create a search dictionary to find Identitys with Private Keys and returning all matches
         // TODO: Tweak this to find the best mix
@@ -104,7 +105,7 @@ class KeychainUtil {
  certificates or identities will be limited to those whose
  certificate chain contains one of the issuers provided in this list.
  */
- 
+
         // build our search dictionary
         
         let identitySearchDict: [String:AnyObject] = [
@@ -122,7 +123,7 @@ class KeychainUtil {
         ]
         
         myErr = 0
-        var lastExpire: Date = Date.distantPast
+
         
         // look for all matches
         
@@ -130,14 +131,14 @@ class KeychainUtil {
         
         if myErr != 0 {
             myLogger.logit(0, message: "Error getting Certificates.")
-            return lastExpire
+            return nil
         }
         
         let foundCerts = searchReturn as! CFArray as Array
         
         if foundCerts.count == 0 {
             myLogger.logit(1, message: "No certificates found.")
-            return lastExpire
+            return nil
         }
         
         for cert in foundCerts {
@@ -146,7 +147,7 @@ class KeychainUtil {
             
             if myErr != 0 {
                 myLogger.logit(0, message: "Error getting Certificate references.")
-                return lastExpire
+                return nil
             }
                     
                     // get the full OID set for the cert
