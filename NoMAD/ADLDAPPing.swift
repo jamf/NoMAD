@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct DS_FLAGS : OptionSetType {
+struct DS_FLAGS : OptionSet {
 	let rawValue: UInt32
 	init(rawValue value: UInt32) {
 		rawValue = value
@@ -41,7 +41,7 @@ class ADLDAPPing {
 	//var currentDataLocation: Int
 	var type: UInt32 //uint32
 	var flags: DS_FLAGS //uint32
-	var domainGUID: NSUUID
+	var domainGUID: UUID
 	var forest: String //rfc1035
 	var domain: String //rfc1035
 	var hostname: String //rfc1035
@@ -51,74 +51,78 @@ class ADLDAPPing {
 	var clientSite: String //rfc1035
 	var serverSite: String
 	
-	class func decodeGUID(buffer: NSData, start: Int) -> NSUUID {
-		var bytes: [UInt8] = [UInt8](count: 16, repeatedValue: 0)
+	class func decodeGUID(_ buffer: Data, start: Int) -> UUID {
+		var bytes: [UInt8] = [UInt8](repeating: 0, count: 16)
 		let length: Int = 16
-		buffer.getBytes(&bytes, range: NSRange(location: start, length: length))
-		return NSUUID(UUIDBytes: bytes)
+		(buffer as NSData).getBytes(&bytes, range: NSRange(location: start, length: length))
+		return (NSUUID(uuidBytes: bytes) as UUID)
 	}
 	
-	class func decodeUInt32(buffer: NSData, start: Int) -> UInt32 {
+	class func decodeUInt32(_ buffer: Data, start: Int) -> UInt32 {
 		var value: UInt32 = 0
 		let length: Int = 4
-		buffer.getBytes(&value, range: NSRange(location: start, length: length))
+		(buffer as NSData).getBytes(&value, range: NSRange(location: start, length: length))
 		return value
 	}
 	
-	enum DecodeError: ErrorType {
-		case IllegalTag
-		case CyclicPointer
+	enum DecodeError: Error {
+		case illegalTag
+		case cyclicPointer
 	}
 	
-	class func decodeRFC1035(buffer: NSData, start: UInt16, seen: Set<UInt16>?) throws -> (r: String, c: UInt16) {
+	class func decodeRFC1035(_ buffer: Data, start: UInt16, seen: Set<UInt16>?) throws -> (r: String, c: UInt16) {
 		let marker: UInt8 = 0xc0
 		var cursor: UInt16 = start
 		var result: [String] = []
 		var pointers: Set<UInt16>
 		pointers = Set<UInt16>()
 		if (seen != nil) {
-			pointers.unionInPlace(seen!)
+			pointers.formUnion(seen!)
 		}
 		while true {
 			var tag: UInt8 = 0
-			buffer.getBytes(&tag, range: NSRange(location: Int(cursor), length: 1))
+			(buffer as NSData).getBytes(&tag, range: NSRange(location: Int(cursor), length: 1))
 			cursor += 1
 			if (tag == 0) {
 				// end of a sequence, time to tally up and return results
 				break
 			} else if ((tag & marker) == marker) {
 				var byte: UInt8 = 0
-				buffer.getBytes(&byte, range: NSRange(location: Int(cursor), length: 1))
+				(buffer as NSData).getBytes(&byte, range: NSRange(location: Int(cursor), length: 1))
 				cursor += 1
 				// we would appear to have a pointer, let's remember it
 				var ptr: UInt16 = 0
 				let d: [UInt8]  = [byte, (tag & ~marker)]
-				ptr += UnsafePointer<UInt16>(d).memory
+//				ptr += UnsafePointer<UInt16>(d).pointee
+                ptr += UnsafePointer(d).withMemoryRebound(to: UInt16.self,
+                                                          capacity: 1) {
+                                                            $0.pointee
+                }
 				// check if we've seen it before already
 				if pointers.contains(ptr) {
-					throw DecodeError.CyclicPointer
+					throw DecodeError.cyclicPointer
 				}
 				pointers.insert(ptr)
 				let (sresult, _) = try ADLDAPPing.decodeRFC1035(buffer, start: ptr, seen: pointers)
 				result.append(sresult)
 				break
 			} else if ((tag & marker) > 0) {
-				throw DecodeError.IllegalTag
+				throw DecodeError.illegalTag
 			} else {
 				// read 'tag'-many bytes
-				var s: [UInt8] = [UInt8](count: Int(tag), repeatedValue: 0)
-				buffer.getBytes(&s, range: NSRange(location: Int(cursor), length: Int(tag)))
+				var s: [UInt8] = [UInt8](repeating: 0, count: Int(tag))
+				(buffer as NSData).getBytes(&s, range: NSRange(location: Int(cursor), length: Int(tag)))
 				cursor += UInt16(tag)
-				result.append(NSString(bytes: s, length: Int(tag), encoding: NSUTF8StringEncoding)! as String)
+				result.append(NSString(bytes: s, length: Int(tag), encoding: String.Encoding.utf8.rawValue)! as String)
 			}
 		}
-		let final = result.joinWithSeparator(".")
+		let final = result.joined(separator: ".")
 		return (final, cursor)
 	}
 	
 	init?( ldapPingBase64String: String ) {
 		//let cleanedNetlogonBase64String = netlogonBase64String.componentsSeparatedByString(": ")[1]
-		guard let netlogonData = NSData(base64EncodedString: ldapPingBase64String, options: []) else {
+		guard let netlogonData = Data(base64Encoded: ldapPingBase64String, options: []) else {
 			myLogger.logit(2, message: "Netlogon base64 encoded string is invalid.")
 			return nil
 		}
@@ -147,9 +151,9 @@ class ADLDAPPing {
 			(forest, cursor) = try ADLDAPPing.decodeRFC1035(netlogonData, start: cursor, seen:nil)
 		} catch let error {
 			switch error {
-			case DecodeError.CyclicPointer:
+			case DecodeError.cyclicPointer:
 				myLogger.logit(2, message: "Decoding RFC1035 string created loop.")
-			case DecodeError.IllegalTag:
+			case DecodeError.illegalTag:
 				myLogger.logit(2, message: "Decoding RFC1035 string found an illegal tag.")
 			default:
 				myLogger.logit(2, message: "Unable to decode RFC1035 string.")
@@ -161,9 +165,9 @@ class ADLDAPPing {
 			(domain, cursor) = try ADLDAPPing.decodeRFC1035(netlogonData, start: cursor, seen:nil)
 		} catch let error {
 			switch error {
-			case DecodeError.CyclicPointer:
+			case DecodeError.cyclicPointer:
 				myLogger.logit(2, message: "Decoding RFC1035 string created loop.")
-			case DecodeError.IllegalTag:
+			case DecodeError.illegalTag:
 				myLogger.logit(2, message: "Decoding RFC1035 string found an illegal tag.")
 			default:
 				myLogger.logit(2, message: "Unable to decode RFC1035 string.")
@@ -175,9 +179,9 @@ class ADLDAPPing {
 			(hostname, cursor) = try ADLDAPPing.decodeRFC1035(netlogonData, start: cursor, seen:nil)
 		} catch let error {
 			switch error {
-			case DecodeError.CyclicPointer:
+			case DecodeError.cyclicPointer:
 				myLogger.logit(2, message: "Decoding RFC1035 string created loop.")
-			case DecodeError.IllegalTag:
+			case DecodeError.illegalTag:
 				myLogger.logit(2, message: "Decoding RFC1035 string found an illegal tag.")
 			default:
 				myLogger.logit(2, message: "Unable to decode RFC1035 string.")
@@ -189,9 +193,9 @@ class ADLDAPPing {
 			(netbiosDomain, cursor) = try ADLDAPPing.decodeRFC1035(netlogonData, start: cursor, seen:nil)
 		} catch let error {
 			switch error {
-			case DecodeError.CyclicPointer:
+			case DecodeError.cyclicPointer:
 				myLogger.logit(2, message: "Decoding RFC1035 string created loop.")
-			case DecodeError.IllegalTag:
+			case DecodeError.illegalTag:
 				myLogger.logit(2, message: "Decoding RFC1035 string found an illegal tag.")
 			default:
 				myLogger.logit(2, message: "Unable to decode RFC1035 string.")
@@ -203,9 +207,9 @@ class ADLDAPPing {
 			(netbiosHostname, cursor) = try ADLDAPPing.decodeRFC1035(netlogonData, start: cursor, seen:nil)
 		} catch let error {
 			switch error {
-			case DecodeError.CyclicPointer:
+			case DecodeError.cyclicPointer:
 				myLogger.logit(2, message: "Decoding RFC1035 string created loop.")
-			case DecodeError.IllegalTag:
+			case DecodeError.illegalTag:
 				myLogger.logit(2, message: "Decoding RFC1035 string found an illegal tag.")
 			default:
 				myLogger.logit(2, message: "Unable to decode RFC1035 string.")
@@ -217,9 +221,9 @@ class ADLDAPPing {
 			(user, cursor) = try ADLDAPPing.decodeRFC1035(netlogonData, start: cursor, seen:nil)
 		} catch let error {
 			switch error {
-			case DecodeError.CyclicPointer:
+			case DecodeError.cyclicPointer:
 				myLogger.logit(2, message: "Decoding RFC1035 string created loop.")
-			case DecodeError.IllegalTag:
+			case DecodeError.illegalTag:
 				myLogger.logit(2, message: "Decoding RFC1035 string found an illegal tag.")
 			default:
 				myLogger.logit(2, message: "Unable to decode RFC1035 string.")
@@ -231,9 +235,9 @@ class ADLDAPPing {
 			(serverSite, cursor) = try ADLDAPPing.decodeRFC1035(netlogonData, start: cursor, seen:nil)
 		} catch let error {
 			switch error {
-			case DecodeError.CyclicPointer:
+			case DecodeError.cyclicPointer:
 				myLogger.logit(2, message: "Decoding RFC1035 string created loop.")
-			case DecodeError.IllegalTag:
+			case DecodeError.illegalTag:
 				myLogger.logit(2, message: "Decoding RFC1035 string found an illegal tag.")
 			default:
 				myLogger.logit(2, message: "Unable to decode RFC1035 string.")
@@ -245,9 +249,9 @@ class ADLDAPPing {
 			(clientSite, cursor) = try ADLDAPPing.decodeRFC1035(netlogonData, start: cursor, seen:nil)
 		} catch let error {
 			switch error {
-			case DecodeError.CyclicPointer:
+			case DecodeError.cyclicPointer:
 				myLogger.logit(2, message: "Decoding RFC1035 string created loop.")
-			case DecodeError.IllegalTag:
+			case DecodeError.illegalTag:
 				myLogger.logit(2, message: "Decoding RFC1035 string found an illegal tag.")
 			default:
 				myLogger.logit(2, message: "Unable to decode RFC1035 string.")

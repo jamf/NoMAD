@@ -12,7 +12,7 @@ import Foundation
 import SystemConfiguration
 import IOKit
 
-public func cliTask( command: String, arguments: [String]? = nil) -> String {
+public func cliTask( _ command: String, arguments: [String]? = nil) -> String {
 	
 
 	var commandLaunchPath: String
@@ -20,22 +20,22 @@ public func cliTask( command: String, arguments: [String]? = nil) -> String {
 	
 	if ( arguments == nil ) {
 		// turn the command into an array and get the first element as the launch path
-		commandPieces = command.componentsSeparatedByString(" ")
+		commandPieces = command.components(separatedBy: " ")
 		// loop through the components and see if any end in \
-		if command.containsString("\\") {
+		if command.contains("\\") {
 			
 			// we need to rebuild the string with the right components
 			var x = 0
 			
 			for line in commandPieces {
 				if line.characters.last == "\\" {
-					commandPieces[x] = commandPieces[x].stringByReplacingOccurrencesOfString("\\", withString: " ") + commandPieces.removeAtIndex(x+1)
+					commandPieces[x] = commandPieces[x].replacingOccurrences(of: "\\", with: " ") + commandPieces.remove(at: x+1)
 					x -= 1
 				}
 				x += 1
 			}
 		}
-		commandLaunchPath = commandPieces.removeAtIndex(0)
+		commandLaunchPath = commandPieces.remove(at: 0)
 	} else {
 		commandLaunchPath = command
 		commandPieces = arguments!
@@ -44,16 +44,16 @@ public func cliTask( command: String, arguments: [String]? = nil) -> String {
 	
     // make sure the launch path is the full path -- think we're going down a rabbit hole here
     
-    if !commandLaunchPath.containsString("/") {
+    if !commandLaunchPath.contains("/") {
         let realPath = which(commandLaunchPath)
         commandLaunchPath = realPath
     }
     
     // set up the NSTask instance and an NSPipe for the result
     
-    let myTask = NSTask()
-    let myPipe = NSPipe()
-    let myErrorPipe = NSPipe()
+    let myTask = Process()
+    let myPipe = Pipe()
+    let myErrorPipe = Pipe()
     
     // Setup and Launch!
     
@@ -68,51 +68,51 @@ public func cliTask( command: String, arguments: [String]? = nil) -> String {
     
     let data = myPipe.fileHandleForReading.readDataToEndOfFile()
     let error = myErrorPipe.fileHandleForReading.readDataToEndOfFile()
-    let outputError = NSString(data: error, encoding: NSUTF8StringEncoding) as! String
-    let output = NSString(data: data, encoding: NSUTF8StringEncoding) as! String
+    let outputError = NSString(data: error, encoding: String.Encoding.utf8.rawValue) as! String
+    let output = NSString(data: data, encoding: String.Encoding.utf8.rawValue) as! String
     
     return output + outputError
 }
 
-public func cliTaskNoTerm( command: String) -> String {
+public func cliTaskNoTerm( _ command: String) -> String {
     
     // This is here because klist -v won't actually trigger the NSTask termination
     
     // turn the command into an array and get the first element as the launch path
     
-    var commandPieces = command.componentsSeparatedByString(" ")
+    var commandPieces = command.components(separatedBy: " ")
     
     // loop through the components and see if any end in \
     
-    if command.containsString("\\") {
+    if command.contains("\\") {
         
         // we need to rebuild the string with the right components
         var x = 0
         
         for line in commandPieces {
             if line.characters.last == "\\" {
-                commandPieces[x] = commandPieces[x].stringByReplacingOccurrencesOfString("\\", withString: " ") + commandPieces.removeAtIndex(x+1)
+                commandPieces[x] = commandPieces[x].replacingOccurrences(of: "\\", with: " ") + commandPieces.remove(at: x+1)
                 x -= 1
             }
             x += 1
         }
     }
     
-    var commandLaunchPath = commandPieces.removeAtIndex(0)
+    var commandLaunchPath = commandPieces.remove(at: 0)
     
     // make sure the launch path is the full path -- think we're going down a rabbit hole here
     
-    if !commandLaunchPath.containsString("/") {
+    if !commandLaunchPath.contains("/") {
         let realPath = which(commandLaunchPath)
         commandLaunchPath = realPath
     }
     
     // set up the NSTask instance and an NSPipe for the result
     
-    let myTask = NSTask()
-    let myPipe = NSPipe()
-    let myInputPipe = NSPipe()
-    let myErrorPipe = NSPipe()
+    let myTask = Process()
+    let myPipe = Pipe()
+    let myInputPipe = Pipe()
+    let myErrorPipe = Pipe()
     
     // Setup and Launch!
     
@@ -125,7 +125,7 @@ public func cliTaskNoTerm( command: String) -> String {
     myTask.launch()
     
     let data = myPipe.fileHandleForReading.readDataToEndOfFile()
-    let output = NSString(data: data, encoding: NSUTF8StringEncoding) as! String
+    let output = NSString(data: data, encoding: String.Encoding.utf8.rawValue) as! String
     
     return output
 }
@@ -148,13 +148,13 @@ public func getConsoleUser() -> String {
 public func getSerial() -> String {
 	
 	guard let platformExpert: io_service_t = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("IOPlatformExpertDevice")),
-	let platformSerialNumberKey: CFString = kIOPlatformSerialNumberKey else
+	let platformSerialNumberKey: CFString = kIOPlatformSerialNumberKey as CFString? else
 	{
 		return "Unknown"
 	}
 	
 	let serialNumberAsCFString = IORegistryEntryCreateCFProperty(platformExpert, platformSerialNumberKey, kCFAllocatorDefault, 0)
-	let serialNumber = serialNumberAsCFString.takeUnretainedValue() as! String
+	let serialNumber = serialNumberAsCFString?.takeUnretainedValue() as! String
 	return serialNumber
 	
 }
@@ -163,12 +163,12 @@ public func getSerial() -> String {
 
 public func getMAC() -> String {
     
-    let myMACOutput = cliTask("/sbin/ifconfig -a").componentsSeparatedByString("\n")
+    let myMACOutput = cliTask("/sbin/ifconfig -a").components(separatedBy: "\n")
     var myMac = ""
     
     for line in myMACOutput {
-        if line.containsString("ether") {
-            myMac = line.stringByReplacingOccurrencesOfString("ether", withString: "").stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
+        if line.contains("ether") {
+            myMac = line.replacingOccurrences(of: "ether", with: "").trimmingCharacters(in: CharacterSet.whitespaces)
             break
         }
     }
@@ -177,22 +177,22 @@ public func getMAC() -> String {
 
 // private function to get the path to the binary if the full path isn't given
 
-private func which(command: String) -> String {
-    let task = NSTask()
+private func which(_ command: String) -> String {
+    let task = Process()
     task.launchPath = "/usr/bin/which"
     task.arguments = [command]
     
-    let whichPipe = NSPipe()
+    let whichPipe = Pipe()
     task.standardOutput = whichPipe
     task.launch()
     
     let data = whichPipe.fileHandleForReading.readDataToEndOfFile()
-    let output = NSString(data: data, encoding: NSUTF8StringEncoding) as! String
+    let output = NSString(data: data, encoding: String.Encoding.utf8.rawValue) as! String
     
     if output == "" {
         NSLog("Binary doesn't exist")
     }
     
-    return output.componentsSeparatedByString("\n").first!
+    return output.components(separatedBy: "\n").first!
     
 }

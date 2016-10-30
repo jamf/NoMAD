@@ -13,14 +13,14 @@ class Localizator {
 	static let sharedInstance = Localizator()
 	
 	lazy var localizableDictionary: NSDictionary! = {
-		if let path = NSBundle.mainBundle().pathForResource("Languages", ofType: "plist") {
+		if let path = Bundle.main.path(forResource: "Languages", ofType: "plist") {
 			return NSDictionary(contentsOfFile: path)
 		}
 		fatalError("Localizable file NOT found")
 	}()
 	
-	func translate(string: String) -> String {
-		guard let localizedString = localizableDictionary.valueForKey(string)?.valueForKey("value") as? String else {
+	func translate(_ string: String) -> String {
+		guard let localizedString = (localizableDictionary.value(forKey: string) as AnyObject).value(forKey: "value") as? String else {
 			assertionFailure("Missing translation for: \(string)")
 			return ""
 		}

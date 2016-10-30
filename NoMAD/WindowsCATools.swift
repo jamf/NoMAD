@@ -20,9 +20,9 @@ class WindowsCATools {
     init(serverURL: String, template: String) {
         self.api = "\(serverURL)/certsrv/"
         
-        directoryURL = NSURL(fileURLWithPath: NSTemporaryDirectory()).URLByAppendingPathComponent(NSProcessInfo.processInfo().globallyUniqueString, isDirectory: true)!
+        directoryURL = NSURL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString, isDirectory: true)! as NSURL
         do {
-            try NSFileManager.defaultManager().createDirectoryAtURL(directoryURL, withIntermediateDirectories: true, attributes: nil)
+            try FileManager.default.createDirectory(at: directoryURL as URL, withIntermediateDirectories: true, attributes: nil)
         } catch {
             myLogger.logit(1, message: "Can't create temp directory")
         }
@@ -30,12 +30,12 @@ class WindowsCATools {
         // we should return this in case there's an error 
         
         // TODO: Don't use certtool for this, but SecTransform to create the CSR
-        cliTask("/usr/bin/certtool r " + directoryURL.URLByAppendingPathComponent("new.csr")!.path! + " Z")
+        cliTask("/usr/bin/certtool r " + directoryURL.appendingPathComponent("new.csr")!.path + " Z")
         
-        let path = directoryURL.URLByAppendingPathComponent("new.csr")
+        let path = directoryURL.appendingPathComponent("new.csr")
         
         do {
-            certCSR = try NSString(contentsOfFile: path!.path!, encoding: NSASCIIStringEncoding) as String
+            certCSR = try NSString(contentsOfFile: path!.path, encoding: String.Encoding.ascii.rawValue) as String
         } catch {
             certCSR = ""
             myLogger.logit(0, message: "Error getting CSR")
@@ -49,10 +49,10 @@ class WindowsCATools {
         // do it all
         // set up the completion handler
         
-        let myCompletionHandler: (NSData?, NSURLResponse?, NSError?) -> Void = { (data, response, error) in
+        let myCompletionHandler: (NSData?, URLResponse?, NSError?) -> Void = { (data, response, error) in
 			if (response != nil) {
 
-				let httpResponse = response as! NSHTTPURLResponse
+				let httpResponse = response as! HTTPURLResponse
 				
 				if (httpResponse.statusCode >= 200 && httpResponse.statusCode < 500) {
 				}
@@ -70,28 +70,28 @@ class WindowsCATools {
         
         var myReqID = 0
         
-		submitCert(certTemplate, completionHandler: { (data, response, error) in
+		submitCert(certTemplate: certTemplate, completionHandler: { (data, response, error) in
             if (response != nil) {
 
-                let httpResponse = response as! NSHTTPURLResponse
+                let httpResponse = response as! HTTPURLResponse
                 
                 if (httpResponse.statusCode >= 200 && httpResponse.statusCode < 500) {
                 }            }
             
             if (data != nil ) {
                 do {
-					myReqID = try self.findReqID(data!)
+					myReqID = try self.findReqID(data: data!)
 				} catch { }
-                self.getCert( myReqID, completionHandler: { (data, response, error) in
+                self.getCert( certID: myReqID, completionHandler: { (data, response, error) in
 					if (response != nil) {
-						let httpResponse = response as! NSHTTPURLResponse
+						let httpResponse = response as! HTTPURLResponse
 						
 						if (httpResponse.statusCode >= 200 && httpResponse.statusCode < 500) {
 						}            }
 					
 					if (data != nil ) {
 						
-						let myCertRef = SecCertificateCreateWithData(nil, data!)
+						let myCertRef = SecCertificateCreateWithData(nil, data! as CFData)
 
 						let dictionary: [NSString: AnyObject] = [
 							kSecClass: kSecClassCertificate,
@@ -101,7 +101,7 @@ class WindowsCATools {
                         
                         var mySecRef : AnyObject? = nil
 						
-						self.myImportError = SecItemAdd(dictionary, &mySecRef)
+						self.myImportError = SecItemAdd(dictionary as CFDictionary, &mySecRef)
                         
                         
                         print(mySecRef)
@@ -199,40 +199,40 @@ class WindowsCATools {
         return self.myImportError
     }
     
-    func submitCert( certTemplate: String, completionHandler: (NSData?, NSURLResponse?, NSError?) -> Void) {
-        
-        let request = NSMutableURLRequest(URL: (NSURL(string: "\(api)certfnsh.asp"))!)
-        request.HTTPMethod = "POST"
+    func submitCert(certTemplate: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
+
+        let request = NSMutableURLRequest(url: (NSURL(string: "\(api)certfnsh.asp"))! as URL)
+        request.httpMethod = "POST"
         
         let unreserved = "*-._/"
-        let allowed = NSMutableCharacterSet.alphanumericCharacterSet()
-        allowed.addCharactersInString(unreserved)
+        let allowed = NSMutableCharacterSet.alphanumeric()
+        allowed.addCharacters(in: unreserved)
         
-        let encodedCertRequestFinal = certCSR.stringByAddingPercentEncodingWithAllowedCharacters(allowed)
+        let encodedCertRequestFinal = certCSR.addingPercentEncoding(withAllowedCharacters: allowed as CharacterSet)
         
         let body = "CertRequest=" + encodedCertRequestFinal! + "&SaveCert=yes&Mode=newreq&CertAttrib=CertificateTemplate:" + certTemplate
         request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         
-        request.HTTPBody = body.dataUsingEncoding(NSUTF8StringEncoding)
+        request.httpBody = body.data(using: String.Encoding.utf8)
         
-        let session = NSURLSession.sharedSession()
-        session.dataTaskWithRequest(request, completionHandler: completionHandler).resume()
+        let session = URLSession.shared
+        session.dataTask(with: request as URLRequest, completionHandler: completionHandler).resume()
     }
     
-    func findReqID(data: NSData) throws -> Int {
+    func findReqID(data: Data) throws -> Int {
         
-        let response = String(data: data, encoding: NSUTF8StringEncoding)
+        let response = String(data: data, encoding: String.Encoding.utf8)
         var myresponse = "0"
         
-        if response!.containsString("certnew.cer?ReqID=") {
-            let responseLines = response?.componentsSeparatedByString("\n")
-            let reqIDRegEx = try NSRegularExpression(pattern: ".*ReqID=", options: NSRegularExpressionOptions.CaseInsensitive)
-            let reqIDRegExEnd = try NSRegularExpression(pattern: "&amp.*", options: NSRegularExpressionOptions.CaseInsensitive)
+        if response!.contains("certnew.cer?ReqID=") {
+            let responseLines = response?.components(separatedBy: "\n")
+            let reqIDRegEx = try NSRegularExpression(pattern: ".*ReqID=", options: NSRegularExpression.Options.caseInsensitive)
+            let reqIDRegExEnd = try NSRegularExpression(pattern: "&amp.*", options: NSRegularExpression.Options.caseInsensitive)
             
             for line in responseLines! {
-                if line.containsString("certnew.cer?ReqID=") {
-                    myresponse = reqIDRegEx.stringByReplacingMatchesInString(line, options: [], range: NSMakeRange(0, line.characters.count), withTemplate: "")
-                    myresponse = reqIDRegExEnd.stringByReplacingMatchesInString(myresponse, options: [], range: NSMakeRange(0, myresponse.characters.count), withTemplate: "").stringByReplacingOccurrencesOfString("\r", withString: "")
+                if line.contains("certnew.cer?ReqID=") {
+                    myresponse = reqIDRegEx.stringByReplacingMatches(in: line, options: [], range: NSMakeRange(0, line.characters.count), withTemplate: "")
+                    myresponse = reqIDRegExEnd.stringByReplacingMatches(in: myresponse, options: [], range: NSMakeRange(0, myresponse.characters.count), withTemplate: "").replacingOccurrences(of: "\r|", with: "")
                     return Int(myresponse)!
                 }
             }
@@ -242,14 +242,14 @@ class WindowsCATools {
         return Int(myresponse)!
     }
     
-    func getCert(certID: Int, completionHandler: (NSData?, NSURLResponse?, NSError?) -> Void) {
+    func getCert(certID: Int, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
         
-        let request = NSMutableURLRequest(URL: (NSURL(string: "\(api)certnew.cer?ReqID=" + String(certID) + "&Enc=bin"))!)
+        let request = NSMutableURLRequest(url: (NSURL(string: "\(api)certnew.cer?ReqID=" + String(certID) + "&Enc=bin"))! as URL)
         
-        request.HTTPMethod = "GET"
+        request.httpMethod = "GET"
         
-        let session = NSURLSession.sharedSession()
-        session.dataTaskWithRequest(request, completionHandler: completionHandler).resume()
+        let session = URLSession.shared
+        session.dataTask(with: request as URLRequest, completionHandler: completionHandler).resume()
     }
     
     // TODO: remove the use of certtool and use CommonCrypto instead

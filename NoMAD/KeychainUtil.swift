@@ -13,7 +13,7 @@ import Security
 
 struct certDates {
     var serial : String
-    var expireDate : NSDate
+    var expireDate : Date
 }
 
 class KeychainUtil {
@@ -21,7 +21,7 @@ class KeychainUtil {
     var myErr: OSStatus
     let serviceName = "NoMAD"
     var passLength: UInt32 = 0
-    var passPtr: UnsafeMutablePointer<Void> = nil
+    var passPtr: UnsafeMutableRawPointer? = nil
     
     var myKeychainItem: SecKeychainItem?
     
@@ -31,28 +31,28 @@ class KeychainUtil {
     
     // find if there is an existing account password and return it or throw
     
-    func findPassword(name: String) throws -> String {
+    func findPassword(_ name: String) throws -> String {
         
         myErr = SecKeychainFindGenericPassword(nil, UInt32(serviceName.characters.count), serviceName, UInt32(name.characters.count), name, &passLength, &passPtr, &myKeychainItem)
 
         if myErr == OSStatus(errSecSuccess) {
-            let password = NSString(bytes: passPtr, length: Int(passLength), encoding: NSUTF8StringEncoding)
+            let password = NSString(bytes: passPtr!, length: Int(passLength), encoding: String.Encoding.utf8.rawValue)
             return password as! String
         } else {
-            throw NoADError.NoStoredPassword
+            throw NoADError.noStoredPassword
         }
     }
     
     // set the password
     
-    func setPassword(name: String, pass: String) -> OSStatus {
+    func setPassword(_ name: String, pass: String) -> OSStatus {
 
         myErr = SecKeychainAddGenericPassword(nil, UInt32(serviceName.characters.count), serviceName, UInt32(name.characters.count), name, UInt32(pass.characters.count), pass, nil)
         
         return myErr
     }
 	
-	func updatePassword(name: String, pass: String) -> Bool {
+	func updatePassword(_ name: String, pass: String) -> Bool {
 		if (try? findPassword(name)) != nil {
 			deletePassword()
 		}
@@ -74,7 +74,7 @@ class KeychainUtil {
 
     // convience functions
     
-    func findAndDelete(name: String) -> Bool {
+    func findAndDelete(_ name: String) -> Bool {
         do {
            try findPassword(name)
         } catch{
@@ -89,11 +89,12 @@ class KeychainUtil {
     
     // return the last expiration date for any certs that match the domain and user
     
-    func findCertExpiration(user: String, defaultNamingContext: String) -> NSDate {
+    func findCertExpiration(_ user: String, defaultNamingContext: String) -> Date? {
         
         var matchingCerts = [certDates]()
         var myCert: SecCertificate? = nil
         var searchReturn: AnyObject? = nil
+        var lastExpire = Date.distantPast
         
         // create a search dictionary to find Identitys with Private Keys and returning all matches
         // TODO: Tweak this to find the best mix
@@ -104,7 +105,7 @@ class KeychainUtil {
  certificates or identities will be limited to those whose
  certificate chain contains one of the issuers provided in this list.
  */
- 
+
         // build our search dictionary
         
         let identitySearchDict: [String:AnyObject] = [
@@ -122,7 +123,7 @@ class KeychainUtil {
         ]
         
         myErr = 0
-        var lastExpire: NSDate = NSDate.distantPast()
+
         
         // look for all matches
         
@@ -130,14 +131,14 @@ class KeychainUtil {
         
         if myErr != 0 {
             myLogger.logit(0, message: "Error getting Certificates.")
-            return lastExpire
+            return nil
         }
         
         let foundCerts = searchReturn as! CFArray as Array
         
         if foundCerts.count == 0 {
             myLogger.logit(1, message: "No certificates found.")
-            return lastExpire
+            return nil
         }
         
         for cert in foundCerts {
@@ -146,7 +147,7 @@ class KeychainUtil {
             
             if myErr != 0 {
                 myLogger.logit(0, message: "Error getting Certificate references.")
-                return lastExpire
+                return nil
             }
                     
                     // get the full OID set for the cert
@@ -161,14 +162,14 @@ class KeychainUtil {
                     for values in URIValue {
                         let value = values as! NSDictionary
                         
-                        if String(_cocoaString: value["label"]!) == "URI" {
+                        if String(_cocoaString: value["label"]! as AnyObject) == "URI" {
 
-                            if String(value["value"]!).containsString(defaultNamingContext){
+                            if String(describing: value["value"]!).contains(defaultNamingContext){
                                 
                                 // we have a match now gather the expire date and the serial
                                 
                                 let expireOID : NSDictionary = myOIDs["2.5.29.24"]! as! NSDictionary
-                                let expireDate = expireOID["value"]! as! NSDate
+                                let expireDate = expireOID["value"]! as! Date
                                 
                                 // this finds the serial
                                 
@@ -192,7 +193,7 @@ class KeychainUtil {
                 }
             }
         myLogger.logit(3, message: "Found " + String(matchingCerts.count) + " certificates.")
-        myLogger.logit(3, message: "Found certificates: " + String(matchingCerts) )
+        myLogger.logit(3, message: "Found certificates: " + String(describing: matchingCerts) )
         return lastExpire
     }
 }

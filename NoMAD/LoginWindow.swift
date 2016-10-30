@@ -12,7 +12,7 @@ protocol LoginWindowDelegate {
     func updateUserInfo()
 }
 
-let resetNotificationKey = NSNotification(name: "resetPassword", object: nil)
+let resetNotificationKey = Notification(name: Notification.Name(rawValue: "resetPassword"), object: nil)
 
 class LoginWindow: NSWindowController, NSWindowDelegate {
     
@@ -36,7 +36,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
     
     override func windowDidLoad() {
         super.windowDidLoad()
-        guard (( defaults.stringForKey("LastUser") ) != nil) else {
+        guard (( defaults.string(forKey: "LastUser") ) != nil) else {
             self.window?.center()
             setWindowToLogin()
             return
@@ -45,7 +45,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         changePasswordButton.title = "NoMADMenuController-LogIn".translate
         self.window?.title = "NoMAD - " + "NoMADMenuController-LogIn".translate
         
-        userName.stringValue = defaults.stringForKey("LastUser")! ?? ""
+        userName.stringValue = defaults.string(forKey: "LastUser")! ?? ""
         Password.becomeFirstResponder()
         
         setWindowToLogin()
@@ -54,23 +54,23 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 
     }
     
-    func windowWillClose(notification: NSNotification) {
+    func windowWillClose(_ notification: Notification) {
         Password.stringValue = ""
         changePasswordField1.stringValue = ""
         changePasswordField2.stringValue = ""
         
-        notificationCenter.postNotification(notificationKey)
+        notificationCenter.post(notificationKey)
         delegate?.updateUserInfo()
     }
     
-    @IBAction func LogInClick(sender: AnyObject) {
+    @IBAction func LogInClick(_ sender: AnyObject) {
         
         var userNameChecked = ""
         
-        if userName.stringValue.containsString("@") {
+        if userName.stringValue.contains("@") {
             userNameChecked = userName.stringValue
         } else {
-            userNameChecked = userName.stringValue + "@" + defaults.stringForKey("KerberosRealm")!
+            userNameChecked = userName.stringValue + "@" + defaults.string(forKey: "KerberosRealm")!
         }
         
         let GetCredentials: KerbUtil = KerbUtil()
@@ -82,12 +82,12 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         
         if myError == nil {
             cliTask("/usr/bin/kswitch -p " + userNameChecked )
-            defaults.setInteger(1296000, forKey: "LastPasswordWarning")
+            defaults.set(1296000, forKey: "LastPasswordWarning")
         }
         
         // put password in keychain, but only if there was no error
         
-        if ( defaults.boolForKey("UseKeychain") && myError == nil ) {
+        if ( defaults.bool(forKey: "UseKeychain") && myError == nil ) {
             
             // check if keychain item exists and delete it if it does
             
@@ -99,19 +99,19 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             
         }
         
-        if ( myError == nil  && defaults.integerForKey("LocalPasswordSync") == 1 ) {
+        if ( myError == nil  && defaults.integer(forKey: "LocalPasswordSync") == 1 ) {
             do { try testLocalPassword( Password.stringValue) }
             catch {
                 
                 myLogger.logit(0, message:"Local password check failed. Attempting to sync.")
                 let alertController = NSAlert()
                 alertController.messageText = "Your network and local passwords are not the same. Please enter the password for your Mac."
-                alertController.addButtonWithTitle("Cancel")
-                alertController.addButtonWithTitle("Sync")
+                alertController.addButton(withTitle: "Cancel")
+                alertController.addButton(withTitle: "Sync")
                 
-                let localPassword = NSSecureTextField(frame: CGRectMake(0, 0, 200, 24))
+                let localPassword = NSSecureTextField(frame: CGRect(x: 0, y: 0, width: 200, height: 24))
                 alertController.accessoryView = localPassword
-                alertController.beginSheetModalForWindow(self.window!, completionHandler: { (response) -> Void in
+                alertController.beginSheetModal(for: self.window!, completionHandler: { (response) -> Void in
                     if response == 1001 {
                         do { try self.testLocalPassword(localPassword.stringValue)
                             myLogger.logit(0, message:"Local password is right. Syncing.")
@@ -128,7 +128,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                         catch {
                             let alertController = NSAlert()
                             alertController.messageText = "Invalid password. Please try again."
-                            alertController.beginSheetModalForWindow(self.window!, completionHandler: nil)
+                            alertController.beginSheetModal(for: self.window!, completionHandler: nil)
                             myLogger.logit(0, message:myError!)
                             EXIT_FAILURE
                             myLogger.logit(0, message:"Local password wrong.")
@@ -147,18 +147,18 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 			self.close()
         } else {
             
-            if defaults.integerForKey("Verbose") >= 1 {
+            if defaults.integer(forKey: "Verbose") >= 1 {
                 myLogger.logit(0, message:"Logging in as: " + userName.stringValue)
             }
             
             if myError == "Password has expired" {
-                defaults.setObject(userName.stringValue, forKey: "userPrincipal")
+                defaults.set(userName.stringValue, forKey: "userPrincipal")
                 print(userName.stringValue)
-                print(defaults.stringForKey("userPrincipal"))
+                print(defaults.string(forKey: "userPrincipal"))
                 let alertController = NSAlert()
                 alertController.messageText = "Your password has expired. Please reset your password now."
-                alertController.addButtonWithTitle("Change Password")
-                alertController.beginSheetModalForWindow(self.window!, completionHandler: { [ unowned self ] (returnCode) -> Void in
+                alertController.addButton(withTitle: "Change Password")
+                alertController.beginSheetModal(for: self.window!, completionHandler: { [ unowned self ] (returnCode) -> Void in
                     if returnCode == NSAlertFirstButtonReturn {
                         myLogger.logit(0, message:myError!)
                         self.setWindowToChange()
@@ -170,7 +170,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             if myError != nil && myError != "Password has expired" {
                 let alertController = NSAlert()
                 alertController.messageText = "Invalid password. Please try again."
-                alertController.beginSheetModalForWindow(self.window!, completionHandler: nil)
+                alertController.beginSheetModal(for: self.window!, completionHandler: nil)
                 myLogger.logit(0, message:myError!)
                 EXIT_FAILURE
             } else if myError == nil {
@@ -180,12 +180,12 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         }
     }
     
-    @IBAction func changePasswordButtonClick(sender: AnyObject) {
+    @IBAction func changePasswordButtonClick(_ sender: AnyObject) {
         let userPrincipal: String
-        if userName.stringValue.containsString("@") {
+        if userName.stringValue.contains("@") {
             userPrincipal = userName.stringValue
         } else {
-            userPrincipal = userName.stringValue + "@" + defaults.stringForKey("KerberosRealm")!
+            userPrincipal = userName.stringValue + "@" + defaults.string(forKey: "KerberosRealm")!
         }
         let currentPassword = Password.stringValue
         let newPassword1 = changePasswordField1.stringValue
@@ -198,28 +198,28 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             
             // put password in keychain, but only if there was no error
             
-            if ( defaults.boolForKey("UseKeychain") && myError != "" ) {
+            if ( defaults.bool(forKey: "UseKeychain") && myError != "" ) {
                 
                 // check if keychain item exists and delete it if it does
                 
                 let myKeychainUtil = KeychainUtil()
                 
-                myKeychainUtil.findAndDelete(userName.stringValue + "@" + defaults.stringForKey("KerberosRealm")!)
+                myKeychainUtil.findAndDelete(userName.stringValue + "@" + defaults.string(forKey: "KerberosRealm")!)
                 
-                myKeychainUtil.setPassword(userName.stringValue + "@" + defaults.stringForKey("KerberosRealm")!, pass: Password.stringValue)
+                myKeychainUtil.setPassword(userName.stringValue + "@" + defaults.string(forKey: "KerberosRealm")!, pass: Password.stringValue)
                 
             }
             
             if myError != "" {
                 let alertController = NSAlert()
                 alertController.messageText = myError
-                alertController.beginSheetModalForWindow(self.window!, completionHandler: nil)
+                alertController.beginSheetModal(for: self.window!, completionHandler: nil)
                 EXIT_FAILURE
             } else {
                 let alertController = NSAlert()
                 alertController.messageText = "Password changed successfully. Note: it may take up to an hour for your password expiration time to be updated."
                 
-                alertController.beginSheetModalForWindow(self.window!, completionHandler: {( response ) in
+                alertController.beginSheetModal(for: self.window!, completionHandler: {( response ) in
                     if ( response == 0 ) {
                         
                         // login via kinit here with the new password
@@ -228,10 +228,10 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                         var myError: String? = ""
                         
                         if myError == "" {
-                            if userPrincipal.containsString("@") {
+                            if userPrincipal.contains("@") {
                                 myError = GetCredentials.getKerbCredentials( newPassword1, userPrincipal );
                             } else {
-                                myError = GetCredentials.getKerbCredentials( newPassword1, (userPrincipal + "@" + defaults.stringForKey("KerberosRealm")!))
+                                myError = GetCredentials.getKerbCredentials( newPassword1, (userPrincipal + "@" + defaults.string(forKey: "KerberosRealm")!))
                             }
                         }
                         
@@ -248,13 +248,13 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             
             let alertController = NSAlert()
             alertController.messageText = "New passwords don't match!"
-            alertController.beginSheetModalForWindow(self.window!, completionHandler: nil)
+            alertController.beginSheetModal(for: self.window!, completionHandler: nil)
             EXIT_FAILURE
             
         }
     }
     
-    private func setWindowToLogin() {
+    fileprivate func setWindowToLogin() {
         
         // set the size
         
@@ -264,18 +264,18 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         
         // disable the bad things
         
-        changePasswordButton.hidden = true
-        changePasswordButton.enabled = false
+        changePasswordButton.isHidden = true
+        changePasswordButton.isEnabled = false
         
-        changePasswordField1.hidden = true
-        changePasswordField2.hidden = true
-        newPasswordLable.hidden = true
-        newPasswordLabel2.hidden = true
+        changePasswordField1.isHidden = true
+        changePasswordField2.isHidden = true
+        newPasswordLable.isHidden = true
+        newPasswordLabel2.isHidden = true
         
         // enable the good things
         
-        logInButton.hidden = false
-        logInButton.enabled = true
+        logInButton.isHidden = false
+        logInButton.isEnabled = true
         
         passwordLabel.stringValue = "Password"
         Password.stringValue = ""
@@ -284,7 +284,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         
     }
     
-    private func setWindowToChange() {
+    fileprivate func setWindowToChange() {
         
         // set the size
         
@@ -294,18 +294,18 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         
         // disable the bad things
         
-        changePasswordButton.hidden = false
-        changePasswordButton.enabled = true
+        changePasswordButton.isHidden = false
+        changePasswordButton.isEnabled = true
         
-        changePasswordField1.hidden = false
-        changePasswordField2.hidden = false
-        newPasswordLable.hidden = false
-        newPasswordLabel2.hidden = false
+        changePasswordField1.isHidden = false
+        changePasswordField2.isHidden = false
+        newPasswordLable.isHidden = false
+        newPasswordLabel2.isHidden = false
         
         // enable the good things
         
-        logInButton.hidden = true
-        logInButton.enabled = false
+        logInButton.isHidden = true
+        logInButton.isEnabled = false
         
         passwordLabel.stringValue = "Old Password"
         
@@ -314,8 +314,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
     }
     
     // username must be of the format username@kerberosRealm
-    func performPasswordChange(username: String, currentPassword: String, newPassword1: String, newPassword2: String) -> String {
-        let localPasswordSync = defaults.integerForKey("LocalPasswordSync")
+    func performPasswordChange(_ username: String, currentPassword: String, newPassword1: String, newPassword2: String) -> String {
+        let localPasswordSync = defaults.integer(forKey: "LocalPasswordSync")
         var myError: String = ""
         
         if (currentPassword.isEmpty || newPassword1.isEmpty || newPassword2.isEmpty) {
@@ -341,7 +341,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             
             // update the password in the keychain if we're using it
             
-            if ( defaults.boolForKey("UseKeychain") ) {
+            if ( defaults.bool(forKey: "UseKeychain") ) {
                 
                 // check if keychain item exists
                 
@@ -375,9 +375,9 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         return myError
     }
     
-    private func testLocalPassword(password: String) throws {
+    fileprivate func testLocalPassword(_ password: String) throws {
         let myUser = NSUserName()
-        let session = ODSession.defaultSession()
+        let session = ODSession.default()
         let node = try ODNode.init(session: session, type: UInt32(kODNodeTypeAuthentication))
         let query = try ODQuery.init(node: node, forRecordTypes: kODRecordTypeUsers, attribute: kODAttributeTypeRecordName, matchType: UInt32(kODMatchEqualTo), queryValues: myUser, returnAttributes: kODAttributeTypeNativeOnly, maximumResults: 0)
         let result = try query.resultsAllowingPartial(false)
@@ -386,22 +386,22 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
     }
     
     // Needed to attempt to sync local password with AD on login.
-    private func changeLocalPassword(oldPassword: String, newPassword: String) throws -> Bool {
+    fileprivate func changeLocalPassword(_ oldPassword: String, newPassword: String) throws -> Bool {
         let myUser = NSUserName()
-        let session = ODSession.defaultSession()
+        let session = ODSession.default()
         let node = try ODNode.init(session: session, type: UInt32(kODNodeTypeAuthentication))
         let query = try ODQuery.init(node: node, forRecordTypes: kODRecordTypeUsers, attribute: kODAttributeTypeRecordName, matchType: UInt32(kODMatchEqualTo), queryValues: myUser, returnAttributes: kODAttributeTypeNativeOnly, maximumResults: 0)
         let result = try query.resultsAllowingPartial(false)
         let recordRef: ODRecordRef = result[0] as! ODRecordRef
-        if ODRecordChangePassword(recordRef, oldPassword, newPassword, nil) {
+        if ODRecordChangePassword(recordRef, oldPassword as CFString!, newPassword as CFString!, nil) {
             return true
         } else {
             return false
         }
     }
     
-    private func sendResetMessage() -> Void {
+    fileprivate func sendResetMessage() -> Void {
         myLogger.logit(0, message:"Need to reset user's password.")
-        notificationQueue.enqueueNotification(resetNotificationKey, postingStyle: .PostNow, coalesceMask: .CoalescingOnName, forModes: nil)
+        notificationQueue.enqueue(resetNotificationKey, postingStyle: .now, coalesceMask: .onName, forModes: nil)
     }
 }

@@ -9,8 +9,8 @@
 import Foundation
 
 extension NSWindow {
-	func forceToFrontAndFocus(sender: AnyObject?) {
-		NSApp.activateIgnoringOtherApps(true)
+	func forceToFrontAndFocus(_ sender: AnyObject?) {
+		NSApp.activate(ignoringOtherApps: true)
 		self.makeKeyAndOrderFront(sender);
 	}
 }
@@ -20,13 +20,13 @@ extension String {
 		return Localizator.sharedInstance.translate(self)
 	}
 	func trim() -> String {
-		return self.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
+		return self.trimmingCharacters(in: CharacterSet.whitespaces)
 	}
-	func contains(find: String) -> Bool {
-		return self.rangeOfString(find) != nil
+	func contains(_ find: String) -> Bool {
+		return self.range(of: find) != nil
 	}
-	func containsIgnoringCase(find: String) -> Bool {
-		return self.rangeOfString(find, options: NSStringCompareOptions.CaseInsensitiveSearch) != nil
+	func containsIgnoringCase(_ find: String) -> Bool {
+		return self.range(of: find, options: NSString.CompareOptions.caseInsensitive) != nil
 	}
 
 }
