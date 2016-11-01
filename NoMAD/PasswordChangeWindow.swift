@@ -78,7 +78,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
                 
                 myKeychainUtil.setPassword(userPrincipal, pass: newPassword1)
             }
-            
+            */
             if myError != "" {
                 let alertController = NSAlert()
                 alertController.messageText = myError
@@ -236,6 +236,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 		
 		return myError
 	}
+	*/
 	
 	
 	// username must be of the format username@kerberosRealm

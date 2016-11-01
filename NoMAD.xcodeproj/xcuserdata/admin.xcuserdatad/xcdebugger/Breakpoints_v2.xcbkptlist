@@ -9,22 +9,6 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "NoMAD/GetHelp.swift"
-            timestampString = "492092860.558236"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "46"
-            endingLineNumber = "46"
-            landmarkName = "getHelp()"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "../NoMAD-Private/NoMAD/NoMADMenuController.swift"
             timestampString = "492545169.665983"
             startingColumnNumber = "9223372036854775807"
@@ -79,7 +63,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "390"
             endingLineNumber = "390"
-            landmarkName = "NoMADMenuClickGetCertificate(_:)"
+            landmarkName = "NoMADMenuClickGetCertificate(sender:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

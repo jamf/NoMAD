@@ -68,12 +68,11 @@ class NoMADUser {
 	func currentConsoleUserIsADuser() -> Bool {
 		if let originalNodeName = try? String(describing: currentConsoleUserRecord.values(forAttribute: kODAttributeTypeOriginalNodeName)[0]) {
 			if ( originalNodeName.contains("/Active Directory")) {
-				myLogger.logit(LogLevel.base, message: "Current Console User is an AD user.")
+				myLogger.logit(LogLevel.debug, message: "Current Console User is an AD user.")
 				return originalNodeName.contains("/Active Directory")
 			}
 		} else {
-			myLogger.logit(LogLevel.base, message: "Current Console User is not an AD user.")
-			myLogger.logit(LogLevel.notice, message: "Attribute OriginalNodeName does not exist.")
+			myLogger.logit(LogLevel.debug, message: "Current Console User is not an AD user.")
 		}
 		return false
 	}
@@ -126,15 +125,11 @@ class NoMADUser {
 	*/
 	func checkRemoteUserPassword(_ password: String) -> Bool {
 		let GetCredentials: KerbUtil = KerbUtil()
-		var myError: String? = ""
+		var myError: String? = nil
 		
 		myError = GetCredentials.getKerbCredentials( password, kerberosPrincipal )
 		
-		if myError == nil {
-			return true
-		} else {
-			return false
-		}
+		return myError
 	}
 	
 	// Checks if the password entered matches the password
@@ -201,6 +196,10 @@ class NoMADUser {
 		}
 		
 		let kerbPrefFile = checkKpasswdServer(true)
+		guard kerbPrefFile else {
+			myLogger.logit(LogLevel.base, message: "Unable to create Kerberos preference file.")
+			throw NoMADUserError.ItemNotFound("Unable to create Kerberos preference file.")
+		}
 		
 		let remotePasswordChanger: KerbUtil = KerbUtil()
 		let error = remotePasswordChanger.changeKerbPassword(oldPassword, newPassword1, kerberosPrincipal)
@@ -341,6 +340,144 @@ class NoMADUser {
 
 
 
+
+
+/**
+Changes the remote and current console user's password based on if the
+current console user is an AD account, and if localPasswordSync is enabled.
+
+- parameters:
+- username: (String) Must be in the format username@REALM
+- currentPassword: (String) The user's current password
+- newPassword1: (String) The new password for the user.
+- newPassword2: (String) Must match newPassword1.
+
+*/
+func performPasswordChange(username: String, currentPassword: String, newPassword1: String, newPassword2: String) -> String {
+	var myError: String = ""
+	guard ( !currentPassword.isEmpty && !newPassword1.isEmpty && !newPassword2.isEmpty ) else {
+		myLogger.logit(LogLevel.base, message: "Some of the fields are empty")
+		myError = "All fields must be filled in"
+		return myError
+	}
+	myLogger.logit(LogLevel.info, message: "All fields are filled in, continuing")
+	guard (newPassword1 == newPassword2) else {
+		myLogger.logit(LogLevel.base, message: "New passwords do not match.")
+		myError = "New passwords do not match."
+		return myError
+	}
+	
+	do {
+		let noMADUser = try NoMADUser(kerberosPrincipal: username)
+		
+		// Checks if the remote users's password is correct.
+		// If it is and the current console user is not an
+		// AD account, then we'll change it.
+		var remoteUserPasswordIsCorrect = false
+		if ( noMADUser.checkRemoteUserPassword(currentPassword) == nil ) {
+			remoteUserPasswordIsCorrect = true
+		}
+		// Checks if console password is correct.
+		let consoleUserPasswordIsCorrect = noMADUser.checkCurrentConsoleUserPassword(currentPassword)
+		// Checks if keychain password is correct
+		let keychainPasswordIsCorrect = try noMADUser.checkKeychainPassword(currentPassword)
+		// Check if we want to store the password in the keychain.
+		let useKeychain = defaults.boolForKey("UseKeychain")
+		// Check if we want to sync the console user's password with the remote AD password.
+		// Only used if console user is not AD.
+		var doLocalPasswordSync = false
+		if defaults.integerForKey("LocalPasswordSync") == 1 {
+			doLocalPasswordSync = true
+		}
+		
+		let consoleUserIsAD = noMADUser.currentConsoleUserIsADuser()
+		
+		
+		if !consoleUserIsAD {
+			myLogger.logit(LogLevel.debug, message: "Console user is not AD, trying to change using remote password.")
+			// Check if the current password entered matches the remote user.
+			guard remoteUserPasswordIsCorrect else {
+				myError = "Current password does not match remote user's password. Can't perform change."
+				return myError
+			}
+			
+			// Try to change the password using the remote method
+			// Because the current console user is not AD.
+			do {
+				try noMADUser.changeRemotePassword(currentPassword, newPassword1: newPassword1, newPassword2: newPassword2)
+			} catch let error as NoMADUserError {
+				myLogger.logit(LogLevel.base, message: error.description)
+				return error.description
+			} catch {
+				return "Unknown error changing remote password"
+			}
+		}
+		
+		
+		if consoleUserIsAD || doLocalPasswordSync {
+			if consoleUserIsAD {
+				myLogger.logit(LogLevel.debug, message: "Console user is AD, trying to change using console password.")
+			}
+			if doLocalPasswordSync && !consoleUserIsAD {
+				myLogger.logit(LogLevel.debug, message: "Local Password sync is enabled, let's try to sync.")
+			}
+			// Check if the current password entered matches the console user.
+			guard consoleUserPasswordIsCorrect else {
+				myError = "Current password does not match console user's password. Can't change console user's password."
+				return myError
+			}
+			
+			// Try to change the current console user's password.
+			do {
+				try noMADUser.changeCurrentConsoleUserPassword(currentPassword, newPassword1: newPassword1, newPassword2: newPassword2, forceChange: true)
+			} catch let error as NoMADUserError {
+				myLogger.logit(LogLevel.base, message: error.description)
+				return error.description
+			} catch {
+				return "Unknown error changing current console user password"
+			}
+			
+			myLogger.logit(LogLevel.debug, message: "Now that we've changed the console user's password, let's try to change the keychain password.")
+			guard keychainPasswordIsCorrect else {
+				myError = "Current password does not match the keychain's password. Can't change keychain password."
+				return myError
+			}
+			
+			// Try to change the password using the remote method
+			// Because the current console user is not AD.
+			do {
+				try noMADUser.changeKeychainPassword(currentPassword, newPassword1: newPassword1, newPassword2: newPassword2)
+			} catch let error as NoMADUserError {
+				myLogger.logit(LogLevel.base, message: error.description)
+				return error.description
+			} catch {
+				return "Unknown error changing keychain password"
+			}
+		}
+		
+		if useKeychain {
+			do {
+				try noMADUser.updateKeychainItem(newPassword1, newPassword2: newPassword2)
+			} catch let error as NoMADUserError {
+				myLogger.logit(LogLevel.base, message: error.description)
+				return error.description
+			} catch {
+				return "Unknown error updating keychain item"
+			}
+		}
+		
+	} catch let error as NoMADUserError {
+		myLogger.logit(LogLevel.base, message: error.description)
+		return error.description
+	} catch let error as NSError {
+		myLogger.logit(LogLevel.base, message: error.description)
+		return error.description
+	} catch {
+		return "Unknown error"
+	}
+	
+	return myError
+}
 
 
 
