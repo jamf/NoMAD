@@ -123,7 +123,7 @@ class NoMADUser {
 	- parameters:
 		- password: The user's current password as a String.
 	*/
-	func checkRemoteUserPassword(_ password: String) -> Bool {
+	func checkRemoteUserPassword(password: String) -> String? {
 		let GetCredentials: KerbUtil = KerbUtil()
 		var myError: String? = nil
 		
@@ -198,7 +198,7 @@ class NoMADUser {
 		let kerbPrefFile = checkKpasswdServer(true)
 		guard kerbPrefFile else {
 			myLogger.logit(LogLevel.base, message: "Unable to create Kerberos preference file.")
-			throw NoMADUserError.ItemNotFound("Unable to create Kerberos preference file.")
+			throw NoMADUserError.itemNotFound("Unable to create Kerberos preference file.")
 		}
 		
 		let remotePasswordChanger: KerbUtil = KerbUtil()
@@ -374,7 +374,7 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
 		// If it is and the current console user is not an
 		// AD account, then we'll change it.
 		var remoteUserPasswordIsCorrect = false
-		if ( noMADUser.checkRemoteUserPassword(currentPassword) == nil ) {
+		if ( noMADUser.checkRemoteUserPassword(password: currentPassword) == nil ) {
 			remoteUserPasswordIsCorrect = true
 		}
 		// Checks if console password is correct.
@@ -382,11 +382,11 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
 		// Checks if keychain password is correct
 		let keychainPasswordIsCorrect = try noMADUser.checkKeychainPassword(currentPassword)
 		// Check if we want to store the password in the keychain.
-		let useKeychain = defaults.boolForKey("UseKeychain")
+		let useKeychain = defaults.bool(forKey: "UseKeychain")
 		// Check if we want to sync the console user's password with the remote AD password.
 		// Only used if console user is not AD.
 		var doLocalPasswordSync = false
-		if defaults.integerForKey("LocalPasswordSync") == 1 {
+		if defaults.integer(forKey: "LocalPasswordSync") == 1 {
 			doLocalPasswordSync = true
 		}
 		
@@ -480,10 +480,6 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
 }
 
 
-
-
-
-
 private func checkKpasswdServer(_ writePref: Bool ) -> Bool {
 	
 	guard let adDomain = defaults.string(forKey: "ADDomain") else {
@@ -510,7 +506,7 @@ private func checkKpasswdServer(_ writePref: Bool ) -> Bool {
 			let myPrefFile = NSHomeDirectory() + "/Library/Preferences/com.apple.Kerberos.plist"
 			
 			if ( !myFileManager.fileExists(atPath: myPrefFile)) {
-				myLogger.logit(LogLevel.debug, message: "Developer says we should write the preference file.")
+				myLogger.logit(LogLevel.debug, message: "The Kerberos plist doesn't exist already, so we're going to create it now.")
 				// no existing pref file
 				
 				let data = NSMutableDictionary()

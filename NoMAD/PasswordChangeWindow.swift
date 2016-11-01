@@ -64,11 +64,11 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
         if ( newPassword1 == newPassword2) {
 			var myError = ""
 			
-			myError = performPasswordChange(userPrincipal, currentPassword: currentPassword, newPassword1: newPassword1, newPassword2: newPassword2)
+			myError = performPasswordChange(username: userPrincipal, currentPassword: currentPassword, newPassword1: newPassword1, newPassword2: newPassword2)
             
             // put password in keychain, but only if there was no error
-            
-            if ( defaults.bool(forKey: "UseKeychain") && myError != "" ) {
+            /*
+            if ( defaults.boolForKey("UseKeychain") && myError != "" ) {
                 
                 // check if keychain item exists and delete it if it does
                 
@@ -117,7 +117,8 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 		- newPassword2: (String) Must match newPassword1.
 	
 	*/
-	func performPasswordChange(_ username: String, currentPassword: String, newPassword1: String, newPassword2: String) -> String {
+	/*
+	func performPasswordChange(username: String, currentPassword: String, newPassword1: String, newPassword2: String) -> String {
 		var myError: String = ""
 		guard ( !currentPassword.isEmpty && !newPassword1.isEmpty && !newPassword2.isEmpty ) else {
 			myLogger.logit(LogLevel.base, message: "Some of the fields are empty")
