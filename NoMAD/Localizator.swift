@@ -8,22 +8,22 @@
 
 import Foundation
 
-class Localizator {
-	
-	static let sharedInstance = Localizator()
-	
-	lazy var localizableDictionary: NSDictionary! = {
-		if let path = NSBundle.mainBundle().pathForResource("Languages", ofType: "plist") {
-			return NSDictionary(contentsOfFile: path)
-		}
-		fatalError("Localizable file NOT found")
-	}()
-	
-	func translate(string: String) -> String {
-		guard let localizedString = localizableDictionary.valueForKey(string)?.valueForKey("value") as? String else {
-			assertionFailure("Missing translation for: \(string)")
-			return ""
-		}
-		return localizedString
-	}
+class Localizator : NSObject {
+
+    static let sharedInstance = Localizator()
+
+    lazy var localizableDictionary: [String:AnyObject] = {
+        if let path = Bundle.main.path(forResource: "Languages", ofType: "plist") {
+            return NSDictionary(contentsOfFile: path) as! [String : AnyObject]
+        }
+        fatalError("Localizable file NOT found")
+    }()
+
+    func translate(_ string: String) -> String {
+        guard let localizedString = localizableDictionary[string]?["value"] else {
+            assertionFailure("Missing translation for: \(string)")
+            return ""
+        }
+        return localizedString as! String
+    }
 }

@@ -9,24 +9,22 @@
 import Foundation
 
 extension NSWindow {
-	func forceToFrontAndFocus(sender: AnyObject?) {
-		NSApp.activateIgnoringOtherApps(true)
-		self.makeKeyAndOrderFront(sender);
-	}
+    func forceToFrontAndFocus(_ sender: AnyObject?) {
+        NSApp.activate(ignoringOtherApps: true)
+        self.makeKeyAndOrderFront(sender);
+    }
 }
 
 extension String {
-	var translate: String {
-		return Localizator.sharedInstance.translate(self)
-	}
-	func trim() -> String {
-		return self.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
-	}
-	func contains(find: String) -> Bool {
-		return self.rangeOfString(find) != nil
-	}
-	func containsIgnoringCase(find: String) -> Bool {
-		return self.rangeOfString(find, options: NSStringCompareOptions.CaseInsensitiveSearch) != nil
-	}
+    var translate: String {
+        return Localizator.sharedInstance.translate(self)
+    }
 
+    func trim() -> String {
+        return self.trimmingCharacters(in: CharacterSet.whitespaces)
+    }
+
+    func containsIgnoringCase(_ find: String) -> Bool {
+        return self.range(of: find, options: NSString.CompareOptions.caseInsensitive) != nil
+    }
 }

@@ -56,8 +56,8 @@ class UserInformation {
         userCertDate = NSDate()
         serverPasswordExpirationDefault = Double(0)
         userDisplayName = ""
-        if defaults.dictionaryForKey("UserPasswordSetDates") != nil {
-            UserPasswordSetDates = defaults.dictionaryForKey("UserPasswordSetDates")!
+        if defaults.dictionary(forKey: "UserPasswordSetDates") != nil {
+            UserPasswordSetDates = defaults.dictionary(forKey: "UserPasswordSetDates")! as [String : AnyObject]
         }
     }
     
@@ -69,14 +69,20 @@ class UserInformation {
     // Determine what certs are available locally
     
     func getCertDate() {
-        let myCertExpire = myKeychainUtil.findCertExpiration(userDisplayName, defaultNamingContext: myLDAPServers.defaultNamingContext )
-        
-        if myCertExpire != 0 {
-            myLogger.logit(1, message: "Last certificate will expire on: " + String(myCertExpire) )
+        guard let myCertExpire = myKeychainUtil.findCertExpiration(userDisplayName, defaultNamingContext: myLDAPServers.defaultNamingContext) else {
+            myLogger.logit(0, message: "Could not retrive certificate")
+            return
         }
         
+        if myCertExpire > Date().addingTimeInterval(2592000) {
+            myLogger.logit(1, message: "Last certificate will expire on: " + String(describing: myCertExpire))
+        }
+
+        if myCertExpire.timeIntervalSinceNow < 0  {
+            myLogger.logit(0, message: "Your certificate has already expired.")
+        }
+
         // Act on Cert expiration
-        
         if myCertExpire.timeIntervalSinceNow < 2592000 && myCertExpire.timeIntervalSinceNow > 0 {
             myLogger.logit(0, message: "Your certificate will expire in less than 30 days.")
             
@@ -84,11 +90,7 @@ class UserInformation {
             
         }
         
-        if myCertExpire.timeIntervalSinceNow < 0 && myCertExpire != NSDate.distantPast() {
-            myLogger.logit(0, message: "Your certificate has already expired.")
-        }
-        
-        defaults.setObject(myCertExpire, forKey: "LastCertificateExpiration")
+        defaults.set(myCertExpire, forKey: "LastCertificateExpiration")
     }
 	
 	func getUserInfo() {
@@ -113,9 +115,9 @@ class UserInformation {
 		
 		if myLDAPServers.tickets.state {
 			userPrincipal = myLDAPServers.tickets.principal
-			realm = defaults.stringForKey("KerberosRealm")!
-			if userPrincipal.containsString(realm) {
-				userPrincipalShort = userPrincipal.stringByReplacingOccurrencesOfString("@" + realm, withString: "")
+			realm = defaults.string(forKey: "KerberosRealm")!
+			if userPrincipal.contains(realm) {
+				userPrincipalShort = userPrincipal.replacingOccurrences(of: "@" + realm, with: "")
 				status = "Logged In"
 				myLogger.logit(0, message: "Logged in.")
 			} else {
@@ -162,7 +164,7 @@ class UserInformation {
 					if ( Int(computedExpireDateRaw!) == 9223372036854775807) {
 						// Password doesn't expire
 						passwordAging = false
-						defaults.setObject(false, forKey: "UserAging")
+						defaults.set(false, forKey: "UserAging")
 						
 						// Set expiration to set date
 						userPasswordExpireDate = NSDate()
@@ -170,7 +172,7 @@ class UserInformation {
 						// Password expires
 						
 						passwordAging = true
-						defaults.setObject(true, forKey: "UserAging")
+						defaults.set(true, forKey: "UserAging")
 						
 						// TODO: Change all Double() to NumberFormatter().number(from: myString)?.doubleValue
 						//       when we switch to Swift 3
@@ -195,22 +197,22 @@ class UserInformation {
 					} else if ( passwordExpirationLength != "" ) {
 						if ~~( Int(userPasswordUACFlag)! & 0x10000 ) {
 							passwordAging = false
-							defaults.setObject(false, forKey: "UserAging")
+							defaults.set(false, forKey: "UserAging")
 						} else {
 							serverPasswordExpirationDefault = Double(abs(Int(passwordExpirationLength)!)/10000000)
 							passwordAging = true
-							defaults.setObject(true, forKey: "UserAging")
+							defaults.set(true, forKey: "UserAging")
 						}
 					} else {
 						serverPasswordExpirationDefault = Double(0)
 						passwordAging = false
 					}
-					userPasswordExpireDate = userPasswordSetDate.dateByAddingTimeInterval(serverPasswordExpirationDefault)
+					userPasswordExpireDate = userPasswordSetDate.addingTimeInterval(serverPasswordExpirationDefault)
 				}
 				
 			}
 			// Check if the password was changed without NoMAD knowing.
-			myLogger.logit(LogLevel.debug, message: String(UserPasswordSetDates[userPrincipal]))
+			myLogger.logit(LogLevel.debug, message: String(describing: UserPasswordSetDates[userPrincipal]))
 			if (UserPasswordSetDates[userPrincipal] != nil) && ( (UserPasswordSetDates[userPrincipal] as? String) != "just set" ) {
 				// user has been previously set so we can check it
 				
@@ -226,12 +228,12 @@ class UserInformation {
 					// record the new password set date
 					
 					UserPasswordSetDates[userPrincipal] = userPasswordSetDate
-					defaults.setObject(UserPasswordSetDates, forKey: "UserPasswordSetDates")
+					defaults.set(UserPasswordSetDates, forKey: "UserPasswordSetDates")
 					
 				}
 			} else {
 				UserPasswordSetDates[userPrincipal] = userPasswordSetDate
-				defaults.setObject(UserPasswordSetDates, forKey: "UserPasswordSetDates")
+				defaults.set(UserPasswordSetDates, forKey: "UserPasswordSetDates")
 			}
 			
 			
@@ -239,34 +241,34 @@ class UserInformation {
 		
 		// 4. if connected and with tickets, get all of user information
 		if connected && myLDAPServers.tickets.state && canary {
-			userHome = userHomeTemp.stringByReplacingOccurrencesOfString("\\", withString: "/")
+			userHome = userHomeTemp.replacingOccurrences(of: "\\", with: "/")
 			
 			groups.removeAll()
 			
 			if groupsTemp != nil {
-				let groupsArray = groupsTemp!.componentsSeparatedByString(";")
+				let groupsArray = groupsTemp!.components(separatedBy: ";")
 				for group in groupsArray {
-					let a = group.componentsSeparatedByString(",")
-					let b = a[0].stringByReplacingOccurrencesOfString("CN=", withString: "") as String
+					let a = group.components(separatedBy: ",")
+					let b = a[0].replacingOccurrences(of: "CN=", with: "") as String
 					if b != "" {
 						groups.append(b)
 					}
 				}
-				myLogger.logit(1, message: "You are a member of: " + groups.joinWithSeparator(", ") )
+				myLogger.logit(1, message: "You are a member of: " + groups.joined(separator: ", ") )
 			}
             
             // look at local certs if an x509 CA has been set
             
-            if (defaults.stringForKey("x509CA") ?? "" != "") {
+            if (defaults.string(forKey: "x509CA") ?? "" != "") {
                 getCertDate()
             }
 			
-			defaults.setObject(userHome, forKey: "userHome")
-			defaults.setObject(userDisplayName, forKey: "displayName")
-			defaults.setObject(userPrincipal, forKey: "userPrincipal")
-			defaults.setObject(userPrincipalShort, forKey: "LastUser")
-			defaults.setObject(userPasswordExpireDate, forKey: "LastPasswordExpireDate")
-			defaults.setObject(groups, forKey: "Groups")
+			defaults.set(userHome, forKey: "userHome")
+			defaults.set(userDisplayName, forKey: "displayName")
+			defaults.set(userPrincipal, forKey: "userPrincipal")
+			defaults.set(userPrincipalShort, forKey: "LastUser")
+			defaults.set(userPasswordExpireDate, forKey: "LastPasswordExpireDate")
+			defaults.set(groups, forKey: "Groups")
 		}
 	}
 	

@@ -43,7 +43,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
         
     }
     
-    func windowWillClose(notification: NSNotification) {
+    func windowWillClose(_ notification: Notification) {
         
 		// blank out the password fields
 		oldPassword.stringValue = ""
@@ -54,8 +54,8 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
         delegate?.updateUserInfo()
     }
 	
-    @IBAction func changePasswordClicked(sender: AnyObject) {
-		let userPrincipal = defaults.stringForKey("userPrincipal")!.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+    @IBAction func changePasswordClicked(_ sender: AnyObject) {
+		let userPrincipal = defaults.string(forKey: "userPrincipal")!.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
 		let currentPassword = oldPassword.stringValue
 		let newPassword1 = newPassword.stringValue
 		let newPassword2 = newPasswordAgain.stringValue
@@ -64,7 +64,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
         if ( newPassword1 == newPassword2) {
 			var myError = ""
 			
-			myError = performPasswordChange(userPrincipal, currentPassword: currentPassword, newPassword1: newPassword1, newPassword2: newPassword2)
+			myError = performPasswordChange(username: userPrincipal, currentPassword: currentPassword, newPassword1: newPassword1, newPassword2: newPassword2)
             
             // put password in keychain, but only if there was no error
             /*
@@ -82,13 +82,13 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
             if myError != "" {
                 let alertController = NSAlert()
                 alertController.messageText = myError
-                alertController.beginSheetModalForWindow(self.window!, completionHandler: nil)
+                alertController.beginSheetModal(for: self.window!, completionHandler: nil)
                 EXIT_FAILURE
             } else {
                 let alertController = NSAlert()
                 alertController.messageText = "Password changed successfully. Note: it may take up to an hour for your password expiration time to be updated."
                 
-                alertController.beginSheetModalForWindow(self.window!, completionHandler: {( response ) in
+                alertController.beginSheetModal(for: self.window!, completionHandler: {( response ) in
                     if ( response == 0 ) {
                         self.close()
                     } else {
@@ -101,7 +101,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
             
             let alertController = NSAlert()
             alertController.messageText = "New passwords don't match!"
-            alertController.beginSheetModalForWindow(self.window!, completionHandler: nil)
+            alertController.beginSheetModal(for: self.window!, completionHandler: nil)
             EXIT_FAILURE
         }
     }
@@ -145,10 +145,10 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 			// Checks if keychain password is cofrect
 			let keychainPasswordIsCorrect = try noMADUser.checkKeychainPassword(currentPassword)
 			//
-			let useKeychain = defaults.boolForKey("UseKeychain")
+			let useKeychain = defaults.bool(forKey: "UseKeychain")
 			//
 			var doLocalPasswordSync = false
-			if defaults.integerForKey("LocalPasswordSync") == 1 {
+			if defaults.integer(forKey: "LocalPasswordSync") == 1 {
 				doLocalPasswordSync = true
 			}
 			

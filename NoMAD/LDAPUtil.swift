@@ -16,7 +16,7 @@ struct LDAPServer {
     var status: String
     var priority: Int
     var weight: Int
-    var timeStamp: NSDate
+    var timeStamp: Date
 }
 
 class LDAPServers : NSObject, DNSResolverDelegate {
@@ -28,7 +28,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     var currentDomain : String
     var lookupServers: Bool
     var site: String
-    let store = SCDynamicStoreCreate(nil, NSBundle.mainBundle().bundleIdentifier!, nil, nil)
+    let store = SCDynamicStoreCreate(nil, Bundle.main.bundleIdentifier! as CFString, nil, nil)
     
     var lastNetwork = ""
     
@@ -57,7 +57,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     
     // this sets the default domain, will take an optional value to determine if the user has a TGT for the domain
     
-    func setDomain(domain: String) {
+    func setDomain(_ domain: String) {
         
         myLogger.logit(0, message:"Finding LDAP Servers.")
         
@@ -67,12 +67,12 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         
         // if a static LDAP server list is given, we don't need to do any testing
         
-        if ( (defaults.stringForKey("LDAPServerList") ?? "") != "" ) {
+        if ( (defaults.string(forKey: "LDAPServerList") ?? "") != "" ) {
             
-            let myLDAPServerListRaw = defaults.stringForKey("LDAPServerList")
-            let myLDAPServerList = myLDAPServerListRaw?.componentsSeparatedByString(",")
+            let myLDAPServerListRaw = defaults.string(forKey: "LDAPServerList")
+            let myLDAPServerList = myLDAPServerListRaw?.components(separatedBy: ",")
             for server in myLDAPServerList! {
-                let currentServer: LDAPServer = LDAPServer(host: server, status: "found", priority: 0, weight: 0, timeStamp: NSDate())
+                let currentServer: LDAPServer = LDAPServer(host: server, status: "found", priority: 0, weight: 0, timeStamp: Date())
                 hosts.append(currentServer)
             }
             currentState = true
@@ -132,17 +132,17 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         
         tickets.getDetails()
         
-        if defaults.stringForKey("LDAPServerList") != nil {
+        if defaults.string(forKey: "LDAPServerList") != nil {
             
             // clear out the hosts list and reload it
             
             hosts.removeAll()
             
-            let myLDAPServerListRaw = defaults.stringForKey("LDAPServerList")
-            let myLDAPServerList = myLDAPServerListRaw?.componentsSeparatedByString(",")
+            let myLDAPServerListRaw = defaults.string(forKey: "LDAPServerList")
+            let myLDAPServerList = myLDAPServerListRaw?.components(separatedBy: ",")
             
             for server in myLDAPServerList! {
-                let currentServer: LDAPServer = LDAPServer(host: server, status: "found", priority: 0, weight: 0, timeStamp: NSDate())
+                let currentServer: LDAPServer = LDAPServer(host: server, status: "found", priority: 0, weight: 0, timeStamp: Date())
                 hosts.append(currentServer)
             }
             
@@ -167,7 +167,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     func dead() {
         myLogger.logit(1, message:"Marking server as dead: " + hosts[current].host)
         hosts[current].status = "dead"
-        hosts[current].timeStamp = NSDate()
+        hosts[current].timeStamp = Date()
         if (hosts.count > current) { testHosts() }
     }
     
@@ -220,17 +220,17 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     
     // do an LDAP lookup with the current naming context
     
-	func getLDAPInformation( attributes: [String], baseSearch: Bool=false, searchTerm: String="", test: Bool=true, overrideDefaultNamingContext: Bool=false) throws -> [[String:String]] {
+	func getLDAPInformation( _ attributes: [String], baseSearch: Bool=false, searchTerm: String="", test: Bool=true, overrideDefaultNamingContext: Bool=false) throws -> [[String:String]] {
         
         if test {
             guard testSocket(self.currentServer) else {
-                throw NoADError.LDAPServerLookup
+                throw NoADError.ldapServerLookup
             }
         }
 		
 		// TODO: We need to un-comment this and figure out another way to pass a valid empty defaultNamingContext
 		if (overrideDefaultNamingContext == false) {
-			if (defaultNamingContext == "") || (defaultNamingContext.containsString("GSSAPI Error")) {
+			if (defaultNamingContext == "") || (defaultNamingContext.contains("GSSAPI Error")) {
 				testHosts()
 			}
 		}
@@ -254,11 +254,11 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 		if ( searchTerm != "") {
 			arguments.append(searchTerm)
 		}
-		arguments.appendContentsOf(attributes)
+		arguments.append(contentsOf: attributes)
 		let ldapResult = cliTask(command, arguments: arguments)
 		
-		if (ldapResult.containsString("GSSAPI Error") || ldapResult.containsString("Can't contact")) {
-			throw NoADError.LDAPConnectionError
+		if (ldapResult.contains("GSSAPI Error") || ldapResult.contains("Can't contact")) {
+			throw NoADError.ldapConnectionError
 		}
 		
 		let myResult = cleanLDIF(ldapResult)
@@ -273,20 +273,20 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         return myResult
     }
     
-    func returnFullRecord(searchTerm: String) -> String {
+    func returnFullRecord(_ searchTerm: String) -> String {
         let myResult = cliTaskNoTerm("/usr/bin/ldapsearch -N -Q -LLL -H ldap://" + self.currentServer + " -b " + self.defaultNamingContext + " " + searchTerm )
         return myResult
     }
     
     // private function to resolve SRV records
     
-    private func getSRV() {
+    fileprivate func getSRV() {
         
     }
 	
     // private function to get the AD site
 	
-	private func findSite() {
+	fileprivate func findSite() {
 		// backup the defaultNamingContext so we can restore it at the end.
 		let tempDefaultNamingContext = defaultNamingContext
 		
@@ -348,10 +348,10 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 	
 	
 	
-	private func cleanLDIF(ldif: String) -> [[String:String]] {
+	fileprivate func cleanLDIF(_ ldif: String) -> [[String:String]] {
 		//var myResult = [[String:String]]()
 		
-		var ldifLines: [String] = ldif.componentsSeparatedByCharactersInSet(NSCharacterSet.newlineCharacterSet())
+		var ldifLines: [String] = ldif.components(separatedBy: CharacterSet.newlines)
 		
 		var records = [[String:String]]()
 		var record = [String:String]()
@@ -387,14 +387,14 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 				continue
 			}
 			
-			var attribute = ldifLines[lineIndex].characters.split(":", maxSplit: 1, allowEmptySlices: true).map(String.init)
+			var attribute = ldifLines[lineIndex].characters.split(separator: ":", maxSplits: 1, omittingEmptySubsequences: false).map(String.init)
 			if attribute.count == 2 {
 				
 				// Get the attribute name (before ;),
 				// then add to attributes array if it doesn't exist.
 				var attributeName = attribute[0].trim()
-				if let index = attributeName.characters.indexOf(";") {
-					attributeName = attributeName.substringToIndex(index)
+				if let index = attributeName.characters.index(of: ";") {
+					attributeName = attributeName.substring(to: index)
 				}
 				if !attributes.contains(attributeName) {
 					attributes.insert(attributeName)
@@ -406,11 +406,11 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 				// If
 				if attributeValue.hasPrefix("<") {
 					// url
-					attributeValue = attributeValue.substringFromIndex(attributeValue.startIndex.successor()).trim()
+					attributeValue = attributeValue.substring(from: attributeValue.characters.index(after: attributeValue.startIndex)).trim()
 				} else if attributeValue.hasPrefix(":") {
 					// base64
-					let tempAttributeValue = attributeValue.substringFromIndex(attributeValue.startIndex.successor()).trim()
-					if (NSData(base64EncodedString: tempAttributeValue, options: NSDataBase64DecodingOptions.init(rawValue: 0)) != nil) {
+					let tempAttributeValue = attributeValue.substring(from: attributeValue.characters.index(after: attributeValue.startIndex)).trim()
+					if (Data(base64Encoded: tempAttributeValue, options: NSData.Base64DecodingOptions.init(rawValue: 0)) != nil) {
 						attributeValue = tempAttributeValue
 					} else {
 						attributeValue = ""
@@ -418,7 +418,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 				}
 				
 				// escape double quote
-				attributeValue = attributeValue.stringByReplacingOccurrencesOfString("\"", withString: "\"\"")
+				attributeValue = attributeValue.replacingOccurrences(of: "\"", with: "\"\"")
 				
 				// save attribute value or append it to the existing
 				if let val = record[attributeName] {
@@ -437,7 +437,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 		return records
 	}
 	
-	func getAttributeForSingleRecordFromCleanedLDIF(attribute: String, ldif: [[String:String]]) -> String {
+	func getAttributeForSingleRecordFromCleanedLDIF(_ attribute: String, ldif: [[String:String]]) -> String {
 		var result: String = ""
 		
 		var foundAttribute = false
@@ -457,7 +457,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 		return result
 	}
 	
-	func getAttributesForSingleRecordFromCleanedLDIF(attributes: [String], ldif: [[String:String]]) -> [String:String] {
+	func getAttributesForSingleRecordFromCleanedLDIF(_ attributes: [String], ldif: [[String:String]]) -> [String:String] {
 		var results = [String: String]()
 		
 		var foundAttribute = false
@@ -493,17 +493,17 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     */
     // private function to clean the LDAP results if we're looking for multiple returns
 	
-    private func cleanLDAPResultsMultiple(result: String, attribute: String) -> String {
-        let lines = result.componentsSeparatedByString("\n")
+    fileprivate func cleanLDAPResultsMultiple(_ result: String, attribute: String) -> String {
+        let lines = result.components(separatedBy: "\n")
         
         var myResult = ""
         
         for i in lines {
-            if (i.containsString(attribute)) {
+            if (i.contains(attribute)) {
                 if myResult == "" {
-                    myResult = i.stringByReplacingOccurrencesOfString( attribute + ": ", withString: "")
+                    myResult = i.replacingOccurrences( of: attribute + ": ", with: "")
                 } else {
-                    myResult = myResult.stringByAppendingString( ", " + i.stringByReplacingOccurrencesOfString( attribute + ": ", withString: ""))
+                    myResult = myResult + (", " + i.replacingOccurrences( of: attribute + ": ", with: ""))
                 }
             }
         }
@@ -513,10 +513,10 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     // private function that uses netcat to create a socket connection to the LDAP server to see if it's reachable.
     // using ldapsearch for this can take a long time to timeout, this returns much quicker
     
-    private func testSocket( host: String ) -> Bool {
+    fileprivate func testSocket( _ host: String ) -> Bool {
         
         let mySocketResult = cliTask("/usr/bin/nc -G 5 -z " + host + " 389")
-        if mySocketResult.containsString("succeeded!") {
+        if mySocketResult.contains("succeeded!") {
             return true
         } else {
             return false
@@ -526,14 +526,14 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     // private function to test for an LDAP defaultNamingContext from the LDAP server
     // this tests for LDAP connectivity and gets the default naming context at the same time
     
-    private func testLDAP ( host: String ) -> Bool {
+    fileprivate func testLDAP ( _ host: String ) -> Bool {
         
-        if defaults.integerForKey("Verbose") >= 1 {
+        if defaults.integer(forKey: "Verbose") >= 1 {
             myLogger.logit(1, message:"Testing " + host + ".")
         }
         let attribute = "defaultNamingContext"
         let myLDAPResult = cliTask("/usr/bin/ldapsearch -N -LLL -Q -l 3 -s base -H ldap://" + host + " " + attribute)
-		if myLDAPResult != "" && !myLDAPResult.containsString("GSSAPI Error") && !myLDAPResult.containsString("Can't contact") {
+		if myLDAPResult != "" && !myLDAPResult.contains("GSSAPI Error") && !myLDAPResult.contains("Can't contact") {
 			let ldifResult = cleanLDIF(myLDAPResult)
 			if ( ldifResult.count > 0 ) {
 				defaultNamingContext = getAttributeForSingleRecordFromCleanedLDIF(attribute, ldif: ldifResult)
@@ -545,7 +545,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     
     // this checks to see if we can get SRV records for the domain
     
-    private func checkConnectivity( domain: String ) -> Bool {
+    fileprivate func checkConnectivity( _ domain: String ) -> Bool {
         
         self.resolver.queryType = "SRV"
 		self.resolver.queryValue = "_ldap._tcp." + domain
@@ -556,7 +556,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         self.resolver.startQuery()
         
         while ( !self.resolver.finished ) {
-            NSRunLoop.currentRunLoop().runMode(NSDefaultRunLoopMode, beforeDate: NSDate.distantFuture())
+            RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
         }
         if (self.resolver.error == nil) {
             myLogger.logit(3, message: "Did Receive Query Result: " + self.resolver.queryResults.description)
@@ -570,11 +570,11 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         }
     }
 	
-    func getSRVRecords(domain: String, srv_type: String="_ldap._tcp.") -> [String] {
+    func getSRVRecords(_ domain: String, srv_type: String="_ldap._tcp.") -> [String] {
         self.resolver.queryType = "SRV"
 		
 		self.resolver.queryValue = srv_type + domain
-		if (site != "" && !srv_type.contains("_kpasswd")) {
+		if (site != "") {
 			self.resolver.queryValue = srv_type + site + "._sites." + domain
 		}
         var results = [String]()
@@ -582,7 +582,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         self.resolver.startQuery()
         
         while ( !self.resolver.finished ) {
-            NSRunLoop.currentRunLoop().runMode(NSDefaultRunLoopMode, beforeDate: NSDate.distantFuture())
+            RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
         }
         
         if (self.resolver.error == nil) {
@@ -594,7 +594,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
             }
             
         } else {
-            myLogger.logit(3, message: "Query Error: " + self.resolver.error.description)
+            myLogger.logit(3, message: "Query Error: " + self.resolver.error.localizedDescription)
         }
         return results
     }
@@ -602,8 +602,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 	// get the list of LDAP servers from a SRV lookup
 	// Uses DNSResolver
     
-	func getHosts(domain: String ) {
-		myLogger.logit(LogLevel.debug, message: "Looking up LDAP Hosts")
+	func getHosts(_ domain: String ) {
 		self.resolver.queryType = "SRV"
 		
 		self.resolver.queryValue = "_ldap._tcp." + domain
@@ -613,7 +612,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 		self.resolver.startQuery()
 		
 		while ( !self.resolver.finished ) {
-			NSRunLoop.currentRunLoop().runMode(NSDefaultRunLoopMode, beforeDate: NSDate.distantFuture())
+			RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
 		}
 		
 		if (self.resolver.error == nil) {
@@ -626,19 +625,19 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 				let priority = record["priority"] as! Int
 				let weight = record["weight"] as! Int
 				// let port = record["port"] as! Int
-				let currentServer = LDAPServer(host: host, status: "found", priority: priority, weight: weight, timeStamp: NSDate())
+				let currentServer = LDAPServer(host: host, status: "found", priority: priority, weight: weight, timeStamp: Date())
 				newHosts.append(currentServer)
 			}
 			
 			// now to sort them
 			
-			hosts = newHosts.sort { (x, y) -> Bool in
+			hosts = newHosts.sorted { (x, y) -> Bool in
 				return ( x.priority <= y.priority )
 			}
 			self.currentState = true
 			
 		} else {
-			myLogger.logit(LogLevel.debug, message: "Query Error: " + self.resolver.error.description)
+			myLogger.logit(3, message: "Query Error: " + self.resolver.error.localizedDescription)
 			self.currentState = false
 			hosts.removeAll()
 		}
@@ -659,17 +658,17 @@ class LDAPServers : NSObject, DNSResolverDelegate {
                     
                     let mySocketResult = cliTask("/usr/bin/nc -G 5 -z " + hosts[i].host + " 389")
                     
-                    if mySocketResult.containsString("succeeded!") {
+                    if mySocketResult.contains("succeeded!") {
                         
                         // if socket test works, then attempt ldapsearch to get default naming context
                         let attribute = "defaultNamingContext"
                         let myLDAPResult = cliTaskNoTerm("/usr/bin/ldapsearch -N -LLL -Q -l 3 -s base -H ldap://" + hosts[i].host + " " + attribute)
-                        if myLDAPResult != "" && !myLDAPResult.containsString("GSSAPI Error") && !myLDAPResult.containsString("Can't contact") {
+                        if myLDAPResult != "" && !myLDAPResult.contains("GSSAPI Error") && !myLDAPResult.contains("Can't contact") {
 							let ldifResult = cleanLDIF(myLDAPResult)
 							if ( ldifResult.count > 0 ) {
 								defaultNamingContext = getAttributeForSingleRecordFromCleanedLDIF(attribute, ldif: ldifResult)
 								hosts[i].status = "live"
-								hosts[i].timeStamp = NSDate()
+								hosts[i].timeStamp = Date()
 								myLogger.logit(0, message:"Current LDAP Server is: " + hosts[i].host )
 								myLogger.logit(0, message:"Current default naming context: " + defaultNamingContext )
 								current = i
@@ -679,13 +678,13 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 						// We didn't get an actual LDIF Result... so LDAP isn't working.
 						myLogger.logit(1, message:"Server is dead by way of ldap test: " + hosts[i].host)
 						hosts[i].status = "dead"
-						hosts[i].timeStamp = NSDate()
+						hosts[i].timeStamp = Date()
 						break
 						
                     } else {
                         myLogger.logit(1, message:"Server is dead by way of socket test: " + hosts[i].host)
                         hosts[i].status = "dead"
-                        hosts[i].timeStamp = NSDate()
+                        hosts[i].timeStamp = Date()
                     }
                 }
             }
@@ -706,11 +705,11 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 	// MARK: DNSResolver Delegate Methods
 	var resolver: DNSResolver;
 	
-	func dnsResolver(resolver: DNSResolver!, didReceiveQueryResult queryResult: [NSObject : AnyObject]!) {
+	func dnsResolver(_ resolver: DNSResolver!, didReceiveQueryResult queryResult: [AnyHashable: Any]!) {
 		myLogger.logit(3, message: "Did Recieve Query Result: " + queryResult.description);
 	}
 
-	func dnsResolver(resolver: DNSResolver!, didStopQueryWithError error: NSError!) {
+	func dnsResolver(_ resolver: DNSResolver!, didStopQueryWithError error: NSError!) {
 		myLogger.logit(3, message: "Did Recieve Query Result: " + error.description);
 	}
 	

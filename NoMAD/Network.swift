@@ -12,7 +12,7 @@ internal struct Network {
 	let ip: String
 	let mask: String
 	var cidr: Int {
-		let maskOctets = mask.componentsSeparatedByString(".")
+		let maskOctets = mask.components(separatedBy: ".")
 		var numBits: Int = 0
 		for maskOctet in maskOctets {
 			numBits += Int( log2(Double(maskOctet)!+1) )
@@ -21,7 +21,7 @@ internal struct Network {
 	}
 	var networkAddress: String {
 		//should create an array of the octets that match up to each x in x.x.x.x
-		let octets = ip.componentsSeparatedByString(".")
+		let octets = ip.components(separatedBy: ".")
 		let numberNetworkOctets: Int = cidr / 8
 		let numberSubnetBits: Int = cidr % 8
 		let subnetOctet: Int
