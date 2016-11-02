@@ -108,7 +108,7 @@ class ShareMounter {
                            &requestID,
                            queue)
        {(stat:Int32, requestID:AsyncRequestID?, mountpoints:CFArray?) -> Void in
-        myLogger.logit(0, message: "Mounted \(mountpoints)")
+        myLogger.logit(.base, message: "Mounted \(mountpoints)")
         }
 
     

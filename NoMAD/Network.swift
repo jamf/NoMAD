@@ -113,7 +113,7 @@ if searchDomain != nil {
 
 let searchDomain2 = myValues!["SupplementalMatchDomains"] as! [String]
 if searchDomain2.contains(currentDomain) {
-myLogger.logit(2, message: "Using domain-specific interface.")
+myLogger.logit(.notice, message: "Using domain-specific interface.")
 
 // get the interface GUID
 let interfaceGUID = myValues!["ConfirmedServiceID"]
@@ -133,12 +133,12 @@ return network
 }
 }
 
-myLogger.logit(3, message: "Looking for primary interface.")
+myLogger.logit(.debug, message: "Looking for primary interface.")
 
 let globalInterface = SCDynamicStoreCopyValue(store, "State:/Network/Global/IPv4")
 let interface = globalInterface!["PrimaryInterface"] as! String
 
-myLogger.logit(3, message: "Primary interface is " + interface)
+myLogger.logit(.debug, message: "Primary interface is " + interface)
 
 let val = SCDynamicStoreCopyValue(store, "State:/Network/Interface/" + interface + "/IPv4") as! NSDictionary
 
@@ -219,14 +219,14 @@ return dec
 private func getInterfaceMatchingDomain() -> String? {
 	// TODO: Replace cliTask
 	// not the best looking code, but it works
-	myLogger.logit(2, message: "Trying to get interface with search domain of \(currentServer)")
+	myLogger.logit(.notice, message: "Trying to get interface with search domain of \(currentServer)")
 	let interfaceRaw = cliTask("/sbin/route get " + currentServer )
 	
 	
 	if interfaceRaw.containsString("interface") {
 		for line in interfaceRaw.componentsSeparatedByString("\n") {
 			if line.containsString("interface") {
-				myLogger.logit(3, message: line)
+				myLogger.logit(.debug, message: line)
 				return line.stringByReplacingOccurrencesOfString("  interface: ", withString: "").stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
 			}
 		}
@@ -237,7 +237,7 @@ private func getInterfaceMatchingDomain() -> String? {
 
 // MARK: IP/Subnet Stuff
 private func getPrimaryInterface() -> String {
-	myLogger.logit(2, message: "Getting the primary interface.")
+	myLogger.logit(.notice, message: "Getting the primary interface.")
 	let globalInterface = SCDynamicStoreCopyValue(store, "State:/Network/Global/IPv4")
 	let interface = globalInterface!["PrimaryInterface"] as! String
 	return interface
@@ -246,7 +246,7 @@ private func getPrimaryInterface() -> String {
 
 // private function to get IP and mask
 private func getNetworkInfoForInterface( interface:String ) -> Network {
-	myLogger.logit(3, message: "Getting network info for interface " + interface)
+	myLogger.logit(.debug, message: "Getting network info for interface " + interface)
 	
 	let val = SCDynamicStoreCopyValue(store, "State:/Network/Interface/" + interface + "/IPv4") as! [String: [String]]
 	

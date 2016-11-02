@@ -39,7 +39,7 @@ public func cliTask( _ command: String, arguments: [String]? = nil) -> String {
 	} else {
 		commandLaunchPath = command
 		commandPieces = arguments!
-        //myLogger.logit(3, message: commandLaunchPath + " " + arguments!.joinWithSeparator(" "))
+        //myLogger.logit(.debug, message: commandLaunchPath + " " + arguments!.joinWithSeparator(" "))
 	}
 	
     // make sure the launch path is the full path -- think we're going down a rabbit hole here

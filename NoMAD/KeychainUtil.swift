@@ -130,14 +130,14 @@ class KeychainUtil {
         myErr = SecItemCopyMatching(identitySearchDict as CFDictionary, &searchReturn)
         
         if myErr != 0 {
-            myLogger.logit(0, message: "Error getting Certificates.")
+            myLogger.logit(.base, message: "Error getting Certificates.")
             return nil
         }
         
         let foundCerts = searchReturn as! CFArray as Array
         
         if foundCerts.count == 0 {
-            myLogger.logit(1, message: "No certificates found.")
+            myLogger.logit(.info, message: "No certificates found.")
             return nil
         }
         
@@ -146,7 +146,7 @@ class KeychainUtil {
             myErr = SecIdentityCopyCertificate(cert as! SecIdentity, &myCert)
             
             if myErr != 0 {
-                myLogger.logit(0, message: "Error getting Certificate references.")
+                myLogger.logit(.base, message: "Error getting Certificate references.")
                 return nil
             }
                     
@@ -192,8 +192,8 @@ class KeychainUtil {
                     }
                 }
             }
-        myLogger.logit(3, message: "Found " + String(matchingCerts.count) + " certificates.")
-        myLogger.logit(3, message: "Found certificates: " + String(describing: matchingCerts) )
+        myLogger.logit(.debug, message: "Found " + String(matchingCerts.count) + " certificates.")
+        myLogger.logit(.debug, message: "Found certificates: " + String(describing: matchingCerts) )
         return lastExpire
     }
 }

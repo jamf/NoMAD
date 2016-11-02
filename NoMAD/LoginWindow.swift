@@ -107,7 +107,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 					alertController.addButton(withTitle: "Change Password")
 					alertController.beginSheetModal(for: self.window!, completionHandler: { [unowned self] (returnCode) -> Void in
 						if returnCode == NSAlertFirstButtonReturn {
-							myLogger.logit(0, message:myError!)
+							myLogger.logit(.base, message:myError!)
 							self.setWindowToChange()
 						}
 					})
@@ -115,14 +115,14 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 					let alertController = NSAlert()
 					alertController.messageText = "Invalid username. Please try again."
 					alertController.beginSheetModal(for: self.window!, completionHandler: nil)
-					myLogger.logit(0, message:myError!)
+					myLogger.logit(.base, message:myError!)
 					EXIT_FAILURE
 				//
 				default:
 					let alertController = NSAlert()
 					alertController.messageText = "Invalid password. Please try again."
 					alertController.beginSheetModal(for: self.window!, completionHandler: nil)
-					myLogger.logit(0, message:myError!)
+					myLogger.logit(.base, message:myError!)
 					EXIT_FAILURE
 				}
 				// TODO: figure out if this is the proper way to handle this.
@@ -198,13 +198,13 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 							let alertController = NSAlert()
 							alertController.messageText = "Invalid password. Please try again."
 							alertController.beginSheetModal(for: self.window!, completionHandler: nil)
-							myLogger.logit(0, message:myError!)
-							myLogger.logit(0, message:"Local password wrong.")
+							myLogger.logit(.base, message:myError!)
+							myLogger.logit(.base, message:"Local password wrong.")
 							EXIT_FAILURE
 							// TODO: figure out if this is the proper way to handle this.
 							return
 						}
-						myLogger.logit(0, message:"Local password is right. Syncing.")
+						myLogger.logit(.base, message:"Local password is right. Syncing.")
 						
 						do {
 							try noMADUser.changeCurrentConsoleUserPassword(currentLocalPassword, newPassword1: newPassword, newPassword2: newPassword, forceChange: true)
@@ -229,7 +229,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 							myError = "Could not change your local keychain password."
 						}
 					} else {
-						myLogger.logit(0, message:"Local sync cancelled by user.")
+						myLogger.logit(.base, message:"Local sync cancelled by user.")
 					}
 				})
 				
@@ -251,7 +251,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 			let alertController = NSAlert()
 			alertController.messageText = nomadUserError.description
 			alertController.beginSheetModal(for: self.window!, completionHandler: nil)
-			myLogger.logit(0, message:myError!)
+			myLogger.logit(.base, message:myError!)
 			EXIT_FAILURE
 			self.Password.stringValue = ""
 			self.close()
@@ -259,7 +259,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 			let alertController = NSAlert()
 			alertController.messageText = "Unknown error."
 			alertController.beginSheetModal(for: self.window!, completionHandler: nil)
-			myLogger.logit(0, message:myError!)
+			myLogger.logit(.base, message:myError!)
 			EXIT_FAILURE
 			self.Password.stringValue = ""
 			self.close()
@@ -325,7 +325,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                     }
                 })
             }
-            myLogger.logit(0, message:myError)
+            myLogger.logit(.base, message:myError)
         } else {
             
             let alertController = NSAlert()
@@ -409,11 +409,11 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         var myError: String = ""
         
         if (currentPassword.isEmpty || newPassword1.isEmpty || newPassword2.isEmpty) {
-            myLogger.logit(0, message:"Some of the fields are empty")
+            myLogger.logit(.base, message:"Some of the fields are empty")
             myError = "All fields must be filled in"
             return myError
         } else {
-            myLogger.logit(2, message:"All fields are filled in, continuing")
+            myLogger.logit(.notice, message:"All fields are filled in, continuing")
         }
         // If the user entered the same value for both password fields.
         if ( newPassword1 == newPassword2) {
@@ -424,7 +424,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             if (localPasswordSync == 1 ) && myError == "" {
                 do { try testLocalPassword(currentPassword) }
                 catch {
-                    myLogger.logit(1, message:"Local password check Swift = no")
+                    myLogger.logit(.info, message:"Local password check Swift = no")
                     myError = "Your current local password does not match your AD password."
                 }
             }
@@ -447,7 +447,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             // Update the keychain password
             if (localPasswordSync == 1 ) && myError == "" {
                 if (ChangePassword.changeKeychainPassword(currentPassword, newPassword1) == 0) {
-                    myLogger.logit(1, message:"Error changing local keychain")
+                    myLogger.logit(.info, message:"Error changing local keychain")
                     myError = "Could not change your local keychain password."
                 }
             }
@@ -457,7 +457,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             if (localPasswordSync == 1 ) && myError == "" {
                 do { try changeLocalPassword( currentPassword, newPassword: newPassword1) }
                 catch {
-                    myLogger.logit(0, message:"Local password change failed")
+                    myLogger.logit(.base, message:"Local password change failed")
                     myError = "Local password change failed"
                 }
             }
@@ -493,7 +493,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
     }
     
     fileprivate func sendResetMessage() -> Void {
-        myLogger.logit(0, message:"Need to reset user's password.")
+        myLogger.logit(.base, message:"Need to reset user's password.")
         notificationQueue.enqueue(resetNotificationKey, postingStyle: .now, coalesceMask: .onName, forModes: nil)
     }
 }
