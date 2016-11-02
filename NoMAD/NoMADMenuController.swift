@@ -221,10 +221,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     myLogger.logit(0, message:"Automatically logging in.")
                     cliTask("/usr/bin/kswitch -p " +  defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: "KerberosRealm")!)}
                 
-                // fire off the LoginCommand script if there is one
+                // fire off the SignInCommand script if there is one
                 
-                if defaults.string(forKey: "LoginCommand") != nil {
-                    let myResult = cliTask(defaults.string(forKey: "LoginCommand")!)
+                if defaults.string(forKey: "SignInCommand") != nil {
+                    let myResult = cliTask(defaults.string(forKey: "SignInCommand")!)
                     myLogger.logit(LogLevel.base, message: myResult)
                 }
             }
@@ -297,10 +297,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     myLogger.logit(0, message:"Automatically logging in.") }
                     cliTask("/usr/bin/kswitch -p " +  defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: "KerberosRealm")!)
                 
-                // fire off the LoginCommand script if there is one
+                // fire off the SignInCommand script if there is one
                 
-                if defaults.string(forKey: "LoginCommand") != nil {
-                    let myResult = cliTask(defaults.string(forKey: "LoginCommand")!)
+                if defaults.string(forKey: "SignInCommand") != nil {
+                    let myResult = cliTask(defaults.string(forKey: "SignInCommand")!)
                     myLogger.logit(LogLevel.base, message: myResult)
                 }
                 

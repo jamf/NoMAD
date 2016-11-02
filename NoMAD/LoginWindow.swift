@@ -265,10 +265,10 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 			self.close()
 		}
         
-        // fire off the LoginCommand script if there is one
+        // fire off the SignInCommand script if there is one
         
-        if defaults.string(forKey: "LoginCommand") != nil {
-            let myResult = cliTask(defaults.string(forKey: "LoginCommand")!)
+        if defaults.string(forKey: "SignInCommand") != nil {
+            let myResult = cliTask(defaults.string(forKey: "SignInCommand")!)
             myLogger.logit(LogLevel.base, message: myResult)
         }
         
@@ -334,8 +334,15 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             EXIT_FAILURE
             
         }
+
+        // fire off the SignInCommand script if there is one
+
+        if defaults.string(forKey: "SignInCommand") != nil {
+            let myResult = cliTask(defaults.string(forKey: "SignInCommand")!)
+            myLogger.logit(LogLevel.base, message: myResult)
+        }
     }
-    
+
     fileprivate func setWindowToLogin() {
         
         // set the size
