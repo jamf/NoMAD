@@ -55,6 +55,7 @@ let settings = [
     "ExpeditedLookup"       : 0,
     "displayName"           : "",
     "LastCertificateExpiration"   : "",
+    "LoginComamnd"  : "",
     "UserPasswordSetDates"   : NSDictionary()
 ] as [String : Any]
 
@@ -219,6 +220,13 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 } else {
                     myLogger.logit(0, message:"Automatically logging in.")
                     cliTask("/usr/bin/kswitch -p " +  defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: "KerberosRealm")!)}
+                
+                // fire off the SignInCommand script if there is one
+                
+                if defaults.string(forKey: "SignInCommand") != nil {
+                    let myResult = cliTask(defaults.string(forKey: "SignInCommand")!)
+                    myLogger.logit(LogLevel.base, message: myResult)
+                }
             }
         }
         
@@ -288,6 +296,14 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 } else {
                     myLogger.logit(0, message:"Automatically logging in.") }
                     cliTask("/usr/bin/kswitch -p " +  defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: "KerberosRealm")!)
+                
+                // fire off the SignInCommand script if there is one
+                
+                if defaults.string(forKey: "SignInCommand") != nil {
+                    let myResult = cliTask(defaults.string(forKey: "SignInCommand")!)
+                    myLogger.logit(LogLevel.base, message: myResult)
+                }
+                
             } else {
 				//bringWindowToFront(loginWindow.window!, focus: true)
                 //loginWindow.showWindow(nil)

@@ -70,7 +70,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 	to login and verify that everything is correct.
 	
 	*/
-    @IBAction func LogInClick(sender: AnyObject) {
+    @IBAction func LogInClick(_ sender: Any) {
         
         var userNameChecked = ""
         
@@ -264,6 +264,14 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 			self.Password.stringValue = ""
 			self.close()
 		}
+        
+        // fire off the SignInCommand script if there is one
+        
+        if defaults.string(forKey: "SignInCommand") != nil {
+            let myResult = cliTask(defaults.string(forKey: "SignInCommand")!)
+            myLogger.logit(LogLevel.base, message: myResult)
+        }
+        
 		// DO NOT put self.close() here to try to save code,
 		// it will mess up the local password sync code.
     }
@@ -326,8 +334,15 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             EXIT_FAILURE
             
         }
+
+        // fire off the SignInCommand script if there is one
+
+        if defaults.string(forKey: "SignInCommand") != nil {
+            let myResult = cliTask(defaults.string(forKey: "SignInCommand")!)
+            myLogger.logit(LogLevel.base, message: myResult)
+        }
     }
-    
+
     fileprivate func setWindowToLogin() {
         
         // set the size
