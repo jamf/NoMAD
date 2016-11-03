@@ -5,6 +5,8 @@ Get all of AD, with none of the bind! From now on you'll have no mo' need of AD.
 NoMAD allows for all of the functionality you would want from a Mac bound to
 Active Directory without having to actually bind to AD.
 
+Supports macOS 10.10 and above.
+
 ***Features***
 
 - Get Kerberos credentials from AD to use for single sign on for all services using Windows Authentication.
@@ -18,11 +20,14 @@ Active Directory without having to actually bind to AD.
 - Sync your AD password to your local account.
 - Users are warned about impending password expirations.
 - Customize user's help options between a Bomgar URL, web URL or local application path.
+- AD Site aware
 
 Coming in future versions:
 
 - VPN connection management for built-in VPN types.
+- Getting a Kerberos ticket as a side effect of a succesful VPN connection.
 - Mounting of arbitrary shares based upon configured values.
+- DFS resolution without needing to be bound.
 - Put x509 certificate into an 802.1x profile for use with wireless networks.
 
 Sample screen shot:
@@ -35,9 +40,31 @@ Sample screen shot:
 
 ***Current Version***
 
-v. .9 Public Beta - Most things work, but we need some testing.
+v. .9 Public Beta 6.1 - Note these are coming fast and furious. The preffered release mechanism is on the #nomad Slack channel.
 
-[NoMADv.9PB1.zip](/uploads/2fa70aed3fd6149ac46f9ca0c7bf04c4/NoMADv.9PB1.zip)
+[NoMAD-PB6.1.zip](/uploads/0861935fbb93fad46d570b9ae096d347/NoMAD-PB6.1.zip)
+
+***Video Walkthrough***
+
+If you want to get a better idea of what NoMAD can do for you, here's a quick walkthrough of some of the major features.
+
+[NoMAD video Walkthrough](https://www.youtube.com/watch?v=Z27GOBl1bWY)
+
+***Have Questions?***
+
+Feel free to report any issues that you're having or feature requests in the Issues section of the project page.
+
+You can find some of the team in #nomad on the Mac Admins Slack. If you're not already a member you can join [here](http://macadmins.org).
+
+You can also discuss the development and get notified of new commits in #nomad-dev.
+
+***Sierra Support***
+
+NoMAD is built and tested on Sierra using Swift 2.3. It almost nearly compiles in Swift 3.
+
+***Experimental Branch***
+
+New features in development, or otherwise risky and irresponsible behavior goes into this branch first.
 
 ***Thanks!***
 
