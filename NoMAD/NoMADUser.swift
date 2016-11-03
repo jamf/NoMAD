@@ -374,6 +374,9 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
 		// If it is and the current console user is not an
 		// AD account, then we'll change it.
 		var remoteUserPasswordIsCorrect = false
+
+        // treat password expired as a soft erorr and continue
+        
 		if ( noMADUser.checkRemoteUserPassword(password: currentPassword) == nil || noMADUser.checkRemoteUserPassword(password: currentPassword) == "Password has expired" ) {
 			remoteUserPasswordIsCorrect = true
 		}
