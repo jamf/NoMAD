@@ -42,21 +42,21 @@ class KlistUtil {
     func getTicketJSON() {
         
         realm = defaults.string(forKey: "KerberosRealm") ?? ""
-        myLogger.logit(3, message:"Looking for tickets using realm: " + realm )
+        myLogger.logit(.debug, message:"Looking for tickets using realm: " + realm )
         dateFormatter.dateFormat = "yyyyMMddHHmmss"
         let rawJSON = cliTask("/usr/bin/klist --json")
-        myLogger.logit(3, message: "Raw ticket cache: " + String(rawJSON))
+        myLogger.logit(.debug, message: "Raw ticket cache: " + String(rawJSON))
         rawTicket = rawJSON.data(using: String.Encoding.utf8)!
         if returnAllTickets().contains("cache") {
             if returnAllTickets().contains("@" + realm ) {
-                myLogger.logit(0, message:"Ticket found for domain: " + realm)
+                myLogger.logit(.base, message:"Ticket found for domain: " + realm)
                 state = true
             } else {
-                myLogger.logit(0, message:"No ticket found for domain: " + realm)
+                myLogger.logit(.base, message:"No ticket found for domain: " + realm)
                 state = false
             }
         } else {
-            myLogger.logit(0, message:"No tickets found.")
+            myLogger.logit(.base, message:"No tickets found.")
             state = false
         }
     }
@@ -66,16 +66,16 @@ class KlistUtil {
         let rawJSON = cliTask("/usr/bin/klist -l --json")
         let rawCache = rawJSON.data(using: String.Encoding.utf8)!
         if returnAllTickets().contains("cache") {
-            myLogger.logit(0, message:"Tickets found.")
+            myLogger.logit(.base, message:"Tickets found.")
             if returnAllTickets().contains("@" + defaults.string(forKey: "KerberosRealm")!) {
-                myLogger.logit(0, message:"Ticket found for domain: " + defaults.string(forKey: "KerberosRealm")!)
+                myLogger.logit(.base, message:"Ticket found for domain: " + defaults.string(forKey: "KerberosRealm")!)
                 state = true
             } else {
-                myLogger.logit(0, message:"No ticket found for domain: " + defaults.string(forKey: "KerberosRealm")!)
+                myLogger.logit(.base, message:"No ticket found for domain: " + defaults.string(forKey: "KerberosRealm")!)
                 state = false
             }
         } else {
-            myLogger.logit(0, message:"No tickets found.")
+            myLogger.logit(.base, message:"No tickets found.")
             state = false
         }
     }
@@ -103,20 +103,20 @@ class KlistUtil {
             
             if let tickets = jsonDict?["tickets"] as? [[String: AnyObject]] {
                 for ticket in tickets {
-                    myLogger.logit(3, message: "Looking at ticket: " + String(describing: ticket))
+                    myLogger.logit(.debug, message: "Looking at ticket: " + String(describing: ticket))
                     
                     if let tick = ticket["Principal"] as? String {
                         let issue = dateFormatter.date(from: (ticket["Issued"] as? String)!)
                         let expire = dateFormatter.date(from: (ticket["Expires"] as? String)!)
                         let myTicket = Ticket(Issued: issue!, Expires: expire!, Principal: tick )
-                        myLogger.logit(3, message: "Appending ticket: " + String(describing: myTicket))
+                        myLogger.logit(.debug, message: "Appending ticket: " + String(describing: myTicket))
                         allTickets.append(myTicket)
                         state = true
                     }
                 }
             }
         } catch {
-            myLogger.logit(3, message: "No tickets found")
+            myLogger.logit(.debug, message: "No tickets found")
             state = false        }
              getExpiration()
     }
@@ -135,18 +135,18 @@ class KlistUtil {
             for ticket in allTickets {
                 if ticket.Principal.contains("krbtgt") {
                     expire = ticket.Expires
-                    myLogger.logit(3, message:"Checking for expired tickets.")
+                    myLogger.logit(.debug, message:"Checking for expired tickets.")
                     // we need to check for an expired TGT and set state to false if we are
                     
                     if expire.compare(Date()) == ComparisonResult.orderedAscending {
-                        myLogger.logit(0, message:"Tickets are expired")
+                        myLogger.logit(.base, message:"Tickets are expired")
                         state = false
                     }
                     break
                 }
             }
         } else {
-            myLogger.logit(3, message:"No tickets, so no need to look for expired tickets.")
+            myLogger.logit(.debug, message:"No tickets, so no need to look for expired tickets.")
         }
     }
     

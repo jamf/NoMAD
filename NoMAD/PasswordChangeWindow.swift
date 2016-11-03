@@ -96,7 +96,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
                     }
                 })
             }
-            myLogger.logit(0, message: myError)
+            myLogger.logit(.base, message: myError)
         } else {
             
             let alertController = NSAlert()
@@ -247,11 +247,11 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 		var myError: String = ""
 		
 		if (currentPassword.isEmpty || newPassword1.isEmpty || newPassword2.isEmpty) {
-            myLogger.logit(1, message: "Some of the fields are empty")
+            myLogger.logit(.info, message: "Some of the fields are empty")
 			myError = "All fields must be filled in"
 			return myError
 		} else {
-			myLogger.logit(1, message: "All fields are filled in, continuing")
+			myLogger.logit(.info, message: "All fields are filled in, continuing")
 		}
 		
 		// If the user entered the same value for both password fields.
@@ -259,7 +259,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 			let localPasswordSync = defaults.integerForKey("LocalPasswordSync")
 			
 			let ChangePassword: KerbUtil = KerbUtil()
-            myLogger.logit(0, message: "Change password for " + username )
+            myLogger.logit(.base, message: "Change password for " + username )
             
             // check to see we can match the kpasswd server with the LDAP server
             let kerbPrefFile = checkKpasswdServer(true)
@@ -309,7 +309,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 			// Update the keychain password
 			if (localPasswordSync == 1 ) && myError == "" {
 				if (ChangePassword.changeKeychainPassword(currentPassword, newPassword1) == 0) {
-					myLogger.logit(0, message: "Error changing local keychain")
+					myLogger.logit(.base, message: "Error changing local keychain")
 					myError = "Could not change your local keychain password."
 				}
 			}
@@ -319,7 +319,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 			if (localPasswordSync == 1 ) && myError == "" {
 				do { try changeLocalPassword( currentPassword, newPassword: newPassword1) }
 				catch {
-					myLogger.logit(0, message: "Local password change failed")
+					myLogger.logit(.base, message: "Local password change failed")
 					myError = "Local password change failed"
 				}
 			}

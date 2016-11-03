@@ -8,38 +8,48 @@
 
 import Foundation
 
-// simple class to handle logging in a semi-sane way
-struct LogLevel {
-	/**
-	Lots and lots and lots of details.
-	*/
-	static let debug = 3
-	/**
-	Nice to know
-	*/
-	static let notice = 2
-	/**
-	Positive info
-	*/
-	static let info = 1
-	/**
-	Errors
-	*/
-	static let base = 0
+/// The individual logging levels to use when logging in NoMAD
+///
+/// - base: General errors
+/// - info: Positive info
+/// - notice: Nice to know issues that may, or may not, cause issues
+/// - debug: Lots of verbose logging
+enum LogLevel: Int {
+
+    /// General errors
+    case base = 0
+
+    /// Positive info
+    case info = 1
+
+    /// Nice to know issues that may, or may not, cause issues
+    case notice = 2
+
+    /// Lots of verbose logging
+    case debug = 3
 }
 
 
+/// Simple class to handle logging levels. Use the `LogLevel` enum to specify the logging details.
 class Logger {
-    var loglevel: Int
-    
+
+    /// Set to a level from `LogLevel` enum to control what gets logged.
+    var loglevel: LogLevel
+
     init() {
         //loglevel = defaults.integerForKey("Verbose")
-        loglevel = 3
+        //TODO: Set the default logging level to debug currently. Fix this later.
+        loglevel = .debug
     }
-    
-    func logit(_ level: Int, message: String) {
-        if (level <= loglevel) {
-            NSLog("level: " + String(level) + " - " + message)
+
+    /// Simple wrapper around NSLog to provide control of logging.
+    ///
+    /// - Parameters:
+    ///   - level: A value from `LogLevel` enum
+    ///   - message: A `String` that describes the information to be logged
+    func logit(_ level: LogLevel, message: String) {
+        if (level.rawValue <= loglevel.rawValue) {
+            NSLog("level: \(level) - " + message)
         }
     }
 }

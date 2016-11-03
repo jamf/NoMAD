@@ -123,7 +123,7 @@ class ADLDAPPing {
 	init?( ldapPingBase64String: String ) {
 		//let cleanedNetlogonBase64String = netlogonBase64String.componentsSeparatedByString(": ")[1]
 		guard let netlogonData = Data(base64Encoded: ldapPingBase64String, options: []) else {
-			myLogger.logit(2, message: "Netlogon base64 encoded string is invalid.")
+			myLogger.logit(.notice, message: "Netlogon base64 encoded string is invalid.")
 			return nil
 		}
 		var cursor = UInt16(24)
@@ -136,11 +136,11 @@ class ADLDAPPing {
 		flags = DS_FLAGS(rawValue: tempFlags)
 		//flags.contains(.DS_PDC_FLAG)
 		
-		myLogger.logit(3, message: "Is PDC: " + flags.contains(.DS_PDC_FLAG).description)
-		myLogger.logit(3, message: "Is GC: " + flags.contains(.DS_GC_FLAG).description)
-		myLogger.logit(3, message: "Is LDAP: " + flags.contains(.DS_LDAP_FLAG).description)
-		myLogger.logit(3, message: "Is Writable: " + flags.contains(.DS_WRITABLE_FLAG).description)
-		myLogger.logit(3, message: "Is Closest: " + flags.contains(.DS_CLOSEST_FLAG).description)
+		myLogger.logit(.debug, message: "Is PDC: " + flags.contains(.DS_PDC_FLAG).description)
+		myLogger.logit(.debug, message: "Is GC: " + flags.contains(.DS_GC_FLAG).description)
+		myLogger.logit(.debug, message: "Is LDAP: " + flags.contains(.DS_LDAP_FLAG).description)
+		myLogger.logit(.debug, message: "Is Writable: " + flags.contains(.DS_WRITABLE_FLAG).description)
+		myLogger.logit(.debug, message: "Is Closest: " + flags.contains(.DS_CLOSEST_FLAG).description)
 		
 		
 		// END
@@ -152,11 +152,11 @@ class ADLDAPPing {
 		} catch let error {
 			switch error {
 			case DecodeError.cyclicPointer:
-				myLogger.logit(2, message: "Decoding RFC1035 string created loop.")
+				myLogger.logit(.notice, message: "Decoding RFC1035 string created loop.")
 			case DecodeError.illegalTag:
-				myLogger.logit(2, message: "Decoding RFC1035 string found an illegal tag.")
+				myLogger.logit(.notice, message: "Decoding RFC1035 string found an illegal tag.")
 			default:
-				myLogger.logit(2, message: "Unable to decode RFC1035 string.")
+				myLogger.logit(.notice, message: "Unable to decode RFC1035 string.")
 			}
 			return nil
 		}
@@ -166,11 +166,11 @@ class ADLDAPPing {
 		} catch let error {
 			switch error {
 			case DecodeError.cyclicPointer:
-				myLogger.logit(2, message: "Decoding RFC1035 string created loop.")
+				myLogger.logit(.notice, message: "Decoding RFC1035 string created loop.")
 			case DecodeError.illegalTag:
-				myLogger.logit(2, message: "Decoding RFC1035 string found an illegal tag.")
+				myLogger.logit(.notice, message: "Decoding RFC1035 string found an illegal tag.")
 			default:
-				myLogger.logit(2, message: "Unable to decode RFC1035 string.")
+				myLogger.logit(.notice, message: "Unable to decode RFC1035 string.")
 			}
 			return nil
 		}
@@ -180,11 +180,11 @@ class ADLDAPPing {
 		} catch let error {
 			switch error {
 			case DecodeError.cyclicPointer:
-				myLogger.logit(2, message: "Decoding RFC1035 string created loop.")
+				myLogger.logit(.notice, message: "Decoding RFC1035 string created loop.")
 			case DecodeError.illegalTag:
-				myLogger.logit(2, message: "Decoding RFC1035 string found an illegal tag.")
+				myLogger.logit(.notice, message: "Decoding RFC1035 string found an illegal tag.")
 			default:
-				myLogger.logit(2, message: "Unable to decode RFC1035 string.")
+				myLogger.logit(.notice, message: "Unable to decode RFC1035 string.")
 			}
 			return nil
 		}
@@ -194,11 +194,11 @@ class ADLDAPPing {
 		} catch let error {
 			switch error {
 			case DecodeError.cyclicPointer:
-				myLogger.logit(2, message: "Decoding RFC1035 string created loop.")
+				myLogger.logit(.notice, message: "Decoding RFC1035 string created loop.")
 			case DecodeError.illegalTag:
-				myLogger.logit(2, message: "Decoding RFC1035 string found an illegal tag.")
+				myLogger.logit(.notice, message: "Decoding RFC1035 string found an illegal tag.")
 			default:
-				myLogger.logit(2, message: "Unable to decode RFC1035 string.")
+				myLogger.logit(.notice, message: "Unable to decode RFC1035 string.")
 			}
 			return nil
 		}
@@ -208,11 +208,11 @@ class ADLDAPPing {
 		} catch let error {
 			switch error {
 			case DecodeError.cyclicPointer:
-				myLogger.logit(2, message: "Decoding RFC1035 string created loop.")
+				myLogger.logit(.notice, message: "Decoding RFC1035 string created loop.")
 			case DecodeError.illegalTag:
-				myLogger.logit(2, message: "Decoding RFC1035 string found an illegal tag.")
+				myLogger.logit(.notice, message: "Decoding RFC1035 string found an illegal tag.")
 			default:
-				myLogger.logit(2, message: "Unable to decode RFC1035 string.")
+				myLogger.logit(.notice, message: "Unable to decode RFC1035 string.")
 			}
 			return nil
 		}
@@ -222,11 +222,11 @@ class ADLDAPPing {
 		} catch let error {
 			switch error {
 			case DecodeError.cyclicPointer:
-				myLogger.logit(2, message: "Decoding RFC1035 string created loop.")
+				myLogger.logit(.notice, message: "Decoding RFC1035 string created loop.")
 			case DecodeError.illegalTag:
-				myLogger.logit(2, message: "Decoding RFC1035 string found an illegal tag.")
+				myLogger.logit(.notice, message: "Decoding RFC1035 string found an illegal tag.")
 			default:
-				myLogger.logit(2, message: "Unable to decode RFC1035 string.")
+				myLogger.logit(.notice, message: "Unable to decode RFC1035 string.")
 			}
 			return nil
 		}
@@ -236,11 +236,11 @@ class ADLDAPPing {
 		} catch let error {
 			switch error {
 			case DecodeError.cyclicPointer:
-				myLogger.logit(2, message: "Decoding RFC1035 string created loop.")
+				myLogger.logit(.notice, message: "Decoding RFC1035 string created loop.")
 			case DecodeError.illegalTag:
-				myLogger.logit(2, message: "Decoding RFC1035 string found an illegal tag.")
+				myLogger.logit(.notice, message: "Decoding RFC1035 string found an illegal tag.")
 			default:
-				myLogger.logit(2, message: "Unable to decode RFC1035 string.")
+				myLogger.logit(.notice, message: "Unable to decode RFC1035 string.")
 			}
 			return nil
 		}
@@ -250,11 +250,11 @@ class ADLDAPPing {
 		} catch let error {
 			switch error {
 			case DecodeError.cyclicPointer:
-				myLogger.logit(2, message: "Decoding RFC1035 string created loop.")
+				myLogger.logit(.notice, message: "Decoding RFC1035 string created loop.")
 			case DecodeError.illegalTag:
-				myLogger.logit(2, message: "Decoding RFC1035 string found an illegal tag.")
+				myLogger.logit(.notice, message: "Decoding RFC1035 string found an illegal tag.")
 			default:
-				myLogger.logit(2, message: "Unable to decode RFC1035 string.")
+				myLogger.logit(.notice, message: "Unable to decode RFC1035 string.")
 			}
 			return nil
 		}

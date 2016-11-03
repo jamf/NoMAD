@@ -70,21 +70,21 @@ class UserInformation {
     
     func getCertDate() {
         guard let myCertExpire = myKeychainUtil.findCertExpiration(userDisplayName, defaultNamingContext: myLDAPServers.defaultNamingContext) else {
-            myLogger.logit(0, message: "Could not retrive certificate")
+            myLogger.logit(.base, message: "Could not retrive certificate")
             return
         }
         
         if myCertExpire > Date().addingTimeInterval(2592000) {
-            myLogger.logit(1, message: "Last certificate will expire on: " + String(describing: myCertExpire))
+            myLogger.logit(.info, message: "Last certificate will expire on: " + String(describing: myCertExpire))
         }
 
         if myCertExpire.timeIntervalSinceNow < 0  {
-            myLogger.logit(0, message: "Your certificate has already expired.")
+            myLogger.logit(.base, message: "Your certificate has already expired.")
         }
 
         // Act on Cert expiration
         if myCertExpire.timeIntervalSinceNow < 2592000 && myCertExpire.timeIntervalSinceNow > 0 {
-            myLogger.logit(0, message: "Your certificate will expire in less than 30 days.")
+            myLogger.logit(.base, message: "Your certificate will expire in less than 30 days.")
             
             // TODO: Trigger an action
             
@@ -108,7 +108,7 @@ class UserInformation {
 		} else {
 			status = "NoMADMenuController-NotConnected"
 			connected = false
-			myLogger.logit(0, message: "Not connected to the network")
+			myLogger.logit(.base, message: "Not connected to the network")
 		}
 		
 		// 2. check for tickets
@@ -119,12 +119,12 @@ class UserInformation {
 			if userPrincipal.contains(realm) {
 				userPrincipalShort = userPrincipal.replacingOccurrences(of: "@" + realm, with: "")
 				status = "Logged In"
-				myLogger.logit(0, message: "Logged in.")
+				myLogger.logit(.base, message: "Logged in.")
 			} else {
-				myLogger.logit(0, message: "No ticket for realm.")
+				myLogger.logit(.base, message: "No ticket for realm.")
 			}
 		} else {
-			myLogger.logit(0, message: "No tickets")
+			myLogger.logit(.base, message: "No tickets")
 		}
 		
 		// 3. if connected and with tickets, get password aging information
@@ -152,7 +152,7 @@ class UserInformation {
 				userDisplayName = ldapResult["displayName"] ?? ""
 				groupsTemp = ldapResult["memberOf"]
 			} else {
-				myLogger.logit(0, message: "Unable to find user.")
+				myLogger.logit(.base, message: "Unable to find user.")
 				canary = false
 			}
 			if canary {
@@ -217,7 +217,7 @@ class UserInformation {
 				// user has been previously set so we can check it
 				
 				if ((UserPasswordSetDates[userPrincipal] as? NSDate ) != userPasswordSetDate) {
-					myLogger.logit(0, message: "Password was changed underneath us.")
+					myLogger.logit(.base, message: "Password was changed underneath us.")
 					
 					// TODO: Do something if we get here
 					
@@ -254,7 +254,7 @@ class UserInformation {
 						groups.append(b)
 					}
 				}
-				myLogger.logit(1, message: "You are a member of: " + groups.joined(separator: ", ") )
+				myLogger.logit(.info, message: "You are a member of: " + groups.joined(separator: ", ") )
 			}
             
             // look at local certs if an x509 CA has been set
@@ -288,7 +288,7 @@ class UserInformation {
         } else {
             status = "NoMADMenuController-NotConnected"
             connected = false
-            myLogger.logit(0, message: "Not connected to the network")
+            myLogger.logit(.base, message: "Not connected to the network")
         }
 		
         // 2. check for tickets
@@ -299,12 +299,12 @@ class UserInformation {
             if userPrincipal.containsString(realm) {
                 userPrincipalShort = userPrincipal.stringByReplacingOccurrencesOfString("@" + realm, withString: "")
                 status = "Logged In"
-                myLogger.logit(0, message: "Logged in.")
+                myLogger.logit(.base, message: "Logged in.")
             } else {
-                myLogger.logit(0, message: "No ticket for realm.")
+                myLogger.logit(.base, message: "No ticket for realm.")
             }
         } else {
-            myLogger.logit(0, message: "No tickets")
+            myLogger.logit(.base, message: "No tickets")
         }
 		
         // 3. if connected and with tickets, get password aging information
@@ -319,7 +319,7 @@ class UserInformation {
 			
 			guard let ldifResult = try? myLDAPServers.getLDAPInformation([attribute], searchTerm: searchTerm) else {
 				passwordSetDate = ""
-				myLogger.logit(0, message: "We shouldn't have gotten here... tell Joel")
+				myLogger.logit(.base, message: "We shouldn't have gotten here... tell Joel")
 				canary = false
 			}
 			passwordSetDate = myLDAPServers.getAttributeForSingleRecordFromCleanedLDIF(attribute, ldif: ldifResult)
@@ -331,7 +331,7 @@ class UserInformation {
 				
                 // Now get default password expiration time - this may not be set for environments with no password cycling requirements
                 
-                myLogger.logit(1, message: "Getting password aging info")
+                myLogger.logit(.info, message: "Getting password aging info")
                 
                 // First try msDS-UserPasswordExpiryTimeComputed
 				var computedExpireDateRaw: String
@@ -416,7 +416,7 @@ class UserInformation {
                 // user has been previously set so we can check it
                 
 				if ((UserPasswordSetDates[userPrincipal] as? NSDate )! != userPasswordSetDate) {
-					myLogger.logit(0, message: "Password was changed underneath us.")
+					myLogger.logit(.base, message: "Password was changed underneath us.")
                     
 					// TODO: Do something if we get here
                     
@@ -454,7 +454,7 @@ class UserInformation {
                 }
             }
             
-            myLogger.logit(1, message: "You are a member of: " + groups.joinWithSeparator(", ") )
+            myLogger.logit(.info, message: "You are a member of: " + groups.joinWithSeparator(", ") )
             
             // look at local certs if an x509 CA has been set
             
@@ -463,20 +463,20 @@ class UserInformation {
             let myCertExpire = myKeychainUtil.findCertExpiration(userDisplayName, defaultNamingContext: myLDAPServers.defaultNamingContext )
             
             if myCertExpire != 0 {
-                myLogger.logit(1, message: "Last certificate will expire on: " + String(myCertExpire) )
+                myLogger.logit(.info, message: "Last certificate will expire on: " + String(myCertExpire) )
             }
             
             // Act on Cert expiration
             
             if myCertExpire.timeIntervalSinceNow < 2592000 && myCertExpire.timeIntervalSinceNow > 0 {
-                myLogger.logit(0, message: "Your certificate will expire in less than 30 days.")
+                myLogger.logit(.base, message: "Your certificate will expire in less than 30 days.")
                 
                 // TODO: Trigger an action
                 
                 }
                 
                 if myCertExpire.timeIntervalSinceNow < 0 && myCertExpire != NSDate.distantPast() {
-                    myLogger.logit(0, message: "Your certificate has already expired.")
+                    myLogger.logit(.base, message: "Your certificate has already expired.")
                 }
                 
                 defaults.setObject(myCertExpire, forKey: "LastCertificateExpiration")
@@ -494,7 +494,7 @@ class UserInformation {
             defaults.setObject(groups, forKey: "Groups")
         }
         
-        myLogger.logit(0, message: "User information update done.")
+        myLogger.logit(.base, message: "User information update done.")
     }
     */
     

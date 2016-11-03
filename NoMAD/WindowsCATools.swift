@@ -24,7 +24,7 @@ class WindowsCATools {
         do {
             try FileManager.default.createDirectory(at: directoryURL as URL, withIntermediateDirectories: true, attributes: nil)
         } catch {
-            myLogger.logit(1, message: "Can't create temp directory")
+            myLogger.logit(.info, message: "Can't create temp directory")
         }
         
         // we should return this in case there's an error 
@@ -38,7 +38,7 @@ class WindowsCATools {
             certCSR = try NSString(contentsOfFile: path!.path, encoding: String.Encoding.ascii.rawValue) as String
         } catch {
             certCSR = ""
-            myLogger.logit(0, message: "Error getting CSR")
+            myLogger.logit(.base, message: "Error getting CSR")
         }
         certTemplate = template
         myImportError = 0
@@ -180,9 +180,9 @@ class WindowsCATools {
                         print(attributesToUpdate)
  */
                         						
-                        //myLogger.logit(0, message: String(self.myImportError))
+                        //myLogger.logit(.base, message: String(self.myImportError))
 						
-                        //myLogger.logit(0, message: SecCopyErrorMessageString(self.myImportError, nil) as! String)
+                        //myLogger.logit(.base, message: SecCopyErrorMessageString(self.myImportError, nil) as! String)
 					}
 					
 					if (error != nil) {

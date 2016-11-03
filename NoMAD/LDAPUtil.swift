@@ -36,7 +36,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     
     var current: Int {
         didSet(LDAPServer) {
-            myLogger.logit(0, message:"Setting the current LDAP server to: " + hosts[current].host)
+            myLogger.logit(.base, message:"Setting the current LDAP server to: " + hosts[current].host)
         }
     }
     
@@ -51,7 +51,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         current = 0
 		
 		self.resolver = DNSResolver.init()
-        //myLogger.logit(2, message:"Looking up tickets.")
+        //myLogger.logit(.notice, message:"Looking up tickets.")
         //tickets.getDetails()
     }
     
@@ -59,7 +59,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     
     func setDomain(_ domain: String) {
         
-        myLogger.logit(0, message:"Finding LDAP Servers.")
+        myLogger.logit(.base, message:"Finding LDAP Servers.")
         
         // set the domain to the current AD Domain
         
@@ -165,7 +165,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     // TODO: just re-test the non-dead servers
     
     func dead() {
-        myLogger.logit(1, message:"Marking server as dead: " + hosts[current].host)
+        myLogger.logit(.info, message:"Marking server as dead: " + hosts[current].host)
         hosts[current].status = "dead"
         hosts[current].timeStamp = Date()
         if (hosts.count > current) { testHosts() }
@@ -205,13 +205,13 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         if testSocket(self.currentServer) && testLDAP(self.currentServer) && tickets.state {
             
             if  defaultNamingContext != "" && site != "" {
-                myLogger.logit(0, message:"Using same LDAP server: " + self.currentServer)
+                myLogger.logit(.base, message:"Using same LDAP server: " + self.currentServer)
             } else {
                 findSite()
             }
         } else {
             if tickets.state {
-                myLogger.logit(0, message:"Can't connect to LDAP server, finding new one")
+                myLogger.logit(.base, message:"Can't connect to LDAP server, finding new one")
             }
         networkChange()
         }
@@ -529,7 +529,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     fileprivate func testLDAP ( _ host: String ) -> Bool {
         
         if defaults.integer(forKey: "Verbose") >= 1 {
-            myLogger.logit(1, message:"Testing " + host + ".")
+            myLogger.logit(.info, message:"Testing " + host + ".")
         }
         let attribute = "defaultNamingContext"
         let myLDAPResult = cliTask("/usr/bin/ldapsearch -N -LLL -Q -l 3 -s base -H ldap://" + host + " " + attribute)
@@ -559,12 +559,12 @@ class LDAPServers : NSObject, DNSResolverDelegate {
             RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
         }
         if (self.resolver.error == nil) {
-            myLogger.logit(3, message: "Did Receive Query Result: " + self.resolver.queryResults.description)
+            myLogger.logit(.debug, message: "Did Receive Query Result: " + self.resolver.queryResults.description)
             //let dnsResults = self.resolver.queryResults as! [[String:AnyObject]]
             currentState = true
             return true
         } else {
-             myLogger.logit(2, message: "Can't find any SRV records for domain.")
+             myLogger.logit(.notice, message: "Can't find any SRV records for domain.")
             currentState = false
             return false
         }
@@ -586,7 +586,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         }
         
         if (self.resolver.error == nil) {
-            myLogger.logit(3, message: "Did Receive Query Result: " + self.resolver.queryResults.description)
+            myLogger.logit(.debug, message: "Did Receive Query Result: " + self.resolver.queryResults.description)
             let records = self.resolver.queryResults as! [[String:AnyObject]]
             for record: Dictionary in records {
                 let host = record["target"] as! String
@@ -594,7 +594,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
             }
             
         } else {
-            myLogger.logit(3, message: "Query Error: " + self.resolver.error.localizedDescription)
+            myLogger.logit(.debug, message: "Query Error: " + self.resolver.error.localizedDescription)
         }
         return results
     }
@@ -616,7 +616,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 		}
 		
 		if (self.resolver.error == nil) {
-			myLogger.logit(3, message: "Did Receive Query Result: " + self.resolver.queryResults.description)
+			myLogger.logit(.debug, message: "Did Receive Query Result: " + self.resolver.queryResults.description)
 			
 			var newHosts = [LDAPServer]()
 			let records = self.resolver.queryResults as! [[String:AnyObject]]
@@ -637,7 +637,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 			self.currentState = true
 			
 		} else {
-			myLogger.logit(3, message: "Query Error: " + self.resolver.error.localizedDescription)
+			myLogger.logit(.debug, message: "Query Error: " + self.resolver.error.localizedDescription)
 			self.currentState = false
 			hosts.removeAll()
 		}
@@ -651,7 +651,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         if self.currentState == true {
             for i in 0...( hosts.count - 1) {
                 if hosts[i].status != "dead" {
-                    myLogger.logit(1, message:"Trying host: " + hosts[i].host)
+                    myLogger.logit(.info, message:"Trying host: " + hosts[i].host)
                     
                     // socket test first - this could be falsely negative
                     // also note that this needs to return stderr
@@ -669,20 +669,20 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 								defaultNamingContext = getAttributeForSingleRecordFromCleanedLDIF(attribute, ldif: ldifResult)
 								hosts[i].status = "live"
 								hosts[i].timeStamp = Date()
-								myLogger.logit(0, message:"Current LDAP Server is: " + hosts[i].host )
-								myLogger.logit(0, message:"Current default naming context: " + defaultNamingContext )
+								myLogger.logit(.base, message:"Current LDAP Server is: " + hosts[i].host )
+								myLogger.logit(.base, message:"Current default naming context: " + defaultNamingContext )
 								current = i
 								break
 							}
 						}
 						// We didn't get an actual LDIF Result... so LDAP isn't working.
-						myLogger.logit(1, message:"Server is dead by way of ldap test: " + hosts[i].host)
+						myLogger.logit(.info, message:"Server is dead by way of ldap test: " + hosts[i].host)
 						hosts[i].status = "dead"
 						hosts[i].timeStamp = Date()
 						break
 						
                     } else {
-                        myLogger.logit(1, message:"Server is dead by way of socket test: " + hosts[i].host)
+                        myLogger.logit(.info, message:"Server is dead by way of socket test: " + hosts[i].host)
                         hosts[i].status = "dead"
                         hosts[i].timeStamp = Date()
                     }
@@ -695,7 +695,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         }
         
         if hosts.last!.status == "dead" {
-            myLogger.logit(0, message: "All DCs in are dead! You should really fix this.")
+            myLogger.logit(.base, message: "All DCs in are dead! You should really fix this.")
             self.currentState = false
         } else {
             self.currentState = true
@@ -706,11 +706,11 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 	var resolver: DNSResolver;
 	
 	func dnsResolver(_ resolver: DNSResolver!, didReceiveQueryResult queryResult: [AnyHashable: Any]!) {
-		myLogger.logit(3, message: "Did Recieve Query Result: " + queryResult.description);
+		myLogger.logit(.debug, message: "Did Recieve Query Result: " + queryResult.description);
 	}
 
 	func dnsResolver(_ resolver: DNSResolver!, didStopQueryWithError error: NSError!) {
-		myLogger.logit(3, message: "Did Recieve Query Result: " + error.description);
+		myLogger.logit(.debug, message: "Did Recieve Query Result: " + error.description);
 	}
 	
 }
