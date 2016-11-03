@@ -574,7 +574,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         self.resolver.queryType = "SRV"
 		
 		self.resolver.queryValue = srv_type + domain
-		if (site != "") {
+		if (site != "" && !srv_type.contains("_kpasswd")) {
 			self.resolver.queryValue = srv_type + site + "._sites." + domain
 		}
         var results = [String]()
