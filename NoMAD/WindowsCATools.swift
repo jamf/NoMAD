@@ -232,7 +232,7 @@ class WindowsCATools {
             for line in responseLines! {
                 if line.contains("certnew.cer?ReqID=") {
                     myresponse = reqIDRegEx.stringByReplacingMatches(in: line, options: [], range: NSMakeRange(0, line.characters.count), withTemplate: "")
-                    myresponse = reqIDRegExEnd.stringByReplacingMatches(in: myresponse, options: [], range: NSMakeRange(0, myresponse.characters.count), withTemplate: "").replacingOccurrences(of: "\r|", with: "")
+                    myresponse = reqIDRegExEnd.stringByReplacingMatches(in: myresponse, options: [], range: NSMakeRange(0, myresponse.characters.count), withTemplate: "").replacingOccurrences(of: "\r", with: "")
                     return Int(myresponse)!
                 }
             }
