@@ -407,13 +407,13 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         // start the animation
         
-        startMenuAnimationTimer()
+            //startMenuAnimationTimer()
             
-            // check for http://
+        // check for http://
             
-            if !certCATest.contains("http://") || !certCATest.contains("https://") {
+        if !certCATest.contains("http://") || !certCATest.contains("https://") {
                 certCATest = "https://" + certCATest
-            }
+        }
         
         let certCARequest = WindowsCATools(serverURL: certCATest, template: certTemplateTest)
         certCARequest.certEnrollment()
@@ -426,7 +426,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         // stop the animation
         
-        stopMenuAnimationTimer()
+        //stopMenuAnimationTimer()
     }
     
     
