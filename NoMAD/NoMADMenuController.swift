@@ -115,6 +115,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
     let myKeychainUtil = KeychainUtil()
     let GetCredentials: KerbUtil = KerbUtil()
+
     //let myShareMounter = ShareMounter()
 
     var menuAnimationTimer = Timer()
@@ -128,15 +129,15 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // on startup we check for preferences
 
     override func awakeFromNib() {
-        
+
         myLogger.logit(.base, message:"---Starting NoMAD---")
-        
+
         let version = String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!)
         let build = String(describing: Bundle.main.infoDictionary!["CFBundleVersion"]!)
-        
+
         myLogger.logit(.base, message:"NoMAD version: " + version )
         myLogger.logit(.base, message:"NoMAD build: " + build )
-        
+
         startMenuAnimationTimer()
 
         preferencesWindow = PreferencesWindow()
@@ -156,9 +157,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         defaults.register(defaults: settings)
 
         // find out if a Self Service Solution exists - hide the menu if it's not there
-        
+
         myLogger.logit(.notice, message:"Looking for Self Service applications")
-        
+
         let selfServiceFileManager = FileManager.default
 
         if selfServiceFileManager.fileExists(atPath: "/Applications/Self Service.app") {
@@ -220,9 +221,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 } else {
                     myLogger.logit(.base, message:"Automatically logging in.")
                     cliTask("/usr/bin/kswitch -p " +  defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: "KerberosRealm")!)}
-                
+
                 // fire off the SignInCommand script if there is one
-                
+
                 if defaults.string(forKey: "SignInCommand") != nil {
                     let myResult = cliTask(defaults.string(forKey: "SignInCommand")!)
                     myLogger.logit(LogLevel.base, message: myResult)
@@ -248,7 +249,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 myLogger.logit(.info, message: "Realm not setting, so creating Realm from the Domain.")
                 defaults.set(defaults.string(forKey: "ADDomain")?.uppercased(), forKey: "KerberosRealm")
             }
-            
+
             //myLogger.logit(.info, message: "Configuring Chrome.")
             //configureChrome()
 
@@ -265,6 +266,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         NoMADMenuLockScreen.title = "Lock Screen".translate
         NoMADMenuChangePassword.title = "NoMADMenuController-ChangePassword".translate
+
+        originalGetCertificateMenu = NoMADMenuGetCertificate
+        originalGetCertificateMenuDate = NoMADMenuGetCertificateDate
+
     }
 
 
@@ -290,15 +295,15 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 myErr = GetCredentials.getKerbCredentials( myPass, defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: "KerberosRealm")!)
                 if myErr != nil {
                     myLogger.logit(.base, message:"Error attempting to automatically log in.")
-					//bringWindowToFront(loginWindow.window!, focus: true)
+                    //bringWindowToFront(loginWindow.window!, focus: true)
                     //loginWindow.showWindow(nil)
                     loginWindow.window!.forceToFrontAndFocus(nil)
                 } else {
                     myLogger.logit(.base, message:"Automatically logging in.") }
-                    cliTask("/usr/bin/kswitch -p " +  defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: "KerberosRealm")!)
-                
+                cliTask("/usr/bin/kswitch -p " +  defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: "KerberosRealm")!)
+
                 // fire off the SignInCommand script if there is one
-                
+
                 if defaults.string(forKey: "SignInCommand") != nil {
                     let myResult = cliTask(defaults.string(forKey: "SignInCommand")!)
                     myLogger.logit(LogLevel.base, message: myResult)
@@ -330,26 +335,26 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     @IBAction func NoMADMenuClickLogOut(_ sender: NSMenuItem) {
 
         // remove their password from the keychain if they're logging out
-        
-		if ( (defaults.string(forKey: "LastUser") ?? "") != "" ) {
-        
-			if ( defaults.bool(forKey: "UseKeychain")) {
-				var myKeychainItem: SecKeychainItem?
-					
-				var myErr: OSStatus
-				let serviceName = "NoMAD"
-				var passLength: UInt32 = 0
-				var passPtr: UnsafeMutableRawPointer? = nil
-				let name = defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: "KerberosRealm")!
-				
-				myErr = SecKeychainFindGenericPassword(nil, UInt32(serviceName.characters.count), serviceName, UInt32(name.characters.count), name, &passLength, &passPtr, &myKeychainItem)
-				
-				if ( myErr == 0 ) {
-					SecKeychainItemDelete(myKeychainItem!)
-				} else {
-					myLogger.logit(.base, message:"Error deleting Keychain entry.")
-				}
-			}
+
+        if ( (defaults.string(forKey: "LastUser") ?? "") != "" ) {
+
+            if ( defaults.bool(forKey: "UseKeychain")) {
+                var myKeychainItem: SecKeychainItem?
+
+                var myErr: OSStatus
+                let serviceName = "NoMAD"
+                var passLength: UInt32 = 0
+                var passPtr: UnsafeMutableRawPointer? = nil
+                let name = defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: "KerberosRealm")!
+
+                myErr = SecKeychainFindGenericPassword(nil, UInt32(serviceName.characters.count), serviceName, UInt32(name.characters.count), name, &passLength, &passPtr, &myKeychainItem)
+
+                if ( myErr == 0 ) {
+                    SecKeychainItemDelete(myKeychainItem!)
+                } else {
+                    myLogger.logit(.base, message:"Error deleting Keychain entry.")
+                }
+            }
         } else {
             loginWindow.showWindow(nil)
             loginWindow.window!.forceToFrontAndFocus(nil)
@@ -499,7 +504,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         myLogger.logit(.base, message:"User password set date: " + String(describing: userInformation.userPasswordSetDate))
         myLogger.logit(.base, message:"User password expire date: " + String(describing: userInformation.userPasswordExpireDate))
         myLogger.logit(.base, message:"User home share: " + userInformation.userHome)
-        
+
         myLogger.logit(.base, message:"---- User Record ----")
         logEntireUserRecord()
         myLogger.logit(.base, message:"---- Kerberos Tickets ----")
@@ -549,12 +554,15 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.NoMADMenuLogIn.action = #selector(self.renewTickets)
             self.NoMADMenuLogOut.isEnabled = true
             self.NoMADMenuChangePassword.isEnabled = true
-            self.NoMADMenuGetCertificate.isEnabled = true
+
+            if (self.NoMADMenuGetCertificate != nil)  {
+                self.NoMADMenuGetCertificate.isEnabled = true
+            }
         }
 
         if defaults.bool(forKey: "HidePrefs") {
-                    self.NoMADMenuPreferences.isEnabled = false
-			myLogger.logit(.notice, message:NSLocalizedString("NoMADMenuController-PreferencesDisabled", comment: "Log; Text; Preferences Disabled"))
+            self.NoMADMenuPreferences.isEnabled = false
+            myLogger.logit(.notice, message:NSLocalizedString("NoMADMenuController-PreferencesDisabled", comment: "Log; Text; Preferences Disabled"))
         }
 
         return true
@@ -623,23 +631,23 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         // only autologin if 1) we're set to use the keychain, 2) we have don't already have a Kerb ticket and 3) we can contact the LDAP servers
         if ( defaults.bool(forKey: "UseKeychain")) && !userInformation.myLDAPServers.tickets.state && userInformation.myLDAPServers.currentState {
             myLogger.logit(.info, message: "Attempting to auto-login")
-            
-                var myPass: String = ""
-            
-                // check if there's a last user
-            
-                if ( (defaults.string(forKey: "LastUser") ?? "") != "" ) {
-                    var myErr: String? = ""
-                    do { myPass = try myKeychainUtil.findPassword(defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: "KerberosRealm")!) } catch {
-                        loginWindow.window!.forceToFrontAndFocus(nil)
-                    }
-                    myErr = GetCredentials.getKerbCredentials( myPass, defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: "KerberosRealm")!)
-                    if myErr != nil {
-                        myLogger.logit(.base, message: "Error attempting to automatically log in.")
-                        loginWindow.window!.forceToFrontAndFocus(nil)
-                    } else {
-                        myLogger.logit(.base, message:"Automatically logging in.")
-                        cliTask("/usr/bin/kswitch -p " +  defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: "KerberosRealm")!)}
+
+            var myPass: String = ""
+
+            // check if there's a last user
+
+            if ( (defaults.string(forKey: "LastUser") ?? "") != "" ) {
+                var myErr: String? = ""
+                do { myPass = try myKeychainUtil.findPassword(defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: "KerberosRealm")!) } catch {
+                    loginWindow.window!.forceToFrontAndFocus(nil)
+                }
+                myErr = GetCredentials.getKerbCredentials( myPass, defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: "KerberosRealm")!)
+                if myErr != nil {
+                    myLogger.logit(.base, message: "Error attempting to automatically log in.")
+                    loginWindow.window!.forceToFrontAndFocus(nil)
+                } else {
+                    myLogger.logit(.base, message:"Automatically logging in.")
+                    cliTask("/usr/bin/kswitch -p " +  defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: "KerberosRealm")!)}
             }
         }
     }
@@ -667,10 +675,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // update the user info and build the actual menu
 
     func updateUserInfo() {
-        
+
         myLogger.logit(.base, message:"Updating User Info")
-        
-        
+
+
         // make sure the domain we're using is the domain we should be using
 
         if ( userInformation.myLDAPServers.getDomain() != defaults.string(forKey: "ADDomain")!) {
@@ -866,10 +874,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 } else {
                     NoMADMenuGetCertificateDate.title = "No Certs"
                 }
-            } else {
-                NoMADMenuGetCertificateDate.title = "No Certs"
             }
-            
         } else {
             myLogger.logit(.info, message:"Time between system checks is too short, delaying")
             if ( !updateScheduled ) {
