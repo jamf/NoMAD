@@ -864,7 +864,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
                 // remove the Get Certificate menu if not needed
                 // add it back in when it is needed
-
+                
                 if defaults.string(forKey: "x509CA") == "" && self.NoMADMenuGetCertificate != nil {
                     self.NoMADMenu.removeItem(self.NoMADMenuGetCertificate)
                     self.NoMADMenu.removeItem(self.NoMADMenuGetCertificateDate)
