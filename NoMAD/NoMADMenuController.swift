@@ -107,6 +107,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
     // let userInfoAPI = UserInfoAPI()
 
+    var originalGetCertificateMenu : NSMenuItem!
+    var originalGetCertificateMenuDate : NSMenuItem!
+
     let userInformation = UserInformation()
 
     var lastStatusCheck = Date().addingTimeInterval(-5000)
@@ -858,8 +861,24 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 } else {
                     defaults.set(Double(defaults.integer(forKey: "PasswordExpireAlertTime") ?? 1296000), forKey: "LastPasswordWarning")
                 }
+
+                // remove the Get Certificate menu if not needed
+                // add it back in when it is needed
+                
+                if defaults.string(forKey: "x509CA") == "" && self.NoMADMenuGetCertificate != nil {
+                    self.NoMADMenu.removeItem(self.NoMADMenuGetCertificate)
+                    self.NoMADMenu.removeItem(self.NoMADMenuGetCertificateDate)
+                    self.NoMADMenuGetCertificate = nil
+                } else if defaults.string(forKey: "x509CA") != "" && self.NoMADMenuGetCertificate == nil{
+                    self.NoMADMenuGetCertificate = self.originalGetCertificateMenu
+                    self.NoMADMenuGetCertificateDate = self.originalGetCertificateMenuDate
+                    let lockIndex = self.NoMADMenu.index(of: self.NoMADMenuLockScreen)
+                    self.NoMADMenu.insertItem(self.NoMADMenuGetCertificate, at: (lockIndex + 1 ))
+                    self.NoMADMenu.insertItem(self.NoMADMenuGetCertificateDate, at: (lockIndex + 2 ))
+                }
                 
             })
+            
             // mark the time and clear the update scheduled flag
             
             lastStatusCheck = Date()
@@ -868,9 +887,13 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             dateFormatter.dateStyle = .medium
             dateFormatter.timeStyle = .short
             
-            if let expireDate = defaults.object(forKey: "LastCertificateExpiration") as? Date {
-                if expireDate != Date.distantPast {
-                    NoMADMenuGetCertificateDate.title = dateFormatter.string(from: expireDate)
+            if self.NoMADMenuGetCertificate != nil {
+                if let expireDate = defaults.object(forKey: "LastCertificateExpiration") as? Date {
+                    if expireDate != Date.distantPast {
+                        NoMADMenuGetCertificateDate.title = dateFormatter.string(from: expireDate)
+                    } else {
+                        NoMADMenuGetCertificateDate.title = "No Certs"
+                    }
                 } else {
                     NoMADMenuGetCertificateDate.title = "No Certs"
                 }
