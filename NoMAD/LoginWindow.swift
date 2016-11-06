@@ -458,7 +458,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
      myError = "Could not change your local keychain password."
      }
      }
-     
+
      // If there wasn't an error and Sync Local Password is set
      // Update the local password
      if (localPasswordSync == 1 ) && myError == "" {
@@ -482,7 +482,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         let record: ODRecord = result[0] as! ODRecord
         try record.verifyPassword(password)
     }
-    
+
     // TODO: Clean this up.
     // Needed to attempt to sync local password with AD on login.
     fileprivate func changeLocalPassword(_ oldPassword: String, newPassword: String) throws -> Bool {
