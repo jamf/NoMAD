@@ -88,9 +88,9 @@ class KeychainUtil {
     }
 
     // return the last expiration date for any certs that match the domain and user
-    
+
     func findCertExpiration(_ identifier: String, defaultNamingContext: String) -> Date? {
-        
+
         var matchingCerts = [certDates]()
         var myCert: SecCertificate? = nil
         var searchReturn: AnyObject? = nil
@@ -114,10 +114,10 @@ class KeychainUtil {
 
             // this matches e-mail address
             kSecMatchEmailAddressIfPresent as String : identifier as CFString,
-            
+
             // this matches Common Name
             //kSecMatchSubjectContains as String : user as CFString,
-            
+
             kSecReturnRef as String: true as AnyObject,
             kSecMatchLimit as String : kSecMatchLimitAll as AnyObject
         ]
@@ -183,9 +183,9 @@ class KeychainUtil {
                             if lastExpire.timeIntervalSinceNow < expireDate.timeIntervalSinceNow {
                                 lastExpire = expireDate
                             }
-
+                            
                             // append to the list
-
+                            
                             matchingCerts.append(certificate)
                         }
                     }

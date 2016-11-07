@@ -861,7 +861,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 } else {
                     defaults.set(Double(defaults.integer(forKey: "PasswordExpireAlertTime") ?? 1296000), forKey: "LastPasswordWarning")
                 }
-
+                
                 // remove the Get Certificate menu if not needed
                 // add it back in when it is needed
                 
