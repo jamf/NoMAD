@@ -20,7 +20,7 @@ struct Ticket {
 }
 
 class KlistUtil {
-    
+
     // defaults
 
     var allTickets = [Ticket]()
@@ -33,14 +33,14 @@ class KlistUtil {
     var state = true
     var rawTicket: Data = Data()
     var realm = ""
-    
+
     init() {
         dateFormatter.dateFormat = "yyyyMMddHHmmss"
         realm = defaults.string(forKey: "KerberosRealm") ?? ""
     }
-    
+
     func getTicketJSON() {
-        
+
         realm = defaults.string(forKey: "KerberosRealm") ?? ""
         myLogger.logit(.debug, message:"Looking for tickets using realm: " + realm )
         dateFormatter.dateFormat = "yyyyMMddHHmmss"
@@ -60,7 +60,7 @@ class KlistUtil {
             state = false
         }
     }
-    
+
     func getCacheListJSON() {
         dateFormatter.dateFormat = "yyyyMMddHHmmss"
         let rawJSON = cliTask("/usr/bin/klist -l --json")
@@ -79,57 +79,57 @@ class KlistUtil {
             state = false
         }
     }
-    
+
     func getDetails() {
-        
+
         getTicketJSON()
-        
+
         if state {
-        
-        // clear the previous tickets
-        
-        allTickets.removeAll()
-        
-        do {
-            let jsonDict = try JSONSerialization.jsonObject(with: rawTicket, options: .allowFragments) as? [String: AnyObject]
-            
-            // ye haw lets downcast and iterate!
-            
-            cache = jsonDict?["cache"] as! String
-            principal = jsonDict?["principal"] as! String
-            
-            short = principal.replacingOccurrences(of: "@" + defaults.string(forKey: "KerberosRealm")!, with: "").trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
-            state = false
-            
-            if let tickets = jsonDict?["tickets"] as? [[String: AnyObject]] {
-                for ticket in tickets {
-                    myLogger.logit(.debug, message: "Looking at ticket: " + String(describing: ticket))
-                    
-                    if let tick = ticket["Principal"] as? String {
-                        let issue = dateFormatter.date(from: (ticket["Issued"] as? String)!)
-                        let expire = dateFormatter.date(from: (ticket["Expires"] as? String)!)
-                        let myTicket = Ticket(Issued: issue!, Expires: expire!, Principal: tick )
-                        myLogger.logit(.debug, message: "Appending ticket: " + String(describing: myTicket))
-                        allTickets.append(myTicket)
-                        state = true
+
+            // clear the previous tickets
+
+            allTickets.removeAll()
+
+            do {
+                let jsonDict = try JSONSerialization.jsonObject(with: rawTicket, options: .allowFragments) as? [String: AnyObject]
+
+                // ye haw lets downcast and iterate!
+
+                cache = jsonDict?["cache"] as! String
+                principal = jsonDict?["principal"] as! String
+
+                short = principal.replacingOccurrences(of: "@" + defaults.string(forKey: "KerberosRealm")!, with: "").trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+                state = false
+
+                if let tickets = jsonDict?["tickets"] as? [[String: AnyObject]] {
+                    for ticket in tickets {
+                        myLogger.logit(.debug, message: "Looking at ticket: " + String(describing: ticket))
+
+                        if let tick = ticket["Principal"] as? String {
+                            let issue = dateFormatter.date(from: (ticket["Issued"] as? String)!)
+                            let expire = dateFormatter.date(from: (ticket["Expires"] as? String)!)
+                            let myTicket = Ticket(Issued: issue!, Expires: expire!, Principal: tick )
+                            myLogger.logit(.debug, message: "Appending ticket: " + String(describing: myTicket))
+                            allTickets.append(myTicket)
+                            state = true
+                        }
                     }
                 }
+            } catch {
+                myLogger.logit(.debug, message: "No tickets found")
+                state = false        }
+            getExpiration()
+        }
+
+        func getPrincipal() -> String {
+            if state {
+                return principal
+            } else {
+                return "No Ticket"
             }
-        } catch {
-            myLogger.logit(.debug, message: "No tickets found")
-            state = false        }
-             getExpiration()
-    }
-    
-    func getPrincipal() -> String {
-        if state {
-            return principal
-        } else {
-            return "No Ticket"
-        }
         }
     }
-    
+
     func getExpiration() {
         if state {
             for ticket in allTickets {
@@ -137,7 +137,7 @@ class KlistUtil {
                     expire = ticket.Expires
                     myLogger.logit(.debug, message:"Checking for expired tickets.")
                     // we need to check for an expired TGT and set state to false if we are
-                    
+
                     if expire.compare(Date()) == ComparisonResult.orderedAscending {
                         myLogger.logit(.base, message:"Tickets are expired")
                         state = false
@@ -149,7 +149,7 @@ class KlistUtil {
             myLogger.logit(.debug, message:"No tickets, so no need to look for expired tickets.")
         }
     }
-    
+
     func getIssue() -> Date {
         if state {
             for ticket in allTickets {
@@ -163,7 +163,7 @@ class KlistUtil {
         }
         return issue
     }
-    
+
     func returnAllTickets() -> String {
         return String(data: rawTicket, encoding: String.Encoding.utf8)!
     }
