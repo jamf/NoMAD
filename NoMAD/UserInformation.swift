@@ -33,6 +33,8 @@ class UserInformation {
     var userPasswordExpireDate = NSDate()
     var userHome: String
 
+    var userEmail: String
+
     var lastSetDate = NSDate()
 
     var userCertDate = NSDate()
@@ -56,6 +58,7 @@ class UserInformation {
         userCertDate = NSDate()
         serverPasswordExpirationDefault = Double(0)
         userDisplayName = ""
+        userEmail = ""
         if defaults.dictionary(forKey: "UserPasswordSetDates") != nil {
             UserPasswordSetDates = defaults.dictionary(forKey: "UserPasswordSetDates")! as [String : AnyObject]
         }
@@ -69,7 +72,7 @@ class UserInformation {
     // Determine what certs are available locally
 
     func getCertDate() {
-        guard let myCertExpire = myKeychainUtil.findCertExpiration(userDisplayName, defaultNamingContext: myLDAPServers.defaultNamingContext) else {
+        guard let myCertExpire = myKeychainUtil.findCertExpiration(userEmail, defaultNamingContext: myLDAPServers.defaultNamingContext) else {
             myLogger.logit(.base, message: "Could not retrive certificate")
             return
         }
@@ -138,7 +141,7 @@ class UserInformation {
 
         if connected && myLDAPServers.tickets.state {
 
-            let attributes = ["pwdLastSet", "msDS-UserPasswordExpiryTimeComputed", "userAccountControl", "homeDirectory", "displayName", "memberOf"] // passwordSetDate, computedExpireDateRaw, userPasswordUACFlag, userHomeTemp, userDisplayName, groupTemp
+            let attributes = ["pwdLastSet", "msDS-UserPasswordExpiryTimeComputed", "userAccountControl", "homeDirectory", "displayName", "memberOf", "mail"] // passwordSetDate, computedExpireDateRaw, userPasswordUACFlag, userHomeTemp, userDisplayName, groupTemp
             // "maxPwdAge" // passwordExpirationLength
 
             let searchTerm = "sAMAccountName=" + userPrincipalShort
@@ -151,6 +154,7 @@ class UserInformation {
                 userHomeTemp = ldapResult["homeDirectory"] ?? ""
                 userDisplayName = ldapResult["displayName"] ?? ""
                 groupsTemp = ldapResult["memberOf"]
+                userEmail = ldapResult["mail"] ?? ""
             } else {
                 myLogger.logit(.base, message: "Unable to find user.")
                 canary = false
