@@ -415,7 +415,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
             // start the animation
 
-            startMenuAnimationTimer()
+            //startMenuAnimationTimer()
 
             // check for http://
 
@@ -434,7 +434,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         // stop the animation
 
-        stopMenuAnimationTimer()
+        //stopMenuAnimationTimer()
     }
 
 
@@ -887,13 +887,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             dateFormatter.dateStyle = .medium
             dateFormatter.timeStyle = .short
             
-            if self.NoMADMenuGetCertificate != nil {
-                if let expireDate = defaults.object(forKey: "LastCertificateExpiration") as? Date {
-                    if expireDate != Date.distantPast {
-                        NoMADMenuGetCertificateDate.title = dateFormatter.string(from: expireDate)
-                    } else {
-                        NoMADMenuGetCertificateDate.title = "No Certs"
-                    }
+            if let expireDate = defaults.object(forKey: "LastCertificateExpiration") as? Date {
+                if expireDate != Date.distantPast {
+                    NoMADMenuGetCertificateDate.title = dateFormatter.string(from: expireDate)
                 } else {
                     NoMADMenuGetCertificateDate.title = "No Certs"
                 }
