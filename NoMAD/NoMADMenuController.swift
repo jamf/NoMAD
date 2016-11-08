@@ -273,6 +273,14 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         originalGetCertificateMenu = NoMADMenuGetCertificate
         originalGetCertificateMenuDate = NoMADMenuGetCertificateDate
 
+        // determine if we should show the Password Change Window
+
+        if let showPasswordChange = defaults.string(forKey: "ChangePasswordType") {
+            if showPasswordChange == "None" {
+                self.NoMADMenu.removeItem(NoMADMenuChangePassword)
+            }
+        }
+
     }
 
 
@@ -328,9 +336,14 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // show the password change window when the menu item is clicked
 
     @IBAction func NoMADMenuClickChangePassword(_ sender: NSMenuItem) {
-        if let changeCommand = defaults.string(forKey: "ChangeCommand") {
-            let myResult = cliTask(changeCommand)
-            myLogger.logit(.base, message: myResult)
+        if let showPasswordChange = defaults.string(forKey: "ChangePasswordType") {
+            switch showPasswordChange {
+            case "Kerberos" :
+                 passwordChangeWindow.window!.forceToFrontAndFocus(nil)
+            default :
+                let myPasswordChange = PasswordChange()
+                myPasswordChange.passwordChange()
+            }
         } else {
             passwordChangeWindow.window!.forceToFrontAndFocus(nil)
         }
@@ -539,7 +552,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.NoMADMenuLogIn.isEnabled = false
             self.NoMADMenuLogIn.title = "NoMADMenuController-LogIn".translate
             self.NoMADMenuLogOut.isEnabled = false
+            if (self.NoMADMenuChangePassword != nil) {
             self.NoMADMenuChangePassword.isEnabled = false
+            }
             self.NoMADMenuGetCertificate.isEnabled = false
 
             // twiddles what needs to be twiddled for connected but not logged in
@@ -550,7 +565,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.NoMADMenuLogIn.title = "NoMADMenuController-LogIn".translate
             self.NoMADMenuLogIn.action = #selector(self.NoMADMenuClickLogIn)
             self.NoMADMenuLogOut.isEnabled = false
+            if (self.NoMADMenuChangePassword != nil) {
             self.NoMADMenuChangePassword.isEnabled = false
+            }
             self.NoMADMenuGetCertificate.isEnabled = false
 
         }
@@ -559,8 +576,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.NoMADMenuLogIn.title = NSLocalizedString("NoMADMenuController-RenewTickets", comment: "Menu; Button; Renew Tickets")
             self.NoMADMenuLogIn.action = #selector(self.renewTickets)
             self.NoMADMenuLogOut.isEnabled = true
+            if (self.NoMADMenuChangePassword != nil) {
             self.NoMADMenuChangePassword.isEnabled = true
-
+            }
             if (self.NoMADMenuGetCertificate != nil)  {
                 self.NoMADMenuGetCertificate.isEnabled = true
             }
