@@ -328,9 +328,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // show the password change window when the menu item is clicked
 
     @IBAction func NoMADMenuClickChangePassword(_ sender: NSMenuItem) {
-        //passwordChangeWindow.showWindow(nil)
-        passwordChangeWindow.window!.forceToFrontAndFocus(nil)
-
+        if let changeCommand = defaults.string(forKey: "ChangeCommand") {
+            let myResult = cliTask(changeCommand)
+            myLogger.logit(.base, message: myResult)
+        } else {
+            passwordChangeWindow.window!.forceToFrontAndFocus(nil)
+        }
     }
 
     // kill the Kerb ticket when clicked
