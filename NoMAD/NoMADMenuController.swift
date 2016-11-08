@@ -537,7 +537,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.NoMADMenuLogIn.title = "NoMADMenuController-LogIn".translate
             self.NoMADMenuLogOut.isEnabled = false
             self.NoMADMenuChangePassword.isEnabled = false
-            self.NoMADMenuGetCertificate.isEnabled = false
+            if (self.NoMADMenuGetCertificate != nil)  {
+                self.NoMADMenuGetCertificate.isEnabled = false
+            }
 
             // twiddles what needs to be twiddled for connected but not logged in
 
@@ -548,7 +550,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.NoMADMenuLogIn.action = #selector(self.NoMADMenuClickLogIn)
             self.NoMADMenuLogOut.isEnabled = false
             self.NoMADMenuChangePassword.isEnabled = false
-            self.NoMADMenuGetCertificate.isEnabled = false
+            if (self.NoMADMenuGetCertificate != nil)  {
+                self.NoMADMenuGetCertificate.isEnabled = false
+            }
 
         }
         else {
@@ -861,7 +865,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 } else {
                     defaults.set(Double(defaults.integer(forKey: "PasswordExpireAlertTime") ?? 1296000), forKey: "LastPasswordWarning")
                 }
-
+                
                 // remove the Get Certificate menu if not needed
                 // add it back in when it is needed
                 
