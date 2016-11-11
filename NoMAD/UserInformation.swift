@@ -73,7 +73,8 @@ class UserInformation {
 
     func getCertDate() {
         guard let myCertExpire = myKeychainUtil.findCertExpiration(userEmail, defaultNamingContext: myLDAPServers.defaultNamingContext) else {
-            myLogger.logit(.base, message: "Could not retrive certificate")
+            myLogger.logit(.base, message: "Could not retrive certificate.")
+            defaults.set("", forKey: "LastCertificateExpiration")
             return
         }
 

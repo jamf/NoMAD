@@ -167,17 +167,7 @@ class KeychainUtil {
                             myLogger.logit(.debug, message: "Certificate NT Principal: " + String(describing: myNTPrincipal) )
                             if String(describing: myNTPrincipal) == ( defaults.string(forKey: "UserShortName")! + "@" + (defaults.string(forKey: "KerberosRealm")?.lowercased())!) {
 myLogger.logit(.debug, message: "Found cert match")
-                                // find the LDAP URI to see if it matches our current defaultNamingContex
 
-                                if myOIDs["1.3.6.1.5.5.7.1.1"] != nil {
-                                    let URI : NSDictionary = myOIDs["1.3.6.1.5.5.7.1.1"] as! NSDictionary
-                                    let URIValue = URI["value"]! as! NSArray
-                                    for values in URIValue {
-                                        let value = values as! NSDictionary
-
-                                        if String(_cocoaString: value["label"]! as AnyObject) == "URI" {
-
-                                            if String(describing: value["value"]!).contains(defaultNamingContext){
 
                                                 // we have a match now gather the expire date and the serial
 
@@ -200,10 +190,6 @@ myLogger.logit(.debug, message: "Found cert match")
                                                 // append to the list
                                                 
                                                 matchingCerts.append(certificate)
-                                            }
-                                        }
-                                    }
-                                }
 
                             } else {
 myLogger.logit(.debug, message: "Certificate doesn't match current user principal.")
