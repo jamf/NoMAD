@@ -196,9 +196,9 @@ class NoMADUser {
 		}
 		
 		let kerbPrefFile = checkKpasswdServer(true)
-		guard kerbPrefFile else {
+		if !kerbPrefFile  {
 			myLogger.logit(LogLevel.base, message: "Unable to create Kerberos preference file.")
-			throw NoMADUserError.itemNotFound("Unable to create Kerberos preference file.")
+            //throw NoMADUserError.itemNotFound("Unable to create Kerberos preference file.")
 		}
 		
 		let remotePasswordChanger: KerbUtil = KerbUtil()
