@@ -113,10 +113,10 @@ class KeychainUtil {
             kSecAttrKeyClass as String: kSecAttrKeyClassPrivate as String as String as AnyObject,
             
             // this matches e-mail address
-            kSecMatchEmailAddressIfPresent as String : identifier as CFString,
+            //kSecMatchEmailAddressIfPresent as String : identifier as CFString,
             
             // this matches Common Name
-            //kSecMatchSubjectContains as String : user as CFString,
+            //kSecMatchSubjectContains as String : identifier as CFString,
             
             kSecReturnRef as String: true as AnyObject,
             kSecMatchLimit as String : kSecMatchLimitAll as AnyObject
@@ -153,44 +153,67 @@ class KeychainUtil {
                     // get the full OID set for the cert
                     
                     let myOIDs : NSDictionary = SecCertificateCopyValues(myCert!, nil, nil)!
-            
-                    // find the LDAP URI to see if it matches our current defaultNamingContex
-            
-            if myOIDs["1.3.6.1.5.5.7.1.1"] != nil {
-                 let URI : NSDictionary = myOIDs["1.3.6.1.5.5.7.1.1"] as! NSDictionary
-                    let URIValue = URI["value"]! as! NSArray
-                    for values in URIValue {
-                        let value = values as! NSDictionary
-                        
-                        if String(_cocoaString: value["label"]! as AnyObject) == "URI" {
 
-                            if String(describing: value["value"]!).contains(defaultNamingContext){
-                                
-                                // we have a match now gather the expire date and the serial
-                                
-                                let expireOID : NSDictionary = myOIDs["2.5.29.24"]! as! NSDictionary
-                                let expireDate = expireOID["value"]! as! Date
-                                
-                                // this finds the serial
-                                
-                                let serialDict : NSDictionary = myOIDs["2.16.840.1.113741.2.1.1.1.3"]! as! NSDictionary
-                                let serial = serialDict["value"]! as! String
-                                
-                                // pack the data up into a certDate
-                                
-                                let certificate = certDates( serial: serial, expireDate: expireDate)
-                                
-                                if lastExpire.timeIntervalSinceNow < expireDate.timeIntervalSinceNow {
-                                    lastExpire = expireDate
+            // look at the NT Principal name
+
+            if myOIDs["2.5.29.17"] != nil {
+                let SAN = myOIDs["2.5.29.17"] as! NSDictionary
+                let SANValues = SAN["value"]! as! NSArray
+                for values in SANValues {
+                    let value = values as! NSDictionary
+                    if String(_cocoaString: value["label"]! as AnyObject) == "1.3.6.1.4.1.311.20.2.3" {
+                        if let myNTPrincipal = value["value"] {
+                            // we have an NT Principal, let's see if it's Kerberos Principal we're looking for
+                            myLogger.logit(.debug, message: "Certificate NT Principal: " + String(describing: myNTPrincipal) )
+                            if String(describing: myNTPrincipal) == ( defaults.string(forKey: "UserShortName")! + "@" + (defaults.string(forKey: "KerberosRealm")?.lowercased())!) {
+myLogger.logit(.debug, message: "Found cert match")
+                                // find the LDAP URI to see if it matches our current defaultNamingContex
+
+                                if myOIDs["1.3.6.1.5.5.7.1.1"] != nil {
+                                    let URI : NSDictionary = myOIDs["1.3.6.1.5.5.7.1.1"] as! NSDictionary
+                                    let URIValue = URI["value"]! as! NSArray
+                                    for values in URIValue {
+                                        let value = values as! NSDictionary
+
+                                        if String(_cocoaString: value["label"]! as AnyObject) == "URI" {
+
+                                            if String(describing: value["value"]!).contains(defaultNamingContext){
+
+                                                // we have a match now gather the expire date and the serial
+
+                                                let expireOID : NSDictionary = myOIDs["2.5.29.24"]! as! NSDictionary
+                                                let expireDate = expireOID["value"]! as! Date
+
+                                                // this finds the serial
+
+                                                let serialDict : NSDictionary = myOIDs["2.16.840.1.113741.2.1.1.1.3"]! as! NSDictionary
+                                                let serial = serialDict["value"]! as! String
+
+                                                // pack the data up into a certDate
+
+                                                let certificate = certDates( serial: serial, expireDate: expireDate)
+
+                                                if lastExpire.timeIntervalSinceNow < expireDate.timeIntervalSinceNow {
+                                                    lastExpire = expireDate
+                                                }
+                                                
+                                                // append to the list
+                                                
+                                                matchingCerts.append(certificate)
+                                            }
+                                        }
+                                    }
                                 }
-                                
-                                // append to the list
-                                
-                                matchingCerts.append(certificate)
+
+                            } else {
+myLogger.logit(.debug, message: "Certificate doesn't match current user principal.")
                             }
                         }
+
                     }
                 }
+            }
+            
             }
         myLogger.logit(.debug, message: "Found " + String(matchingCerts.count) + " certificates.")
         myLogger.logit(.debug, message: "Found certificates: " + String(describing: matchingCerts) )
