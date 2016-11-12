@@ -4,65 +4,65 @@
 <dict>
 	<key>ADDomain</key>
 	<string></string>
-	<key>KerberosRealm</key>
+	<key>displayName</key>
 	<string></string>
-	<key>Verbose</key>
-	<false/>
-	<key>userCommandHotKey1</key>
-	<string></string>
-	<key>userCommandName1</key>
-	<string></string>
-	<key>userCommandTask1</key>
-	<string></string>
-	<key>SecondsToRenew</key>
-	<integer>7200</integer>
-	<key>RenewTickets</key>
-	<true/>
-	<key>userPasswordExpireDate</key>
-	<string></string>
-	<key>PasswordExpireAlertTime</key>
-	<integer>1296000</integer>
-	<key>LastPasswordWarning</key>
-	<string>1296000</string>
-	<key>HidePrefs</key>
-	<false/>
 	<key>ExpeditedLookup</key>
 	<false/>
-	<key>displayName</key>
+	<key>GetHelpType</key>
+	<string></string>
+	<key>GetHelpOptions</key>
+	<string></string>
+	<key>Groups</key>
+	<array/>
+	<key>HidePrefs</key>
+	<false/>
+	<key>KerberosRealm</key>
 	<string></string>
 	<key>LastCertificateExpiration</key>
 	<string></string>
 	<key>LoginComamnd</key>
 	<string></string>
-	<key>x509CA</key>
-	<string></string>
-	<key>Template</key>
-	<string></string>
-	<key>GetHelpType</key>
-	<string></string>
-	<key>GetHelpOptions</key>
-	<string></string>
 	<key>LDAPServerList</key>
 	<string></string>
-	<key>ShowHome</key>
+	<key>LocalPasswordSync</key>
 	<false/>
-	<key>userPrincipal</key>
-	<string></string>
 	<key>LastUser</key>
 	<string></string>
-	<key>UseKeychain</key>
+	<key>LastPasswordWarning</key>
+	<string>1296000</string>
+	<key>PasswordExpireAlertTime</key>
+	<integer>1296000</integer>
+	<key>RenewTickets</key>
+	<true/>
+	<key>ShowHome</key>
 	<false/>
+	<key>SecondsToRenew</key>
+	<integer>7200</integer>
 	<key>SignInCommand</key>
 	<string></string>
 	<key>StateChangeAction</key>
 	<string></string>
-	<key>UserAging</key>
-	<false/>
-	<key>LocalPasswordSync</key>
-	<false/>
+	<key>Template</key>
+	<string></string>
+	<key>userPrincipal</key>
+	<string></string>
+	<key>userPasswordExpireDate</key>
+	<string></string>
+	<key>userCommandTask1</key>
+	<string></string>
+	<key>userCommandName1</key>
+	<string></string>
+	<key>userCommandHotKey1</key>
+	<string></string>
 	<key>UserPasswordSetDates</key>
 	<dict/>
-	<key>Groups</key>
-	<array/>
+	<key>UseKeychain</key>
+	<false/>
+	<key>UserAging</key>
+	<false/>
+	<key>Verbose</key>
+	<false/>
+	<key>x509CA</key>
+	<string></string>
 </dict>
 </plist>
