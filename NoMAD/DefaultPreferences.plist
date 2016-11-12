@@ -1,14 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<!--
-   DefaultPreferences.plist
-   NoMAD
-
-   Created by Tom Nook on 11/12/16.
-   Copyright (c) 2016 Trusource Labs. All rights reserved.
--->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-    <dict>
-    
-    </dict>
+<dict>
+	<key>ADDomain</key>
+	<string></string>
+	<key>KerberosRealm</key>
+	<string></string>
+	<key>Verbose</key>
+	<false/>
+	<key>userCommandHotKey1</key>
+	<string></string>
+	<key>userCommandName1</key>
+	<string></string>
+	<key>userCommandTask1</key>
+	<string></string>
+	<key>SecondsToRenew</key>
+	<integer>7200</integer>
+	<key>RenewTickets</key>
+	<true/>
+	<key>userPasswordExpireDate</key>
+	<string></string>
+	<key>PasswordExpireAlertTime</key>
+	<integer>1296000</integer>
+	<key>LastPasswordWarning</key>
+	<string>1296000</string>
+	<key>HidePrefs</key>
+	<false/>
+	<key>ExpeditedLookup</key>
+	<false/>
+	<key>displayName</key>
+	<string></string>
+	<key>LastCertificateExpiration</key>
+	<string></string>
+	<key>LoginComamnd</key>
+	<string></string>
+	<key>UserPasswordSetDates</key>
+	<dict/>
+</dict>
 </plist>
