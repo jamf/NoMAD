@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1A07E0511DD7AD4F00805707 /* DefaultPreferences.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1A07E0501DD7AD4F00805707 /* DefaultPreferences.plist */; };
 		1A08F1EB1D36CDC200FA68C4 /* LoginWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A08F1EA1D36CDC200FA68C4 /* LoginWindow.xib */; };
 		1A08F1ED1D36CDF700FA68C4 /* PasswordChangeWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A08F1EC1D36CDF700FA68C4 /* PasswordChangeWindow.xib */; };
 		1A08F1EF1D36CE0C00FA68C4 /* PreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A08F1EE1D36CE0C00FA68C4 /* PreferencesWindow.xib */; };
@@ -53,6 +54,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1A07E0501DD7AD4F00805707 /* DefaultPreferences.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DefaultPreferences.plist; sourceTree = "<group>"; };
 		1A08F1EA1D36CDC200FA68C4 /* LoginWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoginWindow.xib; sourceTree = "<group>"; };
 		1A08F1EC1D36CDF700FA68C4 /* PasswordChangeWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PasswordChangeWindow.xib; sourceTree = "<group>"; };
 		1A08F1EE1D36CE0C00FA68C4 /* PreferencesWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PreferencesWindow.xib; sourceTree = "<group>"; };
@@ -122,6 +124,7 @@
 			isa = PBXGroup;
 			children = (
 				1AE1DFC31DA6B1E100456E3E /* Languages.plist */,
+				1A07E0501DD7AD4F00805707 /* DefaultPreferences.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -296,6 +299,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				84CC67E11D30A18A00115C76 /* Assets.xcassets in Resources */,
+				1A07E0511DD7AD4F00805707 /* DefaultPreferences.plist in Resources */,
 				346CD2751DA2065D00255F66 /* Localizable.strings in Resources */,
 				1AE1DFC11DA6B1E100456E3E /* Languages.plist in Resources */,
 				346CD2711DA205B500255F66 /* MainMenu.xib in Resources */,
