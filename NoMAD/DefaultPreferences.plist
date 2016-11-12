@@ -54,6 +54,8 @@
 	<false/>
 	<key>SignInCommand</key>
 	<string></string>
+	<key>StateChangeAction</key>
+	<string></string>
 	<key>UserPasswordSetDates</key>
 	<dict/>
 	<key>Groups</key>
