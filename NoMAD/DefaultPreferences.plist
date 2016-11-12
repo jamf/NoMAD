@@ -58,6 +58,8 @@
 	<string></string>
 	<key>UserAging</key>
 	<false/>
+	<key>LocalPasswordSync</key>
+	<false/>
 	<key>UserPasswordSetDates</key>
 	<dict/>
 	<key>Groups</key>
