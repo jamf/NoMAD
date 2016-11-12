@@ -44,7 +44,13 @@
 	<string></string>
 	<key>LDAPServerList</key>
 	<string></string>
+	<key>ShowHome</key>
+	<true/>
+	<key>userPrincipal</key>
+	<string></string>
 	<key>UserPasswordSetDates</key>
 	<dict/>
+	<key>Groups</key>
+	<array/>
 </dict>
 </plist>
