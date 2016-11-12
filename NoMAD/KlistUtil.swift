@@ -163,7 +163,7 @@ class KlistUtil {
         }
         return issue
     }
-
+    
     func returnAllTickets() -> String {
         return String(data: rawTicket, encoding: String.Encoding.utf8)!
     }

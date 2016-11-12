@@ -241,9 +241,9 @@ class WindowsCATools {
         }
         return Int(myresponse)!
     }
-
+    
     func getCert(certID: Int, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
-
+        
         let request = NSMutableURLRequest(url: (NSURL(string: "\(api)certnew.cer?ReqID=" + String(certID) + "&Enc=bin"))! as URL)
         
         request.httpMethod = "GET"

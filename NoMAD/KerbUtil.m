@@ -24,52 +24,52 @@ extern OSStatus SecKeychainChangePassword(SecKeychainRef keychainRef, UInt32 old
 
 
 - (NSString *)getKerbCredentials:(NSString *)password :(NSString *)userPrincipal {
-    
+
     OM_uint32 maj_stat;
     gss_name_t gname = GSS_C_NO_NAME;
     gss_cred_id_t cred = NULL;
     CFErrorRef error = NULL;
-    
+
     gname = GSSCreateName((__bridge CFTypeRef _Nonnull)(userPrincipal), GSS_C_NT_USER_NAME, NULL);
     if (gname == NULL)
         return @"error: creating GSS name";
-    
+
     NSDictionary *attrs = @{
                             (id)kGSSICPassword : password
                             };
-    
-    
+
+
     maj_stat = gss_aapl_initial_cred(gname, GSS_KRB5_MECHANISM, (__bridge CFDictionaryRef)attrs, &cred, &error);
-    
+
     CFRelease(gname);
     if (maj_stat) {
         NSLog(@"error: %d %@", (int)maj_stat, error);
         NSDictionary *errorDict = CFBridgingRelease(CFErrorCopyUserInfo(error)) ;
         return [ errorDict valueForKey:(@"NSDescription")];
     }
-    
+
     CFRelease(cred);
     return nil ;
 }
 
 - (NSString *)changeKerbPassword:(NSString *)oldPassword :(NSString *)newPassword :(NSString *)userPrincipal {
-    
+
     OM_uint32 maj_stat ;
     gss_name_t gname = GSS_C_NO_NAME;
     CFErrorRef error = NULL;
-    
+
     gname = GSSCreateName((__bridge CFTypeRef _Nonnull)(userPrincipal), GSS_C_NT_USER_NAME, NULL);
     if (gname == NULL)
         return @"Error creating the GSS name.";
-    
+
     // now change the password
-    
+
     NSDictionary *attrs2 = @{
                              (id)kGSSChangePasswordOldPassword : oldPassword,
                              (id)kGSSChangePasswordNewPassword : newPassword,
                              };
-    
-    
+
+
     maj_stat = gss_aapl_change_password(gname, GSS_KRB5_MECHANISM, (__bridge CFDictionaryRef)attrs2, &error);
     CFRelease(gname);
     if (maj_stat) {
@@ -78,15 +78,15 @@ extern OSStatus SecKeychainChangePassword(SecKeychainRef keychainRef, UInt32 old
         return [ errorDict valueForKey:(@"NSDescription")];
     }
     //   CFRelease(error);
-    
+
     return @"";
 }
 
 - (int) checkPassword:(NSString *)myPassword {
-    
+
     //there's a lot of setup here to check a password
     //we create an Authorization Right and then test it
-    
+
     AuthorizationItem myAuthRight;
     myAuthRight.name = "system.login.tty";
     myAuthRight.value = NULL;
@@ -95,9 +95,9 @@ extern OSStatus SecKeychainChangePassword(SecKeychainRef keychainRef, UInt32 old
     AuthorizationRights authRights;
     authRights.count = 1;
     authRights.items = &myAuthRight;
-        
+
     //now to setup the authorization environment
-    
+
     AuthorizationItem authEnvironmentItems[2];
     authEnvironmentItems[0].name = kAuthorizationEnvironmentUsername;
     authEnvironmentItems[0].valueLength = NSUserName().length;
@@ -110,30 +110,30 @@ extern OSStatus SecKeychainChangePassword(SecKeychainRef keychainRef, UInt32 old
     AuthorizationEnvironment authEnvironment;
     authEnvironment.count = 2;
     authEnvironment.items = authEnvironmentItems;
-    
-    
+
+
     //and now to actually do the auth
-    
+
     OSStatus authStatus = AuthorizationCreate(&authRights, &authEnvironment, kAuthorizationFlagExtendRights, NULL);
     return (authStatus == errAuthorizationSuccess);
-    
+
 }
 
 - (int) changeKeychainPassword:(NSString *)oldPassword :(NSString *)newPassword {
-    
+
     // set up some variables
-    
+
     OSStatus getDefaultKeychain;
     SecKeychainRef myDefaultKeychain;
     OSErr err;
-    
+
     // get the default keychain path, then attempt to change the password on it
-    
+
     getDefaultKeychain = SecKeychainCopyDefault ( &myDefaultKeychain);
-    
+
     NSLog(@"changing keychain password");
     err = SecKeychainChangePassword ( myDefaultKeychain, (UInt32)oldPassword.length , [oldPassword UTF8String], (UInt32)newPassword.length, [newPassword UTF8String] );
-    
+
     if ( err == noErr ) {
         //if we're done we should go away
         NSLog(@"Password changed successfully");

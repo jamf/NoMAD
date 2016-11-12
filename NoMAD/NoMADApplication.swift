@@ -22,7 +22,7 @@ import Cocoa
 class NoMADApplication: NSApplication {
     fileprivate let commandKey = NSEventModifierFlags.command.rawValue
     fileprivate let commandShiftKey = NSEventModifierFlags.command.rawValue | NSEventModifierFlags.shift.rawValue
-    
+
     override func sendEvent(_ event: NSEvent) {
         if event.type == NSEventType.keyDown {
             if (event.modifierFlags.rawValue & NSEventModifierFlags.deviceIndependentFlagsMask.rawValue == commandKey) {
@@ -51,7 +51,7 @@ class NoMADApplication: NSApplication {
         }
         super.sendEvent(event)
     }
-    
+
 }
 
 
