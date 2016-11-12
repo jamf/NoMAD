@@ -165,7 +165,7 @@ class KeychainUtil {
                         if let myNTPrincipal = value["value"] {
                             // we have an NT Principal, let's see if it's Kerberos Principal we're looking for
                             myLogger.logit(.debug, message: "Certificate NT Principal: " + String(describing: myNTPrincipal) )
-                            if String(describing: myNTPrincipal) == ( defaults.string(forKey: "UserShortName")! + "@" + (defaults.string(forKey: "KerberosRealm")?.lowercased())!) {
+                            if String(describing: myNTPrincipal) == identifier {
 myLogger.logit(.debug, message: "Found cert match")
 
 
