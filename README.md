@@ -40,7 +40,7 @@ Sample screen shot:
 
 ***Current Version***
 
-v. .9 Public Beta 6.1 - Note these are coming fast and furious. The preffered release mechanism is on the #nomad Slack channel.
+v. .9 Public Beta 6.1 - Note these are coming fast and furious. The preferred release mechanism is on the #nomad Slack channel.
 
 [NoMAD-PB6.1.zip](/uploads/0861935fbb93fad46d570b9ae096d347/NoMAD-PB6.1.zip)
 
