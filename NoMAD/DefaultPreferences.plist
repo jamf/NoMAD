@@ -48,6 +48,12 @@
 	<true/>
 	<key>userPrincipal</key>
 	<string></string>
+	<key>LastUser</key>
+	<string></string>
+	<key>UseKeychain</key>
+	<false/>
+	<key>SignInCommand</key>
+	<string></string>
 	<key>UserPasswordSetDates</key>
 	<dict/>
 	<key>Groups</key>
