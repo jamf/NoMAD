@@ -42,6 +42,8 @@
 	<string></string>
 	<key>GetHelpOptions</key>
 	<string></string>
+	<key>LDAPServerList</key>
+	<string></string>
 	<key>UserPasswordSetDates</key>
 	<dict/>
 </dict>
