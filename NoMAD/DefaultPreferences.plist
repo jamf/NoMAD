@@ -4,7 +4,7 @@
 <dict>
 	<key>ADDomain</key>
 	<string></string>
-	<key>displayName</key>
+	<key>DisplayName</key>
 	<string></string>
 	<key>ExpeditedLookup</key>
 	<false/>
@@ -44,15 +44,15 @@
 	<string></string>
 	<key>Template</key>
 	<string></string>
-	<key>userPrincipal</key>
+	<key>UserPrincipal</key>
 	<string></string>
-	<key>userPasswordExpireDate</key>
+	<key>UserPasswordExpireDate</key>
 	<string></string>
-	<key>userCommandTask1</key>
+	<key>UserCommandTask1</key>
 	<string></string>
-	<key>userCommandName1</key>
+	<key>UserCommandName1</key>
 	<string></string>
-	<key>userCommandHotKey1</key>
+	<key>UserCommandHotKey1</key>
 	<string></string>
 	<key>UserPasswordSetDates</key>
 	<dict/>
