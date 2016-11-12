@@ -45,7 +45,7 @@
 	<key>LDAPServerList</key>
 	<string></string>
 	<key>ShowHome</key>
-	<true/>
+	<false/>
 	<key>userPrincipal</key>
 	<string></string>
 	<key>LastUser</key>
