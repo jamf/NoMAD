@@ -38,6 +38,10 @@
 	<string></string>
 	<key>Template</key>
 	<string></string>
+	<key>GetHelpType</key>
+	<string></string>
+	<key>GetHelpOptions</key>
+	<string></string>
 	<key>UserPasswordSetDates</key>
 	<dict/>
 </dict>
