@@ -485,7 +485,7 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
 
 private func checkKpasswdServer(_ writePref: Bool ) -> Bool {
     
-    guard let adDomain = defaults.string(forKey: "ADDomain") else {
+    guard let adDomain = defaults.string(forKey: ADDomain) else {
         myLogger.logit(LogLevel.base, message: "Preferences does not contain a value for the AD Domain.")
         return false
     }

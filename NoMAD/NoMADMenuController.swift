@@ -236,7 +236,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         // if no preferences are set, we show the preferences pane
 
-        if ( (defaults.string(forKey: "ADDomain") ?? "") == "" ) {
+        if ( (defaults.string(forKey: ADDomain) ?? "") == "" ) {
             preferencesWindow.window!.forceToFrontAndFocus(nil)
         } else {
 
@@ -250,7 +250,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
             if ( ( defaults.string(forKey: "KerberosRealm") ?? "") == "" ) {
                 myLogger.logit(.info, message: "Realm not setting, so creating Realm from the Domain.")
-                defaults.set(defaults.string(forKey: "ADDomain")?.uppercased(), forKey: "KerberosRealm")
+                defaults.set(defaults.string(forKey: ADDomain)?.uppercased(), forKey: "KerberosRealm")
             }
 
             //myLogger.logit(.info, message: "Configuring Chrome.")
@@ -605,7 +605,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         if ( self.userInformation.myLDAPServers.getDomain() == "not set" ) {
             //self.userInformation.myLDAPServers.tickets.getDetails()
-            self.userInformation.myLDAPServers.currentDomain = defaults.string(forKey: "ADDomain")!
+            self.userInformation.myLDAPServers.currentDomain = defaults.string(forKey: ADDomain)!
         }
 
         autoLogin()
@@ -675,8 +675,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // function to configure Chrome
 
     func configureChrome() {
-        cliTask("defaults write com.google.Chrome AuthServerWhiteList \"*." + defaults.string(forKey: "ADDomain")! + "\"")
-        cliTask("defaults write com.google.Chrome AuthNegotiateDelegateWhitelist \"*." + defaults.string(forKey: "ADDomain")! + "\"")
+        cliTask("defaults write com.google.Chrome AuthServerWhiteList \"*." + defaults.string(forKey: ADDomain)! + "\"")
+        cliTask("defaults write com.google.Chrome AuthNegotiateDelegateWhitelist \"*." + defaults.string(forKey: ADDomain)! + "\"")
     }
 
     // update the user info and build the actual menu
@@ -688,8 +688,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         // make sure the domain we're using is the domain we should be using
 
-        if ( userInformation.myLDAPServers.getDomain() != defaults.string(forKey: "ADDomain")!) {
-            userInformation.myLDAPServers.setDomain(defaults.string(forKey: "ADDomain")!)
+        if ( userInformation.myLDAPServers.getDomain() != defaults.string(forKey: ADDomain)!) {
+            userInformation.myLDAPServers.setDomain(defaults.string(forKey: ADDomain)!)
         }
 
         // get the information on the current setup

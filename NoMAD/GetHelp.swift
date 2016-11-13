@@ -76,7 +76,7 @@ class GetHelp {
     fileprivate func subVariables( _ url: String ) -> String? {
         // TODO: get e-mail address as a variable
         var createdURL = url;
-        if let domain = defaults.string(forKey: "ADDomain") {
+        if let domain = defaults.string(forKey: ADDomain) {
             createdURL = createdURL.replacingOccurrences(of: "<<domain>>", with: domain)
         }
 

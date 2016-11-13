@@ -44,9 +44,9 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
 
         // set the fields and disable them if they're managed
 
-        ADDomainTextField.stringValue = defaults.string(forKey: "ADDomain") ?? ""
+        ADDomainTextField.stringValue = defaults.string(forKey: ADDomain) ?? ""
 
-        if defaults.objectIsForced(forKey: "ADDomain") {
+        if defaults.objectIsForced(forKey: ADDomain) {
             ADDomainTextField.isEnabled = false
         } else {
             ADDomainTextField.isEnabled = true
@@ -181,7 +181,7 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
 
         // turn the fields into app defaults
 
-        defaults.set(ADDomainTextField.stringValue, forKey: "ADDomain")
+        defaults.set(ADDomainTextField.stringValue, forKey: ADDomain)
         if ( KerberosRealmField.stringValue == "" ) {
             defaults.set(ADDomainTextField.stringValue.uppercased(), forKey: "KerberosRealm")
         } else {
