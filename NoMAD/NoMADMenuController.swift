@@ -393,8 +393,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         // pre-flight to ensure valid URL and template
 
-        var certCATest = defaults.string(forKey: "x509CA") ?? ""
-        let certTemplateTest = defaults.string(forKey: "Template") ?? ""
+        var certCATest = defaults.string(forKey: X509CA) ?? ""
+        let certTemplateTest = defaults.string(forKey: Template) ?? ""
 
         if ( certCATest != "" && certTemplateTest != "" ) {
 
@@ -869,11 +869,11 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 // remove the Get Certificate menu if not needed
                 // add it back in when it is needed
                 
-                if defaults.string(forKey: "x509CA") == "" && self.NoMADMenuGetCertificate != nil {
+                if defaults.string(forKey: X509CA) == "" && self.NoMADMenuGetCertificate != nil {
                     self.NoMADMenu.removeItem(self.NoMADMenuGetCertificate)
                     self.NoMADMenu.removeItem(self.NoMADMenuGetCertificateDate)
                     self.NoMADMenuGetCertificate = nil
-                } else if defaults.string(forKey: "x509CA") != "" && self.NoMADMenuGetCertificate == nil{
+                } else if defaults.string(forKey: X509CA) != "" && self.NoMADMenuGetCertificate == nil{
                     self.NoMADMenuGetCertificate = self.originalGetCertificateMenu
                     self.NoMADMenuGetCertificateDate = self.originalGetCertificateMenuDate
                     let lockIndex = self.NoMADMenu.index(of: self.NoMADMenuLockScreen)

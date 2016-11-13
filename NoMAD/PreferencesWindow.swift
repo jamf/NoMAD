@@ -76,17 +76,17 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
          InternalSiteIPField.enabled = true
          }
          */
-        x509CAField.stringValue = defaults.string(forKey: "x509CA") ?? ""
+        x509CAField.stringValue = defaults.string(forKey: X509CA) ?? ""
 
-        if defaults.objectIsForced(forKey: "x509CA") {
+        if defaults.objectIsForced(forKey: X509CA) {
             x509CAField.isEnabled = false
         } else {
             x509CAField.isEnabled = true
         }
 
-        TemplateField.stringValue = defaults.string(forKey: "Template") ?? ""
+        TemplateField.stringValue = defaults.string(forKey: Template) ?? ""
 
-        if defaults.objectIsForced(forKey: "Template") {
+        if defaults.objectIsForced(forKey: Template) {
             TemplateField.isEnabled = false
         } else {
             TemplateField.isEnabled = true
@@ -189,8 +189,8 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
         }
         //defaults.setObject(InternalSiteField.stringValue, forKey: "InternalSite")
         //defaults.setObject(InternalSiteIPField.stringValue, forKey: "InternalSiteIP")
-        defaults.set(x509CAField.stringValue, forKey: "x509CA")
-        defaults.set(TemplateField.stringValue, forKey: "Template")
+        defaults.set(x509CAField.stringValue, forKey: X509CA)
+        defaults.set(TemplateField.stringValue, forKey: Template)
 
         // secret stuff
 

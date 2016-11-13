@@ -263,7 +263,7 @@ class UserInformation {
 
             // look at local certs if an x509 CA has been set
 
-            if (defaults.string(forKey: "x509CA") ?? "" != "") {
+            if (defaults.string(forKey: X509CA) ?? "" != "") {
                 getCertDate()
             }
 
