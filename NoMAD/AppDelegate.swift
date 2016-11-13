@@ -36,9 +36,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
             NSLog("State change, checking things.")
             notificationQueue.enqueue(notificationKey, postingStyle: .now, coalesceMask: .onName, forModes: nil)
 
-            if  ( defaults.string(forKey: "StateChangeAction") != nil ) {
+            if  ( defaults.string(forKey: StateChangeAction) != nil ) {
                 NSLog("Firing State Change Action")
-                cliTask(defaults.string(forKey: "StateChangeAction")! + " &")
+                cliTask(defaults.string(forKey: StateChangeAction)! + " &")
             }
         }
 
