@@ -38,7 +38,7 @@ class Logger {
 
     /// Init method simply check to see if Verbose logging is enabled or not for the Logger object.
     init() {
-        if (defaults.bool(forKey: Verbose) == true) {
+        if (defaults.bool(forKey: Preferences.verbose) == true) {
             loglevel = .debug
             logit(.debug, message: "Debug logging enabled")
         } else {

@@ -36,12 +36,12 @@ class KlistUtil {
 
     init() {
         dateFormatter.dateFormat = "yyyyMMddHHmmss"
-        realm = defaults.string(forKey: KerberosRealm) ?? ""
+        realm = defaults.string(forKey: Preferences.kerberosRealm) ?? ""
     }
 
     func getTicketJSON() {
 
-        realm = defaults.string(forKey: KerberosRealm) ?? ""
+        realm = defaults.string(forKey: Preferences.kerberosRealm) ?? ""
         myLogger.logit(.debug, message:"Looking for tickets using realm: " + realm )
         dateFormatter.dateFormat = "yyyyMMddHHmmss"
         let rawJSON = cliTask("/usr/bin/klist --json")
@@ -67,11 +67,11 @@ class KlistUtil {
         let rawCache = rawJSON.data(using: String.Encoding.utf8)!
         if returnAllTickets().contains("cache") {
             myLogger.logit(.base, message:"Tickets found.")
-            if returnAllTickets().contains("@" + defaults.string(forKey: KerberosRealm)!) {
-                myLogger.logit(.base, message:"Ticket found for domain: " + defaults.string(forKey: KerberosRealm)!)
+            if returnAllTickets().contains("@" + defaults.string(forKey: Preferences.kerberosRealm)!) {
+                myLogger.logit(.base, message:"Ticket found for domain: " + defaults.string(forKey: Preferences.kerberosRealm)!)
                 state = true
             } else {
-                myLogger.logit(.base, message:"No ticket found for domain: " + defaults.string(forKey: KerberosRealm)!)
+                myLogger.logit(.base, message:"No ticket found for domain: " + defaults.string(forKey: Preferences.kerberosRealm)!)
                 state = false
             }
         } else {
@@ -98,7 +98,7 @@ class KlistUtil {
                 cache = jsonDict?["cache"] as! String
                 principal = jsonDict?["principal"] as! String
 
-                short = principal.replacingOccurrences(of: "@" + defaults.string(forKey: KerberosRealm)!, with: "").trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+                short = principal.replacingOccurrences(of: "@" + defaults.string(forKey: Preferences.kerberosRealm)!, with: "").trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
                 state = false
 
                 if let tickets = jsonDict?["tickets"] as? [[String: AnyObject]] {

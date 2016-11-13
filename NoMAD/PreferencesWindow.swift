@@ -44,17 +44,17 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
 
         // set the fields and disable them if they're managed
 
-        ADDomainTextField.stringValue = defaults.string(forKey: ADDomain) ?? ""
+        ADDomainTextField.stringValue = defaults.string(forKey: Preferences.aDDomain) ?? ""
 
-        if defaults.objectIsForced(forKey: ADDomain) {
+        if defaults.objectIsForced(forKey: Preferences.aDDomain) {
             ADDomainTextField.isEnabled = false
         } else {
             ADDomainTextField.isEnabled = true
         }
 
-        KerberosRealmField.stringValue = defaults.string(forKey: KerberosRealm) ?? ""
+        KerberosRealmField.stringValue = defaults.string(forKey: Preferences.kerberosRealm) ?? ""
 
-        if defaults.objectIsForced(forKey: KerberosRealm) {
+        if defaults.objectIsForced(forKey: Preferences.kerberosRealm) {
             KerberosRealmField.isEnabled = false
         } else {
             KerberosRealmField.isEnabled = true
@@ -94,25 +94,25 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
 
         // now the secret stuff
 
-        ButtonNameField.stringValue = defaults.string(forKey: UserCommandName1) ?? ""
+        ButtonNameField.stringValue = defaults.string(forKey: Preferences.userCommandName1) ?? ""
 
-        if defaults.objectIsForced(forKey: UserCommandName1) {
+        if defaults.objectIsForced(forKey: Preferences.userCommandName1) {
             ButtonNameField.isEnabled = false
         } else {
             ButtonNameField.isEnabled = true
         }
 
-        HotKeyField.stringValue = defaults.string(forKey: UserCommandHotKey1) ?? ""
+        HotKeyField.stringValue = defaults.string(forKey: Preferences.userCommandHotKey1) ?? ""
 
-        if defaults.objectIsForced(forKey: UserCommandHotKey1) {
+        if defaults.objectIsForced(forKey: Preferences.userCommandHotKey1) {
             HotKeyField.isEnabled = false
         } else {
             HotKeyField.isEnabled = true
         }
 
-        CommandField.stringValue = defaults.string(forKey: UserCommandTask1) ?? ""
+        CommandField.stringValue = defaults.string(forKey: Preferences.userCommandTask1) ?? ""
 
-        if defaults.objectIsForced(forKey: UserCommandTask1) {
+        if defaults.objectIsForced(forKey: Preferences.userCommandTask1) {
             CommandField.isEnabled = false
         } else {
             CommandField.isEnabled = true
@@ -181,11 +181,11 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
 
         // turn the fields into app defaults
 
-        defaults.set(ADDomainTextField.stringValue, forKey: ADDomain)
+        defaults.set(ADDomainTextField.stringValue, forKey: Preferences.aDDomain)
         if ( KerberosRealmField.stringValue == "" ) {
-            defaults.set(ADDomainTextField.stringValue.uppercased(), forKey: KerberosRealm)
+            defaults.set(ADDomainTextField.stringValue.uppercased(), forKey: Preferences.kerberosRealm)
         } else {
-            defaults.set(KerberosRealmField.stringValue.uppercased(), forKey: KerberosRealm)
+            defaults.set(KerberosRealmField.stringValue.uppercased(), forKey: Preferences.kerberosRealm)
         }
         //defaults.setObject(InternalSiteField.stringValue, forKey: "InternalSite")
         //defaults.setObject(InternalSiteIPField.stringValue, forKey: "InternalSiteIP")
@@ -194,9 +194,9 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
 
         // secret stuff
 
-        defaults.set(ButtonNameField.stringValue, forKey: UserCommandName1)
-        defaults.set(HotKeyField.stringValue, forKey: UserCommandHotKey1)
-        defaults.set(CommandField.stringValue, forKey: UserCommandTask1)
+        defaults.set(ButtonNameField.stringValue, forKey: Preferences.userCommandName1)
+        defaults.set(HotKeyField.stringValue, forKey: Preferences.userCommandHotKey1)
+        defaults.set(CommandField.stringValue, forKey: Preferences.userCommandTask1)
 
         // buttons
 

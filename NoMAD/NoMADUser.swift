@@ -485,7 +485,7 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
 
 private func checkKpasswdServer(_ writePref: Bool ) -> Bool {
     
-    guard let adDomain = defaults.string(forKey: ADDomain) else {
+    guard let adDomain = defaults.string(forKey: Preferences.aDDomain) else {
         myLogger.logit(LogLevel.base, message: "Preferences does not contain a value for the AD Domain.")
         return false
     }
@@ -519,7 +519,7 @@ private func checkKpasswdServer(_ writePref: Bool ) -> Bool {
                 realm.setValue(myLDAPServers.currentServer, forKey: "kdc")
                 realm.setValue(myLDAPServers.currentServer, forKey: "kpasswd")
                 
-                realms.setObject(realm, forKey: defaults.string(forKey: KerberosRealm)! as NSCopying)
+                realms.setObject(realm, forKey: defaults.string(forKey: Preferences.kerberosRealm)! as NSCopying)
                 data.setObject(realms, forKey: "realms" as NSCopying)
                 
                 return data.write(toFile: myPrefFile, atomically: true)

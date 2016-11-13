@@ -56,7 +56,7 @@
 
 /* Begin PBXFileReference section */
 		1A07E0501DD7AD4F00805707 /* DefaultPreferences.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DefaultPreferences.plist; sourceTree = "<group>"; };
-		1A07E0521DD7C4A400805707 /* PreferenceConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferenceConstants.swift; sourceTree = "<group>"; };
+		1A07E0521DD7C4A400805707 /* PreferenceConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PreferenceConstants.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		1A08F1EA1D36CDC200FA68C4 /* LoginWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoginWindow.xib; sourceTree = "<group>"; };
 		1A08F1EC1D36CDF700FA68C4 /* PasswordChangeWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PasswordChangeWindow.xib; sourceTree = "<group>"; };
 		1A08F1EE1D36CE0C00FA68C4 /* PreferencesWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PreferencesWindow.xib; sourceTree = "<group>"; };

@@ -24,8 +24,8 @@ class GetHelp {
         getHelpOptions = ""
         enabled = false
 
-        if let getHelpType = defaults.string(forKey: GetHelpType) {
-            if let getHelpOptions = defaults.string(forKey: GetHelpOptions) {
+        if let getHelpType = defaults.string(forKey: Preferences.getHelpType) {
+            if let getHelpOptions = defaults.string(forKey: Preferences.getHelpOptions) {
                 self.getHelpOptions = getHelpOptions
                 self.getHelpType = getHelpType
 
@@ -76,7 +76,7 @@ class GetHelp {
     fileprivate func subVariables( _ url: String ) -> String? {
         // TODO: get e-mail address as a variable
         var createdURL = url;
-        if let domain = defaults.string(forKey: ADDomain) {
+        if let domain = defaults.string(forKey: Preferences.aDDomain) {
             createdURL = createdURL.replacingOccurrences(of: "<<domain>>", with: domain)
         }
 
