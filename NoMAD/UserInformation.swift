@@ -270,7 +270,7 @@ class UserInformation {
             defaults.set(userHome, forKey: "userHome")
             defaults.set(userDisplayName, forKey: "displayName")
             defaults.set(userPrincipal, forKey: "userPrincipal")
-            defaults.set(userPrincipalShort, forKey: "LastUser")
+            defaults.set(userPrincipalShort, forKey: LastUser)
             defaults.set(userPasswordExpireDate, forKey: "LastPasswordExpireDate")
             defaults.set(groups, forKey: "Groups")
         }
@@ -493,7 +493,7 @@ class UserInformation {
      defaults.setObject(userHome, forKey: "userHome")
      defaults.setObject(userDisplayName, forKey: "displayName")
      defaults.setObject(userPrincipal, forKey: "userPrincipal")
-     defaults.setObject(userPrincipalShort, forKey: "LastUser")
+     defaults.setObject(userPrincipalShort, forKey: LastUser)
      defaults.setObject(userPasswordExpireDate, forKey: "LastPasswordExpireDate")
      defaults.setObject(groups, forKey: "Groups")
      }

@@ -38,7 +38,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 
     override func windowDidLoad() {
         super.windowDidLoad()
-        guard (( defaults.string(forKey: "LastUser") ) != nil) else {
+        guard (( defaults.string(forKey: LastUser) ) != nil) else {
             self.window?.center()
             setWindowToLogin()
             return
@@ -47,7 +47,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         changePasswordButton.title = "NoMADMenuController-LogIn".translate
         self.window?.title = "NoMAD - " + "NoMADMenuController-LogIn".translate
 
-        userName.stringValue = defaults.string(forKey: "LastUser")! ?? ""
+        userName.stringValue = defaults.string(forKey: LastUser)! ?? ""
         Password.becomeFirstResponder()
 
         setWindowToLogin()
