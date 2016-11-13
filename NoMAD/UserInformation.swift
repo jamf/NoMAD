@@ -118,7 +118,7 @@ class UserInformation {
 
         if myLDAPServers.tickets.state {
             userPrincipal = myLDAPServers.tickets.principal
-            realm = defaults.string(forKey: "KerberosRealm")!
+            realm = defaults.string(forKey: KerberosRealm)!
             if userPrincipal.contains(realm) {
                 userPrincipalShort = userPrincipal.replacingOccurrences(of: "@" + realm, with: "")
                 status = "Logged In"

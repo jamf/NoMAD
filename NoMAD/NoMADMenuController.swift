@@ -214,16 +214,16 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             if ( (defaults.string(forKey: "LastUser") ?? "") != "" ) {
                 var myErr: String? = ""
 
-                do { myPass = try myKeychainUtil.findPassword(defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: "KerberosRealm")!) } catch {
+                do { myPass = try myKeychainUtil.findPassword(defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: KerberosRealm)!) } catch {
                     loginWindow.window!.forceToFrontAndFocus(nil)
                 }
-                myErr = GetCredentials.getKerbCredentials( myPass, defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: "KerberosRealm")!)
+                myErr = GetCredentials.getKerbCredentials( myPass, defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: KerberosRealm)!)
                 if myErr != nil {
                     myLogger.logit(.base, message: "Error attempting to automatically log in.")
                     loginWindow.window!.forceToFrontAndFocus(nil)
                 } else {
                     myLogger.logit(.base, message:"Automatically logging in.")
-                    cliTask("/usr/bin/kswitch -p " +  defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: "KerberosRealm")!)}
+                    cliTask("/usr/bin/kswitch -p " +  defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: KerberosRealm)!)}
 
                 // fire off the SignInCommand script if there is one
 
@@ -248,9 +248,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 defaults.set(false, forKey: "Verbose")
             }
 
-            if ( ( defaults.string(forKey: "KerberosRealm") ?? "") == "" ) {
+            if ( ( defaults.string(forKey: KerberosRealm) ?? "") == "" ) {
                 myLogger.logit(.info, message: "Realm not setting, so creating Realm from the Domain.")
-                defaults.set(defaults.string(forKey: ADDomain)?.uppercased(), forKey: "KerberosRealm")
+                defaults.set(defaults.string(forKey: ADDomain)?.uppercased(), forKey: KerberosRealm)
             }
 
             //myLogger.logit(.info, message: "Configuring Chrome.")
@@ -289,13 +289,13 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
             if ( (defaults.string(forKey: "LastUser") ?? "") != "" ) {
 
-                do { myPass = try myKeychainUtil.findPassword(defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: "KerberosRealm")!) } catch {
+                do { myPass = try myKeychainUtil.findPassword(defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: KerberosRealm)!) } catch {
                     //bringWindowToFront(loginWindow.window!, focus: true)
                     //loginWindow.showWindow(nil)
                     loginWindow.window!.forceToFrontAndFocus(nil)
                 }
                 let GetCredentials: KerbUtil = KerbUtil()
-                myErr = GetCredentials.getKerbCredentials( myPass, defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: "KerberosRealm")!)
+                myErr = GetCredentials.getKerbCredentials( myPass, defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: KerberosRealm)!)
                 if myErr != nil {
                     myLogger.logit(.base, message:"Error attempting to automatically log in.")
                     //bringWindowToFront(loginWindow.window!, focus: true)
@@ -303,7 +303,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     loginWindow.window!.forceToFrontAndFocus(nil)
                 } else {
                     myLogger.logit(.base, message:"Automatically logging in.") }
-                cliTask("/usr/bin/kswitch -p " +  defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: "KerberosRealm")!)
+                cliTask("/usr/bin/kswitch -p " +  defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: KerberosRealm)!)
 
                 // fire off the SignInCommand script if there is one
 
@@ -348,7 +348,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 let serviceName = "NoMAD"
                 var passLength: UInt32 = 0
                 var passPtr: UnsafeMutableRawPointer? = nil
-                let name = defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: "KerberosRealm")!
+                let name = defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: KerberosRealm)!
 
                 myErr = SecKeychainFindGenericPassword(nil, UInt32(serviceName.characters.count), serviceName, UInt32(name.characters.count), name, &passLength, &passPtr, &myKeychainItem)
 
@@ -645,16 +645,16 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
             if ( (defaults.string(forKey: "LastUser") ?? "") != "" ) {
                 var myErr: String? = ""
-                do { myPass = try myKeychainUtil.findPassword(defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: "KerberosRealm")!) } catch {
+                do { myPass = try myKeychainUtil.findPassword(defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: KerberosRealm)!) } catch {
                     loginWindow.window!.forceToFrontAndFocus(nil)
                 }
-                myErr = GetCredentials.getKerbCredentials( myPass, defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: "KerberosRealm")!)
+                myErr = GetCredentials.getKerbCredentials( myPass, defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: KerberosRealm)!)
                 if myErr != nil {
                     myLogger.logit(.base, message: "Error attempting to automatically log in.")
                     loginWindow.window!.forceToFrontAndFocus(nil)
                 } else {
                     myLogger.logit(.base, message:"Automatically logging in.")
-                    cliTask("/usr/bin/kswitch -p " +  defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: "KerberosRealm")!)}
+                    cliTask("/usr/bin/kswitch -p " +  defaults.string(forKey: "LastUser")! + "@" + defaults.string(forKey: KerberosRealm)!)}
             }
         }
     }

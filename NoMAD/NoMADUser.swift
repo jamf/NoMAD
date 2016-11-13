@@ -519,7 +519,7 @@ private func checkKpasswdServer(_ writePref: Bool ) -> Bool {
                 realm.setValue(myLDAPServers.currentServer, forKey: "kdc")
                 realm.setValue(myLDAPServers.currentServer, forKey: "kpasswd")
                 
-                realms.setObject(realm, forKey: defaults.string(forKey: "KerberosRealm")! as NSCopying)
+                realms.setObject(realm, forKey: defaults.string(forKey: KerberosRealm)! as NSCopying)
                 data.setObject(realms, forKey: "realms" as NSCopying)
                 
                 return data.write(toFile: myPrefFile, atomically: true)

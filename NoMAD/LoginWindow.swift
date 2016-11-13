@@ -77,7 +77,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         if userName.stringValue.contains("@") {
             userNameChecked = userName.stringValue
         } else {
-            userNameChecked = userName.stringValue + "@" + defaults.string(forKey: "KerberosRealm")!
+            userNameChecked = userName.stringValue + "@" + defaults.string(forKey: KerberosRealm)!
         }
 
         //let GetCredentials: KerbUtil = KerbUtil()
@@ -281,7 +281,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         if userName.stringValue.contains("@") {
             userPrincipal = userName.stringValue
         } else {
-            userPrincipal = userName.stringValue + "@" + defaults.string(forKey: "KerberosRealm")!
+            userPrincipal = userName.stringValue + "@" + defaults.string(forKey: KerberosRealm)!
         }
         let currentPassword = Password.stringValue
         let newPassword1 = changePasswordField1.stringValue
@@ -313,7 +313,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                             if userPrincipal.contains("@") {
                                 myError = GetCredentials.getKerbCredentials( newPassword1, userPrincipal );
                             } else {
-                                myError = GetCredentials.getKerbCredentials( newPassword1, (userPrincipal + "@" + defaults.string(forKey: "KerberosRealm")!))
+                                myError = GetCredentials.getKerbCredentials( newPassword1, (userPrincipal + "@" + defaults.string(forKey: KerberosRealm)!))
                             }
                         }
 

@@ -52,9 +52,9 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
             ADDomainTextField.isEnabled = true
         }
 
-        KerberosRealmField.stringValue = defaults.string(forKey: "KerberosRealm") ?? ""
+        KerberosRealmField.stringValue = defaults.string(forKey: KerberosRealm) ?? ""
 
-        if defaults.objectIsForced(forKey: "KerberosRealm") {
+        if defaults.objectIsForced(forKey: KerberosRealm) {
             KerberosRealmField.isEnabled = false
         } else {
             KerberosRealmField.isEnabled = true
@@ -183,9 +183,9 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
 
         defaults.set(ADDomainTextField.stringValue, forKey: ADDomain)
         if ( KerberosRealmField.stringValue == "" ) {
-            defaults.set(ADDomainTextField.stringValue.uppercased(), forKey: "KerberosRealm")
+            defaults.set(ADDomainTextField.stringValue.uppercased(), forKey: KerberosRealm)
         } else {
-            defaults.set(KerberosRealmField.stringValue.uppercased(), forKey: "KerberosRealm")
+            defaults.set(KerberosRealmField.stringValue.uppercased(), forKey: KerberosRealm)
         }
         //defaults.setObject(InternalSiteField.stringValue, forKey: "InternalSite")
         //defaults.setObject(InternalSiteIPField.stringValue, forKey: "InternalSiteIP")

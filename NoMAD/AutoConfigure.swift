@@ -18,7 +18,7 @@ public func setDefaults() {
         switch autoConfigure {
         case "TSL":
             defaults.set("trusourcelabs.com", forKey: ADDomain)
-            defaults.set("TRUSOURCELABS.COM", forKey: "KerberosRealm")
+            defaults.set("TRUSOURCELABS.COM", forKey: KerberosRealm)
             //defaults.setObject("jupiter.trusourcelabs.com", forKey: "InternalSite")
             //defaults.setObject("192.168.32.43", forKey: "InternalSiteIP")
             defaults.set(true, forKey: "Verbose")
@@ -31,7 +31,7 @@ public func setDefaults() {
 
         case "JODA":
             defaults.set("jodapro.com", forKey: ADDomain)
-            defaults.set("JODAPRO.COM", forKey: "KerberosRealm")
+            defaults.set("JODAPRO.COM", forKey: KerberosRealm)
             //defaults.setObject("in-or-out.jodapro.com", forKey: "InternalSite")
             //defaults.setObject("1.1.1.1", forKey: "InternalSiteIP")
             defaults.set("2k12.jodapro.com", forKey: "x509CA")
@@ -66,7 +66,7 @@ private func getADSettings() {
             if line.contains("Active Directory Domain") {
                 let myDomain = (line as NSString).substring(from: 35)
                 defaults.set(myDomain, forKey: ADDomain)
-                defaults.set(myDomain.uppercased(), forKey: "KerberosRealm")
+                defaults.set(myDomain.uppercased(), forKey: KerberosRealm)
                 //defaults.setObject("", forKey: "InternalSite")
                 //defaults.setObject("", forKey: "InternalSiteIP")
                 defaults.set(false, forKey: "Verbose")
