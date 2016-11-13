@@ -12,7 +12,6 @@ import SecurityFoundation
 import SystemConfiguration
 
 // Error codes
-
 enum NoADError: Error {
     case notConnected
     case notLoggedIn
@@ -28,17 +27,13 @@ enum NoADError: Error {
 }
 
 // bitwise convenience
-
 prefix operator ~~
 
 prefix func ~~(value: Int)->Bool{
     return (value>0) ? true : false
 }
 
-
-
 // set up a default defaults
-
 let defaults = UserDefaults.standard
 let statusItem = NSStatusBar.system().statusItem(withLength: NSVariableStatusItemLength)
 let userNotificationCenter = NSUserNotificationCenter.default
@@ -204,7 +199,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
                 // fire off the SignInCommand script if there is one
 
-                if defaults.string(forKey: SignInCommand) != nil {
+                if defaults.string(forKey: Preferences.signInCommand) != nil {
                     let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)
                     myLogger.logit(LogLevel.base, message: myResult)
                 }
@@ -846,11 +841,11 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 // remove the Get Certificate menu if not needed
                 // add it back in when it is needed
                 
-                if defaults.string(forKey: X509CA) == "" && self.NoMADMenuGetCertificate != nil {
+                if defaults.string(forKey: Preferences.x509CA) == "" && self.NoMADMenuGetCertificate != nil {
                     self.NoMADMenu.removeItem(self.NoMADMenuGetCertificate)
                     self.NoMADMenu.removeItem(self.NoMADMenuGetCertificateDate)
                     self.NoMADMenuGetCertificate = nil
-                } else if defaults.string(forKey: X509CA) != "" && self.NoMADMenuGetCertificate == nil{
+                } else if defaults.string(forKey: Preferences.x509CA) != "" && self.NoMADMenuGetCertificate == nil{
                     self.NoMADMenuGetCertificate = self.originalGetCertificateMenu
                     self.NoMADMenuGetCertificateDate = self.originalGetCertificateMenuDate
                     let lockIndex = self.NoMADMenu.index(of: self.NoMADMenuLockScreen)
