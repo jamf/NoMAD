@@ -93,7 +93,7 @@ class UserInformation {
 
         }
 
-        defaults.set(myCertExpire, forKey: "LastCertificateExpiration")
+        defaults.set(myCertExpire, forKey: LastCertificateExpiration)
     }
 
     func getUserInfo() {
@@ -483,7 +483,7 @@ class UserInformation {
      myLogger.logit(.base, message: "Your certificate has already expired.")
      }
 
-     defaults.setObject(myCertExpire, forKey: "LastCertificateExpiration")
+     defaults.setObject(myCertExpire, forKey: LastCertificateExpiration)
 
      }
 

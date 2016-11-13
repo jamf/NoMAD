@@ -398,7 +398,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         if ( certCATest != "" && certTemplateTest != "" ) {
 
-            let lastExpire = defaults.object(forKey: "LastCertificateExpiration") as! Date ?? Date.distantPast
+            let lastExpire = defaults.object(forKey: LastCertificateExpiration) as! Date ?? Date.distantPast
 
             if lastExpire.timeIntervalSinceNow > 2592000 {
                 let alertController = NSAlert()
@@ -891,7 +891,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             dateFormatter.dateStyle = .medium
             dateFormatter.timeStyle = .short
             
-            if let expireDate = defaults.object(forKey: "LastCertificateExpiration") as? Date {
+            if let expireDate = defaults.object(forKey: LastCertificateExpiration) as? Date {
                 if expireDate != Date.distantPast {
                     NoMADMenuGetCertificateDate.title = dateFormatter.string(from: expireDate)
                 } else {
