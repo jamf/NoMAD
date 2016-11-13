@@ -168,7 +168,7 @@ class UserInformation {
                     if ( Int(computedExpireDateRaw!) == 9223372036854775807) {
                         // Password doesn't expire
                         passwordAging = false
-                        defaults.set(false, forKey: "UserAging")
+                        defaults.set(false, forKey: UserAging)
 
                         // Set expiration to set date
                         userPasswordExpireDate = NSDate()
@@ -176,7 +176,7 @@ class UserInformation {
                         // Password expires
 
                         passwordAging = true
-                        defaults.set(true, forKey: "UserAging")
+                        defaults.set(true, forKey: UserAging)
 
                         // TODO: Change all Double() to NumberFormatter().number(from: myString)?.doubleValue
                         //       when we switch to Swift 3
@@ -201,11 +201,11 @@ class UserInformation {
                     } else if ( passwordExpirationLength != "" ) {
                         if ~~( Int(userPasswordUACFlag)! & 0x10000 ) {
                             passwordAging = false
-                            defaults.set(false, forKey: "UserAging")
+                            defaults.set(false, forKey: UserAging)
                         } else {
                             serverPasswordExpirationDefault = Double(abs(Int(passwordExpirationLength)!)/10000000)
                             passwordAging = true
-                            defaults.set(true, forKey: "UserAging")
+                            defaults.set(true, forKey: UserAging)
                         }
                     } else {
                         serverPasswordExpirationDefault = Double(0)
@@ -353,7 +353,7 @@ class UserInformation {
      // password doesn't expire
 
      passwordAging = false
-     defaults.setObject(false, forKey: "UserAging")
+     defaults.setObject(false, forKey: UserAging)
 
      // set expiration to set date
 
@@ -364,7 +364,7 @@ class UserInformation {
      // password expires
 
      passwordAging = true
-     defaults.setObject(true, forKey: "UserAging")
+     defaults.setObject(true, forKey: UserAging)
      let computedExpireDate = NSDate(timeIntervalSince1970: (Double(Int(computedExpireDateRaw)!))/10000000-11644473600)
      userPasswordExpireDate = computedExpireDate
 
@@ -399,11 +399,11 @@ class UserInformation {
 
      if ~~( Int(userPasswordUACFlag)! & 0x10000 ) {
      passwordAging = false
-     defaults.setObject(false, forKey: "UserAging")
+     defaults.setObject(false, forKey: UserAging)
      } else {
      serverPasswordExpirationDefault = Double(abs(Int(passwordExpirationLength)!)/10000000)
      passwordAging = true
-     defaults.setObject(true, forKey: "UserAging")
+     defaults.setObject(true, forKey: UserAging)
      }
      } else {
      serverPasswordExpirationDefault = Double(0)

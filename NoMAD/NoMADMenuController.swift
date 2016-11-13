@@ -772,7 +772,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         self.NoMADMenuUserName.title = defaults.string(forKey: LastUser) ?? "No User"
                     }
 
-                    if ( !defaults.bool(forKey: "UserAging") ) && ( defaults.string(forKey: LastUser) != "" ) {
+                    if ( !defaults.bool(forKey: UserAging) ) && ( defaults.string(forKey: LastUser) != "" ) {
                         self.NoMADMenuPasswordExpires.title = "Password does not expire."
                     } else if ( defaults.string(forKey: LastUser)) != "" {
                         let myDaysToGo = String(abs(((defaults.object(forKey: "LastPasswordExpireDate")! as AnyObject).timeIntervalSinceNow)!)/86400)
