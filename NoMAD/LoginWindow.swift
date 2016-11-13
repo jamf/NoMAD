@@ -267,8 +267,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 
         // fire off the SignInCommand script if there is one
 
-        if defaults.string(forKey: "SignInCommand") != nil {
-            let myResult = cliTask(defaults.string(forKey: "SignInCommand")!)
+        if defaults.string(forKey: SignInCommand) != nil {
+            let myResult = cliTask(defaults.string(forKey: SignInCommand)!)
             myLogger.logit(LogLevel.base, message: myResult)
         }
 
@@ -337,15 +337,15 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 
         // fire off the SignInCommand script if there is one
 
-        if defaults.string(forKey: "SignInCommand") != nil {
-            let myResult = cliTask(defaults.string(forKey: "SignInCommand")!)
+        if defaults.string(forKey: SignInCommand) != nil {
+            let myResult = cliTask(defaults.string(forKey: SignInCommand)!)
             myLogger.logit(LogLevel.base, message: myResult)
         }
 
         // fire off the SignInCommand script if there is one
 
-        if defaults.string(forKey: "SignInCommand") != nil {
-            let myResult = cliTask(defaults.string(forKey: "SignInCommand")!)
+        if defaults.string(forKey: SignInCommand) != nil {
+            let myResult = cliTask(defaults.string(forKey: SignInCommand)!)
             myLogger.logit(LogLevel.base, message: myResult)
         }
     }
