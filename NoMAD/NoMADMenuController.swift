@@ -795,10 +795,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
                     // if a user command is specified, show it, otherwise hide the menu item
 
-                    if ( defaults.string(forKey: "userCommandName1") != "" ) {
+                    if ( defaults.string(forKey: UserCommandName1) != "" ) {
                         self.NoMADMenuHiddenItem1.isEnabled = true
                         self.NoMADMenuHiddenItem1.isHidden = false
-                        self.NoMADMenuHiddenItem1.title = defaults.string(forKey: "userCommandName1")!
+                        self.NoMADMenuHiddenItem1.title = defaults.string(forKey: UserCommandName1)!
                         self.NoMADMenuHiddenItem1.keyEquivalent = defaults.string(forKey: UserCommandHotKey1)!
                     } else  {
                         self.NoMADMenuHiddenItem1.isHidden = true

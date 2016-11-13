@@ -94,9 +94,9 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
 
         // now the secret stuff
 
-        ButtonNameField.stringValue = defaults.string(forKey: "userCommandName1") ?? ""
+        ButtonNameField.stringValue = defaults.string(forKey: UserCommandName1) ?? ""
 
-        if defaults.objectIsForced(forKey: "userCommandName1") {
+        if defaults.objectIsForced(forKey: UserCommandName1) {
             ButtonNameField.isEnabled = false
         } else {
             ButtonNameField.isEnabled = true
@@ -194,7 +194,7 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
 
         // secret stuff
 
-        defaults.set(ButtonNameField.stringValue, forKey: "userCommandName1")
+        defaults.set(ButtonNameField.stringValue, forKey: UserCommandName1)
         defaults.set(HotKeyField.stringValue, forKey: UserCommandHotKey1)
         defaults.set(CommandField.stringValue, forKey: "userCommandTask1")
 
