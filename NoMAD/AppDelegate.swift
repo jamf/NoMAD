@@ -23,6 +23,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
 
         myLogger.logit(.base, message:"---NoMAD Initialized---")
 
+        let defaultPreferences = NSDictionary(contentsOf: Bundle.main.url(forResource: "DefaultPreferences", withExtension: "plist")!)
+        UserDefaults.standard.register(defaults: defaultPreferences as! [String : Any])
+
         //NSUserNotificationCenter.defaultUserNotificationCenter().delegate = self
 
         func sendUpdateRequest() {

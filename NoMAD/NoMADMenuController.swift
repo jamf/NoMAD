@@ -37,28 +37,6 @@ prefix func ~~(value: Int)->Bool{
 
 
 
-// default settings
-
-let settings = [
-    "ADDomain" : "",
-    "KerberosRealm" : "",
-    "Verbose"   :   false,
-    "userCommandHotKey1"    : "",
-    "userCommandName1"  : "",
-    "userCommandTask1"  : "",
-    "SecondsToRenew"    : 7200,
-    "RenewTickets"  :   1,
-    "userPasswordExpireDate"    : "",
-    "PasswordExpireAlertTime"   : 1296000,
-    "LastPasswordWarning"   : 1296000,
-    "HidePrefs"             : 0,
-    "ExpeditedLookup"       : 0,
-    "displayName"           : "",
-    "LastCertificateExpiration"   : "",
-    "LoginComamnd"  : "",
-    "UserPasswordSetDates"   : NSDictionary()
-    ] as [String : Any]
-
 // set up a default defaults
 
 let defaults = UserDefaults.standard
@@ -157,7 +135,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         dateFormatter.dateStyle = .medium
         dateFormatter.timeStyle = .short
 
-        defaults.register(defaults: settings)
 
         // find out if a Self Service Solution exists - hide the menu if it's not there
 
