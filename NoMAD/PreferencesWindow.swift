@@ -110,9 +110,9 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
             HotKeyField.isEnabled = true
         }
 
-        CommandField.stringValue = defaults.string(forKey: "userCommandTask1") ?? ""
+        CommandField.stringValue = defaults.string(forKey: UserCommandTask1) ?? ""
 
-        if defaults.objectIsForced(forKey: "userCommandTask1") {
+        if defaults.objectIsForced(forKey: UserCommandTask1) {
             CommandField.isEnabled = false
         } else {
             CommandField.isEnabled = true
@@ -196,7 +196,7 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
 
         defaults.set(ButtonNameField.stringValue, forKey: UserCommandName1)
         defaults.set(HotKeyField.stringValue, forKey: UserCommandHotKey1)
-        defaults.set(CommandField.stringValue, forKey: "userCommandTask1")
+        defaults.set(CommandField.stringValue, forKey: UserCommandTask1)
 
         // buttons
 

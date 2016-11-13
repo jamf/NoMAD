@@ -461,8 +461,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // if specified by the preferences, this shows a CLI one-liner
 
     @IBAction func NoMADMenuClickHiddenItem1(_ sender: NSMenuItem) {
-        myLogger.logit(.base, message: "Executing command: " + defaults.string(forKey: "userCommandTask1")! )
-        let myResult = cliTask(defaults.string(forKey: "userCommandTask1")!)
+        myLogger.logit(.base, message: "Executing command: " + defaults.string(forKey: UserCommandTask1)! )
+        let myResult = cliTask(defaults.string(forKey: UserCommandTask1)!)
         myLogger.logit(.base, message:myResult)
     }
 
