@@ -36,10 +36,14 @@ class Logger {
     /// Set to a level from `LogLevel` enum to control what gets logged.
     var loglevel: LogLevel
 
+    /// Init method simply check to see if Verbose logging is enabled or not for the Logger object.
     init() {
-        //loglevel = defaults.integerForKey("Verbose")
-        //TODO: Set the default logging level to debug currently. Fix this later.
-        loglevel = .debug
+        if (defaults.bool(forKey: "Verbose") == true) {
+            loglevel = .debug
+            logit(.debug, message: "Debug logging enabled")
+        } else {
+            loglevel = .base
+        }
     }
 
     /// Simple wrapper around NSLog to provide control of logging.
