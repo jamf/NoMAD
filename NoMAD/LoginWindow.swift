@@ -139,7 +139,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             // Check if we want to sync the console user's password with the remote AD password.
             // Only used if console user is not AD.
             var doLocalPasswordSync = false
-            if defaults.bool(forKey: "LocalPasswordSync") {
+            if defaults.bool(forKey: LocalPasswordSync) {
                 doLocalPasswordSync = true
             }
 
