@@ -799,7 +799,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         self.NoMADMenuHiddenItem1.isEnabled = true
                         self.NoMADMenuHiddenItem1.isHidden = false
                         self.NoMADMenuHiddenItem1.title = defaults.string(forKey: "userCommandName1")!
-                        self.NoMADMenuHiddenItem1.keyEquivalent = defaults.string(forKey: "userCommandHotKey1")!
+                        self.NoMADMenuHiddenItem1.keyEquivalent = defaults.string(forKey: UserCommandHotKey1)!
                     } else  {
                         self.NoMADMenuHiddenItem1.isHidden = true
                         self.NoMADMenuHiddenItem1.isEnabled = false
