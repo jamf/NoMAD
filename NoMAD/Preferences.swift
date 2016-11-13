@@ -1,10 +1,14 @@
 //
-//  PreferenceConstants.swift
+//  Preferences.swift
 //  NoMAD
 //
 //  Created by Tom Nook on 11/12/16.
 //  Copyright © 2016 Trusource Labs. All rights reserved.
 //
+
+
+/// A convenience name for `UserDefaults.standard`
+let defaults = UserDefaults.standard
 
 enum Preferences {
     static let aDDomain = "ADDomain"

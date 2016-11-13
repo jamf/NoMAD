@@ -34,7 +34,6 @@ prefix func ~~(value: Int)->Bool{
 }
 
 // set up a default defaults
-let defaults = UserDefaults.standard
 let statusItem = NSStatusBar.system().statusItem(withLength: NSVariableStatusItemLength)
 let userNotificationCenter = NSUserNotificationCenter.default
 var selfServiceExists = false
