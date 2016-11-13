@@ -132,7 +132,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 
         tickets.getDetails()
 
-        if defaults.string(forKey: Preferences.lDAPServerList) != nil {
+        if defaults.string(forKey: Preferences.lDAPServerList) != "" {
 
             // clear out the hosts list and reload it
 
