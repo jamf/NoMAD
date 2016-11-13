@@ -4,6 +4,8 @@
 <dict>
 	<key>ADDomain</key>
 	<string></string>
+	<key>AutoConfigure</key>
+	<string></string>
 	<key>DisplayName</key>
 	<string></string>
 	<key>ExpeditedLookup</key>

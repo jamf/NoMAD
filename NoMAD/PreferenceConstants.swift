@@ -7,6 +7,7 @@
 //
 
 let ADDomain = "ADDomain"
+let AutoConfigure = "AutoConfigure"
 let DisplayName = "DisplayName"
 let ExpeditedLookup = "ExpeditedLookup"
 let GetHelpType = "GetHelpType"
