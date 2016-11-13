@@ -51,7 +51,7 @@ public func setDefaults() {
         }
     }
 
-    if defaults.bool(forKey: "LoginItem") {
+    if defaults.bool(forKey: LoginItem) {
         //TODO: Test this to make sure it actually does what I think it will. This should return the value of the key if found, otherwise false.
         addToLoginItems()
     }
@@ -127,7 +127,7 @@ private func addToLoginItems() {
 
     // clear the flag
 
-    defaults.set(false, forKey: "LoginItem")
+    defaults.set(false, forKey: LoginItem)
 
     // in honor of @macmule
     /*

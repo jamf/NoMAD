@@ -24,6 +24,8 @@
 	<string></string>
 	<key>LoginComamnd</key>
 	<string></string>
+	<key>LoginItem</key>
+	<string></string>
 	<key>LDAPServerList</key>
 	<string></string>
 	<key>LocalPasswordSync</key>
