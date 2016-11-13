@@ -24,7 +24,7 @@ class GetHelp {
         getHelpOptions = ""
         enabled = false
 
-        if let getHelpType = defaults.string(forKey: "GetHelpType") {
+        if let getHelpType = defaults.string(forKey: GetHelpType) {
             if let getHelpOptions = defaults.string(forKey: "GetHelpOptions") {
                 self.getHelpOptions = getHelpOptions
                 self.getHelpType = getHelpType
