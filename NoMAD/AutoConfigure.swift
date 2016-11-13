@@ -14,7 +14,7 @@ public func setDefaults() {
 
     // do we have an AutoConfigure setting?
 
-    if let autoConfigure = defaults.string(forKey: "AutoConfigure") {
+    if let autoConfigure = defaults.string(forKey: AutoConfigure) {
         switch autoConfigure {
         case "TSL":
             defaults.set("trusourcelabs.com", forKey: "ADDomain")
@@ -27,7 +27,7 @@ public func setDefaults() {
             defaults.set("", forKey: "userCommandTask1")
             defaults.set(7200, forKey: "secondsToRenew")
             defaults.set(1, forKey: "RenewTickets")
-            defaults.set("", forKey: "AutoConfigure")
+            defaults.set("", forKey: AutoConfigure)
 
         case "JODA":
             defaults.set("jodapro.com", forKey: "ADDomain")
@@ -42,7 +42,7 @@ public func setDefaults() {
             defaults.set("", forKey: "userCommandTask1")
             defaults.set(7200, forKey: "secondsToRenew")
             defaults.set(1, forKey: "RenewTickets")
-            defaults.set("", forKey: "AutoConfigure")
+            defaults.set("", forKey: AutoConfigure)
 
         default:
             // see if we're on AD
