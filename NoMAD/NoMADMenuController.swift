@@ -244,8 +244,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 defaults.set(172800, forKey: "LastPasswordWarning")
             }
 
-            if ( defaults.bool(forKey: "Verbose") == false) {
-                defaults.set(false, forKey: "Verbose")
+            if ( defaults.bool(forKey: Verbose) == false) {
+                defaults.set(false, forKey: Verbose)
             }
 
             if ( ( defaults.string(forKey: KerberosRealm) ?? "") == "" ) {
@@ -259,7 +259,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             doTheNeedfull()
         }
 
-        if defaults.bool(forKey: "Verbose") == true {
+        if defaults.bool(forKey: Verbose) == true {
             myLogger.logit(.base, message:"Starting up NoMAD")
         }
 
@@ -619,7 +619,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     func renewTickets(){
         cliTask("/usr/bin/kinit -R")
         userInformation.myLDAPServers.tickets.getDetails()
-        if defaults.bool(forKey: "Verbose") == true {
+        if defaults.bool(forKey: Verbose) == true {
             myLogger.logit(.base, message:"Renewing tickets.")
         }
     }
