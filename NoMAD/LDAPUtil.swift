@@ -69,7 +69,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 
         if ( (defaults.string(forKey: "LDAPServerList") ?? "") != "" ) {
 
-            let myLDAPServerListRaw = defaults.string(forKey: "LDAPServerList")
+            let myLDAPServerListRaw = defaults.string(forKey: Preferences.lDAPServerList)
             let myLDAPServerList = myLDAPServerListRaw?.components(separatedBy: ",")
             for server in myLDAPServerList! {
                 let currentServer: LDAPServer = LDAPServer(host: server, status: "found", priority: 0, weight: 0, timeStamp: Date())
@@ -132,13 +132,13 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 
         tickets.getDetails()
 
-        if defaults.string(forKey: "LDAPServerList") != nil {
+        if defaults.string(forKey: Preferences.lDAPServerList) != nil {
 
             // clear out the hosts list and reload it
 
             hosts.removeAll()
 
-            let myLDAPServerListRaw = defaults.string(forKey: "LDAPServerList")
+            let myLDAPServerListRaw = defaults.string(forKey: Preferences.lDAPServerList)
             let myLDAPServerList = myLDAPServerListRaw?.components(separatedBy: ",")
 
             for server in myLDAPServerList! {
