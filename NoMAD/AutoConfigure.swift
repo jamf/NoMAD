@@ -25,7 +25,7 @@ public func setDefaults() {
             defaults.set("", forKey: UserCommandHotKey1)
             defaults.set("", forKey: UserCommandName1)
             defaults.set("", forKey: UserCommandTask1)
-            defaults.set(7200, forKey: "secondsToRenew")
+            defaults.set(7200, forKey: SecondsToRenew)
             defaults.set(1, forKey: "RenewTickets")
             defaults.set("", forKey: AutoConfigure)
 
@@ -40,7 +40,7 @@ public func setDefaults() {
             defaults.set("", forKey: UserCommandHotKey1)
             defaults.set("", forKey: UserCommandName1)
             defaults.set("", forKey: UserCommandTask1)
-            defaults.set(7200, forKey: "secondsToRenew")
+            defaults.set(7200, forKey: SecondsToRenew)
             defaults.set(1, forKey: "RenewTickets")
             defaults.set("", forKey: AutoConfigure)
 
@@ -73,7 +73,7 @@ private func getADSettings() {
                 defaults.set("", forKey: UserCommandHotKey1)
                 defaults.set("", forKey: UserCommandName1)
                 defaults.set("", forKey: UserCommandTask1)
-                defaults.set(7200, forKey: "secondsToRenew")
+                defaults.set(7200, forKey: SecondsToRenew)
                 defaults.set(1, forKey: "RenewTickets")
                 break
             }
