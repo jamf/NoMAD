@@ -92,7 +92,7 @@ class WindowsCATools {
                     if (data != nil ) {
 
                         let myCertRef = SecCertificateCreateWithData(nil, data! as CFData)
-
+                        if myCertRef != nil {
                         let dictionary: [NSString: AnyObject] = [
                             kSecClass: kSecClassCertificate,
                             kSecReturnRef : kCFBooleanTrue,
@@ -103,14 +103,20 @@ class WindowsCATools {
 
                         self.myImportError = SecItemAdd(dictionary as CFDictionary, &mySecRef)
 
+                            if self.myImportError == 0 {
+                                myLogger.logit(.base, message: "Certificate request failed importing certificate.")
+                            }
 
-                        print(mySecRef)
-
-                        print(self.myImportError)
+                                //print(mySecRef)
 
                         var myIdentityRef : SecIdentity? = nil
 
                         SecIdentityCreateWithCertificate(nil, myCertRef!, &myIdentityRef)
+                        } else {
+                            myLogger.logit(.base, message: "Certificate request failed getting certificate.")
+                        }
+
+
                         /*
 
                          // update the name of the private key
