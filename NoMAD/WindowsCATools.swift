@@ -224,7 +224,7 @@ class WindowsCATools {
 
         // first generate the keypair
 
-        let keyGenDict: [String:AnyObject] = [
+        var keyGenDict: [String:AnyObject] = [
 
             // this sets if you can extract the private key
             kSecAttrIsExtractable as String : false as AnyObject,
@@ -237,8 +237,12 @@ class WindowsCATools {
             kSecPublicKeyAttrs as String : pubKeyGenDict as CFDictionary,
             ]
 
-        err = SecKeyGeneratePair(keyGenDict as CFDictionary, &pubKey, &privKey)
+        if defaults.bool(forKey: "ExportableKey") {
+            keyGenDict["extr"] = true as AnyObject
+        }
 
+        err = SecKeyGeneratePair(keyGenDict as CFDictionary, &pubKey, &privKey)
+        
         print(SecCopyErrorMessageString(err, nil)!)
 
     }

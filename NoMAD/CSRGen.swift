@@ -175,7 +175,8 @@ public class CertificateSigningRequest:NSObject {
 
         // let result = SecKeyRawSign(privateKey, padding, digest, digest.count, &signature, &signatureLen)
 
-        // set up the signing
+        // set up the signing using SecTransform
+        
         var myError : Unmanaged<CFError>? = nil
 
         let digestData = Data(digest)
