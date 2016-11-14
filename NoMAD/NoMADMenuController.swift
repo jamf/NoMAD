@@ -554,6 +554,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.NoMADMenuLogOut.isEnabled = false
             if (self.NoMADMenuChangePassword != nil) {
             self.NoMADMenuChangePassword.isEnabled = false
+            }
             if (self.NoMADMenuGetCertificate != nil)  {
                 self.NoMADMenuGetCertificate.isEnabled = false
             }
@@ -568,10 +569,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.NoMADMenuLogOut.isEnabled = false
             if (self.NoMADMenuChangePassword != nil) {
             self.NoMADMenuChangePassword.isEnabled = false
+                }
             if (self.NoMADMenuGetCertificate != nil)  {
                 self.NoMADMenuGetCertificate.isEnabled = false
             }
-
         }
         else {
             self.NoMADMenuLogIn.isEnabled = true
