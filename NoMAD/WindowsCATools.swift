@@ -133,9 +133,9 @@ class WindowsCATools {
                         self.myImportError = SecItemAdd(dictionary as CFDictionary, &mySecRef)
 
 
-                        print(mySecRef)
+                        //print(mySecRef)
 
-                        print(self.myImportError)
+                        // print(self.myImportError)
 
                         var myIdentityRef : SecIdentity? = nil
 
