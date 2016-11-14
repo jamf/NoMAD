@@ -11,11 +11,39 @@ import Security
 
 class WindowsCATools {
 
+    // set up lots of constants
+
     private var api: String
     var directoryURL: NSURL
     var certCSR: String
     var certTemplate: String
     var myImportError: OSStatus
+
+    private let kCryptoExportImportManagerPublicKeyInitialTag = "-----BEGIN RSA PUBLIC KEY-----\n"
+    private let kCryptoExportImportManagerPublicKeyFinalTag = "-----END RSA PUBLIC KEY-----\n"
+
+    private let kCryptoExportImportManagerRequestInitialTag = "-----BEGIN CERTIFICATE REQUEST-----\n"
+    private let kCryptoExportImportManagerRequestFinalTag = "-----END CERTIFICATE REQUEST-----\n"
+
+    private let kCryptoExportImportManagerPublicNumberOfCharactersInALine = 64
+
+    var err = OSStatus()
+
+    var pubKey : SecKey? = nil
+    var privKey : SecKey? = nil
+    var pubKeyBits : CFTypeRef? = nil
+    var privKeyBits : CFTypeRef? = nil
+
+    var pubKeyData : Data? = nil
+    var pubKeyDataPtr : CFData? = nil
+    
+    var uuid : CFUUID? = nil
+    var uuidString : String? = nil
+
+    var now : String? = nil
+
+    var kPrivateKeyTag : String? = nil
+    var kPublicKeyTag : String? = nil
 
     init(serverURL: String, template: String) {
         self.api = "\(serverURL)/certsrv/"
@@ -27,10 +55,14 @@ class WindowsCATools {
             myLogger.logit(.info, message: "Can't create temp directory")
         }
 
+        uuid = CFUUIDCreate(nil)
+        uuidString = CFUUIDCreateString(nil, uuid) as String?
+
         // we should return this in case there's an error
 
         // TODO: Don't use certtool for this, but SecTransform to create the CSR
-        cliTask("/usr/bin/certtool r " + directoryURL.appendingPathComponent("new.csr")!.path + " Z")
+        //cliTask("/usr/bin/certtool r " + directoryURL.appendingPathComponent("new.csr")!.path + " Z")
+
 
         let path = directoryURL.appendingPathComponent("new.csr")
 
@@ -42,11 +74,27 @@ class WindowsCATools {
         }
         certTemplate = template
         myImportError = 0
+
+        now = String(describing: NSDate())
+
+        kPrivateKeyTag = "com.NoMAD.CSR.privatekey." + now!
+        kPublicKeyTag = "com.NoMAD.CSR.publickey." + now!
     }
 
     func certEnrollment() -> OSStatus {
 
-        // do it all
+        // generate the keypair 
+
+        genKeys()
+        let myPubKeyData = getPublicKeyasData()
+        let myCSRGen = CertificateSigningRequest(commonName: "NoMAD", organizationName: "Trusource Labs", organizationUnitName: "WorldHQ", countryName: "US", cryptoAlgorithm: CryptoAlgorithm.sha1)
+        print(myPubKeyData)
+
+        let myCSR = myCSRGen.build(myPubKeyData, privateKey: privKey!)
+
+        certCSR = PEMKeyFromDERKey(myCSR!, PEMType: "CSR")
+
+
         // set up the completion handler
 
         let myCompletionHandler: (NSData?, URLResponse?, NSError?) -> Void = { (data, response, error) in
@@ -177,18 +225,6 @@ class WindowsCATools {
                          ]
                          print(self.myImportError)
 
-                         let attributesToUpdate = NSMutableDictionary()
-                         attributesToUpdate["labl"] = defaults.stringForKey("userPrincipal")! as AnyObject?
-
-                         self.myImportError = SecItemUpdate(itemUpdateDict as CFDictionary, attributesToUpdate as CFDictionary)
-                         print(SecCopyErrorMessageString(self.myImportError, nil))
-
-                         print(attributesToUpdate)
-                         */
-
-                        //myLogger.logit(.base, message: String(self.myImportError))
-
-                        //myLogger.logit(.base, message: SecCopyErrorMessageString(self.myImportError, nil) as! String)
                     }
 
                     if (error != nil) {
@@ -257,6 +293,96 @@ class WindowsCATools {
         let session = URLSession.shared
         session.dataTask(with: request as URLRequest, completionHandler: completionHandler).resume()
     }
+
+    // utility functions
+
+    func genKeys() {
+
+        let privKeyGenDict: [String:AnyObject] = [
+            kSecAttrApplicationTag as String : kPrivateKeyTag!.data(using: String.Encoding.utf8)! as AnyObject,
+            ]
+
+        let pubKeyGenDict: [String:AnyObject] = [
+            kSecAttrApplicationTag as String : kPublicKeyTag!.data(using: String.Encoding.utf8)! as AnyObject,
+            ]
+
+        // first generate the keypair
+
+        let keyGenDict: [String:AnyObject] = [
+
+            // this sets if you can extract the private key
+            kSecAttrIsExtractable as String : false as AnyObject,
+
+            kSecAttrKeyType as String : kSecAttrKeyTypeRSA as AnyObject,
+            kSecAttrKeySizeInBits as String : "2048" as CFString,
+            kSecAttrIsPermanent as String : true as AnyObject,
+            kSecAttrLabel as String : "NoMADTest" as AnyObject,
+            kSecPrivateKeyAttrs as String : privKeyGenDict as CFDictionary,
+            kSecPublicKeyAttrs as String : pubKeyGenDict as CFDictionary,
+            ]
+
+        err = SecKeyGeneratePair(keyGenDict as CFDictionary, &pubKey, &privKey)
+
+        print(SecCopyErrorMessageString(err, nil)!)
+
+    }
+
+    func getPublicKeyasData() -> Data {
+
+        // get the public key
+
+        let pubKeyDict: [String:AnyObject] = [
+            kSecClass as String : kSecClassKey as AnyObject,
+            kSecReturnData as String : true as AnyObject,
+            kSecAttrKeyType as String : kSecAttrKeyTypeRSA as AnyObject,
+            kSecAttrApplicationTag as String : kPublicKeyTag!.data(using: String.Encoding.utf8)! as AnyObject,
+            ]
+
+        err = SecItemExport(pubKey!, SecExternalFormat.formatBSAFE, .init(rawValue: 0), nil, &pubKeyDataPtr)
+        
+        err = SecItemCopyMatching(pubKeyDict as CFDictionary, &pubKeyBits)
+        
+        pubKeyData = (pubKeyDataPtr! as? Data)!
+        
+        return pubKeyDataPtr! as Data
+        
+    }
+
+    func PEMKeyFromDERKey(_ data: Data, PEMType: String) -> String {
+
+        var resultString: String
+
+        // base64 encode the result
+        let base64EncodedString = data.base64EncodedString(options: [])
+
+        // split in lines of 64 characters.
+        var currentLine = ""
+        if PEMType == "RSA" {
+            resultString = kCryptoExportImportManagerPublicKeyInitialTag
+        } else {
+            resultString = kCryptoExportImportManagerRequestInitialTag
+        }
+        var charCount = 0
+        for character in base64EncodedString.characters {
+            charCount += 1
+            currentLine.append(character)
+            if charCount == kCryptoExportImportManagerPublicNumberOfCharactersInALine {
+                resultString += currentLine + "\n"
+                charCount = 0
+                currentLine = ""
+            }
+        }
+        // final line (if any)
+        if currentLine.characters.count > 0 { resultString += currentLine + "\n" }
+        // final tag
+        if PEMType == "RSA" {
+            resultString += kCryptoExportImportManagerPublicKeyFinalTag
+        } else {
+            resultString += kCryptoExportImportManagerRequestFinalTag
+        }
+        return resultString
+    }
+
     
     // TODO: remove the use of certtool and use CommonCrypto instead
     
@@ -265,4 +391,6 @@ class WindowsCATools {
     // TODO: inspect the existing identities for ones matching our AD name, then alert on expiration
     
     // http://opensource.apple.com/source/Security/Security-57337.40.85/SecurityTool/identity_find.c
+
+    // DONE
 }
