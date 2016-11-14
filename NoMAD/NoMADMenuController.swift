@@ -398,8 +398,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         if ( certCATest != "" && certTemplateTest != "" ) {
 
-            let lastExpire = defaults.object(forKey: "LastCertificateExpiration") as! Date ?? Date.distantPast
-
+            if let lastExpire = defaults.object(forKey: "LastCertificateExpiration") as? Date {
             if lastExpire.timeIntervalSinceNow > 2592000 {
                 let alertController = NSAlert()
                 alertController.messageText = "You already have a valid certificate."
@@ -411,6 +410,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 if myResponse == 1000 {
                     return
                 }
+            }
             }
 
             // start the animation
