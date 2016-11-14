@@ -106,7 +106,7 @@ class KeychainUtil {
  certificate chain contains one of the issuers provided in this list.
  */
 
-        // build our search dictionary
+        // build our search dictionary 
         
         let identitySearchDict: [String:AnyObject] = [
             kSecClass as String: kSecClassIdentity,
