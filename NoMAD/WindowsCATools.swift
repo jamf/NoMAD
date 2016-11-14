@@ -121,7 +121,7 @@ class WindowsCATools {
                     if (data != nil ) {
 
                         let myCertRef = SecCertificateCreateWithData(nil, data! as CFData)
-                        if myCertRef != nil {
+
                         let dictionary: [NSString: AnyObject] = [
                             kSecClass: kSecClassCertificate,
                             kSecReturnRef : kCFBooleanTrue,
@@ -132,9 +132,6 @@ class WindowsCATools {
 
                         self.myImportError = SecItemAdd(dictionary as CFDictionary, &mySecRef)
 
-                            if self.myImportError == 0 {
-                                myLogger.logit(.base, message: "Certificate request failed importing certificate.")
-                            }
 
                         //print(mySecRef)
 
@@ -143,70 +140,6 @@ class WindowsCATools {
                         var myIdentityRef : SecIdentity? = nil
 
                         SecIdentityCreateWithCertificate(nil, myCertRef!, &myIdentityRef)
-                        } else {
-                            myLogger.logit(.base, message: "Certificate request failed getting certificate.")
-                        }
-
-
-                        /*
-
-                         // update the name of the private key
-                         // first get a reference to the private key from the identity we just imported
-
-                         var myKey : SecKey? = nil
-
-                         self.myImportError = SecIdentityCopyPrivateKey(myIdentityRef!, &myKey)
-
-                         print(self.myImportError)
-                         print(myKey)
-
-                         // now get the attributes of the key, create a query dictionary to hold all the attributes first
-
-                         var keychain : SecKeychain? = nil
-                         self.myImportError = SecKeychainCopyDefault(&keychain)
-
-                         var info : UnsafeMutablePointer<SecKeychainAttributeInfo>? = nil
-
-                         let keyRefDict = NSArray()
-                         let keyArray = keyRefDict.arrayByAddingObject(myKey!)
-
-                         let itemSearchDict: [String:AnyObject] = [
-                         kSecClass as String: kSecClassKey,
-                         kSecMatchItemList as String : keyArray as! AnyObject,
-                         kSecReturnRef as String: true as AnyObject,
-                         kSecReturnAttributes as String : true as AnyObject,
-                         kSecReturnData as String : true as AnyObject
-                         ]
-
-                         var copyReturn : CFTypeRef? = nil
-
-                         self.myImportError = SecItemCopyMatching(itemSearchDict, &copyReturn)
-
-                         print(self.myImportError)
-                         print(copyReturn)
-
-                         let itemDeleteDict: [String:AnyObject] = [
-                         kSecClass as String: kSecClassKey,
-                         kSecMatchItemList as String : keyArray as! AnyObject,
-                         ]
-
-                         self.myImportError = SecItemDelete(itemDeleteDict)
-
-                         let myAttrs = copyReturn! as! NSMutableDictionary
-                         myAttrs["labl"] = (defaults.stringForKey("userPrincipal")! + "\n"
-                         //myAttrs["kSecAttrIsExtractable as String"] = false as AnyObject
-
-                         var keyResult: AnyObject? = nil
-
-
-                         self.myImportError = SecItemAdd(myAttrs, &keyResult)
-                         print(self.myImportError)
-
-                         let itemUpdateDict: [String:AnyObject] = [
-                         kSecClass as String: kSecClassKey,
-                         kSecMatchItemList as String : keyArray as! AnyObject,
-                         ]
-                         print(self.myImportError)
 
                     }
 
@@ -299,7 +232,7 @@ class WindowsCATools {
             kSecAttrKeyType as String : kSecAttrKeyTypeRSA as AnyObject,
             kSecAttrKeySizeInBits as String : "2048" as CFString,
             kSecAttrIsPermanent as String : true as AnyObject,
-            kSecAttrLabel as String : "NoMADTest" as AnyObject,
+            kSecAttrLabel as String : "NoMAD" as AnyObject,
             kSecPrivateKeyAttrs as String : privKeyGenDict as CFDictionary,
             kSecPublicKeyAttrs as String : pubKeyGenDict as CFDictionary,
             ]
