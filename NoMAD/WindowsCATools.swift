@@ -14,7 +14,6 @@ class WindowsCATools {
     // set up lots of constants
 
     private var api: String
-    var directoryURL: NSURL
     var certCSR: String
     var certTemplate: String
     var myImportError: OSStatus
@@ -45,15 +44,13 @@ class WindowsCATools {
     var kPrivateKeyTag : String? = nil
     var kPublicKeyTag : String? = nil
 
-    init(serverURL: String, template: String) {
-        self.api = "\(serverURL)/certsrv/"
+    var sema : DispatchObject? = nil
 
-        directoryURL = NSURL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString, isDirectory: true)! as NSURL
-        do {
-            try FileManager.default.createDirectory(at: directoryURL as URL, withIntermediateDirectories: true, attributes: nil)
-        } catch {
-            myLogger.logit(.info, message: "Can't create temp directory")
-        }
+    init(serverURL: String, template: String) {
+
+        // TODO: Validate the URL
+
+        self.api = "\(serverURL)/certsrv/"
 
         uuid = CFUUIDCreate(nil)
         uuidString = CFUUIDCreateString(nil, uuid) as String?
@@ -62,16 +59,19 @@ class WindowsCATools {
 
         // TODO: Don't use certtool for this, but SecTransform to create the CSR
         //cliTask("/usr/bin/certtool r " + directoryURL.appendingPathComponent("new.csr")!.path + " Z")
+//
+//
+//        let path = directoryURL.appendingPathComponent("new.csr")
+//
+//        do {
+//            certCSR = try NSString(contentsOfFile: path!.path, encoding: String.Encoding.ascii.rawValue) as String
+//        } catch {
+//            certCSR = ""
+//            myLogger.logit(.base, message: "Error getting CSR")
+//        }
 
+        certCSR = ""
 
-        let path = directoryURL.appendingPathComponent("new.csr")
-
-        do {
-            certCSR = try NSString(contentsOfFile: path!.path, encoding: String.Encoding.ascii.rawValue) as String
-        } catch {
-            certCSR = ""
-            myLogger.logit(.base, message: "Error getting CSR")
-        }
         certTemplate = template
         myImportError = 0
 
@@ -79,6 +79,8 @@ class WindowsCATools {
 
         kPrivateKeyTag = "com.NoMAD.CSR.privatekey." + now!
         kPublicKeyTag = "com.NoMAD.CSR.publickey." + now!
+
+        sema = DispatchSemaphore( value: 0 )
     }
 
     func certEnrollment() -> OSStatus {
@@ -94,28 +96,6 @@ class WindowsCATools {
 
         certCSR = PEMKeyFromDERKey(myCSR!, PEMType: "CSR")
 
-
-        // set up the completion handler
-
-        let myCompletionHandler: (NSData?, URLResponse?, NSError?) -> Void = { (data, response, error) in
-            if (response != nil) {
-
-                let httpResponse = response as! HTTPURLResponse
-
-                if (httpResponse.statusCode >= 200 && httpResponse.statusCode < 500) {
-                }
-            }
-
-            if (data != nil ) {
-
-            }
-
-            if (error != nil) {
-                print(error!)
-            }
-        }
-
-
         var myReqID = 0
 
         submitCert(certTemplate: certTemplate, completionHandler: { (data, response, error) in
@@ -129,7 +109,8 @@ class WindowsCATools {
             if (data != nil ) {
                 do {
                     myReqID = try self.findReqID(data: data!)
-                } catch { }
+                } catch {
+                }
                 self.getCert( certID: myReqID, completionHandler: { (data, response, error) in
                     if (response != nil) {
                         let httpResponse = response as! HTTPURLResponse
