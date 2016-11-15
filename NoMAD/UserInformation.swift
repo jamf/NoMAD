@@ -229,9 +229,9 @@ class UserInformation {
 
                     // TODO: Do something if we get here
 
-                    let alertController = NSAlert()
-                    alertController.messageText = "Your Password Changed"
-                    alertController.runModal()
+                    //let alertController = NSAlert()
+                    //alertController.messageText = "Your Password Changed"
+                    //alertController.runModal()
 
                     // record the new password set date
 
