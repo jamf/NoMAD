@@ -74,7 +74,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         var userNameChecked = ""
 
         // ensure that user entered just a shortname, in which case add the Kerberos realm
-        // or if there is an "@" in the name, assume it's a full Kerberos principal
+        // or if there is an "@" in the name, remove what's after it and put in the AD Domain set in the prefs
+        // TODO: support multiple domains at the same time
 
         if userName.stringValue.contains("@") {
             let split = userName.stringValue.components(separatedBy: "@")
@@ -93,6 +94,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             // Checks if the remote users's password is correct.
             // If it is and the current console user is not an
             // AD account, then we'll change it.
+            
             myError = noMADUser.checkRemoteUserPassword(password: currentPassword)
 
             // Let's present any errors we got before we do anything else.

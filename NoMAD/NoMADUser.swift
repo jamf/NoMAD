@@ -158,12 +158,12 @@ class NoMADUser {
         if (err == noErr) {
             return true
         } else if ( err == errSecAuthFailed ) {
-            myLogger.logit(LogLevel.base, message: "Authentication failed." + err.description)
+            myLogger.logit(LogLevel.base, message: "Keychain authentication failed." + err.description)
             return false
         } else {
             // If we got any other error, we don't know if the password is good or not because we probably couldn't find the keychain.
-            myLogger.logit(LogLevel.base, message: "Unknown error: " + err.description)
-            throw NoMADUserError.unknownError("Unknown error: " + err.description)
+            myLogger.logit(LogLevel.base, message: "Unknown keychain unlocking error: " + err.description)
+            throw NoMADUserError.unknownError("Unknown keychain unlocking error: " + err.description)
         }
 
     }
