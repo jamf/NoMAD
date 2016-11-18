@@ -10,6 +10,7 @@ import Foundation
 import SystemConfiguration
 import SecurityFoundation
 
+let myWorkQueue = DispatchQueue(label: "com.trusourcelabs.NoMAD.background_work_queue", attributes: [])
 
 enum NoMADUserError: Error, CustomStringConvertible {
     case itemNotFound(String)
@@ -127,7 +128,13 @@ class NoMADUser {
         let GetCredentials: KerbUtil = KerbUtil()
         var myError: String? = nil
 
-        myError = GetCredentials.getKerbCredentials( password, kerberosPrincipal )
+        myWorkQueue.async(execute: {
+        myError = GetCredentials.getKerbCredentials( password, self.kerberosPrincipal )
+        })
+
+        while ( !GetCredentials.finished ) {
+            RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
+        }
 
         return myError
     }
