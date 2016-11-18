@@ -65,14 +65,16 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         delegate?.updateUserInfo()
     }
 
-    /**
-     When the user clicks "sign in" in NoMAD, goes through the steps
-     to login and verify that everything is correct.
 
-     */
+    //When the user clicks "sign in" in NoMAD, goes through the steps
+    //to login and verify that everything is correct.
+
     @IBAction func LogInClick(_ sender: Any) {
 
         var userNameChecked = ""
+
+        // ensure that user entered just a shortname, in which case add the Kerberos realm
+        // or if there is an "@" in the name, assume it's a full Kerberos principal
 
         if userName.stringValue.contains("@") {
             userNameChecked = userName.stringValue
@@ -100,8 +102,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                 // Password expired, so we need to present a password change window for the user to change it.
                 case "Password has expired":
                     defaults.set(userName.stringValue, forKey: "userPrincipal")
-                    print(userName.stringValue)
-                    print(defaults.string(forKey: "userPrincipal"))
+                    //print(userName.stringValue)
+                    //print(defaults.string(forKey: "userPrincipal"))
                     let alertController = NSAlert()
                     alertController.messageText = "Your password has expired. Please reset your password now."
                     alertController.addButton(withTitle: "Change Password")

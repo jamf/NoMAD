@@ -14,8 +14,14 @@
 #import <DirectoryService/DirectoryService.h>
 #import <OpenDirectory/OpenDirectory.h>
 
+@interface KerbUtil ()
+
+@property (nonatomic, assign, readwrite) BOOL				finished;
+
+@end
 
 @implementation KerbUtil
+
 
 //we declare the private function SecKeychainChangePassword
 //this is private... so keep that in mind
@@ -24,6 +30,8 @@ extern OSStatus SecKeychainChangePassword(SecKeychainRef keychainRef, UInt32 old
 
 
 - (NSString *)getKerbCredentials:(NSString *)password :(NSString *)userPrincipal {
+
+    self.finished = NO;
 
     OM_uint32 maj_stat;
     gss_name_t gname = GSS_C_NO_NAME;
@@ -45,14 +53,18 @@ extern OSStatus SecKeychainChangePassword(SecKeychainRef keychainRef, UInt32 old
     if (maj_stat) {
         NSLog(@"error: %d %@", (int)maj_stat, error);
         NSDictionary *errorDict = CFBridgingRelease(CFErrorCopyUserInfo(error)) ;
+        self.finished = YES;
         return [ errorDict valueForKey:(@"NSDescription")];
     }
 
     CFRelease(cred);
+    self.finished = YES;
     return nil ;
 }
 
 - (NSString *)changeKerbPassword:(NSString *)oldPassword :(NSString *)newPassword :(NSString *)userPrincipal {
+
+    self.finished = NO;
 
     OM_uint32 maj_stat ;
     gss_name_t gname = GSS_C_NO_NAME;
@@ -75,10 +87,11 @@ extern OSStatus SecKeychainChangePassword(SecKeychainRef keychainRef, UInt32 old
     if (maj_stat) {
         NSLog(@"error: %d %@", (int)maj_stat, error);
         NSDictionary *errorDict = CFBridgingRelease(CFErrorCopyUserInfo(error)) ;
+        self.finished = YES;
         return [ errorDict valueForKey:(@"NSDescription")];
     }
     //   CFRelease(error);
-
+    self.finished = YES;
     return @"";
 }
 
