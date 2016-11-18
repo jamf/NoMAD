@@ -77,7 +77,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         // or if there is an "@" in the name, assume it's a full Kerberos principal
 
         if userName.stringValue.contains("@") {
-            userNameChecked = userName.stringValue
+            let split = userName.stringValue.components(separatedBy: "@")
+            userNameChecked = split[0] + "@" + defaults.string(forKey: "KerberosRealm")!
         } else {
             userNameChecked = userName.stringValue + "@" + defaults.string(forKey: "KerberosRealm")!
         }
