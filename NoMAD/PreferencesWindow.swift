@@ -18,13 +18,8 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
 
     @IBOutlet weak var ADDomainTextField: NSTextField!
     @IBOutlet weak var KerberosRealmField: NSTextField!
-    //@IBOutlet weak var InternalSiteField: NSTextField!
-    //@IBOutlet weak var InternalSiteIPField: NSTextField!
     @IBOutlet weak var x509CAField: NSTextField!
     @IBOutlet weak var TemplateField: NSTextField!
-    @IBOutlet weak var ButtonNameField: NSTextField!
-    @IBOutlet weak var HotKeyField: NSTextField!
-    @IBOutlet weak var CommandField: NSTextField!
     @IBOutlet weak var SecondsToRenew: NSTextField!
 
     // Check boxes
@@ -59,23 +54,7 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
         } else {
             KerberosRealmField.isEnabled = true
         }
-        /*
-         InternalSiteField.stringValue = defaults.stringForKey("InternalSite") ?? ""
 
-         if defaults.objectIsForcedForKey("InternalSite") {
-         InternalSiteField.enabled = false
-         } else {
-         InternalSiteField.enabled = true
-         }
-
-         InternalSiteIPField.stringValue = defaults.stringForKey("InternalSiteIP") ?? ""
-
-         if defaults.objectIsForcedForKey("InternalSiteIP") {
-         InternalSiteIPField.enabled = false
-         } else {
-         InternalSiteIPField.enabled = true
-         }
-         */
         x509CAField.stringValue = defaults.string(forKey: "x509CA") ?? ""
 
         if defaults.objectIsForced(forKey: "x509CA") {
@@ -90,32 +69,6 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
             TemplateField.isEnabled = false
         } else {
             TemplateField.isEnabled = true
-        }
-
-        // now the secret stuff
-
-        ButtonNameField.stringValue = defaults.string(forKey: "userCommandName1") ?? ""
-
-        if defaults.objectIsForced(forKey: "userCommandName1") {
-            ButtonNameField.isEnabled = false
-        } else {
-            ButtonNameField.isEnabled = true
-        }
-
-        HotKeyField.stringValue = defaults.string(forKey: "userCommandHotKey1") ?? ""
-
-        if defaults.objectIsForced(forKey: "userCommandHotKey1") {
-            HotKeyField.isEnabled = false
-        } else {
-            HotKeyField.isEnabled = true
-        }
-
-        CommandField.stringValue = defaults.string(forKey: "userCommandTask1") ?? ""
-
-        if defaults.objectIsForced(forKey: "userCommandTask1") {
-            CommandField.isEnabled = false
-        } else {
-            CommandField.isEnabled = true
         }
 
         // now the buttons
@@ -187,16 +140,11 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
         } else {
             defaults.set(KerberosRealmField.stringValue.uppercased(), forKey: "KerberosRealm")
         }
-        //defaults.setObject(InternalSiteField.stringValue, forKey: "InternalSite")
-        //defaults.setObject(InternalSiteIPField.stringValue, forKey: "InternalSiteIP")
+
+        // x509 fields
+
         defaults.set(x509CAField.stringValue, forKey: "x509CA")
         defaults.set(TemplateField.stringValue, forKey: "Template")
-
-        // secret stuff
-
-        defaults.set(ButtonNameField.stringValue, forKey: "userCommandName1")
-        defaults.set(HotKeyField.stringValue, forKey: "userCommandHotKey1")
-        defaults.set(CommandField.stringValue, forKey: "userCommandTask1")
 
         // buttons
 
