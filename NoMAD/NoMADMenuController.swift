@@ -712,10 +712,22 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             userInformation.myLDAPServers.setDomain(defaults.string(forKey: "ADDomain")!)
         }
 
-        // get the information on the current setup
+        // check for network reachability
 
-        //let qualityBackground = QOS_CLASS_BACKGROUND
-        //let backgroundQueue: dispatch_queue_t = dispatch_get_global_queue(qualityBackground, 0)
+        let host = defaults.string(forKey: "ADDomain")
+        let myReach = SCNetworkReachabilityCreateWithName(nil, host!)
+        var flag = SCNetworkReachabilityFlags.reachable
+
+        if !SCNetworkReachabilityGetFlags(myReach!, &flag) {
+            myLogger.logit(.base, message: "Can't determine network reachability.")
+            lastStatusCheck = Date()
+        }
+
+        if (flag.rawValue != UInt32(kSCNetworkFlagsReachable)) {
+            // network isn't reachable
+            myLogger.logit(.base, message: "Network is not reachable, delaying lookups.")
+            lastStatusCheck = Date()
+        }
 
         if abs(lastStatusCheck.timeIntervalSinceNow) > 3 {
 

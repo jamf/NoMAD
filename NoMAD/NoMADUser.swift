@@ -10,6 +10,7 @@ import Foundation
 import SystemConfiguration
 import SecurityFoundation
 
+let myWorkQueue = DispatchQueue(label: "com.trusourcelabs.NoMAD.background_work_queue", attributes: [])
 
 enum NoMADUserError: Error, CustomStringConvertible {
     case itemNotFound(String)
@@ -127,7 +128,13 @@ class NoMADUser {
         let GetCredentials: KerbUtil = KerbUtil()
         var myError: String? = nil
 
-        myError = GetCredentials.getKerbCredentials( password, kerberosPrincipal )
+        myWorkQueue.async(execute: {
+        myError = GetCredentials.getKerbCredentials( password, self.kerberosPrincipal )
+        })
+
+        while ( !GetCredentials.finished ) {
+            RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
+        }
 
         return myError
     }
@@ -151,12 +158,12 @@ class NoMADUser {
         if (err == noErr) {
             return true
         } else if ( err == errSecAuthFailed ) {
-            myLogger.logit(LogLevel.base, message: "Authentication failed." + err.description)
+            myLogger.logit(LogLevel.base, message: "Keychain authentication failed." + err.description)
             return false
         } else {
             // If we got any other error, we don't know if the password is good or not because we probably couldn't find the keychain.
-            myLogger.logit(LogLevel.base, message: "Unknown error: " + err.description)
-            throw NoMADUserError.unknownError("Unknown error: " + err.description)
+            myLogger.logit(LogLevel.base, message: "Unknown keychain unlocking error: " + err.description)
+            throw NoMADUserError.unknownError("Unknown keychain unlocking error: " + err.description)
         }
 
     }
