@@ -9,9 +9,6 @@
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindow" customModule="NoMAD" customModuleProvider="target">
             <connections>
                 <outlet property="ADDomainTextField" destination="myy-KH-FKA" id="q5O-2d-gdR"/>
-                <outlet property="ButtonNameField" destination="VJR-cM-Ghl" id="2gp-Hx-rVf"/>
-                <outlet property="CommandField" destination="K8l-4E-IfU" id="hYq-k1-Pbb"/>
-                <outlet property="HotKeyField" destination="pi6-kj-dav" id="yjj-aA-aUJ"/>
                 <outlet property="KerberosRealmField" destination="nT1-7a-7Ki" id="c9D-Pt-5H1"/>
                 <outlet property="RenewTickets" destination="gA7-HJ-fUd" id="eqt-Zs-n03"/>
                 <outlet property="SecondsToRenew" destination="1ai-OG-Wah" id="SDP-nn-ncN"/>
@@ -31,7 +28,7 @@
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
             <value key="minSize" type="size" width="392" height="137"/>
             <view key="contentView" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="392" height="320"/>
+                <rect key="frame" x="0.0" y="0.0" width="392" height="201"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <textField identifier="ADDomain" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="myy-KH-FKA">
@@ -250,7 +247,7 @@
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
             </connections>
-            <point key="canvasLocation" x="410" y="771"/>
+            <point key="canvasLocation" x="410" y="711.5"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="bcB-Up-qaA"/>
     </objects>

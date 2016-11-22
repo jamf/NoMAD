@@ -65,17 +65,21 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         delegate?.updateUserInfo()
     }
 
-    /**
-     When the user clicks "sign in" in NoMAD, goes through the steps
-     to login and verify that everything is correct.
 
-     */
+    //When the user clicks "sign in" in NoMAD, goes through the steps
+    //to login and verify that everything is correct.
+
     @IBAction func LogInClick(_ sender: Any) {
 
         var userNameChecked = ""
 
+        // ensure that user entered just a shortname, in which case add the Kerberos realm
+        // or if there is an "@" in the name, remove what's after it and put in the AD Domain set in the prefs
+        // TODO: support multiple domains at the same time
+
         if userName.stringValue.contains("@") {
-            userNameChecked = userName.stringValue
+            let split = userName.stringValue.components(separatedBy: "@")
+            userNameChecked = split[0] + "@" + defaults.string(forKey: "KerberosRealm")!
         } else {
             userNameChecked = userName.stringValue + "@" + defaults.string(forKey: Preferences.kerberosRealm)!
         }
@@ -90,6 +94,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             // Checks if the remote users's password is correct.
             // If it is and the current console user is not an
             // AD account, then we'll change it.
+            
             myError = noMADUser.checkRemoteUserPassword(password: currentPassword)
 
             // Let's present any errors we got before we do anything else.
@@ -100,8 +105,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                 // Password expired, so we need to present a password change window for the user to change it.
                 case "Password has expired":
                     defaults.set(userName.stringValue, forKey: "userPrincipal")
-                    print(userName.stringValue)
-                    print(defaults.string(forKey: "userPrincipal"))
+                    //print(userName.stringValue)
+                    //print(defaults.string(forKey: "userPrincipal"))
                     let alertController = NSAlert()
                     alertController.messageText = "Your password has expired. Please reset your password now."
                     alertController.addButton(withTitle: "Change Password")

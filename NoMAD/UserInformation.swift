@@ -34,6 +34,7 @@ class UserInformation {
     var userHome: String
 
     var userEmail: String
+    var UPN: String
 
     var lastSetDate = NSDate()
 
@@ -59,6 +60,7 @@ class UserInformation {
         serverPasswordExpirationDefault = Double(0)
         userDisplayName = ""
         userEmail = ""
+        UPN = ""
         if defaults.dictionary(forKey: "UserPasswordSetDates") != nil {
             UserPasswordSetDates = defaults.dictionary(forKey: "UserPasswordSetDates")! as [String : AnyObject]
         }
@@ -72,8 +74,9 @@ class UserInformation {
     // Determine what certs are available locally
 
     func getCertDate() {
-        guard let myCertExpire = myKeychainUtil.findCertExpiration(userEmail, defaultNamingContext: myLDAPServers.defaultNamingContext) else {
-            myLogger.logit(.base, message: "Could not retrive certificate")
+        guard let myCertExpire = myKeychainUtil.findCertExpiration(UPN, defaultNamingContext: myLDAPServers.defaultNamingContext) else {
+            myLogger.logit(.base, message: "Could not retrive certificate.")
+            defaults.set("", forKey: "LastCertificateExpiration")
             return
         }
 
@@ -141,7 +144,7 @@ class UserInformation {
 
         if connected && myLDAPServers.tickets.state {
 
-            let attributes = ["pwdLastSet", "msDS-UserPasswordExpiryTimeComputed", "userAccountControl", "homeDirectory", "displayName", "memberOf", "mail"] // passwordSetDate, computedExpireDateRaw, userPasswordUACFlag, userHomeTemp, userDisplayName, groupTemp
+            let attributes = ["pwdLastSet", "msDS-UserPasswordExpiryTimeComputed", "userAccountControl", "homeDirectory", "displayName", "memberOf", "mail", "userPrincipalName"] // passwordSetDate, computedExpireDateRaw, userPasswordUACFlag, userHomeTemp, userDisplayName, groupTemp
             // "maxPwdAge" // passwordExpirationLength
 
             let searchTerm = "sAMAccountName=" + userPrincipalShort
@@ -155,6 +158,7 @@ class UserInformation {
                 userDisplayName = ldapResult["displayName"] ?? ""
                 groupsTemp = ldapResult["memberOf"]
                 userEmail = ldapResult["mail"] ?? ""
+                UPN = ldapResult["userPrincipalName"] ?? ""
             } else {
                 myLogger.logit(.base, message: "Unable to find user.")
                 canary = false
@@ -225,9 +229,9 @@ class UserInformation {
 
                     // TODO: Do something if we get here
 
-                    let alertController = NSAlert()
-                    alertController.messageText = "Your Password Changed"
-                    alertController.runModal()
+                    //let alertController = NSAlert()
+                    //alertController.messageText = "Your Password Changed"
+                    //alertController.runModal()
 
                     // record the new password set date
 

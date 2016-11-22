@@ -24,9 +24,6 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
     @IBOutlet weak var KerberosRealmField: NSTextField!
     @IBOutlet weak var x509CAField: NSTextField!
     @IBOutlet weak var TemplateField: NSTextField!
-    @IBOutlet weak var ButtonNameField: NSTextField!
-    @IBOutlet weak var HotKeyField: NSTextField!
-    @IBOutlet weak var CommandField: NSTextField!
     @IBOutlet weak var SecondsToRenew: NSTextField!
 
     // Check boxes

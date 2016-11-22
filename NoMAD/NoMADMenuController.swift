@@ -244,6 +244,14 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         originalGetCertificateMenu = NoMADMenuGetCertificate
         originalGetCertificateMenuDate = NoMADMenuGetCertificateDate
 
+        // determine if we should show the Password Change Window
+
+        if let showPasswordChange = defaults.string(forKey: "ChangePasswordType") {
+            if showPasswordChange == "None" {
+                self.NoMADMenu.removeItem(NoMADMenuChangePassword)
+            }
+        }
+
     }
 
 
@@ -299,9 +307,17 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // show the password change window when the menu item is clicked
 
     @IBAction func NoMADMenuClickChangePassword(_ sender: NSMenuItem) {
-        //passwordChangeWindow.showWindow(nil)
-        passwordChangeWindow.window!.forceToFrontAndFocus(nil)
-
+        if let showPasswordChange = defaults.string(forKey: "ChangePasswordType") {
+            switch showPasswordChange {
+            case "Kerberos" :
+                 passwordChangeWindow.window!.forceToFrontAndFocus(nil)
+            default :
+                let myPasswordChange = PasswordChange()
+                myPasswordChange.passwordChange()
+            }
+        } else {
+            passwordChangeWindow.window!.forceToFrontAndFocus(nil)
+        }
     }
 
     // kill the Kerb ticket when clicked
@@ -382,6 +398,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 if myResponse == 1000 {
                     return
                 }
+            }
             }
 
             // start the animation
@@ -507,7 +524,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.NoMADMenuLogIn.isEnabled = false
             self.NoMADMenuLogIn.title = "NoMADMenuController-LogIn".translate
             self.NoMADMenuLogOut.isEnabled = false
+            if (self.NoMADMenuChangePassword != nil) {
             self.NoMADMenuChangePassword.isEnabled = false
+            }
             if (self.NoMADMenuGetCertificate != nil)  {
                 self.NoMADMenuGetCertificate.isEnabled = false
             }
@@ -520,19 +539,21 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.NoMADMenuLogIn.title = "NoMADMenuController-LogIn".translate
             self.NoMADMenuLogIn.action = #selector(self.NoMADMenuClickLogIn)
             self.NoMADMenuLogOut.isEnabled = false
+            if (self.NoMADMenuChangePassword != nil) {
             self.NoMADMenuChangePassword.isEnabled = false
+                }
             if (self.NoMADMenuGetCertificate != nil)  {
                 self.NoMADMenuGetCertificate.isEnabled = false
             }
-
         }
         else {
             self.NoMADMenuLogIn.isEnabled = true
             self.NoMADMenuLogIn.title = NSLocalizedString("NoMADMenuController-RenewTickets", comment: "Menu; Button; Renew Tickets")
             self.NoMADMenuLogIn.action = #selector(self.renewTickets)
             self.NoMADMenuLogOut.isEnabled = true
+            if (self.NoMADMenuChangePassword != nil) {
             self.NoMADMenuChangePassword.isEnabled = true
-
+            }
             if (self.NoMADMenuGetCertificate != nil)  {
                 self.NoMADMenuGetCertificate.isEnabled = true
             }
@@ -663,10 +684,22 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             userInformation.myLDAPServers.setDomain(defaults.string(forKey: Preferences.aDDomain)!)
         }
 
-        // get the information on the current setup
+        // check for network reachability
 
-        //let qualityBackground = QOS_CLASS_BACKGROUND
-        //let backgroundQueue: dispatch_queue_t = dispatch_get_global_queue(qualityBackground, 0)
+        let host = defaults.string(forKey: "ADDomain")
+        let myReach = SCNetworkReachabilityCreateWithName(nil, host!)
+        var flag = SCNetworkReachabilityFlags.reachable
+
+        if !SCNetworkReachabilityGetFlags(myReach!, &flag) {
+            myLogger.logit(.base, message: "Can't determine network reachability.")
+            lastStatusCheck = Date()
+        }
+
+        if (flag.rawValue != UInt32(kSCNetworkFlagsReachable)) {
+            // network isn't reachable
+            myLogger.logit(.base, message: "Network is not reachable, delaying lookups.")
+            lastStatusCheck = Date()
+        }
 
         if abs(lastStatusCheck.timeIntervalSinceNow) > 3 {
 
