@@ -10,7 +10,12 @@
 /// A convenience name for `UserDefaults.standard`
 let defaults = UserDefaults.standard
 
+/// The preference keys for the NoMAD defaults domain.
+///
+/// Use these keys, rather than raw strings.
 enum Preferences {
+
+    /// The name of the current Active Directory Domain.
     static let aDDomain = "ADDomain"
     static let autoConfigure = "AutoConfigure"
     static let displayName = "DisplayName"
@@ -28,7 +33,11 @@ enum Preferences {
     static let lastUser = "LastUser"
     static let lastPasswordWarning = "LastPasswordWarning"
     static let passwordExpireAlertTime = "PasswordExpireAlertTime"
+
+    /// Should NoMAD automatically attempt to renew Kerberos tickets on behalf of the user.
     static let renewTickets = "RenewTickets"
+
+    /// Should NoMAD automatically attempt to mount the user's AD defined home share.
     static let showHome = "ShowHome"
     static let secondsToRenew = "SecondsToRenew"
     static let signInCommand = "SignInCommand"
@@ -42,6 +51,8 @@ enum Preferences {
     static let userPasswordSetDates = "UserPasswordSetDates"
     static let useKeychain = "UseKeychain"
     static let userAging = "UserAging"
+
+    /// Should verbose logging be used. This will significantly increase log spew.
     static let verbose = "Verbose"
     static let x509CA = "X509CA"
 }

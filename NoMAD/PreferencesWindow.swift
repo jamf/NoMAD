@@ -16,10 +16,12 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
 
     var delegate: PreferencesWindowDelegate?
 
+    // The UI controls are connected with simple SharedDefaults bindings.
+    // This means that they stay syncronized with the Defaults system and we
+    // don't need to get into messing with state checking.
+
     @IBOutlet weak var ADDomainTextField: NSTextField!
     @IBOutlet weak var KerberosRealmField: NSTextField!
-    //@IBOutlet weak var InternalSiteField: NSTextField!
-    //@IBOutlet weak var InternalSiteIPField: NSTextField!
     @IBOutlet weak var x509CAField: NSTextField!
     @IBOutlet weak var TemplateField: NSTextField!
     @IBOutlet weak var ButtonNameField: NSTextField!
@@ -39,33 +41,13 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
     override func windowDidLoad() {
         super.windowDidLoad()
         self.window?.center()
-
-        guard let controls = self.window?.contentView?.subviews else {
-            myLogger.logit(.debug, message: "Preference window somehow drew without any controls.")
-            return
-        }
-
-        //Disable managed preferences
-        for object in controls {
-            let identifier = object.identifier
-            if defaults.objectIsForced(forKey: identifier!) {
-                switch object.className {
-                case "NSTextField":
-                    let textField = object as! NSTextField
-                    textField.isEnabled = false
-                case "NSButton":
-                    let button = object as! NSButton
-                    button.isEnabled = false
-                default:
-                    return
-                }
-            }
-        }
+        self.disableManagedPrefs()
     }
 
     func windowShouldClose(_ sender: Any) -> Bool {
 
-        // Make sure we have an AD Domain
+        // Make sure we have an AD Domain. Either require the user to enter one
+        // or quit.
         if ADDomainTextField.stringValue == "" {
             let alertController = NSAlert()
             alertController.messageText = "The AD Domain needs to be filled out."
@@ -84,5 +66,34 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
     func windowWillClose(_ notification: Notification) {
         defaults.set(ADDomainTextField.stringValue.uppercased(), forKey: Preferences.kerberosRealm)
         notificationCenter.post(notificationKey)
+    }
+
+    /// Disable the UI for managed preferences.
+    ///
+    /// Because of naming disparities we are cycling through the controls in
+    /// the `contentView` of the window and looking at their `identifier` keys.
+    /// These keys are set to the same string as the preference value they
+    /// control.
+    func disableManagedPrefs() {
+        guard let controls = self.window?.contentView?.subviews else {
+            myLogger.logit(.debug, message: "Preference window somehow drew without any controls.")
+            return
+        }
+        //MARK: TODO This smells to be overly clever. We should find a simpler way.
+        for object in controls {
+            let identifier = object.identifier
+            if defaults.objectIsForced(forKey: identifier!) {
+                switch object.className {
+                case "NSTextField":
+                    let textField = object as! NSTextField
+                    textField.isEnabled = false
+                case "NSButton":
+                    let button = object as! NSButton
+                    button.isEnabled = false
+                default:
+                    return
+                }
+            }
+        }
     }
 }
