@@ -18,7 +18,7 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
 
     // The UI controls are connected with simple SharedDefaults bindings.
     // This means that they stay syncronized with the Defaults system and we
-    // don't need to get into messing with state checking.
+    // don't need to get into messing with state checking when loading the window.
 
     @IBOutlet weak var ADDomainTextField: NSTextField!
     @IBOutlet weak var KerberosRealmField: NSTextField!
@@ -64,7 +64,10 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
     }
 
     func windowWillClose(_ notification: Notification) {
-        defaults.set(ADDomainTextField.stringValue.uppercased(), forKey: Preferences.kerberosRealm)
+        // If no Kerberos realm has been entered, assume it's the same as the AD Domain.
+        if KerberosRealmField.stringValue == "" {
+            defaults.set(ADDomainTextField.stringValue.uppercased(), forKey: Preferences.kerberosRealm)
+        }
         notificationCenter.post(notificationKey)
     }
 
