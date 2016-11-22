@@ -26,7 +26,7 @@ public func setDefaults() {
             defaults.set("", forKey: Preferences.userCommandName1)
             defaults.set("", forKey: Preferences.userCommandTask1)
             defaults.set(7200, forKey: Preferences.secondsToRenew)
-            defaults.set(1, forKey: "RenewTickets")
+            defaults.set(1, forKey: Preferences.renewTickets)
             defaults.set("", forKey: Preferences.autoConfigure)
 
         case "JODA":
@@ -41,7 +41,7 @@ public func setDefaults() {
             defaults.set("", forKey: Preferences.userCommandName1)
             defaults.set("", forKey: Preferences.userCommandTask1)
             defaults.set(7200, forKey: Preferences.secondsToRenew)
-            defaults.set(1, forKey: "RenewTickets")
+            defaults.set(1, forKey: Preferences.renewTickets)
             defaults.set("", forKey: Preferences.autoConfigure)
 
         default:
@@ -74,7 +74,7 @@ private func getADSettings() {
                 defaults.set("", forKey: Preferences.userCommandName1)
                 defaults.set("", forKey: Preferences.userCommandTask1)
                 defaults.set(7200, forKey: Preferences.secondsToRenew)
-                defaults.set(1, forKey: "RenewTickets")
+                defaults.set(1, forKey: Preferences.renewTickets)
                 break
             }
         }

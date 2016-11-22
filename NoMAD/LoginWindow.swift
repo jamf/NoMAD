@@ -135,7 +135,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             // Checks if keychain password is correct
             let keychainPasswordIsCorrect = try noMADUser.checkKeychainPassword(currentPassword)
             // Check if we want to store the password in the keychain.
-            let useKeychain = defaults.bool(forKey: "UseKeychain")
+            let useKeychain = defaults.bool(forKey: Preferences.useKeychain)
             // Check if we want to sync the console user's password with the remote AD password.
             // Only used if console user is not AD.
             var doLocalPasswordSync = false

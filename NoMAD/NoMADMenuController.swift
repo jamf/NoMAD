@@ -178,7 +178,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         // only autologin if 1) we're set to use the keychain, 2) we have don't already have a Kerb ticket and 3) we can contact the LDAP servers
 
-        if ( defaults.bool(forKey: "UseKeychain")) && !userInformation.myLDAPServers.tickets.state && userInformation.myLDAPServers.currentState {
+        if ( defaults.bool(forKey: Preferences.useKeychain)) && !userInformation.myLDAPServers.tickets.state && userInformation.myLDAPServers.currentState {
 
             var myPass: String = ""
             // check if there's a last user
@@ -253,7 +253,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
     @IBAction func NoMADMenuClickLogIn(_ sender: NSMenuItem) {
 
-        if ( defaults.bool(forKey: "UseKeychain")) {
+        if ( defaults.bool(forKey: Preferences.useKeychain)) {
             var myPass: String = ""
             var myErr: String? = ""
             // check if there's a last user
@@ -312,7 +312,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         if ( (defaults.string(forKey: Preferences.lastUser) ?? "") != "" ) {
 
-            if ( defaults.bool(forKey: "UseKeychain")) {
+            if ( defaults.bool(forKey: Preferences.useKeychain)) {
                 var myKeychainItem: SecKeychainItem?
 
                 var myErr: OSStatus
@@ -607,7 +607,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
     func autoLogin()         {
         // only autologin if 1) we're set to use the keychain, 2) we have don't already have a Kerb ticket and 3) we can contact the LDAP servers
-        if ( defaults.bool(forKey: "UseKeychain")) && !userInformation.myLDAPServers.tickets.state && userInformation.myLDAPServers.currentState {
+        if ( defaults.bool(forKey: Preferences.useKeychain)) && !userInformation.myLDAPServers.tickets.state && userInformation.myLDAPServers.currentState {
             myLogger.logit(.info, message: "Attempting to auto-login")
 
             var myPass: String = ""
@@ -778,7 +778,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
                     // add home directory menu item
 
-                    if self.userInformation.connected && defaults.integer(forKey: "ShowHome") == 1 {
+                    if self.userInformation.connected && defaults.integer(forKey: Preferences.showHome) == 1 {
 
                         if ( self.userInformation.userHome != "" && self.NoMADMenu.items.contains(self.NoMADMenuHome) == false ) {
                             self.NoMADMenuHome.title = "Home Sharepoint"
@@ -807,7 +807,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
                 // check if we need to renew the ticket
 
-                if defaults.integer(forKey: "RenewTickets") == 1 && self.userInformation.status == "Logged In" && ( abs(self.userInformation.myLDAPServers.tickets.expire.timeIntervalSinceNow) >= Double(defaults.integer(forKey: "SecondsToRenew"))) {
+                if defaults.integer(forKey: Preferences.renewTickets) == 1 && self.userInformation.status == "Logged In" && ( abs(self.userInformation.myLDAPServers.tickets.expire.timeIntervalSinceNow) >= Double(defaults.integer(forKey: Preferences.secondsToRenew))) {
                     self.renewTickets()
                 }
 
