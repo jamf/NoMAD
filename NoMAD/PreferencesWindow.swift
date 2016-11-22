@@ -41,25 +41,44 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
         super.windowDidLoad()
 
         self.window?.center()
-        let controls = self.window?.contentView?.subviews
+
+//        guard let controls = self.window?.contentView?.subviews else {
+//            myLogger.logit(.debug, message: "Preference window somehow drew without any controls.")
+//            return
+//        }
+//
+//        for object in controls {
+//            let identifier = object.identifier
+//            switch object.className {
+//            case "NSTextField":
+//                let textField = object as! NSTextField
+//                textField.stringValue = defaults.string(forKey: identifier!) ?? ""
+//            case "NSButton":
+//                let button = object as! NSButton
+//                button.state = defaults.integer(forKey: identifier!)
+//            default:
+//                return
+//            }
+//        }
 
         // set the fields and disable them if they're managed
 
-        ADDomainTextField.stringValue = defaults.string(forKey: Preferences.aDDomain)!
+//
+//        ADDomainTextField.stringValue = defaults.string(forKey: Preferences.aDDomain)!
+//
+//        if defaults.objectIsForced(forKey: Preferences.aDDomain) {
+//            ADDomainTextField.isEnabled = false
+//        } else {
+//            ADDomainTextField.isEnabled = true
+//        }
 
-        if defaults.objectIsForced(forKey: Preferences.aDDomain) {
-            ADDomainTextField.isEnabled = false
-        } else {
-            ADDomainTextField.isEnabled = true
-        }
-
-        KerberosRealmField.stringValue = defaults.string(forKey: Preferences.kerberosRealm)!
-
-        if defaults.objectIsForced(forKey: Preferences.kerberosRealm) {
-            KerberosRealmField.isEnabled = false
-        } else {
-            KerberosRealmField.isEnabled = true
-        }
+//        KerberosRealmField.stringValue = defaults.string(forKey: Preferences.kerberosRealm)!
+//
+//        if defaults.objectIsForced(forKey: Preferences.kerberosRealm) {
+//            KerberosRealmField.isEnabled = false
+//        } else {
+//            KerberosRealmField.isEnabled = true
+//        }
         /*
          InternalSiteField.stringValue = defaults.stringForKey("InternalSite") ?? ""
 
@@ -77,83 +96,83 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
          InternalSiteIPField.enabled = true
          }
          */
-        x509CAField.stringValue = defaults.string(forKey: Preferences.x509CA)!
-
-        if defaults.objectIsForced(forKey: Preferences.x509CA) {
-            x509CAField.isEnabled = false
-        } else {
-            x509CAField.isEnabled = true
-        }
-
-        TemplateField.stringValue = defaults.string(forKey: Preferences.template)!
-
-        if defaults.objectIsForced(forKey: Preferences.template) {
-            TemplateField.isEnabled = false
-        } else {
-            TemplateField.isEnabled = true
-        }
+//        x509CAField.stringValue = defaults.string(forKey: Preferences.x509CA)!
+//
+//        if defaults.objectIsForced(forKey: Preferences.x509CA) {
+//            x509CAField.isEnabled = false
+//        } else {
+//            x509CAField.isEnabled = true
+//        }
+//
+//        TemplateField.stringValue = defaults.string(forKey: Preferences.template)!
+//
+//        if defaults.objectIsForced(forKey: Preferences.template) {
+//            TemplateField.isEnabled = false
+//        } else {
+//            TemplateField.isEnabled = true
+//        }
 
         // now the secret stuff
-
-        ButtonNameField.stringValue = defaults.string(forKey: Preferences.userCommandName1)!
-
-        if defaults.objectIsForced(forKey: Preferences.userCommandName1) {
-            ButtonNameField.isEnabled = false
-        } else {
-            ButtonNameField.isEnabled = true
-        }
-
-        HotKeyField.stringValue = defaults.string(forKey: Preferences.userCommandHotKey1)!
-
-        if defaults.objectIsForced(forKey: Preferences.userCommandHotKey1) {
-            HotKeyField.isEnabled = false
-        } else {
-            HotKeyField.isEnabled = true
-        }
-
-        CommandField.stringValue = defaults.string(forKey: Preferences.userCommandTask1)!
-
-        if defaults.objectIsForced(forKey: Preferences.userCommandTask1) {
-            CommandField.isEnabled = false
-        } else {
-            CommandField.isEnabled = true
-        }
+//
+//        ButtonNameField.stringValue = defaults.string(forKey: Preferences.userCommandName1)!
+//
+//        if defaults.objectIsForced(forKey: Preferences.userCommandName1) {
+//            ButtonNameField.isEnabled = false
+//        } else {
+//            ButtonNameField.isEnabled = true
+//        }
+//
+//        HotKeyField.stringValue = defaults.string(forKey: Preferences.userCommandHotKey1)!
+//
+//        if defaults.objectIsForced(forKey: Preferences.userCommandHotKey1) {
+//            HotKeyField.isEnabled = false
+//        } else {
+//            HotKeyField.isEnabled = true
+//        }
+//
+//        CommandField.stringValue = defaults.string(forKey: Preferences.userCommandTask1)!
+//
+//        if defaults.objectIsForced(forKey: Preferences.userCommandTask1) {
+//            CommandField.isEnabled = false
+//        } else {
+//            CommandField.isEnabled = true
+//        }
 
         // now the buttons
 
-        UseKeychain.state = defaults.integer(forKey: Preferences.useKeychain)
-
-        if defaults.objectIsForced(forKey: Preferences.useKeychain) {
-            UseKeychain.isEnabled = false
-        } else {
-            UseKeychain.isEnabled = true
-        }
-
-        RenewTickets.state = defaults.integer(forKey: Preferences.renewTickets)
-
-        if defaults.objectIsForced(forKey: Preferences.renewTickets) {
-            RenewTickets.isEnabled = false
-        } else {
-            RenewTickets.isEnabled = true
-        }
-
-        ShowHome.state = defaults.integer(forKey: Preferences.showHome)
-
-        if defaults.objectIsForced(forKey: Preferences.showHome) {
-            ShowHome.isEnabled = false
-        } else {
-            ShowHome.isEnabled = true
-        }
-
-        // and the seconds
-
-        SecondsToRenew.stringValue = String(defaults.integer(forKey: Preferences.secondsToRenew) )
-
-        if defaults.objectIsForced(forKey: Preferences.secondsToRenew) {
-            SecondsToRenew.isEnabled = false
-        } else {
-            SecondsToRenew.isEnabled = true
-        }
+//        UseKeychain.state = defaults.integer(forKey: Preferences.useKeychain)
+//
+//        if defaults.objectIsForced(forKey: Preferences.useKeychain) {
+//            UseKeychain.isEnabled = false
+//        } else {
+//            UseKeychain.isEnabled = true
+//        }
+//
+//        RenewTickets.state = defaults.integer(forKey: Preferences.renewTickets)
+//
+//        if defaults.objectIsForced(forKey: Preferences.renewTickets) {
+//            RenewTickets.isEnabled = false
+//        } else {
+//            RenewTickets.isEnabled = true
+//        }
+//
+//        ShowHome.state = defaults.integer(forKey: Preferences.showHome)
+//
+//        if defaults.objectIsForced(forKey: Preferences.showHome) {
+//            ShowHome.isEnabled = false
+//        } else {
+//            ShowHome.isEnabled = true
+//        }
+//
+//        // and the seconds
+//
+//        SecondsToRenew.stringValue = String(defaults.integer(forKey: Preferences.secondsToRenew) )
+//
+//        if defaults.objectIsForced(forKey: Preferences.secondsToRenew) {
+//            SecondsToRenew.isEnabled = false
+//        } else {
+//            SecondsToRenew.isEnabled = true
+//        }
 
     }
 
@@ -182,7 +201,7 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
 
         // turn the fields into app defaults
 
-        defaults.set(ADDomainTextField.stringValue, forKey: Preferences.aDDomain)
+//        defaults.set(ADDomainTextField.stringValue, forKey: Preferences.aDDomain)
         if ( KerberosRealmField.stringValue == "" ) {
             defaults.set(ADDomainTextField.stringValue.uppercased(), forKey: Preferences.kerberosRealm)
         } else {
@@ -190,26 +209,26 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
         }
         //defaults.setObject(InternalSiteField.stringValue, forKey: "InternalSite")
         //defaults.setObject(InternalSiteIPField.stringValue, forKey: "InternalSiteIP")
-        defaults.set(x509CAField.stringValue, forKey: Preferences.x509CA)
-        defaults.set(TemplateField.stringValue, forKey: Preferences.template)
+//        defaults.set(x509CAField.stringValue, forKey: Preferences.x509CA)
+//        defaults.set(TemplateField.stringValue, forKey: Preferences.template)
 
         // secret stuff
 
-        defaults.set(ButtonNameField.stringValue, forKey: Preferences.userCommandName1)
-        defaults.set(HotKeyField.stringValue, forKey: Preferences.userCommandHotKey1)
-        defaults.set(CommandField.stringValue, forKey: Preferences.userCommandTask1)
+//        defaults.set(ButtonNameField.stringValue, forKey: Preferences.userCommandName1)
+//        defaults.set(HotKeyField.stringValue, forKey: Preferences.userCommandHotKey1)
+//        defaults.set(CommandField.stringValue, forKey: Preferences.userCommandTask1)
 
         // buttons
 
-        defaults.set(UseKeychain.state, forKey: Preferences.useKeychain)
-        defaults.set(RenewTickets.state, forKey: Preferences.renewTickets)
-        defaults.set(ShowHome.state, forKey: Preferences.showHome)
-
-        // and the seconds
-
-        defaults.set(Int(SecondsToRenew.stringValue), forKey: Preferences.secondsToRenew)
+//        defaults.set(UseKeychain.state, forKey: Preferences.useKeychain)
+//        defaults.set(RenewTickets.state, forKey: Preferences.renewTickets)
+//        defaults.set(ShowHome.state, forKey: Preferences.showHome)
+//        
+//        // and the seconds
+//        
+//        defaults.set(Int(SecondsToRenew.stringValue), forKey: Preferences.secondsToRenew)
         notificationCenter.post(notificationKey)
-
+        
     }
-
+    
 }
