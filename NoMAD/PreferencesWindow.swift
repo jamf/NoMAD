@@ -41,6 +41,7 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
         super.windowDidLoad()
 
         self.window?.center()
+        let controls = self.window?.contentView?.subviews
 
         // set the fields and disable them if they're managed
 
