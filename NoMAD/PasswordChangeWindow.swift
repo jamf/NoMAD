@@ -148,7 +148,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
      let useKeychain = defaults.bool(forKey: "UseKeychain")
      //
      var doLocalPasswordSync = false
-     if defaults.integer(forKey: LocalPasswordSync) == 1 {
+     if defaults.integer(forKey: "LocalPasswordSync") == 1 {
      doLocalPasswordSync = true
      }
 
