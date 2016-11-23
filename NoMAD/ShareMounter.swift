@@ -28,7 +28,7 @@ class ShareMounter {
         // read in the preference files
 
 
-        if defaults.integer(forKey: Preferences.showHome) == 1 {
+        if defaults.bool(forKey: Preferences.showHome) {
             //NSLog("Looking for ShareMounter files")
             //prefs = try! ["/Library/Preferences/ShareMounter.plist", NSHomeDirectory() + "/Library/Preferences/ShareMounter.plist"]
             /*
@@ -44,7 +44,7 @@ class ShareMounter {
 
     func mount() {
 
-        let myGroups = defaults.array(forKey: "Groups")
+        let myGroups = defaults.array(forKey: Preferences.groups)
 
         for share in all_shares {
             for group in myGroups! {
@@ -101,7 +101,7 @@ class ShareMounter {
 
         NetFSMountURLAsync(shareAddress as CFURL!,
                            nil,
-                           defaults.string(forKey: "userPrincipal")! as CFString!,
+                           defaults.string(forKey: Preferences.userPrincipal)! as CFString!,
                            nil,
                            nil,
                            mount_options,

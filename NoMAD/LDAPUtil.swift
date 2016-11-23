@@ -67,7 +67,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 
         // if a static LDAP server list is given, we don't need to do any testing
 
-        if ( (defaults.string(forKey: "LDAPServerList") ?? "") != "" ) {
+        if (defaults.string(forKey: Preferences.lDAPServerList) != "" ) {
 
             let myLDAPServerListRaw = defaults.string(forKey: Preferences.lDAPServerList)
             let myLDAPServerList = myLDAPServerListRaw?.components(separatedBy: ",")

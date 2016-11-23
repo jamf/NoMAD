@@ -19,8 +19,6 @@ public func setDefaults() {
         case "TSL":
             defaults.set("trusourcelabs.com", forKey: Preferences.aDDomain)
             defaults.set("TRUSOURCELABS.COM", forKey: Preferences.kerberosRealm)
-            //defaults.setObject("jupiter.trusourcelabs.com", forKey: "InternalSite")
-            //defaults.setObject("192.168.32.43", forKey: "InternalSiteIP")
             defaults.set(true, forKey: Preferences.verbose)
             defaults.set("", forKey: Preferences.userCommandHotKey1)
             defaults.set("", forKey: Preferences.userCommandName1)
@@ -32,8 +30,6 @@ public func setDefaults() {
         case "JODA":
             defaults.set("jodapro.com", forKey: Preferences.aDDomain)
             defaults.set("JODAPRO.COM", forKey: Preferences.kerberosRealm)
-            //defaults.setObject("in-or-out.jodapro.com", forKey: "InternalSite")
-            //defaults.setObject("1.1.1.1", forKey: "InternalSiteIP")
             defaults.set("2k12.jodapro.com", forKey: Preferences.x509CA)
             defaults.set("User Auth", forKey: Preferences.template)
             defaults.set(true, forKey: Preferences.verbose)
@@ -67,8 +63,6 @@ private func getADSettings() {
                 let myDomain = (line as NSString).substring(from: 35)
                 defaults.set(myDomain, forKey: Preferences.aDDomain)
                 defaults.set(myDomain.uppercased(), forKey: Preferences.kerberosRealm)
-                //defaults.setObject("", forKey: "InternalSite")
-                //defaults.setObject("", forKey: "InternalSiteIP")
                 defaults.set(false, forKey: Preferences.verbose)
                 defaults.set("", forKey: Preferences.userCommandHotKey1)
                 defaults.set("", forKey: Preferences.userCommandName1)

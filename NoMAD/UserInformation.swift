@@ -61,8 +61,8 @@ class UserInformation {
         userDisplayName = ""
         userEmail = ""
         UPN = ""
-        if defaults.dictionary(forKey: "UserPasswordSetDates") != nil {
-            UserPasswordSetDates = defaults.dictionary(forKey: "UserPasswordSetDates")! as [String : AnyObject]
+        if defaults.dictionary(forKey: Preferences.userPasswordSetDates) != nil {
+            UserPasswordSetDates = defaults.dictionary(forKey: Preferences.userPasswordSetDates)! as [String : AnyObject]
         }
     }
 
@@ -76,7 +76,7 @@ class UserInformation {
     func getCertDate() {
         guard let myCertExpire = myKeychainUtil.findCertExpiration(UPN, defaultNamingContext: myLDAPServers.defaultNamingContext) else {
             myLogger.logit(.base, message: "Could not retrive certificate.")
-            defaults.set("", forKey: "LastCertificateExpiration")
+            defaults.set("", forKey: Preferences.lastCertificateExpiration)
             return
         }
 
@@ -236,12 +236,12 @@ class UserInformation {
                     // record the new password set date
 
                     UserPasswordSetDates[userPrincipal] = userPasswordSetDate
-                    defaults.set(UserPasswordSetDates, forKey: "UserPasswordSetDates")
+                    defaults.set(UserPasswordSetDates, forKey: Preferences.userPasswordSetDates)
 
                 }
             } else {
                 UserPasswordSetDates[userPrincipal] = userPasswordSetDate
-                defaults.set(UserPasswordSetDates, forKey: "UserPasswordSetDates")
+                defaults.set(UserPasswordSetDates, forKey: Preferences.userPasswordSetDates)
             }
 
 
@@ -271,12 +271,12 @@ class UserInformation {
                 getCertDate()
             }
 
-            defaults.set(userHome, forKey: "userHome")
-            defaults.set(userDisplayName, forKey: "displayName")
-            defaults.set(userPrincipal, forKey: "userPrincipal")
+            defaults.set(userHome, forKey: Preferences.userHome)
+            defaults.set(userDisplayName, forKey: Preferences.displayName)
+            defaults.set(userPrincipal, forKey: Preferences.userPrincipal)
             defaults.set(userPrincipalShort, forKey: Preferences.lastUser)
-            defaults.set(userPasswordExpireDate, forKey: "LastPasswordExpireDate")
-            defaults.set(groups, forKey: "Groups")
+            defaults.set(userPasswordExpireDate, forKey: Preferences.lastPasswordExpireDate)
+            defaults.set(groups, forKey: Preferences.groups)
         }
     }
 
@@ -494,7 +494,7 @@ class UserInformation {
 
      // set defaults for these
 
-     defaults.setObject(userHome, forKey: "userHome")
+     defaults.setObject(userHome, forKey: "UserHome")
      defaults.setObject(userDisplayName, forKey: "displayName")
      defaults.setObject(userPrincipal, forKey: "userPrincipal")
      defaults.setObject(userPrincipalShort, forKey: Preferences.lastUser)

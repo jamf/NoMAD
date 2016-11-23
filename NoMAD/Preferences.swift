@@ -18,8 +18,10 @@ enum Preferences {
     /// The name of the current Active Directory Domain.
     static let aDDomain = "ADDomain"
     static let autoConfigure = "AutoConfigure"
+    static let changePasswordType = "ChangePasswordType"
     static let displayName = "DisplayName"
     static let expeditedLookup = "ExpeditedLookup"
+    static let exportableKey = "ExportableKey"
     static let getHelpType = "GetHelpType"
     static let getHelpOptions = "GetHelpOptions"
     static let groups = "Groups"
@@ -32,7 +34,9 @@ enum Preferences {
     static let localPasswordSync = "LocalPasswordSync"
     static let lastUser = "LastUser"
     static let lastPasswordWarning = "LastPasswordWarning"
+    static let lastPasswordExpireDate = "LastPasswordExpireDate"
     static let passwordExpireAlertTime = "PasswordExpireAlertTime"
+    static let passwordChangeOptions = "PasswordChangeOptions"
 
     /// Should NoMAD automatically attempt to renew Kerberos tickets on behalf of the user.
     static let renewTickets = "RenewTickets"
@@ -44,6 +48,7 @@ enum Preferences {
     static let stateChangeAction = "StateChangeAction"
     static let template = "Template"
     static let userPrincipal = "UserPrincipal"
+    static let userHome = "UserHome"
     static let userPasswordExpireDate = "UserPasswordExpireDate"
     static let userCommandTask1 = "UserCommandTask1"
     static let userCommandName1 = "UserCommandName1"
@@ -51,6 +56,7 @@ enum Preferences {
     static let userPasswordSetDates = "UserPasswordSetDates"
     static let useKeychain = "UseKeychain"
     static let userAging = "UserAging"
+    static let userShortName = "UserShortName"
 
     /// Should verbose logging be used. This will significantly increase log spew.
     static let verbose = "Verbose"

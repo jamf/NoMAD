@@ -82,14 +82,14 @@ class GetHelp {
 
         //TODO: this crashes if displayName is empty
         // Should be fixed... needs to be tested.
-        if (defaults.string(forKey: "displayName") != nil) {
-            let fullName = defaults.string(forKey: "displayName")!.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)
+        if (defaults.string(forKey: Preferences.displayName) != "") {
+            let fullName = defaults.string(forKey: Preferences.displayName)!.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)
             createdURL = createdURL.replacingOccurrences(of: "<<fullname>>", with: fullName!)
         }
         if let serial = getSerial().addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) {
             createdURL = createdURL.replacingOccurrences(of: "<<serial>>", with: serial)
         }
-        let shortName = defaults.string(forKey: "UserShortName") ?? ""
+        let shortName = defaults.string(forKey: Preferences.userShortName)!
         createdURL = createdURL.replacingOccurrences(of: "<<shortname>>", with: shortName)
 
         return createdURL

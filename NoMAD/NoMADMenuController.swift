@@ -207,7 +207,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         // if no preferences are set, we show the preferences pane
 
-        if ( (defaults.string(forKey: Preferences.aDDomain) ?? "") == "" ) {
+        if (defaults.string(forKey: Preferences.aDDomain) == "" ) {
             preferencesWindow.window!.forceToFrontAndFocus(nil)
         } else {
 
@@ -219,7 +219,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 defaults.set(false, forKey: Preferences.verbose)
             }
 
-            if ( ( defaults.string(forKey: Preferences.kerberosRealm) ?? "") == "" ) {
+            if (defaults.string(forKey: Preferences.kerberosRealm) == "") {
                 myLogger.logit(.info, message: "Realm not setting, so creating Realm from the Domain.")
                 defaults.set(defaults.string(forKey: Preferences.aDDomain)?.uppercased(), forKey: Preferences.kerberosRealm)
             }
@@ -246,7 +246,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         // determine if we should show the Password Change Window
 
-        if let showPasswordChange = defaults.string(forKey: "ChangePasswordType") {
+        if let showPasswordChange = defaults.string(forKey: Preferences.changePasswordType) {
             if showPasswordChange == "None" {
                 self.NoMADMenu.removeItem(NoMADMenuChangePassword)
             }
@@ -307,7 +307,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // show the password change window when the menu item is clicked
 
     @IBAction func NoMADMenuClickChangePassword(_ sender: NSMenuItem) {
-        if let showPasswordChange = defaults.string(forKey: "ChangePasswordType") {
+        if let showPasswordChange = defaults.string(forKey: Preferences.changePasswordType) {
             switch showPasswordChange {
             case "Kerberos" :
                  passwordChangeWindow.window!.forceToFrontAndFocus(nil)
@@ -326,7 +326,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         // remove their password from the keychain if they're logging out
 
-        if ( (defaults.string(forKey: Preferences.lastUser) ?? "") != "" ) {
+        if  (defaults.string(forKey: Preferences.lastUser) != "" ) {
 
             if ( defaults.bool(forKey: Preferences.useKeychain)) {
                 var myKeychainItem: SecKeychainItem?
@@ -470,7 +470,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
     @IBAction func homeClicked(_ send: AnyObject) {
         // TODO: I think NSWorkspace can do this...
-        cliTask("open smb:" + defaults.string(forKey: "userHome")!)
+        cliTask("open smb:" + defaults.string(forKey: Preferences.userHome)!)
     }
 
     // send copious logs to the console
@@ -558,7 +558,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             }
         }
 
-        if defaults.bool(forKey: "HidePrefs") {
+        if defaults.bool(forKey: Preferences.hidePrefs) {
             self.NoMADMenuPreferences.isEnabled = false
             myLogger.logit(.notice, message:NSLocalizedString("NoMADMenuController-PreferencesDisabled", comment: "Log; Text; Preferences Disabled"))
         }
@@ -685,7 +685,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         // check for network reachability
 
-        let host = defaults.string(forKey: "ADDomain")
+        let host = defaults.string(forKey: Preferences.aDDomain)
         let myReach = SCNetworkReachabilityCreateWithName(nil, host!)
         var flag = SCNetworkReachabilityFlags.reachable
 
@@ -778,7 +778,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     if ( !defaults.bool(forKey: Preferences.userAging) ) && ( defaults.string(forKey: Preferences.lastUser) != "" ) {
                         self.NoMADMenuPasswordExpires.title = "Password does not expire."
                     } else if ( defaults.string(forKey: Preferences.lastUser)) != "" {
-                        let myDaysToGo = String(abs(((defaults.object(forKey: "LastPasswordExpireDate")! as AnyObject).timeIntervalSinceNow)!)/86400)
+                        let myDaysToGo = String(abs(((defaults.object(forKey: Preferences.lastPasswordExpireDate)! as AnyObject).timeIntervalSinceNow)!)/86400)
                         //self.NoMADMenuPasswordExpires.title = "Password expires in: " + myDaysToGo.componentsSeparatedByString(".")[0] + " days"
                         let title = String.localizedStringWithFormat(
                             NSLocalizedString("NoMADMenuController-PasswordExpiresInDays", comment: "Menu Text; Password expires in: %@ days"),
@@ -794,7 +794,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
                     // add shortname into the defaults
 
-                    defaults.set(self.userInformation.userPrincipalShort, forKey: "UserShortName")
+                    defaults.set(self.userInformation.userPrincipalShort, forKey: Preferences.userShortName)
 
                     // if a user command is specified, show it, otherwise hide the menu item
 
@@ -832,7 +832,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
                         // Share Mounter setup taken out for now
 
-                        //self.myShareMounter.asyncMountShare("smb:" + defaults.stringForKey("userHome")!)
+                        //self.myShareMounter.asyncMountShare("smb:" + defaults.stringForKey("UserHome")!)
                         //self.myShareMounter.mount()
                     }
                 })
@@ -848,7 +848,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
                 // reset the counter if the password change is over the default
 
-                if ( abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) < Double(defaults.integer(forKey: "PasswordExpireAlertTime")) && self.userInformation.status == "Logged In" ) && self.userInformation.passwordAging {
+                if ( abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) < Double(defaults.integer(forKey: Preferences.passwordExpireAlertTime)) && self.userInformation.status == "Logged In" ) && self.userInformation.passwordAging {
 
                     if ( abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) < Double(defaults.integer(forKey: Preferences.lastPasswordWarning)) ) {
                         if ( abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) > Double(345600) ) {
@@ -866,7 +866,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         }
                     }
                 } else {
-                    defaults.set(Double(defaults.integer(forKey: "PasswordExpireAlertTime") ?? 1296000), forKey: Preferences.lastPasswordWarning)
+                    defaults.set(Double(defaults.integer(forKey: Preferences.passwordExpireAlertTime) ?? 1296000), forKey: Preferences.lastPasswordWarning)
                 }
                 
                 // remove the Get Certificate menu if not needed

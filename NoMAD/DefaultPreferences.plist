@@ -6,13 +6,17 @@
 	<string></string>
 	<key>AutoConfigure</key>
 	<string></string>
+	<key>ChangePasswordType</key>
+	<string></string>
 	<key>DisplayName</key>
 	<string></string>
 	<key>ExpeditedLookup</key>
 	<false/>
-	<key>GetHelpType</key>
-	<string></string>
+	<key>ExportableKey</key>
+	<false/>
 	<key>GetHelpOptions</key>
+	<string></string>
+	<key>GetHelpType</key>
 	<string></string>
 	<key>Groups</key>
 	<array/>
@@ -34,14 +38,18 @@
 	<string></string>
 	<key>LastPasswordWarning</key>
 	<string>1296000</string>
+	<key>LastPasswordExpireDate</key>
+	<date>2016-11-23T02:28:33Z</date>
 	<key>PasswordExpireAlertTime</key>
 	<integer>1296000</integer>
+	<key>PasswordChangeOptions</key>
+	<string></string>
 	<key>RenewTickets</key>
 	<true/>
-	<key>ShowHome</key>
-	<false/>
 	<key>SecondsToRenew</key>
 	<integer>7200</integer>
+	<key>ShowHome</key>
+	<false/>
 	<key>SignInCommand</key>
 	<string></string>
 	<key>StateChangeAction</key>
@@ -51,6 +59,8 @@
 	<key>UserPrincipal</key>
 	<string></string>
 	<key>UserPasswordExpireDate</key>
+	<string></string>
+	<key>UserHome</key>
 	<string></string>
 	<key>UserCommandTask1</key>
 	<string></string>
@@ -62,6 +72,8 @@
 	<dict/>
 	<key>UseKeychain</key>
 	<false/>
+	<key>UserShortName</key>
+	<string></string>
 	<key>UserAging</key>
 	<false/>
 	<key>Verbose</key>

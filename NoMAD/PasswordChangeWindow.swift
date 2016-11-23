@@ -55,7 +55,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
     }
 
     @IBAction func changePasswordClicked(_ sender: AnyObject) {
-        let userPrincipal = defaults.string(forKey: "userPrincipal")!.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+        let userPrincipal = defaults.string(forKey: Preferences.userPrincipal)!.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
         let currentPassword = oldPassword.stringValue
         let newPassword1 = newPassword.stringValue
         let newPassword2 = newPasswordAgain.stringValue
