@@ -38,7 +38,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 
     override func windowDidLoad() {
         super.windowDidLoad()
-        guard (( defaults.string(forKey: "LastUser") ) != nil) else {
+        guard (( defaults.string(forKey: Preferences.lastUser) ) != nil) else {
             self.window?.center()
             setWindowToLogin()
             return
@@ -47,7 +47,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         changePasswordButton.title = "NoMADMenuController-LogIn".translate
         self.window?.title = "NoMAD - " + "NoMADMenuController-LogIn".translate
 
-        userName.stringValue = defaults.string(forKey: "LastUser")! ?? ""
+        userName.stringValue = defaults.string(forKey: Preferences.lastUser)! ?? ""
         Password.becomeFirstResponder()
 
         setWindowToLogin()
@@ -81,7 +81,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             let split = userName.stringValue.components(separatedBy: "@")
             userNameChecked = split[0] + "@" + defaults.string(forKey: "KerberosRealm")!
         } else {
-            userNameChecked = userName.stringValue + "@" + defaults.string(forKey: "KerberosRealm")!
+            userNameChecked = userName.stringValue + "@" + defaults.string(forKey: Preferences.kerberosRealm)!
         }
 
         //let GetCredentials: KerbUtil = KerbUtil()
@@ -140,11 +140,11 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             // Checks if keychain password is correct
             let keychainPasswordIsCorrect = try noMADUser.checkKeychainPassword(currentPassword)
             // Check if we want to store the password in the keychain.
-            let useKeychain = defaults.bool(forKey: "UseKeychain")
+            let useKeychain = defaults.bool(forKey: Preferences.useKeychain)
             // Check if we want to sync the console user's password with the remote AD password.
             // Only used if console user is not AD.
             var doLocalPasswordSync = false
-            if defaults.bool(forKey: "LocalPasswordSync") {
+            if defaults.bool(forKey: Preferences.localPasswordSync) {
                 doLocalPasswordSync = true
             }
 
@@ -154,7 +154,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             // make sure the just logged in user is the current user and then reset the password warning
             // TODO: @mactroll - why is this 1296000?
             cliTask("/usr/bin/kswitch -p " + userNameChecked )
-            defaults.set(1296000, forKey: "LastPasswordWarning")
+            defaults.set(1296000, forKey: Preferences.lastPasswordWarning)
 
             if ( useKeychain ) {
                 do {
@@ -272,8 +272,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 
         // fire off the SignInCommand script if there is one
 
-        if defaults.string(forKey: "SignInCommand") != nil {
-            let myResult = cliTask(defaults.string(forKey: "SignInCommand")!)
+        if defaults.string(forKey: Preferences.signInCommand) != nil {
+            let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)
             myLogger.logit(LogLevel.base, message: myResult)
         }
 
@@ -286,7 +286,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         if userName.stringValue.contains("@") {
             userPrincipal = userName.stringValue
         } else {
-            userPrincipal = userName.stringValue + "@" + defaults.string(forKey: "KerberosRealm")!
+            userPrincipal = userName.stringValue + "@" + defaults.string(forKey: Preferences.kerberosRealm)!
         }
         let currentPassword = Password.stringValue
         let newPassword1 = changePasswordField1.stringValue
@@ -318,7 +318,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                             if userPrincipal.contains("@") {
                                 myError = GetCredentials.getKerbCredentials( newPassword1, userPrincipal );
                             } else {
-                                myError = GetCredentials.getKerbCredentials( newPassword1, (userPrincipal + "@" + defaults.string(forKey: "KerberosRealm")!))
+                                myError = GetCredentials.getKerbCredentials( newPassword1, (userPrincipal + "@" + defaults.string(forKey: Preferences.kerberosRealm)!))
                             }
                         }
 
@@ -342,15 +342,15 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 
         // fire off the SignInCommand script if there is one
 
-        if defaults.string(forKey: "SignInCommand") != nil {
-            let myResult = cliTask(defaults.string(forKey: "SignInCommand")!)
+        if defaults.string(forKey: Preferences.signInCommand) != nil {
+            let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)
             myLogger.logit(LogLevel.base, message: myResult)
         }
 
         // fire off the SignInCommand script if there is one
 
-        if defaults.string(forKey: "SignInCommand") != nil {
-            let myResult = cliTask(defaults.string(forKey: "SignInCommand")!)
+        if defaults.string(forKey: Preferences.signInCommand) != nil {
+            let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)
             myLogger.logit(LogLevel.base, message: myResult)
         }
     }
