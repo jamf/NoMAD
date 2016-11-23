@@ -20,9 +20,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         myLogger.logit(.base, message:"---NoMAD Initialized---")
 
-        let defaultPreferences = NSDictionary(contentsOf: Bundle.main.url(forResource: "DefaultPreferences", withExtension: "plist")!)
-        defaults.register(defaults: defaultPreferences as! [String : Any])
-
         let changed: SCDynamicStoreCallBack = {SCDynamicStore,_,_ in
             myLogger.logit(.base, message: "State change, checking things.")
             notificationQueue.enqueue(notificationKey, postingStyle: .now, coalesceMask: .onName, forModes: nil)
