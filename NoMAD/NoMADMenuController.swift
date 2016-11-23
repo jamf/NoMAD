@@ -399,7 +399,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     return
                 }
             }
-            }
 
             // start the animation
 
