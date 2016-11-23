@@ -20,6 +20,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         myLogger.logit(.base, message:"---NoMAD Initialized---")
 
+        if defaults.bool(forKey: Preferences.verbose) {
+            dumpPrefs()
+        }
+
         let changed: SCDynamicStoreCallBack = {SCDynamicStore,_,_ in
             myLogger.logit(.base, message: "State change, checking things.")
             notificationQueue.enqueue(notificationKey, postingStyle: .now, coalesceMask: .onName, forModes: nil)
@@ -57,5 +61,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
     func sendUpdateMessage() {
         myLogger.logit(.base, message: "It's been a while, checking things.")
         notificationQueue.enqueue(notificationKey, postingStyle: .now, coalesceMask: .onName, forModes: nil)
+    }
+
+    func dumpPrefs() {
+        myLogger.logit(.debug, message: "Current app preferences: \(defaults.dictionaryRepresentation())")
     }
 }

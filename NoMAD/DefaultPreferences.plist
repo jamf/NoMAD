@@ -7,7 +7,7 @@
 	<key>AutoConfigure</key>
 	<string></string>
 	<key>ChangePasswordType</key>
-	<string></string>
+	<string>Kerberos</string>
 	<key>DisplayName</key>
 	<string></string>
 	<key>ExpeditedLookup</key>

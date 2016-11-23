@@ -396,7 +396,7 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
         // Check if we want to sync the console user's password with the remote AD password.
         // Only used if console user is not AD.
         var doLocalPasswordSync = false
-        if defaults.integer(forKey: Preferences.localPasswordSync) == 1 {
+        if defaults.bool(forKey: Preferences.localPasswordSync) {
             doLocalPasswordSync = true
         }
 
