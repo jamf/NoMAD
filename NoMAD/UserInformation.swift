@@ -96,7 +96,7 @@ class UserInformation {
 
         }
 
-        defaults.set(myCertExpire, forKey: Preferences.lastCertificateExpiration)
+        defaults.set(myCertExpire, forKey: "LastCertificateExpiration")
     }
 
     func getUserInfo() {
@@ -121,7 +121,7 @@ class UserInformation {
 
         if myLDAPServers.tickets.state {
             userPrincipal = myLDAPServers.tickets.principal
-            realm = defaults.string(forKey: Preferences.kerberosRealm)!
+            realm = defaults.string(forKey: "KerberosRealm")!
             if userPrincipal.contains(realm) {
                 userPrincipalShort = userPrincipal.replacingOccurrences(of: "@" + realm, with: "")
                 status = "Logged In"
@@ -172,7 +172,7 @@ class UserInformation {
                     if ( Int(computedExpireDateRaw!) == 9223372036854775807) {
                         // Password doesn't expire
                         passwordAging = false
-                        defaults.set(false, forKey: Preferences.userAging)
+                        defaults.set(false, forKey: "UserAging")
 
                         // Set expiration to set date
                         userPasswordExpireDate = NSDate()
@@ -180,7 +180,7 @@ class UserInformation {
                         // Password expires
 
                         passwordAging = true
-                        defaults.set(true, forKey: Preferences.userAging)
+                        defaults.set(true, forKey: "UserAging")
 
                         // TODO: Change all Double() to NumberFormatter().number(from: myString)?.doubleValue
                         //       when we switch to Swift 3
@@ -205,11 +205,11 @@ class UserInformation {
                     } else if ( passwordExpirationLength != "" ) {
                         if ~~( Int(userPasswordUACFlag)! & 0x10000 ) {
                             passwordAging = false
-                            defaults.set(false, forKey: Preferences.userAging)
+                            defaults.set(false, forKey: "UserAging")
                         } else {
                             serverPasswordExpirationDefault = Double(abs(Int(passwordExpirationLength)!)/10000000)
                             passwordAging = true
-                            defaults.set(true, forKey: Preferences.userAging)
+                            defaults.set(true, forKey: "UserAging")
                         }
                     } else {
                         serverPasswordExpirationDefault = Double(0)
@@ -267,14 +267,14 @@ class UserInformation {
 
             // look at local certs if an x509 CA has been set
 
-            if (defaults.string(forKey: Preferences.x509CA) ?? "" != "") {
+            if (defaults.string(forKey: "x509CA") ?? "" != "") {
                 getCertDate()
             }
 
             defaults.set(userHome, forKey: "userHome")
             defaults.set(userDisplayName, forKey: "displayName")
             defaults.set(userPrincipal, forKey: "userPrincipal")
-            defaults.set(userPrincipalShort, forKey: Preferences.lastUser)
+            defaults.set(userPrincipalShort, forKey: "LastUser")
             defaults.set(userPasswordExpireDate, forKey: "LastPasswordExpireDate")
             defaults.set(groups, forKey: "Groups")
         }
@@ -357,7 +357,7 @@ class UserInformation {
      // password doesn't expire
 
      passwordAging = false
-     defaults.setObject(false, forKey: Preferences.userAging)
+     defaults.setObject(false, forKey: "UserAging")
 
      // set expiration to set date
 
@@ -368,7 +368,7 @@ class UserInformation {
      // password expires
 
      passwordAging = true
-     defaults.setObject(true, forKey: Preferences.userAging)
+     defaults.setObject(true, forKey: "UserAging")
      let computedExpireDate = NSDate(timeIntervalSince1970: (Double(Int(computedExpireDateRaw)!))/10000000-11644473600)
      userPasswordExpireDate = computedExpireDate
 
@@ -403,11 +403,11 @@ class UserInformation {
 
      if ~~( Int(userPasswordUACFlag)! & 0x10000 ) {
      passwordAging = false
-     defaults.setObject(false, forKey: Preferences.userAging)
+     defaults.setObject(false, forKey: "UserAging")
      } else {
      serverPasswordExpirationDefault = Double(abs(Int(passwordExpirationLength)!)/10000000)
      passwordAging = true
-     defaults.setObject(true, forKey: Preferences.userAging)
+     defaults.setObject(true, forKey: "UserAging")
      }
      } else {
      serverPasswordExpirationDefault = Double(0)
@@ -487,7 +487,7 @@ class UserInformation {
      myLogger.logit(.base, message: "Your certificate has already expired.")
      }
 
-     defaults.setObject(myCertExpire, forKey: Preferences.lastCertificateExpiration)
+     defaults.setObject(myCertExpire, forKey: "LastCertificateExpiration")
 
      }
 
@@ -497,7 +497,7 @@ class UserInformation {
      defaults.setObject(userHome, forKey: "userHome")
      defaults.setObject(userDisplayName, forKey: "displayName")
      defaults.setObject(userPrincipal, forKey: "userPrincipal")
-     defaults.setObject(userPrincipalShort, forKey: Preferences.lastUser)
+     defaults.setObject(userPrincipalShort, forKey: "LastUser")
      defaults.setObject(userPasswordExpireDate, forKey: "LastPasswordExpireDate")
      defaults.setObject(groups, forKey: "Groups")
      }
