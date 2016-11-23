@@ -38,7 +38,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 
     override func windowDidLoad() {
         super.windowDidLoad()
-        guard (( defaults.string(forKey: Preferences.lastUser) ) != nil) else {
+        guard (( defaults.string(forKey: Preferences.lastUser) ) != "") else {
             self.window?.center()
             setWindowToLogin()
             return
@@ -47,7 +47,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         changePasswordButton.title = "NoMADMenuController-LogIn".translate
         self.window?.title = "NoMAD - " + "NoMADMenuController-LogIn".translate
 
-        userName.stringValue = defaults.string(forKey: Preferences.lastUser)! ?? ""
+        userName.stringValue = defaults.string(forKey: Preferences.lastUser)!
         Password.becomeFirstResponder()
 
         setWindowToLogin()
@@ -272,7 +272,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 
         // fire off the SignInCommand script if there is one
 
-        if defaults.string(forKey: Preferences.signInCommand) != nil {
+        if defaults.string(forKey: Preferences.signInCommand) != "" {
             let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)
             myLogger.logit(LogLevel.base, message: myResult)
         }
@@ -342,14 +342,14 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 
         // fire off the SignInCommand script if there is one
 
-        if defaults.string(forKey: Preferences.signInCommand) != nil {
+        if defaults.string(forKey: Preferences.signInCommand) != "" {
             let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)
             myLogger.logit(LogLevel.base, message: myResult)
         }
 
         // fire off the SignInCommand script if there is one
 
-        if defaults.string(forKey: Preferences.signInCommand) != nil {
+        if defaults.string(forKey: Preferences.signInCommand) != "" {
             let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)
             myLogger.logit(LogLevel.base, message: myResult)
         }

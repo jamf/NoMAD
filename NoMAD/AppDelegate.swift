@@ -27,7 +27,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
             myLogger.logit(.base, message: "State change, checking things.")
             notificationQueue.enqueue(notificationKey, postingStyle: .now, coalesceMask: .onName, forModes: nil)
 
-            if (defaults.string(forKey: Preferences.stateChangeAction) != nil ) {
+            if (defaults.string(forKey: Preferences.stateChangeAction) != "" ) {
                 myLogger.logit(.base, message: "Firing State Change Action")
                 cliTask(defaults.string(forKey: Preferences.stateChangeAction)! + " &")
             }

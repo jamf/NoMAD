@@ -198,7 +198,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
                 // fire off the SignInCommand script if there is one
 
-                if defaults.string(forKey: Preferences.signInCommand) != nil {
+                if defaults.string(forKey: Preferences.signInCommand) != "" {
                     let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)
                     myLogger.logit(LogLevel.base, message: myResult)
                 }
@@ -266,7 +266,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             var myErr: String? = ""
             // check if there's a last user
 
-            if ( (defaults.string(forKey: Preferences.lastUser) ?? "") != "" ) {
+            if (defaults.string(forKey: Preferences.lastUser) != "" ) {
 
                 do { myPass = try myKeychainUtil.findPassword(defaults.string(forKey: Preferences.lastUser)! + "@" + defaults.string(forKey: Preferences.kerberosRealm)!) } catch {
                     //bringWindowToFront(loginWindow.window!, focus: true)
@@ -286,7 +286,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
                 // fire off the SignInCommand script if there is one
 
-                if defaults.string(forKey: Preferences.signInCommand) != nil {
+                if defaults.string(forKey: Preferences.signInCommand) != "" {
                     let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)
                     myLogger.logit(LogLevel.base, message: myResult)
                 }
