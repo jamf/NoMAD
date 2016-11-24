@@ -506,6 +506,6 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
     
     fileprivate func sendResetMessage() -> Void {
         myLogger.logit(.base, message:"Need to reset user's password.")
-        notificationQueue.enqueue(resetNotificationKey, postingStyle: .now, coalesceMask: .onName, forModes: nil)
+        NotificationQueue.default.enqueue(resetNotificationKey, postingStyle: .now, coalesceMask: .onName, forModes: nil)
     }
 }
