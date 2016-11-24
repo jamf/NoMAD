@@ -28,7 +28,7 @@ class ShareMounter {
         // read in the preference files
 
 
-        if defaults.integer(forKey: "ShowHome") == 1 {
+        if defaults.bool(forKey: Preferences.showHome) {
             //NSLog("Looking for ShareMounter files")
             //prefs = try! ["/Library/Preferences/ShareMounter.plist", NSHomeDirectory() + "/Library/Preferences/ShareMounter.plist"]
             /*

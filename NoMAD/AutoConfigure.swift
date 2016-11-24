@@ -14,35 +14,31 @@ public func setDefaults() {
 
     // do we have an AutoConfigure setting?
 
-    if let autoConfigure = defaults.string(forKey: "AutoConfigure") {
+    if let autoConfigure = defaults.string(forKey: Preferences.autoConfigure) {
         switch autoConfigure {
         case "TSL":
-            defaults.set("trusourcelabs.com", forKey: "ADDomain")
-            defaults.set("TRUSOURCELABS.COM", forKey: "KerberosRealm")
-            //defaults.setObject("jupiter.trusourcelabs.com", forKey: "InternalSite")
-            //defaults.setObject("192.168.32.43", forKey: "InternalSiteIP")
-            defaults.set(true, forKey: "Verbose")
-            defaults.set("", forKey: "userCommandHotKey1")
-            defaults.set("", forKey: "userCommandName1")
-            defaults.set("", forKey: "userCommandTask1")
-            defaults.set(7200, forKey: "secondsToRenew")
-            defaults.set(1, forKey: "RenewTickets")
-            defaults.set("", forKey: "AutoConfigure")
+            defaults.set("trusourcelabs.com", forKey: Preferences.aDDomain)
+            defaults.set("TRUSOURCELABS.COM", forKey: Preferences.kerberosRealm)
+            defaults.set(true, forKey: Preferences.verbose)
+            defaults.set("", forKey: Preferences.userCommandHotKey1)
+            defaults.set("", forKey: Preferences.userCommandName1)
+            defaults.set("", forKey: Preferences.userCommandTask1)
+            defaults.set(7200, forKey: Preferences.secondsToRenew)
+            defaults.set(1, forKey: Preferences.renewTickets)
+            defaults.set("", forKey: Preferences.autoConfigure)
 
         case "JODA":
-            defaults.set("jodapro.com", forKey: "ADDomain")
-            defaults.set("JODAPRO.COM", forKey: "KerberosRealm")
-            //defaults.setObject("in-or-out.jodapro.com", forKey: "InternalSite")
-            //defaults.setObject("1.1.1.1", forKey: "InternalSiteIP")
-            defaults.set("2k12.jodapro.com", forKey: "x509CA")
-            defaults.set("User Auth", forKey: "Template")
-            defaults.set(true, forKey: "Verbose")
-            defaults.set("", forKey: "userCommandHotKey1")
-            defaults.set("", forKey: "userCommandName1")
-            defaults.set("", forKey: "userCommandTask1")
-            defaults.set(7200, forKey: "secondsToRenew")
-            defaults.set(1, forKey: "RenewTickets")
-            defaults.set("", forKey: "AutoConfigure")
+            defaults.set("jodapro.com", forKey: Preferences.aDDomain)
+            defaults.set("JODAPRO.COM", forKey: Preferences.kerberosRealm)
+            defaults.set("2k12.jodapro.com", forKey: Preferences.x509CA)
+            defaults.set("User Auth", forKey: Preferences.template)
+            defaults.set(true, forKey: Preferences.verbose)
+            defaults.set("", forKey: Preferences.userCommandHotKey1)
+            defaults.set("", forKey: Preferences.userCommandName1)
+            defaults.set("", forKey: Preferences.userCommandTask1)
+            defaults.set(7200, forKey: Preferences.secondsToRenew)
+            defaults.set(1, forKey: Preferences.renewTickets)
+            defaults.set("", forKey: Preferences.autoConfigure)
 
         default:
             // see if we're on AD
@@ -51,7 +47,7 @@ public func setDefaults() {
         }
     }
 
-    if defaults.bool(forKey: "LoginItem") {
+    if defaults.bool(forKey: Preferences.loginItem) {
         //TODO: Test this to make sure it actually does what I think it will. This should return the value of the key if found, otherwise false.
         addToLoginItems()
     }
@@ -65,16 +61,14 @@ private func getADSettings() {
         for line in myADConfig {
             if line.contains("Active Directory Domain") {
                 let myDomain = (line as NSString).substring(from: 35)
-                defaults.set(myDomain, forKey: "ADDomain")
-                defaults.set(myDomain.uppercased(), forKey: "KerberosRealm")
-                //defaults.setObject("", forKey: "InternalSite")
-                //defaults.setObject("", forKey: "InternalSiteIP")
-                defaults.set(false, forKey: "Verbose")
-                defaults.set("", forKey: "userCommandHotKey1")
-                defaults.set("", forKey: "userCommandName1")
-                defaults.set("", forKey: "userCommandTask1")
-                defaults.set(7200, forKey: "secondsToRenew")
-                defaults.set(1, forKey: "RenewTickets")
+                defaults.set(myDomain, forKey: Preferences.aDDomain)
+                defaults.set(myDomain.uppercased(), forKey: Preferences.kerberosRealm)
+                defaults.set(false, forKey: Preferences.verbose)
+                defaults.set("", forKey: Preferences.userCommandHotKey1)
+                defaults.set("", forKey: Preferences.userCommandName1)
+                defaults.set("", forKey: Preferences.userCommandTask1)
+                defaults.set(7200, forKey: Preferences.secondsToRenew)
+                defaults.set(1, forKey: Preferences.renewTickets)
                 break
             }
         }
@@ -127,7 +121,7 @@ private func addToLoginItems() {
 
     // clear the flag
 
-    defaults.set(false, forKey: "LoginItem")
+    defaults.set(false, forKey: Preferences.loginItem)
 
     // in honor of @macmule
     /*

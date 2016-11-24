@@ -392,11 +392,11 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
         // Checks if keychain password is correct
         let keychainPasswordIsCorrect = try noMADUser.checkKeychainPassword(currentPassword)
         // Check if we want to store the password in the keychain.
-        let useKeychain = defaults.bool(forKey: "UseKeychain")
+        let useKeychain = defaults.bool(forKey: Preferences.useKeychain)
         // Check if we want to sync the console user's password with the remote AD password.
         // Only used if console user is not AD.
         var doLocalPasswordSync = false
-        if defaults.integer(forKey: "LocalPasswordSync") == 1 {
+        if defaults.bool(forKey: Preferences.localPasswordSync) {
             doLocalPasswordSync = true
         }
 
@@ -492,7 +492,7 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
 
 private func checkKpasswdServer(_ writePref: Bool ) -> Bool {
     
-    guard let adDomain = defaults.string(forKey: "ADDomain") else {
+    guard let adDomain = defaults.string(forKey: Preferences.aDDomain) else {
         myLogger.logit(LogLevel.base, message: "Preferences does not contain a value for the AD Domain.")
         return false
     }
@@ -526,7 +526,7 @@ private func checkKpasswdServer(_ writePref: Bool ) -> Bool {
                 realm.setValue(myLDAPServers.currentServer, forKey: "kdc")
                 realm.setValue(myLDAPServers.currentServer, forKey: "kpasswd")
                 
-                realms.setObject(realm, forKey: defaults.string(forKey: "KerberosRealm")! as NSCopying)
+                realms.setObject(realm, forKey: defaults.string(forKey: Preferences.kerberosRealm)! as NSCopying)
                 data.setObject(realms, forKey: "realms" as NSCopying)
                 
                 return data.write(toFile: myPrefFile, atomically: true)
