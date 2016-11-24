@@ -9,8 +9,7 @@
 import Cocoa
 import SystemConfiguration
 
-let notificationKey = Notification(name: Notification.Name(rawValue: "updateNow"), object: nil)
-let notificationCenter = NotificationCenter.default
+let updateNotification = Notification(name: Notification.Name(rawValue: "updateNow"), object: nil)
 
 @NSApplicationMain
 
@@ -22,7 +21,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
 
         let changed: SCDynamicStoreCallBack = {SCDynamicStore,_,_ in
             myLogger.logit(.base, message: "State change, checking things.")
-            NotificationQueue.default.enqueue(notificationKey, postingStyle: .now, coalesceMask: .onName, forModes: nil)
+            NotificationQueue.default.enqueue(updateNotification, postingStyle: .now, coalesceMask: .onName, forModes: nil)
 
             if (defaults.string(forKey: Preferences.stateChangeAction) != "" ) {
                 myLogger.logit(.base, message: "Firing State Change Action")
@@ -56,6 +55,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
 
     func sendUpdateMessage() {
         myLogger.logit(.base, message: "It's been a while, checking things.")
-        NotificationQueue.default.enqueue(notificationKey, postingStyle: .now, coalesceMask: .onName, forModes: nil)
+        NotificationQueue.default.enqueue(updateNotification, postingStyle: .now, coalesceMask: .onName, forModes: nil)
     }
 }

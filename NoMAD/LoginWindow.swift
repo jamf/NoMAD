@@ -61,7 +61,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         changePasswordField1.stringValue = ""
         changePasswordField2.stringValue = ""
 
-        notificationCenter.post(notificationKey)
+        NotificationCenter.default.post(updateNotification)
         delegate?.updateUserInfo()
     }
 
