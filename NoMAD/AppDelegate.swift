@@ -19,7 +19,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         myLogger.logit(.base, message:"---NoMAD Initialized---")
         myLogger.logit(.debug, message: "Current app preferences: \(defaults.dictionaryRepresentation())")
 
-        let changed: SCDynamicStoreCallBack = {SCDynamicStore, _, _ in
+        let changed: SCDynamicStoreCallBack = { dynamicStore, _, _ in
             myLogger.logit(.base, message: "State change, checking things.")
             NotificationQueue.default.enqueue(updateNotification, postingStyle: .now)
 
@@ -35,15 +35,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         // set a 15 minute timer to update everything
         Timer.scheduledTimer(timeInterval: 900, target: self, selector: #selector(sendUpdateMessage), userInfo: nil, repeats: true)
 
-        if let dynamicStore = SCDynamicStoreCreate(kCFAllocatorDefault, "io.fti.networkconfigurationchanged" as CFString, changed, dcAddress){
-            let keys: [CFString] = ["State:/Network/Global/IPv4" as CFString]
-            let keysArray = keys as CFArray
-
+        if let dynamicStore = SCDynamicStoreCreate(kCFAllocatorDefault, "com.trusourcelabs.networknotification" as CFString, changed, dcAddress) {
+            let keysArray = ["State:/Network/Global/IPv4" as CFString] as CFArray
             SCDynamicStoreSetNotificationKeys(dynamicStore, nil, keysArray)
-
             let loop = SCDynamicStoreCreateRunLoopSource(kCFAllocatorDefault, dynamicStore, 0)
-            CFRunLoopAddSource(CFRunLoopGetCurrent(), loop, CFRunLoopMode.defaultMode)
-
+            CFRunLoopAddSource(CFRunLoopGetCurrent(), loop, .defaultMode)
             CFRunLoopRun()
         }
         awakeFromNib()
