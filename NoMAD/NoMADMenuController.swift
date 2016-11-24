@@ -134,6 +134,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     override func awakeFromNib() {
 
         myLogger.logit(.base, message:"---Starting NoMAD---")
+        
+        let defaultPreferences = NSDictionary(contentsOf: Bundle.main.url(forResource: "DefaultPreferences", withExtension: "plist")!)
+        defaults.register(defaults: defaultPreferences as! [String : Any])
 
         let version = String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!)
         let build = String(describing: Bundle.main.infoDictionary!["CFBundleVersion"]!)
@@ -275,7 +278,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         // determine if we should show the Password Change Window
 
-        if let showPasswordChange = defaults.string(forKey: "ChangePasswordType") {
+        if let showPasswordChange = defaults.string(forKey: Preferences.changePasswordType) {
             if showPasswordChange == "None" {
                 self.NoMADMenu.removeItem(NoMADMenuChangePassword)
             }
@@ -336,18 +339,13 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // show the password change window when the menu item is clicked
 
     @IBAction func NoMADMenuClickChangePassword(_ sender: NSMenuItem) {
-        if let showPasswordChange = defaults.string(forKey: "ChangePasswordType") {
-            switch showPasswordChange {
-            case "Kerberos" :
-                 passwordChangeWindow.window!.forceToFrontAndFocus(nil)
-            default :
-                let myPasswordChange = PasswordChange()
-                myPasswordChange.passwordChange()
-            }
+        if defaults.string(forKey: Preferences.changePasswordType) != "Kerberos"  {
+            PasswordChange().passwordChange()
         } else {
             passwordChangeWindow.window!.forceToFrontAndFocus(nil)
         }
     }
+
 
     // kill the Kerb ticket when clicked
 
@@ -499,7 +497,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
     @IBAction func homeClicked(_ send: AnyObject) {
         // TODO: I think NSWorkspace can do this...
-        cliTask("open smb:" + defaults.string(forKey: "userHome")!)
+        cliTask("open smb:" + defaults.string(forKey: Preferences.userHome)!)
     }
 
     // send copious logs to the console
@@ -587,7 +585,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             }
         }
 
-        if defaults.bool(forKey: "HidePrefs") {
+        if defaults.bool(forKey: Preferences.hidePrefs) {
             self.NoMADMenuPreferences.isEnabled = false
             myLogger.logit(.notice, message:NSLocalizedString("NoMADMenuController-PreferencesDisabled", comment: "Log; Text; Preferences Disabled"))
         }
@@ -714,7 +712,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         // check for network reachability
 
-        let host = defaults.string(forKey: "ADDomain")
+        let host = defaults.string(forKey: Preferences.aDDomain)
         let myReach = SCNetworkReachabilityCreateWithName(nil, host!)
         var flag = SCNetworkReachabilityFlags.reachable
 
@@ -823,7 +821,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
                     // add shortname into the defaults
 
-                    defaults.set(self.userInformation.userPrincipalShort, forKey: "UserShortName")
+                    defaults.set(self.userInformation.userPrincipalShort, forKey: Preferences.userShortName)
 
                     // if a user command is specified, show it, otherwise hide the menu item
 
@@ -861,7 +859,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
                         // Share Mounter setup taken out for now
 
-                        //self.myShareMounter.asyncMountShare("smb:" + defaults.stringForKey("userHome")!)
+                        //self.myShareMounter.asyncMountShare("smb:" + defaults.stringForKey("UserHome")!)
                         //self.myShareMounter.mount()
                     }
                 })
@@ -877,7 +875,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
                 // reset the counter if the password change is over the default
 
-                if ( abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) < Double(defaults.integer(forKey: "PasswordExpireAlertTime")) && self.userInformation.status == "Logged In" ) && self.userInformation.passwordAging {
+                if ( abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) < Double(defaults.integer(forKey: Preferences.passwordExpireAlertTime)) && self.userInformation.status == "Logged In" ) && self.userInformation.passwordAging {
 
                     if ( abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) < Double(defaults.integer(forKey: "LastPasswordWarning")) ) {
                         if ( abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) > Double(345600) ) {

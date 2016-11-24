@@ -44,7 +44,7 @@ class ShareMounter {
 
     func mount() {
 
-        let myGroups = defaults.array(forKey: "Groups")
+        let myGroups = defaults.array(forKey: Preferences.groups)
 
         for share in all_shares {
             for group in myGroups! {
@@ -101,7 +101,7 @@ class ShareMounter {
 
         NetFSMountURLAsync(shareAddress as CFURL!,
                            nil,
-                           defaults.string(forKey: "userPrincipal")! as CFString!,
+                           defaults.string(forKey: Preferences.userPrincipal)! as CFString!,
                            nil,
                            nil,
                            mount_options,

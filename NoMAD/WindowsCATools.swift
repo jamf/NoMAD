@@ -237,7 +237,7 @@ class WindowsCATools {
             kSecPublicKeyAttrs as String : pubKeyGenDict as CFDictionary,
             ]
 
-        if defaults.bool(forKey: "ExportableKey") {
+        if defaults.bool(forKey: Preferences.exportableKey) {
             keyGenDict["extr"] = true as AnyObject
         }
 

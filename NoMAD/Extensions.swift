@@ -27,4 +27,5 @@ extension String {
     func containsIgnoringCase(_ find: String) -> Bool {
         return self.range(of: find, options: NSString.CompareOptions.caseInsensitive) != nil
     }
+
 }

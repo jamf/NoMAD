@@ -79,7 +79,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 
         if userName.stringValue.contains("@") {
             let split = userName.stringValue.components(separatedBy: "@")
-            userNameChecked = split[0] + "@" + defaults.string(forKey: "KerberosRealm")!
+            userNameChecked = split[0] + "@" + defaults.string(forKey: Preferences.kerberosRealm)!
         } else {
             userNameChecked = userName.stringValue + "@" + defaults.string(forKey: "KerberosRealm")!
         }
@@ -104,7 +104,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                 switch myError! {
                 // Password expired, so we need to present a password change window for the user to change it.
                 case "Password has expired":
-                    defaults.set(userName.stringValue, forKey: "userPrincipal")
+                    defaults.set(userName.stringValue, forKey: Preferences.userPrincipal)
                     //print(userName.stringValue)
                     //print(defaults.string(forKey: "userPrincipal"))
                     let alertController = NSAlert()

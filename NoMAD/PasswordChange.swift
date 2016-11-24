@@ -25,8 +25,8 @@ class PasswordChange {
         passwordChangeOptions = ""
         enabled = false
 
-        if let passwordChangeType = defaults.string(forKey: "PasswordChangeType") {
-            if let passwordChangeOptions = defaults.string(forKey: "PasswordChangeOptions") {
+        if let passwordChangeType = defaults.string(forKey: Preferences.changePasswordType) {
+            if let passwordChangeOptions = defaults.string(forKey: Preferences.passwordChangeOptions) {
                 self.passwordChangeOptions = passwordChangeOptions
                 self.passwordChangeType = passwordChangeType
 
@@ -74,22 +74,22 @@ class PasswordChange {
     fileprivate func subVariables( _ url: String ) -> String? {
         // TODO: get e-mail address as a variable
         var createdURL = url;
-        if let domain = defaults.string(forKey: "ADDomain") {
+        if let domain = defaults.string(forKey: Preferences.aDDomain) {
             createdURL = createdURL.replacingOccurrences(of: "<<domain>>", with: domain)
         }
 
         //TODO: this crashes if displayName is empty
         // Should be fixed... needs to be tested.
-        if (defaults.string(forKey: "displayName") != nil) {
-            let fullName = defaults.string(forKey: "displayName")!.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)
+        if (defaults.string(forKey: Preferences.displayName) != "") {
+            let fullName = defaults.string(forKey: Preferences.displayName)!.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)
             createdURL = createdURL.replacingOccurrences(of: "<<fullname>>", with: fullName!)
         }
         if let serial = getSerial().addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) {
             createdURL = createdURL.replacingOccurrences(of: "<<serial>>", with: serial)
         }
-        let shortName = defaults.string(forKey: "UserShortName") ?? ""
+        if let shortName = defaults.string(forKey: Preferences.userShortName) {
         createdURL = createdURL.replacingOccurrences(of: "<<shortname>>", with: shortName)
-
+        }
         return createdURL
     }
 }
