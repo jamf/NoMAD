@@ -9,7 +9,7 @@
 import Cocoa
 import SystemConfiguration
 
-let updateNotification = Notification(name: Notification.Name(rawValue: "updateNow"), object: nil)
+let updateNotification = Notification(name: Notification.Name(rawValue: "updateNow"))
 
 @NSApplicationMain
 
