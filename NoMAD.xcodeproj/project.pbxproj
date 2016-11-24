@@ -19,6 +19,8 @@
 		1A58C88C1DD9264D002C0769 /* CSRGen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A58C88B1DD9264D002C0769 /* CSRGen.swift */; };
 		1ADCEC621D75476D005D33F5 /* ShareMounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ADCEC611D75476D005D33F5 /* ShareMounter.swift */; };
 		1AE1DFC11DA6B1E100456E3E /* Languages.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1AE1DFC31DA6B1E100456E3E /* Languages.plist */; };
+		1AFBDC651DE675B000C19AE1 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AFBDC641DE675B000C19AE1 /* Preferences.swift */; };
+		1AFBDC671DE675C000C19AE1 /* DefaultPreferences.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1AFBDC661DE675C000C19AE1 /* DefaultPreferences.plist */; };
 		1AFEAC361D68FEAF00B7FA88 /* UserInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AFEAC351D68FEAF00B7FA88 /* UserInformation.swift */; };
 		345226E41DAA052C0066C922 /* ADLDAPPing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345226E31DAA052C0066C922 /* ADLDAPPing.swift */; };
 		345226E91DAA266B0066C922 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345226E81DAA266B0066C922 /* Network.swift */; };
@@ -68,6 +70,8 @@
 		1ADCEC611D75476D005D33F5 /* ShareMounter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareMounter.swift; sourceTree = "<group>"; };
 		1AE1DFC21DA6B1E100456E3E /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Base; path = Base.lproj/Languages.plist; sourceTree = "<group>"; };
 		1AE1DFC51DA6B52300456E3E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = en; path = en.lproj/Languages.plist; sourceTree = "<group>"; };
+		1AFBDC641DE675B000C19AE1 /* Preferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
+		1AFBDC661DE675C000C19AE1 /* DefaultPreferences.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DefaultPreferences.plist; sourceTree = "<group>"; };
 		1AFEAC351D68FEAF00B7FA88 /* UserInformation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = UserInformation.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		345226E31DAA052C0066C922 /* ADLDAPPing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ADLDAPPing.swift; sourceTree = "<group>"; };
 		345226E81DAA266B0066C922 /* Network.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
@@ -125,6 +129,7 @@
 		1AE1DFBC1DA69CF100456E3E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				1AFBDC661DE675C000C19AE1 /* DefaultPreferences.plist */,
 				1AE1DFC31DA6B1E100456E3E /* Languages.plist */,
 			);
 			name = Resources;
@@ -184,6 +189,7 @@
 				84996CAC1D503F9700793747 /* PreferencesWindow.swift */,
 				1A08F1EE1D36CE0C00FA68C4 /* PreferencesWindow.xib */,
 				84CC67DE1D30A18A00115C76 /* AppDelegate.swift */,
+				1AFBDC641DE675B000C19AE1 /* Preferences.swift */,
 				84CC67E01D30A18A00115C76 /* Assets.xcassets */,
 				84CC67E51D30A18A00115C76 /* Info.plist */,
 				1A08F1F21D36DA0900FA68C4 /* NoMADApplication.swift */,
@@ -302,6 +308,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				84CC67E11D30A18A00115C76 /* Assets.xcassets in Resources */,
+				1AFBDC671DE675C000C19AE1 /* DefaultPreferences.plist in Resources */,
 				346CD2751DA2065D00255F66 /* Localizable.strings in Resources */,
 				1AE1DFC11DA6B1E100456E3E /* Languages.plist in Resources */,
 				346CD2711DA205B500255F66 /* MainMenu.xib in Resources */,
@@ -347,6 +354,7 @@
 				1A24EF481D7F01B3006A1866 /* Logger.swift in Sources */,
 				1A08F1F31D36DA0900FA68C4 /* NoMADApplication.swift in Sources */,
 				34E186BF1D9C681000265138 /* DNSResolver.m in Sources */,
+				1AFBDC651DE675B000C19AE1 /* Preferences.swift in Sources */,
 				84996CAD1D503F9700793747 /* PreferencesWindow.swift in Sources */,
 				84CC68051D30A25500115C76 /* NoMADMenuController.swift in Sources */,
 				345226E91DAA266B0066C922 /* Network.swift in Sources */,
