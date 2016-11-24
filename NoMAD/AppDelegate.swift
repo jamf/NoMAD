@@ -19,9 +19,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         myLogger.logit(.base, message:"---NoMAD Initialized---")
         myLogger.logit(.debug, message: "Current app preferences: \(defaults.dictionaryRepresentation())")
 
-        let changed: SCDynamicStoreCallBack = {SCDynamicStore,_,_ in
+        let changed: SCDynamicStoreCallBack = {SCDynamicStore, _, _ in
             myLogger.logit(.base, message: "State change, checking things.")
-            NotificationQueue.default.enqueue(updateNotification, postingStyle: .now, coalesceMask: .onName, forModes: nil)
+            NotificationQueue.default.enqueue(updateNotification, postingStyle: .now)
 
             if (defaults.string(forKey: Preferences.stateChangeAction) != "" ) {
                 myLogger.logit(.base, message: "Firing State Change Action")
@@ -55,6 +55,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
 
     func sendUpdateMessage() {
         myLogger.logit(.base, message: "It's been a while, checking things.")
-        NotificationQueue.default.enqueue(updateNotification, postingStyle: .now, coalesceMask: .onName, forModes: nil)
+        NotificationQueue.default.enqueue(updateNotification, postingStyle: .now)
     }
 }
