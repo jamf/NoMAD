@@ -9,11 +9,17 @@
 import Cocoa
 import SystemConfiguration
 
+/// `Notification` to alert app of changes in system state.
+///
+/// Listen for this notification if you need to refresh data on network changes.
 let updateNotification = Notification(name: Notification.Name(rawValue: "updateNow"))
 
 @NSApplicationMain
 
 class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDelegate {
+
+    var refreshTimer: Timer?
+    var refreshActivity: NSBackgroundActivityScheduler?
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         myLogger.logit(.base, message:"---NoMAD Initialized---")
@@ -32,9 +38,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         var dynamicContext = SCDynamicStoreContext(version: 0, info: nil, retain: nil, release: nil, copyDescription: nil)
         let dcAddress = withUnsafeMutablePointer(to: &dynamicContext, {UnsafeMutablePointer<SCDynamicStoreContext>($0)})
 
-        // set a 15 minute timer to update everything
-        Timer.scheduledTimer(timeInterval: 900, target: self, selector: #selector(sendUpdateMessage), userInfo: nil, repeats: true)
-
         if let dynamicStore = SCDynamicStoreCreate(kCFAllocatorDefault, "com.trusourcelabs.networknotification" as CFString, changed, dcAddress) {
             let keysArray = ["State:/Network/Global/IPv4" as CFString] as CFArray
             SCDynamicStoreSetNotificationKeys(dynamicStore, nil, keysArray)
@@ -42,6 +45,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
             CFRunLoopAddSource(CFRunLoopGetCurrent(), loop, .defaultMode)
             CFRunLoopRun()
         }
+
+        scheduleTimer()
         awakeFromNib()
     }
 
@@ -53,4 +58,23 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         myLogger.logit(.base, message: "It's been a while, checking things.")
         NotificationQueue.default.enqueue(updateNotification, postingStyle: .now)
     }
+
+    /// Schedule our update notification to fire every 15 minutes or so.
+    func scheduleTimer() {
+        if #available(OSX 10.12, *) {
+            refreshActivity = NSBackgroundActivityScheduler(identifier: "com.trusourcelabs.updatecheck")
+            refreshActivity?.repeats = true
+            refreshActivity?.interval = 15 * 60
+            refreshActivity?.tolerance = 1.5 * 60
+
+            refreshActivity?.schedule() { (completionHandler) in
+                self.sendUpdateMessage()
+                completionHandler(NSBackgroundActivityScheduler.Result.finished)
+            }
+        } else {
+            refreshTimer = Timer.scheduledTimer(timeInterval: 15 * 60, target: self, selector: #selector(sendUpdateMessage), userInfo: nil, repeats: true)
+            refreshTimer?.tolerance = 1.5 * 60
+        }
+    }
 }
+
