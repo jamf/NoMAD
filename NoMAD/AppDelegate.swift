@@ -52,6 +52,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
 
     func applicationWillTerminate(_ aNotification: Notification) {
         defaults.synchronize()
+        refreshActivity?.invalidate()
+        refreshTimer?.invalidate()
     }
 
     func sendUpdateMessage() {
