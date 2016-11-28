@@ -33,8 +33,6 @@ prefix func ~~(value: Int)->Bool{
 }
 
 // set up a default defaults
-let statusItem = NSStatusBar.system().statusItem(withLength: NSVariableStatusItemLength)
-let userNotificationCenter = NSUserNotificationCenter.default
 var selfServiceExists = false
 let myLogger = Logger()
 
@@ -97,6 +95,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     let myWorkQueue = DispatchQueue(label: "com.trusourcelabs.NoMAD.background_work_queue", attributes: [])
 
     var SelfServiceType: String = ""
+
+    let statusItem = NSStatusBar.system().statusItem(withLength: NSVariableStatusItemLength)
 
 
 
@@ -573,7 +573,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         notification.hasActionButton = true
         notification.actionButtonTitle = "NoMADMenuController-ChangePassword".translate
         notification.soundName = NSUserNotificationDefaultSoundName
-        userNotificationCenter.deliver(notification)
+        NSUserNotificationCenter.default.deliver(notification)
     }
 
     // pulls user's entire LDAP record when asked
@@ -712,22 +712,22 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
                     // build the menu
 
-                    statusItem.menu = self.NoMADMenu
+                    self.statusItem.menu = self.NoMADMenu
 
                     // set the menu icon
                     if self.userInformation.status == "Connected" {
-                        statusItem.image = self.iconOnOff
+                        self.statusItem.image = self.iconOnOff
                         // we do this twice b/c doing it only once seems to make it less than full width
-                        statusItem.title = self.userInformation.status.translate
-                        statusItem.title = self.userInformation.status.translate
+                        self.statusItem.title = self.userInformation.status.translate
+                        self.statusItem.title = self.userInformation.status.translate
 
                         // if we're not logged in we disable some options
 
-                        statusItem.toolTip = self.dateFormatter.string(from: self.userInformation.userPasswordExpireDate as Date)
+                        self.statusItem.toolTip = self.dateFormatter.string(from: self.userInformation.userPasswordExpireDate as Date)
                         self.NoMADMenuTicketLife.title = "Not logged in."
 
                     } else if self.userInformation.status == "Logged In" && self.userInformation.myLDAPServers.tickets.state {
-                        statusItem.image = self.iconOnOn
+                        self.statusItem.image = self.iconOnOn
 
                         // if we're logged in we enable some options
 
@@ -736,34 +736,34 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
                         if self.userInformation.passwordAging {
 
-                            statusItem.toolTip = self.dateFormatter.string(from: self.userInformation.userPasswordExpireDate as Date)
+                            self.statusItem.toolTip = self.dateFormatter.string(from: self.userInformation.userPasswordExpireDate as Date)
                             self.NoMADMenuTicketLife.title = self.dateFormatter.string(from: self.userInformation.myLDAPServers.tickets.expire as Date) + " " + self.userInformation.myLDAPServers.currentServer
 
                             let daysToGo = Int(abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow)/86400)
                             // we do this twice b/c doing it only once seems to make it less than full width
                             if Int(daysToGo) > 4 {
-                                statusItem.title = (String(daysToGo) + "d" )
-                                statusItem.title = (String(daysToGo) + "d" )
+                                self.statusItem.title = (String(daysToGo) + "d" )
+                                self.statusItem.title = (String(daysToGo) + "d" )
                             } else {
 
                                 let myMutableString = NSMutableAttributedString(string: String(daysToGo) + "d")
                                 myMutableString.addAttribute(NSForegroundColorAttributeName, value: NSColor.red, range: NSRange(location: 0, length: 2))
-                                statusItem.attributedTitle = myMutableString
-                                statusItem.attributedTitle = myMutableString
+                                self.statusItem.attributedTitle = myMutableString
+                                self.statusItem.attributedTitle = myMutableString
                             }
                         } else {
 
                             // we do this twice b/c doing it only once seems to make it less than full width
-                            statusItem.title = ""
-                            statusItem.title = ""
+                            self.statusItem.title = ""
+                            self.statusItem.title = ""
                             self.NoMADMenuTicketLife.title = self.dateFormatter.string(from: self.userInformation.myLDAPServers.tickets.expire as Date) + " " + self.userInformation.myLDAPServers.currentServer
                         }
                     } else {
-                        statusItem.image = self.iconOffOff
+                        self.statusItem.image = self.iconOffOff
 
                         // we do this twice b/c doing it only once seems to make it less than full width
-                        statusItem.title = self.userInformation.status.translate
-                        statusItem.title = self.userInformation.status.translate
+                        self.statusItem.title = self.userInformation.status.translate
+                        self.statusItem.title = self.userInformation.status.translate
                     }
 
                     if ( self.userInformation.userPrincipalShort != "No User" ) {
