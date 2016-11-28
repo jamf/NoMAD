@@ -877,9 +877,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             lastStatusCheck = Date()
             updateScheduled = false
             
-            dateFormatter.dateStyle = .medium
-            dateFormatter.timeStyle = .short
-            
             if let expireDate = defaults.object(forKey: Preferences.lastCertificateExpiration) as? Date {
                 if expireDate != Date.distantPast {
                     NoMADMenuGetCertificateDate.title = dateFormatter.string(from: expireDate)
