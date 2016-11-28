@@ -16,24 +16,9 @@ import Foundation
 
 class PasswordChange {
 
-    var passwordChangeType = ""
-    var passwordChangeOptions = ""
-
-    init() {
+    func passwordChange() {
         if let passwordChangeType = defaults.string(forKey: Preferences.changePasswordType),
             let passwordChangeOptions = defaults.string(forKey: Preferences.passwordChangeOptions) {
-            self.passwordChangeOptions = passwordChangeOptions
-            self.passwordChangeType = passwordChangeType
-        } else {
-            myLogger.logit(.base, message: "Missing PasswordChange keys.")
-            self.passwordChangeType = ""
-            self.passwordChangeOptions = ""
-        }
-    }
-
-    func passwordChange() {
-
-        if passwordChangeType != "" && passwordChangeOptions != "" {
             switch passwordChangeType {
             case "Task":
                 let result = cliTask(passwordChangeOptions)
