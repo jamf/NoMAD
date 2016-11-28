@@ -33,7 +33,7 @@ prefix func ~~(value: Int) -> Bool {
 }
 
 // set up a default defaults
-var selfServiceExists = false
+
 let myLogger = Logger()
 
 class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate, PreferencesWindowDelegate, NSMenuDelegate {
@@ -97,6 +97,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     var SelfServiceType: String = ""
 
     let statusItem = NSStatusBar.system().statusItem(withLength: NSVariableStatusItemLength)
+    var selfServiceExists = false
 
 
 
