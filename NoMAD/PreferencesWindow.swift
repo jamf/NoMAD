@@ -16,14 +16,20 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
 
     var delegate: PreferencesWindowDelegate?
 
+    // The UI controls are connected with simple SharedDefaults bindings.
+    // This means that they stay syncronized with the Defaults system and we
+    // don't need to get into messing with state checking when loading the window.
+
     @IBOutlet weak var ADDomainTextField: NSTextField!
     @IBOutlet weak var KerberosRealmField: NSTextField!
     @IBOutlet weak var x509CAField: NSTextField!
     @IBOutlet weak var TemplateField: NSTextField!
+    @IBOutlet weak var ButtonNameField: NSTextField!
+    @IBOutlet weak var HotKeyField: NSTextField!
+    @IBOutlet weak var CommandField: NSTextField!
     @IBOutlet weak var SecondsToRenew: NSTextField!
 
     // Check boxes
-
     @IBOutlet weak var UseKeychain: NSButton!
     @IBOutlet weak var RenewTickets: NSButton!
     @IBOutlet weak var ShowHome: NSButton!
@@ -34,129 +40,63 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
 
     override func windowDidLoad() {
         super.windowDidLoad()
-
         self.window?.center()
-
-        // set the fields and disable them if they're managed
-
-        ADDomainTextField.stringValue = defaults.string(forKey: "ADDomain") ?? ""
-
-        if defaults.objectIsForced(forKey: "ADDomain") {
-            ADDomainTextField.isEnabled = false
-        } else {
-            ADDomainTextField.isEnabled = true
-        }
-
-        KerberosRealmField.stringValue = defaults.string(forKey: "KerberosRealm") ?? ""
-
-        if defaults.objectIsForced(forKey: "KerberosRealm") {
-            KerberosRealmField.isEnabled = false
-        } else {
-            KerberosRealmField.isEnabled = true
-        }
-
-        x509CAField.stringValue = defaults.string(forKey: "x509CA") ?? ""
-
-        if defaults.objectIsForced(forKey: "x509CA") {
-            x509CAField.isEnabled = false
-        } else {
-            x509CAField.isEnabled = true
-        }
-
-        TemplateField.stringValue = defaults.string(forKey: "Template") ?? ""
-
-        if defaults.objectIsForced(forKey: "Template") {
-            TemplateField.isEnabled = false
-        } else {
-            TemplateField.isEnabled = true
-        }
-
-        // now the buttons
-
-        UseKeychain.state = defaults.integer(forKey: "UseKeychain") ?? 0
-
-        if defaults.objectIsForced(forKey: "UseKeychain") {
-            UseKeychain.isEnabled = false
-        } else {
-            UseKeychain.isEnabled = true
-        }
-
-        RenewTickets.state = defaults.integer(forKey: "RenewTickets") ?? 1
-
-        if defaults.objectIsForced(forKey: "RenewTickets") {
-            RenewTickets.isEnabled = false
-        } else {
-            RenewTickets.isEnabled = true
-        }
-
-        ShowHome.state = defaults.integer(forKey: "ShowHome") ?? 0
-
-        if defaults.objectIsForced(forKey: "ShowHome") {
-            ShowHome.isEnabled = false
-        } else {
-            ShowHome.isEnabled = true
-        }
-
-        // and the seconds
-
-        SecondsToRenew.stringValue = String(defaults.integer(forKey: "SecondsToRenew") )
-
-        if defaults.objectIsForced(forKey: "SecondsToRenew") {
-            SecondsToRenew.isEnabled = false
-        } else {
-            SecondsToRenew.isEnabled = true
-        }
-
+        self.disableManagedPrefs()
     }
 
     func windowShouldClose(_ sender: Any) -> Bool {
 
-        // make sure we have an AD Domain
-
+        // Make sure we have an AD Domain. Either require the user to enter one
+        // or quit.
         if ADDomainTextField.stringValue == "" {
             let alertController = NSAlert()
             alertController.messageText = "The AD Domain needs to be filled out."
             alertController.addButton(withTitle: "OK")
             alertController.addButton(withTitle: "Quit NoMAD")
-            alertController.beginSheetModal(for: self.window!, completionHandler: {( response ) in
-                if ( response == 1001 ) {
+            alertController.beginSheetModal(for: self.window!) { response in
+                if response == 1001 {
                     NSApp.terminate(self)
-                } else {
                 }
-            })
+            }
             return false
-        } else {
-            return true
         }
+        return true
     }
 
     func windowWillClose(_ notification: Notification) {
-
-        // turn the fields into app defaults
-
-        defaults.set(ADDomainTextField.stringValue, forKey: "ADDomain")
-        if ( KerberosRealmField.stringValue == "" ) {
-            defaults.set(ADDomainTextField.stringValue.uppercased(), forKey: "KerberosRealm")
-        } else {
-            defaults.set(KerberosRealmField.stringValue.uppercased(), forKey: "KerberosRealm")
+        // If no Kerberos realm has been entered, assume it's the same as the AD Domain.
+        if KerberosRealmField.stringValue == "" {
+            defaults.set(ADDomainTextField.stringValue.uppercased(), forKey: Preferences.kerberosRealm)
         }
-
-        // x509 fields
-
-        defaults.set(x509CAField.stringValue, forKey: "x509CA")
-        defaults.set(TemplateField.stringValue, forKey: "Template")
-
-        // buttons
-
-        defaults.set(UseKeychain.state, forKey: "UseKeychain")
-        defaults.set(RenewTickets.state, forKey: "RenewTickets")
-        defaults.set(ShowHome.state, forKey: "ShowHome")
-
-        // and the seconds
-
-        defaults.set(Int(SecondsToRenew.stringValue), forKey: "SecondsToRenew")
         NotificationCenter.default.post(updateNotification)
-
     }
 
+    /// Disable the UI for managed preferences.
+    ///
+    /// Because of naming disparities we are cycling through the controls in
+    /// the `contentView` of the window and looking at their `identifier` keys.
+    /// These keys are set to the same string as the preference value they
+    /// control.
+    func disableManagedPrefs() {
+        guard let controls = self.window?.contentView?.subviews else {
+            myLogger.logit(.debug, message: "Preference window somehow drew without any controls.")
+            return
+        }
+        //MARK: TODO This smells to be overly clever. We should find a simpler way.
+        for object in controls {
+            let identifier = object.identifier
+            if defaults.objectIsForced(forKey: identifier!) {
+                switch object.className {
+                case "NSTextField":
+                    let textField = object as! NSTextField
+                    textField.isEnabled = false
+                case "NSButton":
+                    let button = object as! NSButton
+                    button.isEnabled = false
+                default:
+                    return
+                }
+            }
+        }
+    }
 }
