@@ -23,12 +23,12 @@ class PasswordChange {
             case "Task":
                 let result = cliTask(passwordChangeOptions)
                 myLogger.logit(.base, message: result)
-
             case "URL":
-                if let myURL = subVariables(passwordChangeOptions) {
+                guard let myURL = subVariables(passwordChangeOptions) else {
+
+                }
                     let url = URL(string: myURL)
                     NSWorkspace.shared().open( url! )
-                }
 
             case "App":
                 cliTask("/usr/bin/open " + passwordChangeOptions.replacingOccurrences(of: " ", with: "\\ ") )
