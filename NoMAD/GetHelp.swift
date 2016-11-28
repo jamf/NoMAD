@@ -12,6 +12,7 @@
 
 import Foundation
 
+//TODO: Move to a standard URL for the Bomgar client so we can use the standard URLSession tools.
 class GetHelp {
 
     func getHelp() {
@@ -22,9 +23,11 @@ class GetHelp {
                 switch getHelpType {
                 case "Bomgar":
                     if let myURL = subVariables(getHelpOptions) {
-                        cliTask("curl -o /tmp/BomgarClient " + myURL )
-                        cliTaskNoTerm("/usr/bin/unzip -o -d /tmp /tmp/BomgarClient")
-                        NSWorkspace.shared().launchApplication("/tmp/Bomgar/Double-Click\\ To\\ Start\\ Support\\ Session.app")
+                        OperationQueue.main.addOperation() {
+                            cliTask("curl -o /tmp/BomgarClient " + myURL )
+                            cliTaskNoTerm("/usr/bin/unzip -o -d /tmp /tmp/BomgarClient")
+                            cliTask("/usr/bin/open /tmp/Bomgar/Double-Click\\ To\\ Start\\ Support\\ Session.app")
+                        }
                     }
                 case "URL":
                         guard let url = URL(string: getHelpOptions) else {
@@ -33,7 +36,7 @@ class GetHelp {
                         }
                         NSWorkspace.shared().open(url)
                 case "Path":
-                    cliTask(getHelpOptions.replacingOccurrences(of: " ", with: "\\ ") )
+                    cliTask(getHelpOptions.replacingOccurrences(of: " ", with: "\\ "))
                 case "App":
                     NSWorkspace.shared().launchApplication(getHelpOptions)
                 default:
@@ -71,7 +74,6 @@ class GetHelp {
         createdURL = createdURL.replacingOccurrences(of: "<<fullname>>", with: fullName)
         createdURL = createdURL.replacingOccurrences(of: "<<serial>>", with: serial)
         createdURL = createdURL.replacingOccurrences(of: "<<shortname>>", with: shortName)
-
         return createdURL
     }
 }
