@@ -6,7 +6,6 @@
 //  Copyright © 2016 Trusource Labs. All rights reserved.
 //
 
-import Foundation
 import Cocoa
 import SecurityFoundation
 import SystemConfiguration
