@@ -16,29 +16,18 @@ import Foundation
 
 class PasswordChange {
 
-    var passwordChangeType: String
-    var passwordChangeOptions: String
-    var enabled: Bool
+    var passwordChangeType = ""
+    var passwordChangeOptions = ""
 
     init() {
-        passwordChangeType = ""
-        passwordChangeOptions = ""
-        enabled = false
-
-        if let passwordChangeType = defaults.string(forKey: Preferences.changePasswordType) {
-            if let passwordChangeOptions = defaults.string(forKey: Preferences.passwordChangeOptions) {
-                self.passwordChangeOptions = passwordChangeOptions
-                self.passwordChangeType = passwordChangeType
-
-                enabled = true;
-            } else {
-                print("Missing PasswordChangeOptions key")
-                self.passwordChangeType = ""
-                self.passwordChangeOptions = ""
-                enabled = false
-            }
+        if let passwordChangeType = defaults.string(forKey: Preferences.changePasswordType),
+            let passwordChangeOptions = defaults.string(forKey: Preferences.passwordChangeOptions) {
+            self.passwordChangeOptions = passwordChangeOptions
+            self.passwordChangeType = passwordChangeType
         } else {
-            print("Missing PasswordChangeType key")
+            myLogger.logit(.base, message: "Missing PasswordChange keys.")
+            self.passwordChangeType = ""
+            self.passwordChangeOptions = ""
         }
     }
 
