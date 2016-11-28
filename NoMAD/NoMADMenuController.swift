@@ -28,8 +28,8 @@ enum NoADError: Error {
 // bitwise convenience
 prefix operator ~~
 
-prefix func ~~(value: Int)->Bool{
-    return (value>0) ? true : false
+prefix func ~~(value: Int) -> Bool {
+    return (value > 0) ? true : false
 }
 
 // set up a default defaults
