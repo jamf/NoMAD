@@ -64,13 +64,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
     // for delegates
 
-    var loginWindow: LoginWindow!
-    var preferencesWindow: PreferencesWindow!
-    var passwordChangeWindow: PasswordChangeWindow!
-
-    // globals
-
-    // let userInfoAPI = UserInfoAPI()
+    let preferencesWindow = PreferencesWindow()
+    let loginWindow = LoginWindow()
+    let passwordChangeWindow = PasswordChangeWindow()
 
     var originalGetCertificateMenu : NSMenuItem!
     var originalGetCertificateMenuDate : NSMenuItem!
@@ -82,7 +78,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     let dateFormatter = DateFormatter()
 
     let myKeychainUtil = KeychainUtil()
-    let GetCredentials: KerbUtil = KerbUtil()
+    let GetCredentials = KerbUtil()
 
     //let myShareMounter = ShareMounter()
 
@@ -102,7 +98,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     override func awakeFromNib() {
 
         myLogger.logit(.base, message:"---Starting NoMAD---")
-        
+
         let defaultPreferences = NSDictionary(contentsOf: Bundle.main.url(forResource: "DefaultPreferences", withExtension: "plist")!)
         defaults.register(defaults: defaultPreferences as! [String : Any])
 
@@ -113,10 +109,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         myLogger.logit(.base, message:"NoMAD build: " + build )
 
         startMenuAnimationTimer()
-
-        preferencesWindow = PreferencesWindow()
-        loginWindow = LoginWindow()
-        passwordChangeWindow = PasswordChangeWindow()
 
         loginWindow.delegate = self
         passwordChangeWindow.delegate = self
@@ -518,7 +510,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.NoMADMenuLogIn.title = "NoMADMenuController-LogIn".translate
             self.NoMADMenuLogOut.isEnabled = false
             if (self.NoMADMenuChangePassword != nil) {
-            self.NoMADMenuChangePassword.isEnabled = false
+                self.NoMADMenuChangePassword.isEnabled = false
             }
             if (self.NoMADMenuGetCertificate != nil)  {
                 self.NoMADMenuGetCertificate.isEnabled = false
@@ -533,8 +525,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.NoMADMenuLogIn.action = #selector(self.NoMADMenuClickLogIn)
             self.NoMADMenuLogOut.isEnabled = false
             if (self.NoMADMenuChangePassword != nil) {
-            self.NoMADMenuChangePassword.isEnabled = false
-                }
+                self.NoMADMenuChangePassword.isEnabled = false
+            }
             if (self.NoMADMenuGetCertificate != nil)  {
                 self.NoMADMenuGetCertificate.isEnabled = false
             }
@@ -545,7 +537,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.NoMADMenuLogIn.action = #selector(self.renewTickets)
             self.NoMADMenuLogOut.isEnabled = true
             if (self.NoMADMenuChangePassword != nil) {
-            self.NoMADMenuChangePassword.isEnabled = true
+                self.NoMADMenuChangePassword.isEnabled = true
             }
             if (self.NoMADMenuGetCertificate != nil)  {
                 self.NoMADMenuGetCertificate.isEnabled = true
