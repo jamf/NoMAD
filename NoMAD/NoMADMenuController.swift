@@ -32,10 +32,6 @@ prefix func ~~(value: Int) -> Bool {
     return (value > 0) ? true : false
 }
 
-// set up a default defaults
-
-let myLogger = Logger()
-
 class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate, PreferencesWindowDelegate, NSMenuDelegate {
 
     // menu item connections
