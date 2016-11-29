@@ -186,23 +186,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         if (defaults.string(forKey: Preferences.aDDomain) == "" ) {
             preferencesWindow.window!.forceToFrontAndFocus(nil)
         } else {
-
-            if  ( defaults.string(forKey: Preferences.lastPasswordWarning) == nil ) {
-                defaults.set(172800, forKey: Preferences.lastPasswordWarning)
-            }
-
-            if ( defaults.bool(forKey: Preferences.verbose) == false) {
-                defaults.set(false, forKey: Preferences.verbose)
-            }
-
-            if (defaults.string(forKey: Preferences.kerberosRealm) == "") {
-                myLogger.logit(.info, message: "Realm not setting, so creating Realm from the Domain.")
-                defaults.set(defaults.string(forKey: Preferences.aDDomain)?.uppercased(), forKey: Preferences.kerberosRealm)
-            }
-
-            //myLogger.logit(.info, message: "Configuring Chrome.")
-            //configureChrome()
-
             doTheNeedfull()
         }
 
