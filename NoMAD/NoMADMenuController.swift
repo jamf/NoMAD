@@ -35,7 +35,6 @@ prefix func ~~(value: Int) -> Bool {
 class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate, PreferencesWindowDelegate, NSMenuDelegate {
 
     // menu item connections
-
     @IBOutlet weak var NoMADMenu: NSMenu!
     @IBOutlet weak var NoMADMenuUserName: NSMenuItem!
     @IBOutlet weak var NoMADMenuPasswordExpires: NSMenuItem!
@@ -57,13 +56,11 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     let NoMADMenuHome = NSMenuItem()
 
     // menu bar icons
-
     let iconOnOn = NSImage(named: "NoMAD-statusicon-on-on")
     let iconOnOff = NSImage(named: "NoMAD-statusicon-on-off")
     let iconOffOff = NSImage(named: "NoMAD-statusicon-off-off")
 
     // for delegates
-
     let preferencesWindow = PreferencesWindow()
     let loginWindow = LoginWindow()
     let passwordChangeWindow = PasswordChangeWindow()
@@ -86,7 +83,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
     let myWorkQueue = DispatchQueue(label: "com.trusourcelabs.NoMAD.background_work_queue", attributes: [])
 
-    var SelfServiceType: String = ""
+    var SelfServiceType = ""
 
     let statusItem = NSStatusBar.system().statusItem(withLength: NSVariableStatusItemLength)
     var selfServiceExists = false
@@ -94,15 +91,13 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     override func awakeFromNib() {
 
         myLogger.logit(.base, message:"---Starting NoMAD---")
+        let version = String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!)
+        let build = String(describing: Bundle.main.infoDictionary!["CFBundleVersion"]!)
+        myLogger.logit(.base, message:"NoMAD version: " + version )
+        myLogger.logit(.base, message:"NoMAD build: " + build )
 
         let defaultPreferences = NSDictionary(contentsOf: Bundle.main.url(forResource: "DefaultPreferences", withExtension: "plist")!)
         defaults.register(defaults: defaultPreferences as! [String : Any])
-
-        let version = String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!)
-        let build = String(describing: Bundle.main.infoDictionary!["CFBundleVersion"]!)
-
-        myLogger.logit(.base, message:"NoMAD version: " + version )
-        myLogger.logit(.base, message:"NoMAD build: " + build )
 
         startMenuAnimationTimer()
 
@@ -117,7 +112,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         dateFormatter.timeStyle = .short
 
         // find out if a Self Service Solution exists - hide the menu if it's not there
-
         myLogger.logit(.notice, message:"Looking for Self Service applications")
 
         let selfServiceFileManager = FileManager.default
