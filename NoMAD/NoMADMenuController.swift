@@ -189,10 +189,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             doTheNeedfull()
         }
 
-        if defaults.bool(forKey: Preferences.verbose) == true {
-            myLogger.logit(.base, message:"Starting up NoMAD")
-        }
-
         stopMenuAnimationTimer()
 
         // set up menu titles w/translation
