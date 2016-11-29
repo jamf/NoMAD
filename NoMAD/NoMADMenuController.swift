@@ -87,6 +87,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     let statusItem = NSStatusBar.system().statusItem(withLength: NSVariableStatusItemLength)
     var selfServiceExists = false
 
+
+    /// Fired when the menu loads the first time
     override func awakeFromNib() {
 
         myLogger.logit(.base, message:"---Starting NoMAD---")
@@ -196,7 +198,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         originalGetCertificateMenu = NoMADMenuGetCertificate
         originalGetCertificateMenuDate = NoMADMenuGetCertificateDate
 
-        // determine if we should show the Password Change Window
+        // determine if we should show the Password Change Menu Item
 
         if let showPasswordChange = defaults.string(forKey: Preferences.changePasswordType) {
             if showPasswordChange == "None" {
