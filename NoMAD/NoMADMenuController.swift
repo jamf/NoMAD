@@ -73,9 +73,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     var lastStatusCheck = Date().addingTimeInterval(-5000)
     var updateScheduled = false
 
-    let myKeychainUtil = KeychainUtil()
-    let getCredentials = KerbUtil()
-
     //let myShareMounter = ShareMounter()
 
     var menuAnimationTimer = Timer()
@@ -128,12 +125,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         userInformation.myLDAPServers.tickets.getDetails()
         autoLogin()
 
-        // fire off the SignInCommand script if there is one
-
-        if defaults.string(forKey: Preferences.signInCommand) != "" {
-            let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)
-            myLogger.logit(LogLevel.base, message: myResult)
-        }
 
         // if no preferences are set, we show the preferences pane
         if (defaults.string(forKey: Preferences.aDDomain) == "" ) {
@@ -145,7 +136,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         stopMenuAnimationTimer()
 
         // set up menu titles w/translation
-
         NoMADMenuLockScreen.title = "Lock Screen".translate
         NoMADMenuChangePassword.title = "NoMADMenuController-ChangePassword".translate
 
@@ -153,7 +143,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         originalGetCertificateMenuDate = NoMADMenuGetCertificateDate
 
         // determine if we should show the Password Change Menu Item
-
         if let showPasswordChange = defaults.string(forKey: Preferences.changePasswordType) {
             if showPasswordChange == "None" {
                 NoMADMenuChangePassword.isHidden = true
@@ -167,46 +156,37 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
     @IBAction func NoMADMenuClickLogIn(_ sender: NSMenuItem) {
 
-        if ( defaults.bool(forKey: Preferences.useKeychain)) {
-            var myPass = ""
-            var myErr: String?
+        if defaults.bool(forKey: Preferences.useKeychain) {
+
             // check if there's a last user
-
             if (defaults.string(forKey: Preferences.lastUser) != "" ) {
+                var myPass = ""
+                var myErr: String?
 
-                do { myPass = try myKeychainUtil.findPassword(defaults.string(forKey: Preferences.lastUser)! + "@" + defaults.string(forKey: Preferences.kerberosRealm)!) } catch {
-                    //bringWindowToFront(loginWindow.window!, focus: true)
-                    //loginWindow.showWindow(nil)
+                do {
+                    myPass = try KeychainUtil().findPassword(defaults.string(forKey: Preferences.lastUser)! + "@" + defaults.string(forKey: Preferences.kerberosRealm)!)
+                } catch {
                     loginWindow.window!.forceToFrontAndFocus(nil)
+                    return
                 }
-                let GetCredentials: KerbUtil = KerbUtil()
-                myErr = GetCredentials.getKerbCredentials( myPass, defaults.string(forKey: Preferences.lastUser)! + "@" + defaults.string(forKey: Preferences.kerberosRealm)!)
+
+                myErr = KerbUtil().getKerbCredentials(myPass, defaults.string(forKey: Preferences.lastUser)! + "@" + defaults.string(forKey: Preferences.kerberosRealm)!)
                 if myErr != nil {
                     myLogger.logit(.base, message:"Error attempting to automatically log in.")
-                    //bringWindowToFront(loginWindow.window!, focus: true)
-                    //loginWindow.showWindow(nil)
                     loginWindow.window!.forceToFrontAndFocus(nil)
+                    return
                 } else {
                     myLogger.logit(.base, message:"Automatically logging in.") }
                 cliTask("/usr/bin/kswitch -p " +  defaults.string(forKey: Preferences.lastUser)! + "@" + defaults.string(forKey: Preferences.kerberosRealm)!)
 
                 // fire off the SignInCommand script if there is one
-
                 if defaults.string(forKey: Preferences.signInCommand) != "" {
                     let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)
-                    myLogger.logit(LogLevel.base, message: myResult)
+                    myLogger.logit(.base, message: myResult)
+                    return
                 }
-
-            } else {
-                //bringWindowToFront(loginWindow.window!, focus: true)
-                //loginWindow.showWindow(nil)
-                loginWindow.window!.forceToFrontAndFocus(nil)
             }
-        } else {
-            //bringWindowToFront(loginWindow.window!, focus: true)
-            //loginWindow.showWindow(nil)
             loginWindow.window!.forceToFrontAndFocus(nil)
-
         }
     }
 
@@ -534,34 +514,15 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     }
 
     // function to see if we should autologin and then proceede accordingly
-
-    func autoLogin()         {
+    func autoLogin() {
         // only autologin if 1) we're set to use the keychain, 2) we have don't already have a Kerb ticket and 3) we can contact the LDAP servers
-        if ( defaults.bool(forKey: Preferences.useKeychain)) && !userInformation.myLDAPServers.tickets.state && userInformation.myLDAPServers.currentState {
+        if (defaults.bool(forKey: Preferences.useKeychain)) && !userInformation.myLDAPServers.tickets.state && userInformation.myLDAPServers.currentState {
             myLogger.logit(.info, message: "Attempting to auto-login")
-
-            var myPass: String = ""
-
-            // check if there's a last user
-
-            if ( (defaults.string(forKey: Preferences.lastUser) ?? "") != "" ) {
-                var myErr: String? = ""
-                do { myPass = try myKeychainUtil.findPassword(defaults.string(forKey: Preferences.lastUser)! + "@" + defaults.string(forKey: Preferences.kerberosRealm)!) } catch {
-                    loginWindow.window!.forceToFrontAndFocus(nil)
-                }
-                myErr = getCredentials.getKerbCredentials( myPass, defaults.string(forKey: Preferences.lastUser)! + "@" + defaults.string(forKey: Preferences.kerberosRealm)!)
-                if myErr != nil {
-                    myLogger.logit(.base, message: "Error attempting to automatically log in.")
-                    loginWindow.window!.forceToFrontAndFocus(nil)
-                } else {
-                    myLogger.logit(.base, message:"Automatically logging in.")
-                    cliTask("/usr/bin/kswitch -p " +  defaults.string(forKey: Preferences.lastUser)! + "@" + defaults.string(forKey: Preferences.kerberosRealm)!)}
-            }
+            NoMADMenuClickLogIn(NoMADMenuLogIn)
         }
     }
 
     // function to start the menu throbbing
-
     func startMenuAnimationTimer() {
         menuAnimationTimer = Timer(timeInterval: 1, target: self, selector: #selector(animateMenuItem), userInfo: nil, repeats: true)
         statusItem.menu = NSMenu()
