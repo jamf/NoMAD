@@ -87,10 +87,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     override func awakeFromNib() {
 
         myLogger.logit(.base, message:"---Starting NoMAD---")
-        let version = String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!)
-        let build = String(describing: Bundle.main.infoDictionary!["CFBundleVersion"]!)
-        myLogger.logit(.base, message:"NoMAD version: " + version )
-        myLogger.logit(.base, message:"NoMAD build: " + build )
+
 
         let defaultPreferences = NSDictionary(contentsOf: Bundle.main.url(forResource: "DefaultPreferences", withExtension: "plist")!)
         defaults.register(defaults: defaultPreferences as! [String : Any])

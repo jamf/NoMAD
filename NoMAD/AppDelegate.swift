@@ -23,6 +23,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         myLogger.logit(.base, message:"---NoMAD Initialized---")
+        let version = String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!)
+        let build = String(describing: Bundle.main.infoDictionary!["CFBundleVersion"]!)
+        myLogger.logit(.base, message:"NoMAD version: " + version)
+        myLogger.logit(.base, message:"NoMAD build: " + build)
         myLogger.logit(.debug, message: "Current app preferences: \(defaults.dictionaryRepresentation())")
 
         let changed: SCDynamicStoreCallBack = { dynamicStore, _, _ in
