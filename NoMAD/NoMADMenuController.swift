@@ -85,8 +85,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     var selfService: SelfServiceType?
 
     let statusItem = NSStatusBar.system().statusItem(withLength: NSVariableStatusItemLength)
-    var selfServiceExists = false
-
 
     /// Fired when the menu loads the first time
     override func awakeFromNib() {
@@ -100,13 +98,16 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         let defaultPreferences = NSDictionary(contentsOf: Bundle.main.url(forResource: "DefaultPreferences", withExtension: "plist")!)
         defaults.register(defaults: defaultPreferences as! [String : Any])
 
+        // Register for update notifications.
+        NotificationCenter.default.addObserver(self, selector: #selector(doTheNeedfull), name: NSNotification.Name(rawValue: "updateNow"), object: nil)
+
         startMenuAnimationTimer()
 
         loginWindow.delegate = self
         passwordChangeWindow.delegate = self
         preferencesWindow.delegate = self
 
-        //Allows us to force windows to show when menu clicked.
+        // Allows us to force windows to show when menu clicked.
         self.NoMADMenu.delegate = self
 
         // find out if a Self Service Solution exists - hide the menu if it's not there
@@ -115,14 +116,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             selfService = discoveredService
         } else {
             if NoMADMenu.items.contains(NoMADMenuGetSoftware) {
-                NoMADMenuGetSoftware.isEnabled = false
-                NoMADMenu.removeItem(NoMADMenuGetSoftware)
+                NoMADMenuGetSoftware.isHidden = true
                 myLogger.logit(.info, message:"Not using Self Service.")
             }
         }
-
-        // listen for updates
-        NotificationCenter.default.addObserver(self, selector: #selector(doTheNeedfull), name: NSNotification.Name(rawValue: "updateNow"), object: nil)
 
         // see if we should auto-configure
         setDefaults()
@@ -133,7 +130,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         // only autologin if 1) we're set to use the keychain, 2) we have don't already have a Kerb ticket and 3) we can contact the LDAP servers
 
-        if ( defaults.bool(forKey: Preferences.useKeychain)) && !userInformation.myLDAPServers.tickets.state && userInformation.myLDAPServers.currentState {
+        if (defaults.bool(forKey: Preferences.useKeychain)) && !userInformation.myLDAPServers.tickets.state && userInformation.myLDAPServers.currentState {
 
             var myPass = ""
             // check if there's a last user
@@ -161,7 +158,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         }
 
         // if no preferences are set, we show the preferences pane
-
         if (defaults.string(forKey: Preferences.aDDomain) == "" ) {
             preferencesWindow.window!.forceToFrontAndFocus(nil)
         } else {
