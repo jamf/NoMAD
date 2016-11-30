@@ -25,6 +25,13 @@ enum NoADError: Error {
     case storedPasswordWrong
 }
 
+// bitwise convenience
+prefix operator ~~
+
+prefix func ~~(value: Int) -> Bool {
+    return (value > 0) ? true : false
+}
+
 class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate, PreferencesWindowDelegate, NSMenuDelegate {
 
     // menu item connections
