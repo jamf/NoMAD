@@ -82,7 +82,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
     let myWorkQueue = DispatchQueue(label: "com.trusourcelabs.NoMAD.background_work_queue", attributes: [])
 
-    var SelfServiceType = ""
+    var selfService: SelfServiceType?
 
     let statusItem = NSStatusBar.system().statusItem(withLength: NSVariableStatusItemLength)
     var selfServiceExists = false
@@ -109,31 +109,11 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         //Allows us to force windows to show when menu clicked.
         self.NoMADMenu.delegate = self
 
-
         // find out if a Self Service Solution exists - hide the menu if it's not there
         myLogger.logit(.notice, message:"Looking for Self Service applications")
-
-        let selfServiceFileManager = FileManager.default
-
-        if selfServiceFileManager.fileExists(atPath: "/Applications/Self Service.app") {
-            selfServiceExists = true
-            SelfServiceType = "Casper"
-            myLogger.logit(.info, message:"Using Casper for Self Service")
-        }
-
-        if !selfServiceExists && selfServiceFileManager.fileExists(atPath: "/Library/Application Support/LANrev Agent/LANrev Agent.app/Contents/MacOS/LANrev Agent") {
-            selfServiceExists = true
-            SelfServiceType = "LANRev"
-            myLogger.logit(.info, message:"Using LANRev for Self Service")
-        }
-
-        if !selfServiceExists && selfServiceFileManager.fileExists(atPath: "/Applications/Managed Software Center.app") {
-            selfServiceExists = true
-            SelfServiceType = "Munki"
-            myLogger.logit(.info, message:"Using Munki for Self Service")
-        }
-
-        if !selfServiceExists {
+        if let discoveredService = SelfServiceManager().discoverSelfService() {
+            selfService = discoveredService
+        } else {
             if NoMADMenu.items.contains(NoMADMenuGetSoftware) {
                 NoMADMenuGetSoftware.isEnabled = false
                 NoMADMenu.removeItem(NoMADMenuGetSoftware)
@@ -376,11 +356,20 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // opens up a self service portal - this should only be shown if Self Service exists on the machine
 
     @IBAction func NoMADMenuClickGetSoftware(_ sender: NSMenuItem) {
-        switch SelfServiceType {
-        case "Casper" :	NSWorkspace.shared().launchApplication("/Applications/Self Service.app")
-        case "LANRev" : cliTask("/Library/Application\\ Support/LANrev\\ Agent/LANrev\\ Agent.app/Contents/MacOS/LANrev\\ Agent --ShowOnDemandPackages")
-        case "Munki"  :	NSWorkspace.shared().launchApplication("/Applications/Managed Software Center.app")
-        default :  return
+        guard let selfService = selfService else {
+            myLogger.logit(.info, message:"Not using Self Service.")
+            return
+        }
+
+        switch selfService {
+        case .casper:
+            NSWorkspace.shared().launchApplication("/Applications/Self Service.app")
+        case .lanrev:
+            cliTask("/Library/Application\\ Support/LANrev\\ Agent/LANrev\\ Agent.app/Contents/MacOS/LANrev\\ Agent --ShowOnDemandPackages")
+        case .munki:
+            NSWorkspace.shared().launchApplication("/Applications/Managed Software Center.app")
+        default:
+            return
         }
     }
 
