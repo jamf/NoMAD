@@ -13,83 +13,60 @@
 
 import Foundation
 
-
 class PasswordChange {
 
-    var passwordChangeType: String
-    var passwordChangeOptions: String
-    var enabled: Bool
-
-    init() {
-        passwordChangeType = ""
-        passwordChangeOptions = ""
-        enabled = false
-
-        if let passwordChangeType = defaults.string(forKey: Preferences.changePasswordType) {
-            if let passwordChangeOptions = defaults.string(forKey: Preferences.passwordChangeOptions) {
-                self.passwordChangeOptions = passwordChangeOptions
-                self.passwordChangeType = passwordChangeType
-
-                enabled = true;
-            } else {
-                print("Missing PasswordChangeOptions key")
-                self.passwordChangeType = ""
-                self.passwordChangeOptions = ""
-                enabled = false
-            }
-        } else {
-            print("Missing PasswordChangeType key")
-        }
-    }
-
     func passwordChange() {
-
-        if passwordChangeType != "" && passwordChangeOptions != "" {
+        if let passwordChangeType = defaults.string(forKey: Preferences.changePasswordType),
+            let passwordChangeOptions = defaults.string(forKey: Preferences.passwordChangeOptions) {
             switch passwordChangeType {
             case "Task":
                 let result = cliTask(passwordChangeOptions)
                 myLogger.logit(.base, message: result)
-
             case "URL":
-                if let myURL = subVariables(passwordChangeOptions) {
-                    let url = URL(string: myURL)
-                    NSWorkspace.shared().open( url! )
+                guard let myURL = subVariables(passwordChangeOptions) else {
+                    myLogger.logit(.base, message: "Could not create password change URL.")
+                    break
                 }
-
+                guard let url = URL(string: myURL) else {
+                    myLogger.logit(.base, message: "Could not create password change NSURL.")
+                    break
+                }
+                NSWorkspace.shared().open(url)
             case "App":
                 cliTask("/usr/bin/open " + passwordChangeOptions.replacingOccurrences(of: " ", with: "\\ ") )
-
             case "None":
                 myLogger.logit(.base, message: "No password changes allowed.")
-
             default:
-                let url = URL(string: "http://www.apple.com/support")!
-                NSWorkspace.shared().open( url )
+                guard let url = URL(string: "http://www.apple.com/support") else {
+                    myLogger.logit(.base, message: "Could not create default support URL.")
+                    break
+                }
+                NSWorkspace.shared().open(url)
             }
         } else {
             myLogger.logit(.debug, message: "Invalid PasswordChangeType or PasswordChangeOptions, defaulting to change via Kerberos.")
         }
     }
 
-    fileprivate func subVariables( _ url: String ) -> String? {
+    fileprivate func subVariables(_ url: String) -> String? {
         // TODO: get e-mail address as a variable
-        var createdURL = url;
+        var createdURL = url
         if let domain = defaults.string(forKey: Preferences.aDDomain) {
             createdURL = createdURL.replacingOccurrences(of: "<<domain>>", with: domain)
         }
 
-        //TODO: this crashes if displayName is empty
-        // Should be fixed... needs to be tested.
-        if (defaults.string(forKey: Preferences.displayName) != "") {
-            let fullName = defaults.string(forKey: Preferences.displayName)!.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)
-            createdURL = createdURL.replacingOccurrences(of: "<<fullname>>", with: fullName!)
+        guard let domain = defaults.string(forKey: Preferences.aDDomain),
+            let fullName = defaults.string(forKey: Preferences.displayName)?.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed),
+            let serial = getSerial().addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed),
+            let shortName = defaults.string(forKey: Preferences.userShortName)
+            else {
+                myLogger.logit(.base, message: "Could not create password change URL.")
+                return nil
         }
-        if let serial = getSerial().addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) {
-            createdURL = createdURL.replacingOccurrences(of: "<<serial>>", with: serial)
-        }
-        if let shortName = defaults.string(forKey: Preferences.userShortName) {
+        createdURL = createdURL.replacingOccurrences(of: "<<domain>>", with: domain)
+        createdURL = createdURL.replacingOccurrences(of: "<<fullname>>", with: fullName)
+        createdURL = createdURL.replacingOccurrences(of: "<<serial>>", with: serial)
         createdURL = createdURL.replacingOccurrences(of: "<<shortname>>", with: shortName)
-        }
         return createdURL
     }
 }
