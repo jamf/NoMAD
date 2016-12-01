@@ -229,11 +229,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         updateUserInfo()
     }
 
-    // lock the screen when clicked
-
+    // Sleep the screen when clicked
     @IBAction func NoMADMenuClickLockScreen(_ sender: NSMenuItem) {
         //  cliTask("/System/Library/CoreServices/Menu\\ Extras/User.menu/Contents/Resources/CGSession -suspend")
-
         let registry: io_registry_entry_t = IORegistryEntryFromPath(kIOMasterPortDefault, "IOService:/IOResources/IODisplayWrangler")
         let _ = IORegistryEntrySetCFProperty(registry, "IORequestIdle" as CFString!, true as CFTypeRef!)
         IOObjectRelease(registry)
@@ -241,7 +239,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     }
 
     // gets a cert from the Windows CA
-
     @IBAction func NoMADMenuClickGetCertificate(_ sender: NSMenuItem) -> Void {
 
         var myResponse : Int? = nil
@@ -296,7 +293,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
 
     // opens up a self service portal - this should only be shown if Self Service exists on the machine
-
     @IBAction func NoMADMenuClickGetSoftware(_ sender: NSMenuItem) {
         guard let selfService = selfService else {
             myLogger.logit(.info, message:"Not using Self Service.")
@@ -310,22 +306,17 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             cliTask("/Library/Application\\ Support/LANrev\\ Agent/LANrev\\ Agent.app/Contents/MacOS/LANrev\\ Agent --ShowOnDemandPackages")
         case .munki:
             NSWorkspace.shared().launchApplication("/Applications/Managed Software Center.app")
-        default:
-            return
         }
     }
 
     // this enagages help based upon preferences set
-
     @IBAction func NoMADMenuClickGetHelp(_ sender: NSMenuItem) {
         //startMenuAnimationTimer()
-        let myGetHelp = GetHelp()
-        myGetHelp.getHelp()
+        GetHelp().getHelp()
         //stopMenuAnimationTimer()
     }
 
     // if specified by the preferences, this shows a CLI one-liner
-
     @IBAction func NoMADMenuClickHiddenItem1(_ sender: NSMenuItem) {
         myLogger.logit(.base, message: "Executing command: " + defaults.string(forKey: Preferences.userCommandTask1)! )
         let myResult = cliTask(defaults.string(forKey: Preferences.userCommandTask1)!)
@@ -333,27 +324,23 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     }
 
     // shows the preferences window
-
     @IBAction func NoMADMenuClickPreferences(_ sender: NSMenuItem) {
         //preferencesWindow.showWindow(nil)
         preferencesWindow.window!.forceToFrontAndFocus(nil)
     }
 
     // quit when asked
-
     @IBAction func NoMADMenuClickQuit(_ sender: NSMenuItem) {
         NSApplication.shared().terminate(self)
     }
 
     // connect to the Home share if it's available
-
     @IBAction func homeClicked(_ send: AnyObject) {
         // TODO: I think NSWorkspace can do this...
         cliTask("open smb:" + defaults.string(forKey: Preferences.userHome)!)
     }
 
     // send copious logs to the console
-
     @IBAction func NoMADMenuClickSpewLogs(_ sender: AnyObject) {
         myLogger.logit(.base, message:"---- Spew Logs ----")
 
