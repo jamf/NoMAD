@@ -88,7 +88,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         myLogger.logit(.base, message:"---Starting NoMAD---")
 
-
         let defaultPreferences = NSDictionary(contentsOf: Bundle.main.url(forResource: "DefaultPreferences", withExtension: "plist")!)
         defaults.register(defaults: defaultPreferences as! [String : Any])
 
@@ -104,15 +103,20 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         // Allows us to force windows to show when menu clicked.
         self.NoMADMenu.delegate = self
 
+        // if no preferences are set, we show the preferences pane
+        if (defaults.string(forKey: Preferences.aDDomain) == "" ) {
+            preferencesWindow.window!.forceToFrontAndFocus(nil)
+        } else {
+            doTheNeedfull()
+        }
+
         // find out if a Self Service Solution exists - hide the menu item if it's not there
         myLogger.logit(.notice, message:"Looking for Self Service applications")
         if let discoveredService = SelfServiceManager().discoverSelfService() {
             selfService = discoveredService
         } else {
-            if NoMADMenu.items.contains(NoMADMenuGetSoftware) {
                 NoMADMenuGetSoftware.isHidden = true
                 myLogger.logit(.info, message:"Not using Self Service.")
-            }
         }
 
         // see if we should auto-configure
@@ -121,14 +125,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         // Autologin if you should
         userInformation.myLDAPServers.tickets.getDetails()
         autoLogin()
-
-
-        // if no preferences are set, we show the preferences pane
-        if (defaults.string(forKey: Preferences.aDDomain) == "" ) {
-            preferencesWindow.window!.forceToFrontAndFocus(nil)
-        } else {
-            doTheNeedfull()
-        }
 
         stopMenuAnimationTimer()
 
@@ -147,10 +143,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         }
     }
 
-    // MARK: Menu Items' Actions
+    // MARK: IBActions
 
-    // show the login window when the menu item is clicked
-
+    // Show the login window when the menu item is clicked
     @IBAction func NoMADMenuClickLogIn(_ sender: NSMenuItem) {
 
         if defaults.bool(forKey: Preferences.useKeychain) {
@@ -159,28 +154,31 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             if (defaults.string(forKey: Preferences.lastUser) != "" ) {
                 var myPass = ""
                 var myErr: String?
+                let userPrinc = defaults.string(forKey: Preferences.lastUser)! + "@" + defaults.string(forKey: Preferences.kerberosRealm)!
 
                 do {
-                    myPass = try KeychainUtil().findPassword(defaults.string(forKey: Preferences.lastUser)! + "@" + defaults.string(forKey: Preferences.kerberosRealm)!)
+                    myPass = try KeychainUtil().findPassword(userPrinc)
                 } catch {
                     loginWindow.window!.forceToFrontAndFocus(nil)
                     return
                 }
 
-                myErr = KerbUtil().getKerbCredentials(myPass, defaults.string(forKey: Preferences.lastUser)! + "@" + defaults.string(forKey: Preferences.kerberosRealm)!)
+                myErr = KerbUtil().getKerbCredentials(myPass, userPrinc)
                 if myErr != nil {
                     myLogger.logit(.base, message:"Error attempting to automatically log in.")
                     loginWindow.window!.forceToFrontAndFocus(nil)
                     return
                 } else {
-                    myLogger.logit(.base, message:"Automatically logging in.") }
-                cliTask("/usr/bin/kswitch -p " +  defaults.string(forKey: Preferences.lastUser)! + "@" + defaults.string(forKey: Preferences.kerberosRealm)!)
+                    myLogger.logit(.base, message:"Automatically logging in.")
 
-                // fire off the SignInCommand script if there is one
-                if defaults.string(forKey: Preferences.signInCommand) != "" {
-                    let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)
-                    myLogger.logit(.base, message: myResult)
-                    return
+                    cliTask("/usr/bin/kswitch -p " +  userPrinc)
+
+                    // fire off the SignInCommand script if there is one
+                    if defaults.string(forKey: Preferences.signInCommand) != "" {
+                        let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)
+                        myLogger.logit(.base, message: myResult)
+                        return
+                    }
                 }
             }
             loginWindow.window!.forceToFrontAndFocus(nil)
@@ -188,7 +186,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     }
 
     // show the password change window when the menu item is clicked
-
     @IBAction func NoMADMenuClickChangePassword(_ sender: NSMenuItem) {
         if defaults.string(forKey: Preferences.changePasswordType) != "Kerberos"  {
             PasswordChange().passwordChange()
@@ -197,42 +194,37 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         }
     }
 
-
     // kill the Kerb ticket when clicked
-
     @IBAction func NoMADMenuClickLogOut(_ sender: NSMenuItem) {
 
         // remove their password from the keychain if they're logging out
+        if defaults.string(forKey: Preferences.lastUser) != "" && defaults.bool(forKey: Preferences.useKeychain) {
+            var myKeychainItem: SecKeychainItem?
+            var myErr: OSStatus
+            let serviceName = "NoMAD"
+            var passLength: UInt32 = 0
+            var passPtr: UnsafeMutableRawPointer? = nil
+            let name = defaults.string(forKey: Preferences.lastUser)! + "@" + defaults.string(forKey: Preferences.kerberosRealm)!
 
-        if  (defaults.string(forKey: Preferences.lastUser) != "" ) {
+            myErr = SecKeychainFindGenericPassword(nil,
+                                                   UInt32(serviceName.characters.count),
+                                                   serviceName,
+                                                   UInt32(name.characters.count),
+                                                   name,
+                                                   &passLength,
+                                                   &passPtr, &myKeychainItem)
 
-            if ( defaults.bool(forKey: Preferences.useKeychain)) {
-                var myKeychainItem: SecKeychainItem?
-
-                var myErr: OSStatus
-                let serviceName = "NoMAD"
-                var passLength: UInt32 = 0
-                var passPtr: UnsafeMutableRawPointer? = nil
-                let name = defaults.string(forKey: Preferences.lastUser)! + "@" + defaults.string(forKey: Preferences.kerberosRealm)!
-
-                myErr = SecKeychainFindGenericPassword(nil, UInt32(serviceName.characters.count), serviceName, UInt32(name.characters.count), name, &passLength, &passPtr, &myKeychainItem)
-
-                if ( myErr == 0 ) {
-                    SecKeychainItemDelete(myKeychainItem!)
-                } else {
-                    myLogger.logit(.base, message:"Error deleting Keychain entry.")
-                }
+            if (myErr == 0) {
+                SecKeychainItemDelete(myKeychainItem!)
+            } else {
+                myLogger.logit(.base, message:"Error deleting Keychain entry.")
             }
         } else {
-            loginWindow.showWindow(nil)
             loginWindow.window!.forceToFrontAndFocus(nil)
         }
 
         cliTask("/usr/bin/kdestroy")
-
-        // new
-        self.userInformation.connected = false
-
+        userInformation.connected = false
         lastStatusCheck = Date().addingTimeInterval(-5000)
         updateUserInfo()
     }
