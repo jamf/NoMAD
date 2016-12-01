@@ -325,7 +325,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
     // shows the preferences window
     @IBAction func NoMADMenuClickPreferences(_ sender: NSMenuItem) {
-        //preferencesWindow.showWindow(nil)
         preferencesWindow.window!.forceToFrontAndFocus(nil)
     }
 
@@ -433,7 +432,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     }
 
     // display a user notifcation
-
     func showNotification(_ title: String, text: String, date: Date) -> Void {
         let notification = NSUserNotification()
         notification.title = title
@@ -446,14 +444,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     }
 
     // pulls user's entire LDAP record when asked
-
     func logEntireUserRecord() {
         let myResult = userInformation.myLDAPServers.returnFullRecord("sAMAccountName=" + defaults.string(forKey: Preferences.lastUser)!)
         myLogger.logit(.base, message:myResult)
     }
 
     // everything to do on a network change
-
     func doTheNeedfull() {
 
         //   let qualityBackground = QOS_CLASS_BACKGROUND
@@ -472,7 +468,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     }
 
     // simple function to renew tickets
-
     func renewTickets(){
         cliTask("/usr/bin/kinit -R")
         userInformation.myLDAPServers.tickets.getDetails()
