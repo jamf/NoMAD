@@ -57,18 +57,6 @@ class WindowsCATools {
 
         // we should return this in case there's an error
 
-        // TODO: Don't use certtool for this, but SecTransform to create the CSR
-        //cliTask("/usr/bin/certtool r " + directoryURL.appendingPathComponent("new.csr")!.path + " Z")
-//
-//
-//        let path = directoryURL.appendingPathComponent("new.csr")
-//
-//        do {
-//            certCSR = try NSString(contentsOfFile: path!.path, encoding: String.Encoding.ascii.rawValue) as String
-//        } catch {
-//            certCSR = ""
-//            myLogger.logit(.base, message: "Error getting CSR")
-//        }
 
         certCSR = ""
 
