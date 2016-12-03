@@ -339,7 +339,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         case .munki:
             NSWorkspace.shared().launchApplication("/Applications/Managed Software Center.app")
         case .custom:
-            cliTask(defaults.string(forKey: Preferences.selfServicePath)!)
+            cliTask("/usr/bin/open " + defaults.string(forKey: Preferences.selfServicePath)!)
         }
     }
 
