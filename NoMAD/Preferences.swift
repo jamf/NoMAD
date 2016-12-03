@@ -64,6 +64,8 @@ enum Preferences {
 
     // secondsToRenew - r/w - int - determines the threshhold at which a ticket is renewed in seconds
 
+    // selfServicePath - r/w - string - path to a self service application for "Get Software"
+
     // signInCommand - r/w - string - the shell script, or other binary, to be triggered whenever a succesful sign in occurs
 
     // stateChangeAction - r/w - string - the shell script, or other binary, to be triggered whenever the network changes
