@@ -14,6 +14,7 @@ import Foundation
 /// - casper: JAMF Software
 /// - lanrev: HEAT Software
 /// - munki: OpenSource Software
+/// - custom: Filesystem path to a self-service app
 enum SelfServiceType {
     case casper
     case lanrev
@@ -42,8 +43,8 @@ class SelfServiceManager {
             myLogger.logit(.info, message:"Using Munki for Self Service")
             return .munki
         }
-
-        if ( defaults.string(forKey: Preferences.selfServicePath) ?? "" ) != "" {
+        if defaults.string(forKey: Preferences.selfServicePath) != "" {
+            myLogger.logit(.info, message:"Using custom self-service path")
             return .custom
         }
         return nil
