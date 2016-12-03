@@ -252,9 +252,17 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         if ( certCATest != "" && certTemplateTest != "" ) {
 
-            let lastExpire = defaults.object(forKey: Preferences.lastCertificateExpiration) as! Date ?? Date.distantPast
+            let lastExpireTemp = defaults.object(forKey: Preferences.lastCertificateExpiration)
+            var lastExpire: Date? = nil
 
-            if lastExpire.timeIntervalSinceNow > 2592000 {
+            if (String(describing: lastExpireTemp)) == "" {
+                lastExpire = Date.distantPast as Date
+            } else {
+                lastExpire = lastExpireTemp as! Date
+            }
+
+
+            if (lastExpire?.timeIntervalSinceNow)! > 2592000 {
                 let alertController = NSAlert()
                 alertController.messageText = "You already have a valid certificate."
                 alertController.addButton(withTitle: "Cancel")
@@ -277,8 +285,32 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 certCATest = "https://" + certCATest
             }
 
+            // preflight that there aren't SSL issues
+            var caTestWait = true
+            var caSSLTest = true
+
+            testSite(caURL: certCATest, completionHandler: { (data, response, error) in
+
+                if (error != nil) {
+                    caSSLTest = false
+                }
+                caTestWait = false
+            }
+            )
+            
+            while caTestWait {
+                RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
+            }
+
+            if !caSSLTest {
+            let certAlertController = NSAlert()
+            certAlertController.messageText = "Connetion error. Please ensure SSL certificates are trusted and URL is correct for your X509 CA."
+            certAlertController.runModal()
+            } else {
+
             let certCARequest = WindowsCATools(serverURL: certCATest, template: certTemplateTest)
             certCARequest.certEnrollment()
+            }
 
         } else {
             let certAlertController = NSAlert()
@@ -482,6 +514,16 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         } else {
             statusItem.image = iconOnOn
         }
+    }
+
+    func testSite(caURL: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
+
+        let request = NSMutableURLRequest(url: URL(string: caURL)!)
+
+        request.httpMethod = "GET"
+
+        let session = URLSession.shared
+        session.dataTask(with: request as URLRequest, completionHandler: completionHandler).resume()
     }
 
     // function to see if we should autologin and then proceede accordingly

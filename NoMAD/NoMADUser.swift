@@ -204,7 +204,7 @@ class NoMADUser {
 
         let kerbPrefFile = checkKpasswdServer(true)
         if !kerbPrefFile {
-            myLogger.logit(LogLevel.base, message: "Unable to create Kerberos preference file.")
+            myLogger.logit(LogLevel.base, message: "Skipping creating Kerberos preferences.")
             //throw NoMADUserError.itemNotFound("Unable to create Kerberos preference file.")
         }
 
@@ -219,10 +219,26 @@ class NoMADUser {
         }
 
         if kerbPrefFile {
-            //let kerbDefaults = NSUserDefaults(suiteName: "com.apple.Kerberos")
 
-            // TODO: Replace defaults delete.
-            cliTask("/usr/bin/defaults delete com.apple.Kerberos")
+            // get the defaults for com.apple.Kerberos
+
+            let kerbPrefs = UserDefaults.init(suiteName: "com.apple.Kerberos")
+
+            // get the list of domains, or create an empty dictionary if there are none
+
+            var kerbRealms = kerbPrefs?.dictionary(forKey: "realms")  ?? [String:AnyObject]()
+
+            // test to see if the realm already exists, if not build it
+
+            if kerbRealms[defaults.string(forKey: Preferences.kerberosRealm)!] == nil {
+                myLogger.logit(LogLevel.debug, message: "No realm in com.apple.Kerberos defaults.")
+            } else {
+                myLogger.logit(LogLevel.debug, message: "Removing realm from Kerberos Preferences.")
+                // remove the realm from the realms list
+                kerbRealms.removeValue(forKey: defaults.string(forKey: Preferences.kerberosRealm)!)
+                // save the dictionary back to the pref file
+                kerbPrefs?.set(kerbRealms, forKey: "realms")
+            }
         }
 
     }
@@ -500,43 +516,40 @@ private func checkKpasswdServer(_ writePref: Bool ) -> Bool {
     let myLDAPServers = LDAPServers()
     myLDAPServers.setDomain(adDomain)
     
-    
-    
     let myKpasswdServers = myLDAPServers.getSRVRecords(adDomain, srv_type: "_kpasswd._tcp.")
     myLogger.logit(LogLevel.debug, message: "Current Server is: " + myLDAPServers.currentServer)
     myLogger.logit(LogLevel.debug, message: "Kpasswd Servers are: " + myKpasswdServers.description)
     
     if myKpasswdServers.contains(myLDAPServers.currentServer) {
         myLogger.logit(LogLevel.debug, message: "Found kpasswd server that matches current LDAP server.")
-        if writePref {
-            myLogger.logit(LogLevel.debug, message: "Developer says we should write the preference file.")
-            // check to see if a file exists already
-            
-            let myFileManager = FileManager()
-            let myPrefFile = NSHomeDirectory() + "/Library/Preferences/com.apple.Kerberos.plist"
-            
-            if ( !myFileManager.fileExists(atPath: myPrefFile)) {
-                myLogger.logit(LogLevel.debug, message: "The Kerberos plist doesn't exist already, so we're going to create it now.")
-                // no existing pref file
-                
-                let data = NSMutableDictionary()
-                let realms = NSMutableDictionary()
+            myLogger.logit(LogLevel.debug, message: "Attempting to set kpasswd server to ensure Kerberos and LDAP are in sync.")
+
+            // get the defaults for com.apple.Kerberos
+
+            let kerbPrefs = UserDefaults.init(suiteName: "com.apple.Kerberos")
+
+            // get the list of domains, or create an empty dictionary if there are none
+
+            var kerbRealms = kerbPrefs?.dictionary(forKey: "realms")  ?? [String:AnyObject]()
+
+            // test to see if the realm already exists, if not build it
+
+            if kerbRealms[defaults.string(forKey: Preferences.kerberosRealm)!] != nil {
+                myLogger.logit(LogLevel.debug, message: "Existing Kerberos configuration for realm. Skipping adding KDC to Kerberos prefs.")
+                return false
+            } else {
+                // build a dictionary and add the KDC into it then write it back to defaults
                 let realm = NSMutableDictionary()
-                
                 realm.setValue(myLDAPServers.currentServer, forKey: "kdc")
                 realm.setValue(myLDAPServers.currentServer, forKey: "kpasswd")
-                
-                realms.setObject(realm, forKey: defaults.string(forKey: Preferences.kerberosRealm)! as NSCopying)
-                data.setObject(realms, forKey: "realms" as NSCopying)
-                
-                return data.write(toFile: myPrefFile, atomically: true)
-                
+                kerbRealms[defaults.string(forKey: Preferences.kerberosRealm)!] = realm
+                kerbPrefs?.set(kerbRealms, forKey: "realms")
+                return true
             }
-            return false
-        }
-        return false
     } else {
-        myLogger.logit(LogLevel.base, message: "Couldn't find kpasswd server that matches current LDAP server.")
+        myLogger.logit(LogLevel.base, message: "Couldn't find kpasswd server that matches current LDAP server. Letting system chose.")
         return false
     }
+    return false
 }
+

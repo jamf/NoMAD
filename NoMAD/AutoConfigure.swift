@@ -47,6 +47,13 @@ public func setDefaults() {
         }
     }
 
+    // if no defaults are set for ADDomain look to see if we're bound and use that
+
+    if defaults.string(forKey: Preferences.aDDomain) != "" {
+        myLogger.logit(.info, message: "No AD Domain set, determining if the machine is bound.")
+        getADSettings()
+    }
+
     if defaults.bool(forKey: Preferences.loginItem) {
         //TODO: Test this to make sure it actually does what I think it will. This should return the value of the key if found, otherwise false.
         addToLoginItems()
@@ -55,11 +62,14 @@ public func setDefaults() {
 
 private func getADSettings() {
 
+    // TODO: do this programatically? Although may need to be root to see AD prefs
+
     let myADConfig = cliTask("/usr/sbin/dsconfigad -show").components(separatedBy: "\n")
 
     if myADConfig.count > 0 {
         for line in myADConfig {
             if line.contains("Active Directory Domain") {
+                myLogger.logit(.base, message: "Setting AD Domain to the domain the machine is currently bound to.")
                 let myDomain = (line as NSString).substring(from: 35)
                 defaults.set(myDomain, forKey: Preferences.aDDomain)
                 defaults.set(myDomain.uppercased(), forKey: Preferences.kerberosRealm)
