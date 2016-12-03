@@ -338,6 +338,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             cliTask("/Library/Application\\ Support/LANrev\\ Agent/LANrev\\ Agent.app/Contents/MacOS/LANrev\\ Agent --ShowOnDemandPackages")
         case .munki:
             NSWorkspace.shared().launchApplication("/Applications/Managed Software Center.app")
+        case .custom:
+            cliTask(defaults.string(forKey: Preferences.selfServicePath)!)
         }
     }
 

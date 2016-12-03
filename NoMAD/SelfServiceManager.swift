@@ -18,6 +18,7 @@ enum SelfServiceType {
     case casper
     case lanrev
     case munki
+    case custom
 }
 
 class SelfServiceManager {
@@ -40,6 +41,10 @@ class SelfServiceManager {
         if selfServiceFileManager.fileExists(atPath: "/Applications/Managed Software Center.app") {
             myLogger.logit(.info, message:"Using Munki for Self Service")
             return .munki
+        }
+
+        if ( defaults.string(forKey: Preferences.selfServicePath) ?? "" ) != "" {
+            return .custom
         }
         return nil
        }

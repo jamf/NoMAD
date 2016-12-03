@@ -117,6 +117,7 @@ enum Preferences {
     /// Should NoMAD automatically attempt to mount the user's AD defined home share.
     static let showHome = "ShowHome"
     static let secondsToRenew = "SecondsToRenew"
+    static let selfServicePath = "SelfServicePath"
     static let signInCommand = "SignInCommand"
     static let stateChangeAction = "StateChangeAction"
     static let template = "Template"
