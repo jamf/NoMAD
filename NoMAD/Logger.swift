@@ -6,6 +6,9 @@
 //  Copyright © 2016 Trusource Labs. All rights reserved.
 //
 
+/// A singleton `Logger` instance for the app to use.
+let myLogger = Logger()
+
 import Foundation
 
 /// The individual logging levels to use when logging in NoMAD

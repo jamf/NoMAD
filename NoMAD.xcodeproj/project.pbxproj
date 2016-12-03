@@ -21,6 +21,7 @@
 		1AE1DFC11DA6B1E100456E3E /* Languages.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1AE1DFC31DA6B1E100456E3E /* Languages.plist */; };
 		1AFBDC651DE675B000C19AE1 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AFBDC641DE675B000C19AE1 /* Preferences.swift */; };
 		1AFBDC671DE675C000C19AE1 /* DefaultPreferences.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1AFBDC661DE675C000C19AE1 /* DefaultPreferences.plist */; };
+		1AFBDC701DEE4F4800C19AE1 /* SelfServiceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AFBDC6F1DEE4F4800C19AE1 /* SelfServiceManager.swift */; };
 		1AFEAC361D68FEAF00B7FA88 /* UserInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AFEAC351D68FEAF00B7FA88 /* UserInformation.swift */; };
 		345226E41DAA052C0066C922 /* ADLDAPPing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345226E31DAA052C0066C922 /* ADLDAPPing.swift */; };
 		345226E91DAA266B0066C922 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345226E81DAA266B0066C922 /* Network.swift */; };
@@ -72,6 +73,7 @@
 		1AE1DFC51DA6B52300456E3E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = en; path = en.lproj/Languages.plist; sourceTree = "<group>"; };
 		1AFBDC641DE675B000C19AE1 /* Preferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
 		1AFBDC661DE675C000C19AE1 /* DefaultPreferences.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DefaultPreferences.plist; sourceTree = "<group>"; };
+		1AFBDC6F1DEE4F4800C19AE1 /* SelfServiceManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelfServiceManager.swift; sourceTree = "<group>"; };
 		1AFEAC351D68FEAF00B7FA88 /* UserInformation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = UserInformation.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		345226E31DAA052C0066C922 /* ADLDAPPing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ADLDAPPing.swift; sourceTree = "<group>"; };
 		345226E81DAA266B0066C922 /* Network.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
@@ -159,6 +161,7 @@
 				1A08F1EC1D36CDF700FA68C4 /* PasswordChangeWindow.xib */,
 				84996CAC1D503F9700793747 /* PreferencesWindow.swift */,
 				1A08F1EE1D36CE0C00FA68C4 /* PreferencesWindow.xib */,
+				1AFBDC6F1DEE4F4800C19AE1 /* SelfServiceManager.swift */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -393,6 +396,7 @@
 				8454EFDD1D34ADEE00422D4E /* PasswordChangeWindow.swift in Sources */,
 				84CC67DF1D30A18A00115C76 /* AppDelegate.swift in Sources */,
 				345226E41DAA052C0066C922 /* ADLDAPPing.swift in Sources */,
+				1AFBDC701DEE4F4800C19AE1 /* SelfServiceManager.swift in Sources */,
 				1A206B2D1D58312800539FA6 /* KeychainUtil.swift in Sources */,
 				34B9B70A1DA6E9C500FCCFE3 /* Localizator.swift in Sources */,
 				1A26AFF51D3BE620000776A4 /* WindowsCATools.swift in Sources */,

@@ -11,16 +11,18 @@ Supports macOS 10.10 and above.
 
 - Get Kerberos credentials from AD to use for single sign on for all services using Windows Authentication.
 - Automatically renew your Kerberos tickets based upon your desires.
-- Optional lock screen menu item.
+- Lock screen menu item.
 - Get an X509 identity from your Windows CA.
-- One click access to Casper self-service if installed.
-- One click access to creating a Bomgar chat session with a help desk operative.
+- One click access to Casper and other self-service applications if installed.
+- One click access to creating a Bomgar chat session with a help desk operative, and other support options.
 - Admins can push one-line CLI commands to show up as a menu item in NoMAD.
 - Admins can specify LDAP servers to use instead of looking them up via SRV records.
-- Sync your AD password to your local account.
+- Sync your AD password to your local account. Including keeping the user's local keychain and FileVault passwords in sync.
 - Users are warned about impending password expirations.
-- Customize user's help options between a Bomgar URL, web URL or local application path.
-- AD Site aware
+- Single sign on access to the users Windows home directory.
+- Fully AD Site aware.
+- Scripts can be triggered on network change and sign in.
+- Admins can enable alternate methods of changing passwords beyond Kerberos.
 
 Coming in future versions:
 
@@ -60,7 +62,7 @@ You can also discuss the development and get notified of new commits in #nomad-d
 
 ***Sierra Support***
 
-NoMAD is built and tested on Sierra using Swift 2.3. It almost nearly compiles in Swift 3.
+NoMAD is built and primarily tested on macOS Sierra using Swift 3.
 
 ***Experimental Branch***
 
