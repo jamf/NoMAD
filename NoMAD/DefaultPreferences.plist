@@ -48,6 +48,8 @@
 	<true/>
 	<key>SecondsToRenew</key>
 	<integer>7200</integer>
+	<key>SelfServicePath</key>
+	<string></string>
 	<key>ShowHome</key>
 	<false/>
 	<key>SignInCommand</key>
