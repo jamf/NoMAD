@@ -241,7 +241,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // gets a cert from the Windows CA
     @IBAction func NoMADMenuClickGetCertificate(_ sender: NSMenuItem) -> Void {
 
-        var myResponse : Int? = nil
+        var myResponse: Int?
 
         // TODO: check to see if the SSL Certs are trusted, otherwise we'll fail
 
@@ -253,12 +253,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         if ( certCATest != "" && certTemplateTest != "" ) {
 
             let lastExpireTemp = defaults.object(forKey: Preferences.lastCertificateExpiration)
-            var lastExpire: Date? = nil
+            var lastExpire: Date?
 
             if (String(describing: lastExpireTemp)) == "" {
                 lastExpire = Date.distantPast as Date
             } else {
-                lastExpire = lastExpireTemp as! Date
+                lastExpire = lastExpireTemp as? Date
             }
 
 
