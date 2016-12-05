@@ -182,7 +182,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 }
             }
             loginWindow.window!.forceToFrontAndFocus(nil)
+            return
         }
+        loginWindow.window!.forceToFrontAndFocus(nil)
     }
 
     // show the password change window when the menu item is clicked
