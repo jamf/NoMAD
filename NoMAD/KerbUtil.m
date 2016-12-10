@@ -136,13 +136,12 @@ extern OSStatus SecKeychainChangePassword(SecKeychainRef keychainRef, UInt32 old
 
     // set up some variables
 
-    OSStatus getDefaultKeychain;
     SecKeychainRef myDefaultKeychain;
     OSErr err;
 
     // get the default keychain path, then attempt to change the password on it
 
-    getDefaultKeychain = SecKeychainCopyDefault ( &myDefaultKeychain);
+    SecKeychainCopyDefault ( &myDefaultKeychain);
 
     NSLog(@"changing keychain password");
     err = SecKeychainChangePassword ( myDefaultKeychain, (UInt32)oldPassword.length , [oldPassword UTF8String], (UInt32)newPassword.length, [newPassword UTF8String] );
