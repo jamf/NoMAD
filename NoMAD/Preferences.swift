@@ -39,6 +39,8 @@ enum Preferences {
 
     // kerberosRealm - r/w - string - determines the Kerberos realm to use for all Kerberos activites. If left blank this will be set to the all-caps version of the AD Domain
 
+    // keychainItems - r/w - [String] - Array of keychain item names to be synced when changing passwords
+
     // lastCertificateExpiration - r/o - date - keeps track of the most future expiration date of certificates associated with the user's NT Principal for the Subj. Alternate Name on the certificate
 
     // loginItem - r/w - bool - if set to true will create a new Launch Agent for NoMAD. This will set itself back to false after being used
@@ -88,6 +90,8 @@ enum Preferences {
 
     // userShortName - r/o - string - the user's short name as pulled from AD
 
+    // userUPN - r/o - string - the current users UPN
+
     // verbose - r/w - bool - determines if verbose logging is enabled or not
     
     // x509CA - r/w - string - URL for the Windows WebCA for certificate generation
@@ -102,6 +106,7 @@ enum Preferences {
     static let groups = "Groups"
     static let hidePrefs = "HidePrefs"
     static let kerberosRealm = "KerberosRealm"
+    static let keychainItems = "KeychainItems"
     static let lastCertificateExpiration = "LastCertificateExpiration"
     static let loginComamnd = "LoginComamnd"
     static let loginItem = "LoginItem"
@@ -133,6 +138,7 @@ enum Preferences {
     static let useKeychain = "UseKeychain"
     static let userAging = "UserAging"
     static let userShortName = "UserShortName"
+    static let userUPN = "UserUPN"
 
     /// Should verbose logging be used. This will significantly increase log spew.
     static let verbose = "Verbose"
