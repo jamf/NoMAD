@@ -42,9 +42,9 @@ Sample screen shot:
 
 ***Current Version***
 
-v1.0 RC1
+v1.0 RC2
 
-[NoMAD-1.0RC1.zip](/uploads/12d1cdc65fe2cede7ecccc51985ce1e0/NoMAD-1.0RC1.zip)[NoMAD_1.0-RC1.pkg](/uploads/a4a2bb982a967d5839c1d0aefd7654ef/NoMAD_1.0-RC1.pkg)
+[NoMAD-1.0RC2.zip](/uploads/0a2443d39be33cb97652460f08c09f10/NoMAD-1.0RC2.zip)[NoMAD.pkg](/uploads/68c843059c14ec9ebab918ce6ff84c4d/NoMAD.pkg)
 
 ***Video Walkthrough***
 
