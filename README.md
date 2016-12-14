@@ -44,7 +44,13 @@ Sample screen shot:
 
 v1.0 RC2
 
-[NoMAD-1.0RC2.zip](/uploads/0a2443d39be33cb97652460f08c09f10/NoMAD-1.0RC2.zip)[NoMAD.pkg](/uploads/68c843059c14ec9ebab918ce6ff84c4d/NoMAD.pkg)
+Standalone App:
+
+[NoMAD-1.0RC2.zip](/uploads/0a2443d39be33cb97652460f08c09f10/NoMAD-1.0RC2.zip)
+
+Package installer:
+
+[NoMAD.pkg](/uploads/68c843059c14ec9ebab918ce6ff84c4d/NoMAD.pkg)
 
 ***Video Walkthrough***
 
