@@ -56,9 +56,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     let NoMADMenuHome = NSMenuItem()
 
     // menu bar icons
-    let iconOnOn = NSImage(named: "NoMAD-statusicon-on-on")
-    let iconOnOff = NSImage(named: "NoMAD-statusicon-on-off")
-    let iconOffOff = NSImage(named: "NoMAD-statusicon-off-off")
+    var iconOnOn = NSImage(named: "NoMAD-statusicon-on-on")
+    var iconOnOff = NSImage(named: "NoMAD-statusicon-on-off")
+    var iconOffOff = NSImage(named: "NoMAD-statusicon-off-off")
 
     // for delegates
     let preferencesWindow = PreferencesWindow()
@@ -87,12 +87,26 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     override func awakeFromNib() {
 
         myLogger.logit(.base, message:"---Starting NoMAD---")
+        
+        // check for Dark Mode
+        
+        if UserDefaults.standard.persistentDomain(forName: UserDefaults.globalDomain)?["AppleInterfaceStyle"] == nil {
+            iconOnOn = NSImage(named: "NoMAD-statusicon-on-on")
+            iconOnOff = NSImage(named: "NoMAD-statusicon-on-off")
+            iconOffOff = NSImage(named: "NoMAD-statusicon-off-off")
+        } else {
+            iconOnOn = NSImage(named: "NoMAD-LogoAlternate-on")
+            //iconOnOff = NSImage(named: "NoMAD-statusicon-on-off")
+            iconOffOff = NSImage(named: "NoMAD-LogoAlternate-off")
+        }
 
         let defaultPreferences = NSDictionary(contentsOf: Bundle.main.url(forResource: "DefaultPreferences", withExtension: "plist")!)
         defaults.register(defaults: defaultPreferences as! [String : Any])
 
         // Register for update notifications.
         NotificationCenter.default.addObserver(self, selector: #selector(doTheNeedfull), name: NSNotification.Name(rawValue: "updateNow"), object: nil)
+        
+        DistributedNotificationCenter.default.addObserver(self, selector: #selector(interfaceModeChanged), name: NSNotification.Name(rawValue: "AppleInterfaceThemeChangedNotification"), object: nil)
 
         startMenuAnimationTimer()
 
@@ -536,6 +550,30 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         if (defaults.bool(forKey: Preferences.useKeychain)) && !userInformation.myLDAPServers.tickets.state && userInformation.myLDAPServers.currentState {
             myLogger.logit(.info, message: "Attempting to auto-login")
             NoMADMenuClickLogIn(NoMADMenuLogIn)
+        }
+    }
+    
+    // change the menu item if it's dark
+    
+    func interfaceModeChanged() {
+        print("***Theme change***")
+        if UserDefaults.standard.persistentDomain(forName: UserDefaults.globalDomain)?["AppleInterfaceStyle"] == nil {
+            iconOnOn = NSImage(named: "NoMAD-statusicon-on-on")
+            iconOnOff = NSImage(named: "NoMAD-statusicon-on-off")
+            iconOffOff = NSImage(named: "NoMAD-statusicon-off-off")
+            print("***Light***")
+        } else {
+            iconOnOn = NSImage(named: "NoMAD-LogoAlternate-on")
+            //iconOnOff = NSImage(named: "NoMAD-statusicon-on-off")
+            iconOffOff = NSImage(named: "NoMAD-LogoAlternate-off")
+            print("***Dark***")
+        }
+        if self.userInformation.status == "Connected" {
+            self.statusItem.image = self.iconOnOff
+        } else if self.userInformation.status == "Logged In" && self.userInformation.myLDAPServers.tickets.state {
+            self.statusItem.image = self.iconOnOn
+        } else {
+            self.statusItem.image = self.iconOffOff
         }
     }
 
