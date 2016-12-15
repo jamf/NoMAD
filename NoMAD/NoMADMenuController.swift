@@ -556,17 +556,14 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // change the menu item if it's dark
     
     func interfaceModeChanged() {
-        print("***Theme change***")
         if UserDefaults.standard.persistentDomain(forName: UserDefaults.globalDomain)?["AppleInterfaceStyle"] == nil {
             iconOnOn = NSImage(named: "NoMAD-statusicon-on-on")
             iconOnOff = NSImage(named: "NoMAD-statusicon-on-off")
             iconOffOff = NSImage(named: "NoMAD-statusicon-off-off")
-            print("***Light***")
         } else {
             iconOnOn = NSImage(named: "NoMAD-LogoAlternate-on")
             //iconOnOff = NSImage(named: "NoMAD-statusicon-on-off")
             iconOffOff = NSImage(named: "NoMAD-LogoAlternate-off")
-            print("***Dark***")
         }
         if self.userInformation.status == "Connected" {
             self.statusItem.image = self.iconOnOff
