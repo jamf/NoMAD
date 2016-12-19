@@ -95,6 +95,7 @@ enum Preferences {
     static let aDDomain = "ADDomain"
     static let autoConfigure = "AutoConfigure"
     static let changePasswordType = "ChangePasswordType"
+    static let caribouTime = "CaribouTime"
     static let displayName = "DisplayName"
     static let exportableKey = "ExportableKey"
     static let getHelpType = "GetHelpType"
@@ -110,6 +111,7 @@ enum Preferences {
     static let lastUser = "LastUser"
     static let lastPasswordWarning = "LastPasswordWarning"
     static let lastPasswordExpireDate = "LastPasswordExpireDate"
+    static let messageLocalSync = "MessageLocalSync"
     static let passwordExpireAlertTime = "PasswordExpireAlertTime"
     static let passwordChangeOptions = "PasswordChangeOptions"
 

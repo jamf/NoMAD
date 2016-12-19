@@ -56,9 +56,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     let NoMADMenuHome = NSMenuItem()
 
     // menu bar icons
-    let iconOnOn = NSImage(named: "NoMAD-statusicon-on-on")
-    let iconOnOff = NSImage(named: "NoMAD-statusicon-on-off")
-    let iconOffOff = NSImage(named: "NoMAD-statusicon-off-off")
+    var iconOnOn = NSImage(named: "NoMAD-statusicon-on-on")
+    var iconOnOff = NSImage(named: "NoMAD-statusicon-on-off")
+    var iconOffOff = NSImage(named: "NoMAD-statusicon-off-off")
 
     // for delegates
     let preferencesWindow = PreferencesWindow()
@@ -88,11 +88,35 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         myLogger.logit(.base, message:"---Starting NoMAD---")
 
+        // check for Dark Mode
+
+        if UserDefaults.standard.persistentDomain(forName: UserDefaults.globalDomain)?["AppleInterfaceStyle"] == nil {
+            if !defaults.bool(forKey: Preferences.caribouTime) {
+                iconOnOn = NSImage(named: "NoMAD-statusicon-on-on")
+                iconOnOff = NSImage(named: "NoMAD-statusicon-on-off")
+                iconOffOff = NSImage(named: "NoMAD-statusicon-off-off")
+            } else {
+                iconOnOn = NSImage(named: "NoMAD-Caribou-on")
+                iconOffOff = NSImage(named: "NoMAD-Caribou-off")
+            }
+        } else {
+            if !defaults.bool(forKey: Preferences.caribouTime) {
+                iconOnOn = NSImage(named: "NoMAD-LogoAlternate-on")
+                //iconOnOff = NSImage(named: "NoMAD-statusicon-on-off")
+                iconOffOff = NSImage(named: "NoMAD-LogoAlternate-off")
+            } else {
+                iconOnOn = NSImage(named: "NoMAD-Caribou-dark-on")
+                iconOffOff = NSImage(named: "NoMAD-Caribou-dark-off")
+            }
+        }
+
         let defaultPreferences = NSDictionary(contentsOf: Bundle.main.url(forResource: "DefaultPreferences", withExtension: "plist")!)
         defaults.register(defaults: defaultPreferences as! [String : Any])
 
         // Register for update notifications.
         NotificationCenter.default.addObserver(self, selector: #selector(doTheNeedfull), name: NSNotification.Name(rawValue: "updateNow"), object: nil)
+
+        DistributedNotificationCenter.default.addObserver(self, selector: #selector(interfaceModeChanged), name: NSNotification.Name(rawValue: "AppleInterfaceThemeChangedNotification"), object: nil)
 
         startMenuAnimationTimer()
 
@@ -115,8 +139,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         if let discoveredService = SelfServiceManager().discoverSelfService() {
             selfService = discoveredService
         } else {
-                NoMADMenuGetSoftware.isHidden = true
-                myLogger.logit(.info, message:"Not using Self Service.")
+            NoMADMenuGetSoftware.isHidden = true
+            myLogger.logit(.info, message:"Not using Self Service.")
         }
 
         // see if we should auto-configure
@@ -299,19 +323,19 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 caTestWait = false
             }
             )
-            
+
             while caTestWait {
                 RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
             }
 
             if !caSSLTest {
-            let certAlertController = NSAlert()
-            certAlertController.messageText = "Connetion error. Please ensure SSL certificates are trusted and URL is correct for your X509 CA."
-            certAlertController.runModal()
+                let certAlertController = NSAlert()
+                certAlertController.messageText = "Connetion error. Please ensure SSL certificates are trusted and URL is correct for your X509 CA."
+                certAlertController.runModal()
             } else {
 
-            let certCARequest = WindowsCATools(serverURL: certCATest, template: certTemplateTest)
-            certCARequest.certEnrollment()
+                let certCARequest = WindowsCATools(serverURL: certCATest, template: certTemplateTest)
+                certCARequest.certEnrollment()
             }
 
         } else {
@@ -539,6 +563,37 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         }
     }
 
+    // change the menu item if it's dark
+
+    func interfaceModeChanged() {
+        if UserDefaults.standard.persistentDomain(forName: UserDefaults.globalDomain)?["AppleInterfaceStyle"] == nil {
+            if !defaults.bool(forKey: Preferences.caribouTime) {
+                iconOnOn = NSImage(named: "NoMAD-statusicon-on-on")
+                iconOnOff = NSImage(named: "NoMAD-statusicon-on-off")
+                iconOffOff = NSImage(named: "NoMAD-statusicon-off-off")
+            } else {
+                iconOnOn = NSImage(named: "NoMAD-Caribou-on")
+                iconOffOff = NSImage(named: "NoMAD-Caribou-off")
+            }
+        } else {
+            if !defaults.bool(forKey: Preferences.caribouTime) {
+                iconOnOn = NSImage(named: "NoMAD-LogoAlternate-on")
+                //iconOnOff = NSImage(named: "NoMAD-statusicon-on-off")
+                iconOffOff = NSImage(named: "NoMAD-LogoAlternate-off")
+            } else {
+                iconOnOn = NSImage(named: "NoMAD-Caribou-dark-on")
+                iconOffOff = NSImage(named: "NoMAD-Caribou-dark-off")
+            }
+        }
+        if self.userInformation.status == "Connected" {
+            self.statusItem.image = self.iconOnOff
+        } else if self.userInformation.status == "Logged In" && self.userInformation.myLDAPServers.tickets.state {
+            self.statusItem.image = self.iconOnOn
+        } else {
+            self.statusItem.image = self.iconOffOff
+        }
+    }
+
     // function to start the menu throbbing
     func startMenuAnimationTimer() {
         menuAnimationTimer = Timer(timeInterval: 1, target: self, selector: #selector(animateMenuItem), userInfo: nil, repeats: true)
@@ -760,10 +815,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 } else {
                     defaults.set(Double(defaults.integer(forKey: Preferences.passwordExpireAlertTime) ?? 1296000), forKey: Preferences.lastPasswordWarning)
                 }
-                
+
                 // remove the Get Certificate menu if not needed
                 // add it back in when it is needed
-                
+
                 if defaults.string(forKey: Preferences.x509CA) == "" && self.NoMADMenuGetCertificate != nil {
                     self.NoMADMenu.removeItem(self.NoMADMenuGetCertificate)
                     self.NoMADMenu.removeItem(self.NoMADMenuGetCertificateDate)
