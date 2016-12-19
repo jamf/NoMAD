@@ -197,6 +197,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
                     cliTask("/usr/bin/kswitch -p " +  userPrinc)
 
+                    // update the UI if we've logged in correctly
+                    self.updateUserInfo()
+
                     // fire off the SignInCommand script if there is one
                     if defaults.string(forKey: Preferences.signInCommand) != "" {
                         let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)
@@ -560,6 +563,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         if (defaults.bool(forKey: Preferences.useKeychain)) && !userInformation.myLDAPServers.tickets.state && userInformation.myLDAPServers.currentState {
             myLogger.logit(.info, message: "Attempting to auto-login")
             NoMADMenuClickLogIn(NoMADMenuLogIn)
+
+            // we should recheck in 30 secs to see if we need to auto-login again
+
+            //    Timer.scheduledTimer(timeInterval: 30, target: self, selector: #selector(autoLogin), userInfo: nil, repeats: false)
         }
     }
 
