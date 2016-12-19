@@ -42,7 +42,7 @@ Sample screen shot:
 
 ***Current Version***
 
-v1.0 RC2
+v1.0 RC3
 
 Standalone App:
 
