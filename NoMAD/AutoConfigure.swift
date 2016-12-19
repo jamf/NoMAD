@@ -49,7 +49,7 @@ public func setDefaults() {
 
     // if no defaults are set for ADDomain look to see if we're bound and use that
 
-    if defaults.string(forKey: Preferences.aDDomain) != "" {
+    if defaults.string(forKey: Preferences.aDDomain) == "" {
         myLogger.logit(.info, message: "No AD Domain set, determining if the machine is bound.")
         getADSettings()
     }
