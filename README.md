@@ -46,11 +46,11 @@ v1.0 RC2
 
 Standalone App:
 
-[NoMAD-1.0RC2.zip](/uploads/0a2443d39be33cb97652460f08c09f10/NoMAD-1.0RC2.zip)
+[NoMAD-1.0RC3.zip](/uploads/617af8794bc5bd824abc34395a188fbc/NoMAD-1.0RC3.zip)
 
 Package installer:
 
-[NoMAD.pkg](/uploads/68c843059c14ec9ebab918ce6ff84c4d/NoMAD.pkg)
+[NoMAD.pkg](/uploads/6ab29eb84c47cb31fbbf4e46ebd2b6f1/NoMAD.pkg)
 
 ***Video Walkthrough***
 
