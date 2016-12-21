@@ -46,7 +46,7 @@ v 1.0.1
 
 Standalone App:
 
-[NoMAD-1.0RC3.zip](https://www.nomad.menu/download/NoMAD.zip)
+[NoMAD.zip](https://www.nomad.menu/download/NoMAD.zip)
 
 Package installer:
 
