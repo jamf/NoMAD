@@ -42,15 +42,15 @@ Sample screen shot:
 
 ***Current Version***
 
-v1.0 RC3
+v 1.0.1
 
 Standalone App:
 
-[NoMAD-1.0RC3.zip](/uploads/617af8794bc5bd824abc34395a188fbc/NoMAD-1.0RC3.zip)
+[NoMAD-1.0RC3.zip](https://www.nomad.menu/download/NoMAD.zip)
 
 Package installer:
 
-[NoMAD.pkg](/uploads/6ab29eb84c47cb31fbbf4e46ebd2b6f1/NoMAD.pkg)
+[NoMAD.pkg](https://www.nomad.menu/download/NoMAD.pkg)
 
 ***Video Walkthrough***
 
