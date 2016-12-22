@@ -194,6 +194,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     return
                 } else {
                     myLogger.logit(.base, message:"Automatically logging in.")
+                    // since we logged in succesfully, update the UI
+                    NotificationCenter.default.post(updateNotification)
 
                     cliTask("/usr/bin/kswitch -p " +  userPrinc)
 
