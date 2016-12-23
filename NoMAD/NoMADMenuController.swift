@@ -696,12 +696,16 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                             if Int(daysToGo) > 4 {
                                 self.statusItem.title = (String(daysToGo) + "d" )
                                 self.statusItem.title = (String(daysToGo) + "d" )
+                                self.NoMADMenuPasswordExpires.title = String.localizedStringWithFormat(
+                                    NSLocalizedString("NoMADMenuController-PasswordExpiresInDays", comment: "Menu Text; Password expires in: %@ days"), String(daysToGo))
                             } else {
 
                                 let myMutableString = NSMutableAttributedString(string: String(daysToGo) + "d")
                                 myMutableString.addAttribute(NSForegroundColorAttributeName, value: NSColor.red, range: NSRange(location: 0, length: 2))
                                 self.statusItem.attributedTitle = myMutableString
                                 self.statusItem.attributedTitle = myMutableString
+                                self.NoMADMenuPasswordExpires.title = String.localizedStringWithFormat(
+                                    NSLocalizedString("NoMADMenuController-PasswordExpiresInDays", comment: "Menu Text; Password expires in: %@ days"), String(daysToGo))
                             }
                         } else {
 
@@ -710,6 +714,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                             self.statusItem.title = ""
                             self.NoMADMenuTicketLife.title = dateFormatter.string(from: self.userInformation.myLDAPServers.tickets.expire as Date) + " " + self.userInformation.myLDAPServers.currentServer
                             self.statusItem.toolTip = "Password does not expire."
+                            self.NoMADMenuPasswordExpires.title = "Password does not expire."
                         }
                     } else {
                         self.statusItem.image = self.iconOffOff
@@ -723,21 +728,24 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         self.NoMADMenuUserName.title = self.userInformation.userPrincipalShort
                     } else {
                         self.NoMADMenuUserName.title = defaults.string(forKey: Preferences.lastUser) ?? "No User"
-                    }
-
-                    if ( !defaults.bool(forKey: Preferences.userAging) ) && ( defaults.string(forKey: Preferences.lastUser) != "" ) {
-                        self.NoMADMenuPasswordExpires.title = "Password does not expire."
-                    } else if ( defaults.string(forKey: Preferences.lastUser)) != "" {
-                        let myDaysToGo = String(abs(((defaults.object(forKey: Preferences.lastPasswordExpireDate)! as AnyObject).timeIntervalSinceNow)!)/86400)
-                        //self.NoMADMenuPasswordExpires.title = "Password expires in: " + myDaysToGo.componentsSeparatedByString(".")[0] + " days"
-                        let title = String.localizedStringWithFormat(
-                            NSLocalizedString("NoMADMenuController-PasswordExpiresInDays", comment: "Menu Text; Password expires in: %@ days"),
-                            myDaysToGo.components(separatedBy: ".")[0]
-                        )
-                        self.NoMADMenuPasswordExpires.title = title
-                    } else {
                         self.NoMADMenuPasswordExpires.title = ""
                     }
+//
+//                    if ( !defaults.bool(forKey: Preferences.userAging) ) && ( defaults.string(forKey: Preferences.lastUser) != "" ) {
+//                        self.NoMADMenuPasswordExpires.title = "Password does not expire."
+//                    } else if ( defaults.string(forKey: Preferences.lastUser)) != "" {
+//                        //let myDaysToGo = String(abs(((defaults.object(forKey: Preferences.lastPasswordExpireDate)! as AnyObject).timeIntervalSinceNow)!)/86400)
+//                        let myDaysToGo = String(Int(abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow)/86400))
+//                        //self.NoMADMenuPasswordExpires.title = "Password expires in: " + myDaysToGo.componentsSeparatedByString(".")[0] + " days"
+//                        let title = String.localizedStringWithFormat(
+//                            NSLocalizedString("NoMADMenuController-PasswordExpiresInDays", comment: "Menu Text; Password expires in: %@ days"),
+//                            myDaysToGo
+//                        )
+//                        self.NoMADMenuPasswordExpires.title = String.localizedStringWithFormat(
+//                            NSLocalizedString("NoMADMenuController-PasswordExpiresInDays", comment: "Menu Text; Password expires in: %@ days"), myDaysToGo)
+//                    } else {
+//                        self.NoMADMenuPasswordExpires.title = ""
+//                    }
 
                     let futureDate = Date()
                     futureDate.addingTimeInterval(300)

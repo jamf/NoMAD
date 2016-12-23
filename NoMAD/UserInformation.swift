@@ -176,6 +176,18 @@ class UserInformation {
 
                         // Set expiration to set date
                         userPasswordExpireDate = NSDate()
+                    } else if (Int(computedExpireDateRaw!) == 0) {
+                        // password needs to be reset
+                        passwordAging = true
+                        defaults.set(true, forKey: Preferences.userAging)
+
+                        // TODO: Change all Double() to NumberFormatter().number(from: myString)?.doubleValue
+                        //       when we switch to Swift 3
+                        let computedExpireDate = NSDate()
+
+                        // Set expiration to the computed date.
+                        userPasswordExpireDate = computedExpireDate
+
                     } else {
                         // Password expires
 

@@ -412,6 +412,10 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 
         passwordLabel.stringValue = "Old Password"
 
+        // put focus into the first change field
+        
+        changePasswordField1.becomeFirstResponder()
+
         self.window?.setContentSize(changeSize)
 
     }
