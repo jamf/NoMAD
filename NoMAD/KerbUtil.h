@@ -17,10 +17,13 @@
 #import <OpenDirectory/OpenDirectory.h>
 
 @interface KerbUtil : NSObject
+@property (nonatomic, assign, readonly) BOOL						finished;   // observable
+
 - (NSString *)getKerbCredentials:(NSString *)password :(NSString *)userPrincipal;
 - (NSString *)changeKerbPassword:(NSString *)oldPassword :(NSString *)newPassword :(NSString *)userPrincipal;
 - (int)checkPassword:(NSString *)myPassword;
 - (int)changeKeychainPassword:(NSString *)oldPassword :(NSString *)newPassword;
+
 @end
 
 #endif /* Header_h */

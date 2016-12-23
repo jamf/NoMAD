@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15G31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11542" systemVersion="16C48b" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11542"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -31,7 +31,7 @@
                         <action selector="NoMADMenuClickLogIn:" target="Gp4-Xp-pEc" id="wVm-5I-piH"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Log In" alternate="YES" id="Wa6-S1-lXm">
+                <menuItem title="Sign In" alternate="YES" id="Wa6-S1-lXm">
                     <modifierMask key="keyEquivalentModifierMask" control="YES" option="YES"/>
                     <connections>
                         <action selector="NoMADMenuClickLogInAlternate:" target="Gp4-Xp-pEc" id="Ght-9J-Q4Q"/>
@@ -43,7 +43,7 @@
                         <action selector="NoMADMenuClickChangePassword:" target="Gp4-Xp-pEc" id="lgn-ZO-gUO"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Log Out" id="w1A-iF-wAU">
+                <menuItem title="Sign Out" id="w1A-iF-wAU">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="NoMADMenuClickLogOut:" target="Gp4-Xp-pEc" id="DXe-en-Xqw"/>
@@ -61,6 +61,9 @@
                     <connections>
                         <action selector="NoMADMenuClickGetCertificate:" target="Gp4-Xp-pEc" id="Ux3-1h-v3f"/>
                     </connections>
+                </menuItem>
+                <menuItem title="CertificateDate" alternate="YES" toolTip="Certificate expire date." id="A9U-v2-LiT">
+                    <modifierMask key="keyEquivalentModifierMask" option="YES"/>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="wcV-DA-kNE"/>
                 <menuItem title="Get Software" id="fuo-5h-NuR">
@@ -88,7 +91,7 @@
                         <action selector="NoMADMenuClickPreferences:" target="Gp4-Xp-pEc" id="JtX-Sp-fgv"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Spew Logs" hidden="YES" alternate="YES" id="pC8-5a-Aec">
+                <menuItem title="Dump Logs" hidden="YES" alternate="YES" id="pC8-5a-Aec">
                     <modifierMask key="keyEquivalentModifierMask" control="YES" option="YES"/>
                     <connections>
                         <action selector="NoMADMenuClickSpewLogs:" target="Gp4-Xp-pEc" id="aX2-5X-Gjx"/>
@@ -101,13 +104,14 @@
                     </connections>
                 </menuItem>
             </items>
-            <point key="canvasLocation" x="190.5" y="587.5"/>
+            <point key="canvasLocation" x="101" y="403"/>
         </menu>
         <customObject id="Gp4-Xp-pEc" userLabel="NoMADMenuController" customClass="NoMADMenuController" customModule="NoMAD" customModuleProvider="target">
             <connections>
                 <outlet property="NoMADMenu" destination="eKu-sI-x3b" id="Wyg-fq-yBG"/>
                 <outlet property="NoMADMenuChangePassword" destination="0IM-ZO-KLA" id="iVk-Xe-XSm"/>
                 <outlet property="NoMADMenuGetCertificate" destination="AlW-9M-CK2" id="3Dc-Wx-115"/>
+                <outlet property="NoMADMenuGetCertificateDate" destination="A9U-v2-LiT" id="bJZ-l5-Dcn"/>
                 <outlet property="NoMADMenuGetHelp" destination="rbx-v6-fJx" id="1bd-6M-fUQ"/>
                 <outlet property="NoMADMenuGetSoftware" destination="fuo-5h-NuR" id="rPu-zt-iBj"/>
                 <outlet property="NoMADMenuHiddenItem1" destination="kql-Bl-QJE" id="ehL-Ac-Qlb"/>

@@ -6,24 +6,27 @@
 //  Copyright © 2016 Trusource Labs. All rights reserved.
 //
 
+// This lets copy/paste and other shortcuts work in NoMAD windows
+// Otherwise since it's a menu item only it can't do that
+
 import Cocoa
 
 @objc protocol UndoActionRespondable {
-    func undo(sender: AnyObject)
+    func undo(_ sender: AnyObject)
 }
 
 @objc protocol RedoActionRespondable {
-    func redo(sender: AnyObject)
+    func redo(_ sender: AnyObject)
 }
 
 class NoMADApplication: NSApplication {
-    private let commandKey = NSEventModifierFlags.CommandKeyMask.rawValue
-    private let commandShiftKey = NSEventModifierFlags.CommandKeyMask.rawValue | NSEventModifierFlags.ShiftKeyMask.rawValue
-    
-    override func sendEvent(event: NSEvent) {
-        if event.type == NSEventType.KeyDown {
-            if (event.modifierFlags.rawValue & NSEventModifierFlags.DeviceIndependentModifierFlagsMask.rawValue == commandKey) {
-                switch event.charactersIgnoringModifiers!.lowercaseString {
+    fileprivate let commandKey = NSEventModifierFlags.command.rawValue
+    fileprivate let commandShiftKey = NSEventModifierFlags.command.rawValue | NSEventModifierFlags.shift.rawValue
+
+    override func sendEvent(_ event: NSEvent) {
+        if event.type == NSEventType.keyDown {
+            if (event.modifierFlags.rawValue & NSEventModifierFlags.deviceIndependentFlagsMask.rawValue == commandKey) {
+                switch event.charactersIgnoringModifiers!.lowercased() {
                 case "x":
                     if NSApp.sendAction(#selector(NSText.cut(_:)), to:nil, from:self) { return }
                 case "c":
@@ -40,7 +43,7 @@ class NoMADApplication: NSApplication {
                     break
                 }
             }
-            else if (event.modifierFlags.rawValue & NSEventModifierFlags.DeviceIndependentModifierFlagsMask.rawValue == commandShiftKey) {
+            else if (event.modifierFlags.rawValue & NSEventModifierFlags.deviceIndependentFlagsMask.rawValue == commandShiftKey) {
                 if event.charactersIgnoringModifiers == "Z" {
                     if NSApp.sendAction(#selector(RedoActionRespondable.redo(_:)), to:nil, from:self) { return }
                 }
@@ -48,7 +51,7 @@ class NoMADApplication: NSApplication {
         }
         super.sendEvent(event)
     }
-    
+
 }
 
 

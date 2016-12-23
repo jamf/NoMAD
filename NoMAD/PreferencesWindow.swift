@@ -13,201 +13,90 @@ protocol PreferencesWindowDelegate {
 }
 
 class PreferencesWindow: NSWindowController, NSWindowDelegate {
-    
+
     var delegate: PreferencesWindowDelegate?
-    
+
+    // The UI controls are connected with simple SharedDefaults bindings.
+    // This means that they stay syncronized with the Defaults system and we
+    // don't need to get into messing with state checking when loading the window.
+
     @IBOutlet weak var ADDomainTextField: NSTextField!
     @IBOutlet weak var KerberosRealmField: NSTextField!
-    @IBOutlet weak var InternalSiteField: NSTextField!
-    @IBOutlet weak var InternalSiteIPField: NSTextField!
     @IBOutlet weak var x509CAField: NSTextField!
     @IBOutlet weak var TemplateField: NSTextField!
     @IBOutlet weak var ButtonNameField: NSTextField!
     @IBOutlet weak var HotKeyField: NSTextField!
     @IBOutlet weak var CommandField: NSTextField!
     @IBOutlet weak var SecondsToRenew: NSTextField!
-    
+
     // Check boxes
-    
     @IBOutlet weak var UseKeychain: NSButton!
     @IBOutlet weak var RenewTickets: NSButton!
     @IBOutlet weak var ShowHome: NSButton!
-    
-    // set up defaults
-    
-    //let defaults = NSUserDefaults.standardUserDefaults()
-    
+
     override var windowNibName: String? {
         return "PreferencesWindow"
     }
-    
+
     override func windowDidLoad() {
         super.windowDidLoad()
-        
         self.window?.center()
-        self.window?.makeKeyAndOrderFront(nil)
-        NSApp.activateIgnoringOtherApps(true)
-        
-        // set the fields and disable them if they're managed
-        
-        ADDomainTextField.stringValue = defaults.stringForKey("ADDomain") ?? ""
-        
-        if defaults.objectIsForcedForKey("ADDomain") {
-            ADDomainTextField.enabled = false
-        } else {
-            ADDomainTextField.enabled = true
-        }
-        
-        KerberosRealmField.stringValue = defaults.stringForKey("KerberosRealm") ?? ""
-        
-        if defaults.objectIsForcedForKey("KerberosRealm") {
-            KerberosRealmField.enabled = false
-        } else {
-            KerberosRealmField.enabled = true
-        }
-        
-        InternalSiteField.stringValue = defaults.stringForKey("InternalSite") ?? ""
-        
-        if defaults.objectIsForcedForKey("InternalSite") {
-            InternalSiteField.enabled = false
-        } else {
-            InternalSiteField.enabled = true
-        }
-        
-        InternalSiteIPField.stringValue = defaults.stringForKey("InternalSiteIP") ?? ""
-        
-        if defaults.objectIsForcedForKey("InternalSiteIP") {
-            InternalSiteIPField.enabled = false
-        } else {
-            InternalSiteIPField.enabled = true
-        }
-        
-        x509CAField.stringValue = defaults.stringForKey("x509CA") ?? ""
-        
-        if defaults.objectIsForcedForKey("x509CA") {
-            x509CAField.enabled = false
-        } else {
-            x509CAField.enabled = true
-        }
-        
-        TemplateField.stringValue = defaults.stringForKey("Template") ?? ""
-        
-        if defaults.objectIsForcedForKey("Template") {
-            TemplateField.enabled = false
-        } else {
-            TemplateField.enabled = true
-        }
-        
-        // now the secret stuff
-        
-        ButtonNameField.stringValue = defaults.stringForKey("userCommandName1") ?? ""
-        
-        if defaults.objectIsForcedForKey("userCommandName1") {
-            ButtonNameField.enabled = false
-        } else {
-            ButtonNameField.enabled = true
-        }
-        
-        HotKeyField.stringValue = defaults.stringForKey("userCommandHotKey1") ?? ""
-        
-        if defaults.objectIsForcedForKey("userCommandHotKey1") {
-            HotKeyField.enabled = false
-        } else {
-            HotKeyField.enabled = true
-        }
-        
-        CommandField.stringValue = defaults.stringForKey("userCommandTask1") ?? ""
-        
-        if defaults.objectIsForcedForKey("userCommandTask1") {
-            CommandField.enabled = false
-        } else {
-            CommandField.enabled = true
-        }
-        
-        // now the buttons
-        
-        UseKeychain.state = defaults.integerForKey("UseKeychain") ?? 0
-        
-        if defaults.objectIsForcedForKey("UseKeychain") {
-            UseKeychain.enabled = false
-        } else {
-            UseKeychain.enabled = true
-        }
-        
-        RenewTickets.state = defaults.integerForKey("RenewTickets") ?? 1
-        
-        if defaults.objectIsForcedForKey("RenewTickets") {
-            RenewTickets.enabled = false
-        } else {
-            RenewTickets.enabled = true
-        }
-        
-        ShowHome.state = defaults.integerForKey("ShowHome") ?? 0
-        
-        if defaults.objectIsForcedForKey("ShowHome") {
-            ShowHome.enabled = false
-        } else {
-            ShowHome.enabled = true
-        }
-        
-        // and the seconds
-        
-        SecondsToRenew.stringValue = String(defaults.integerForKey("SecondsToRenew") ?? 1400 )
-        
-        if defaults.objectIsForcedForKey("SecondsToRenew") {
-            SecondsToRenew.enabled = false
-        } else {
-            SecondsToRenew.enabled = true
-        }
-
+        self.disableManagedPrefs()
     }
-    
-    func windowShouldClose(sender: AnyObject) -> Bool {
-        
-        // make sure we have an AD Domain
-        
+
+    func windowShouldClose(_ sender: Any) -> Bool {
+
+        // Make sure we have an AD Domain. Either require the user to enter one
+        // or quit.
         if ADDomainTextField.stringValue == "" {
             let alertController = NSAlert()
             alertController.messageText = "The AD Domain needs to be filled out."
-            alertController.beginSheetModalForWindow(self.window!, completionHandler: nil)
+            alertController.addButton(withTitle: "OK")
+            alertController.addButton(withTitle: "Quit NoMAD")
+            alertController.beginSheetModal(for: self.window!) { response in
+                if response == 1001 {
+                    NSApp.terminate(self)
+                }
+            }
             return false
-        } else {
-            return true
+        }
+        return true
+    }
+
+    func windowWillClose(_ notification: Notification) {
+        // If no Kerberos realm has been entered, assume it's the same as the AD Domain.
+        if KerberosRealmField.stringValue == "" {
+            defaults.set(ADDomainTextField.stringValue.uppercased(), forKey: Preferences.kerberosRealm)
+        }
+        NotificationCenter.default.post(updateNotification)
+    }
+
+    /// Disable the UI for managed preferences.
+    ///
+    /// Because of naming disparities we are cycling through the controls in
+    /// the `contentView` of the window and looking at their `identifier` keys.
+    /// These keys are set to the same string as the preference value they
+    /// control.
+    func disableManagedPrefs() {
+        guard let controls = self.window?.contentView?.subviews else {
+            myLogger.logit(.debug, message: "Preference window somehow drew without any controls.")
+            return
+        }
+        //MARK: TODO This smells to be overly clever. We should find a simpler way.
+        for object in controls {
+            let identifier = object.identifier
+            if defaults.objectIsForced(forKey: identifier!) {
+                switch object.className {
+                case "NSTextField":
+                    let textField = object as! NSTextField
+                    textField.isEnabled = false
+                case "NSButton":
+                    let button = object as! NSButton
+                    button.isEnabled = false
+                default:
+                    return
+                }
+            }
         }
     }
-    
-    func windowWillClose(notification: NSNotification) {
-        
-        // turn the fields into app defaults
-        
-        defaults.setObject(ADDomainTextField.stringValue, forKey: "ADDomain")
-        if ( KerberosRealmField.stringValue == "" ) {
-            defaults.setObject(ADDomainTextField.stringValue.uppercaseString, forKey: "KerberosRealm")
-        } else {
-            defaults.setObject(KerberosRealmField.stringValue, forKey: "KerberosRealm")
-        }
-        defaults.setObject(InternalSiteField.stringValue, forKey: "InternalSite")
-        defaults.setObject(InternalSiteIPField.stringValue, forKey: "InternalSiteIP")
-        defaults.setObject(x509CAField.stringValue, forKey: "x509CA")
-        defaults.setObject(TemplateField.stringValue, forKey: "Template")
-        
-        // secret stuff
-        
-        defaults.setObject(ButtonNameField.stringValue, forKey: "userCommandName1")
-        defaults.setObject(HotKeyField.stringValue, forKey: "userCommandHotKey1")
-        defaults.setObject(CommandField.stringValue, forKey: "userCommandTask1")
-        
-        // buttons
-        
-        defaults.setObject(UseKeychain.state, forKey: "UseKeychain")
-        defaults.setObject(RenewTickets.state, forKey: "RenewTickets")
-        defaults.setObject(ShowHome.state, forKey: "ShowHome")
-        
-        // and the seconds
-        
-        defaults.setObject(Int(SecondsToRenew.stringValue), forKey: "SecondsToRenew")
-        notificationCenter.postNotification(notificationKey)
-                
-    }
-    
 }
