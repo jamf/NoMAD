@@ -709,6 +709,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                             self.statusItem.title = ""
                             self.statusItem.title = ""
                             self.NoMADMenuTicketLife.title = dateFormatter.string(from: self.userInformation.myLDAPServers.tickets.expire as Date) + " " + self.userInformation.myLDAPServers.currentServer
+                            self.statusItem.toolTip = "Password does not expire."
                         }
                     } else {
                         self.statusItem.image = self.iconOffOff
@@ -788,7 +789,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
                 // check if we need to renew the ticket
 
-                if defaults.integer(forKey: Preferences.renewTickets) == 1 && self.userInformation.status == "Logged In" && ( abs(self.userInformation.myLDAPServers.tickets.expire.timeIntervalSinceNow) >= Double(defaults.integer(forKey: Preferences.secondsToRenew))) {
+                if defaults.bool(forKey: Preferences.renewTickets) && self.userInformation.status == "Logged In" && ( abs(self.userInformation.myLDAPServers.tickets.expire.timeIntervalSinceNow) <= Double(defaults.integer(forKey: Preferences.secondsToRenew))) {
                     self.renewTickets()
                 }
 
