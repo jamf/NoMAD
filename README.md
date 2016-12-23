@@ -56,7 +56,7 @@ Package installer:
 
 If you want to get a better idea of what NoMAD can do for you, here's a quick walkthrough of some of the major features.
 
-[NoMAD video Walkthrough](https://www.youtube.com/watch?v=Z27GOBl1bWY)
+[NoMAD video Walkthrough(https://m.youtube.com/watch?v=z6Fw_7nYhW0)
 
 ***Have Questions?***
 
