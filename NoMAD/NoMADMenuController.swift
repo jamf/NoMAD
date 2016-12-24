@@ -248,7 +248,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 myLogger.logit(.base, message:"Error deleting Keychain entry.")
             }
         } else {
-            loginWindow.window!.forceToFrontAndFocus(nil)
+            //loginWindow.window!.forceToFrontAndFocus(nil)
         }
 
         cliTask("/usr/bin/kdestroy")
@@ -730,22 +730,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         self.NoMADMenuUserName.title = defaults.string(forKey: Preferences.lastUser) ?? "No User"
                         self.NoMADMenuPasswordExpires.title = ""
                     }
-//
-//                    if ( !defaults.bool(forKey: Preferences.userAging) ) && ( defaults.string(forKey: Preferences.lastUser) != "" ) {
-//                        self.NoMADMenuPasswordExpires.title = "Password does not expire."
-//                    } else if ( defaults.string(forKey: Preferences.lastUser)) != "" {
-//                        //let myDaysToGo = String(abs(((defaults.object(forKey: Preferences.lastPasswordExpireDate)! as AnyObject).timeIntervalSinceNow)!)/86400)
-//                        let myDaysToGo = String(Int(abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow)/86400))
-//                        //self.NoMADMenuPasswordExpires.title = "Password expires in: " + myDaysToGo.componentsSeparatedByString(".")[0] + " days"
-//                        let title = String.localizedStringWithFormat(
-//                            NSLocalizedString("NoMADMenuController-PasswordExpiresInDays", comment: "Menu Text; Password expires in: %@ days"),
-//                            myDaysToGo
-//                        )
-//                        self.NoMADMenuPasswordExpires.title = String.localizedStringWithFormat(
-//                            NSLocalizedString("NoMADMenuController-PasswordExpiresInDays", comment: "Menu Text; Password expires in: %@ days"), myDaysToGo)
-//                    } else {
-//                        self.NoMADMenuPasswordExpires.title = ""
-//                    }
 
                     let futureDate = Date()
                     futureDate.addingTimeInterval(300)
