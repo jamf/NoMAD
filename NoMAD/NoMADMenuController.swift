@@ -153,8 +153,11 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
         }
 
-        if !userInformation.tickets {
+        if userInformation.status != "Logged In" && userInformation.connected {
         autoLogin()
+
+            // update again
+            doTheNeedfull()
         }
         stopMenuAnimationTimer()
 
@@ -199,22 +202,29 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
                 }
 
-                if myErr != nil {
+            if myErr == nil {
+                myLogger.logit(.base, message:"Automatically logged in.")
+
+                cliTask("/usr/bin/kswitch -p " +  userPrinc)
+
+                // fire off the SignInCommand script if there is one
+                if defaults.string(forKey: Preferences.signInCommand) != "" {
+                    let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)
+                    myLogger.logit(.base, message: myResult)
+                }
+                return
+            } else if (myErr?.contains("Code=851968"))! {
+                myLogger.logit(.base, message:"Autologin can't find KDCs.")
+                return
+            } else if (myErr?.contains("kGSSMinorErrorCode=-1765328378"))! {
+                myLogger.logit(.base, message:"Autologin using unkown user.")
+                return
+            } else if (myErr?.contains("kGSSMinorErrorCode=-1765328360"))! {
+                myLogger.logit(.base, message:"Autologin password error.")
+                // not sure what to do here, delete the password entry?
+            } else  {
                     myLogger.logit(.base, message:"Error attempting to automatically log in.")
                     loginWindow.window!.forceToFrontAndFocus(nil)
-                    return
-                } else {
-                    myLogger.logit(.base, message:"Automatically logging in.")
-                    // since we logged in succesfully, update the UI
-                    NotificationCenter.default.post(updateNotification)
-
-                    cliTask("/usr/bin/kswitch -p " +  userPrinc)
-
-                    // fire off the SignInCommand script if there is one
-                    if defaults.string(forKey: Preferences.signInCommand) != "" {
-                        let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)
-                        myLogger.logit(.base, message: myResult)
-                    }
                     return
                 }
         }
@@ -340,7 +350,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
             if !caSSLTest {
                 let certAlertController = NSAlert()
-                certAlertController.messageText = "Connetion error. Please ensure SSL certificates are trusted and URL is correct for your X509 CA."
+                certAlertController.messageText = "Connection error. Please ensure SSL certificates are trusted and the URL is correct for your X509 CA."
                 certAlertController.runModal()
             } else {
 
@@ -531,6 +541,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.userInformation.myLDAPServers.currentDomain = defaults.string(forKey: Preferences.aDDomain)!
         }
 
+        if !userInformation.loggedIn && userInformation.connected {
+            autoLogin()
+        }
+
         self.updateUserInfo()
         // })
     }
@@ -565,7 +579,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // function to see if we should autologin and then proceede accordingly
     func autoLogin() {
         // only autologin if 1) we're set to use the keychain, 2) we have don't already have a Kerb ticket and 3) we can contact the LDAP servers
-        if (defaults.bool(forKey: Preferences.useKeychain)) {//&& !userInformation.myLDAPServers.tickets.state && userInformation.myLDAPServers.currentState {
+        if (defaults.bool(forKey: Preferences.useKeychain)) && !userInformation.myLDAPServers.tickets.state && userInformation.myLDAPServers.currentState {
             myLogger.logit(.info, message: "Attempting to auto-login")
             NoMADMenuClickLogIn(NoMADMenuLogIn)
         }
@@ -834,12 +848,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 }
                 self.updateRunning = false
             })
-            
+
             // mark the time and clear the update scheduled flag
             
             lastStatusCheck = Date()
             updateScheduled = false
-            
+
             if let expireDate = defaults.object(forKey: Preferences.lastCertificateExpiration) as? Date {
                 if expireDate != Date.distantPast {
                     NoMADMenuGetCertificateDate.title = dateFormatter.string(from: expireDate)

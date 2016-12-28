@@ -33,6 +33,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
             myLogger.logit(.base, message: "State change, checking things.")
             NotificationQueue.default.enqueue(updateNotification, postingStyle: .now)
 
+            if #available(OSX 10.12, *) {
+                Timer.scheduledTimer(withTimeInterval: 5, repeats: false, block: {_ in
+                    myLogger.logit(.base, message: "State change, checking things again.")
+                    NotificationQueue.default.enqueue(updateNotification, postingStyle: .now)
+                })
+            } else {
+                // Fallback on earlier versions
+            }
+
             if (defaults.string(forKey: Preferences.stateChangeAction) != "" ) {
                 myLogger.logit(.base, message: "Firing State Change Action")
                 cliTask(defaults.string(forKey: Preferences.stateChangeAction)! + " &")
