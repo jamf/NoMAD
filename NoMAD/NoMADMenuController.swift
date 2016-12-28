@@ -653,8 +653,11 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         // we do this in the background and then time out if it doesn't complete
 
         var reachCheck = false
+        let reachCheckDate = Date()
 
-        myWorkQueue.sync(execute: {
+        let reachCheckQueue = DispatchQueue(label: "com.trusourcelabs.NoMAD.reachability", attributes: [])
+
+        reachCheckQueue.async(execute: {
 
         let host = defaults.string(forKey: Preferences.aDDomain)
         let myReach = SCNetworkReachabilityCreateWithName(nil, host!)
@@ -673,10 +676,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             reachCheck = true
         })
 
-        while !reachCheck {
+        while !reachCheck && (abs(reachCheckDate.timeIntervalSinceNow) < 5) {
             RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
             myLogger.logit(.base, message: "Waiting for reachability check to return.")
-        }
+        }        
 
         if abs(lastStatusCheck.timeIntervalSinceNow) > 3 {
 
