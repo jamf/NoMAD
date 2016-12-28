@@ -39,7 +39,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
                     NotificationQueue.default.enqueue(updateNotification, postingStyle: .now)
                 })
             } else {
-                // Fallback on earlier versions
+                // wait a few seconds
+                let now = Date()
+                while abs(now.timeIntervalSinceNow) < 5 {
+                    RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
+                }
+                myLogger.logit(.base, message: "State change, checking things again.")
+                NotificationQueue.default.enqueue(updateNotification, postingStyle: .now)
             }
 
             if (defaults.string(forKey: Preferences.stateChangeAction) != "" ) {
