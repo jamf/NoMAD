@@ -650,6 +650,11 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         }
 
         // check for network reachability
+        // we do this in the background and then time out if it doesn't complete
+
+        var reachCheck = false
+
+        myWorkQueue.sync(execute: {
 
         let host = defaults.string(forKey: Preferences.aDDomain)
         let myReach = SCNetworkReachabilityCreateWithName(nil, host!)
@@ -657,13 +662,20 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         if !SCNetworkReachabilityGetFlags(myReach!, &flag) {
             myLogger.logit(.base, message: "Can't determine network reachability.")
-            lastStatusCheck = Date()
+            self.lastStatusCheck = Date()
         }
 
         if (flag.rawValue != UInt32(kSCNetworkFlagsReachable)) {
             // network isn't reachable
             myLogger.logit(.base, message: "Network is not reachable, delaying lookups.")
-            lastStatusCheck = Date()
+            self.lastStatusCheck = Date()
+        }
+            reachCheck = true
+        })
+
+        while !reachCheck {
+            RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
+            myLogger.logit(.base, message: "Waiting for reachability check to return.")
         }
 
         if abs(lastStatusCheck.timeIntervalSinceNow) > 3 {
