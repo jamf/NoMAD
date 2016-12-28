@@ -72,6 +72,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
     var lastStatusCheck = Date().addingTimeInterval(-5000)
     var updateScheduled = false
+    var updateRunning = false
 
     //let myShareMounter = ShareMounter()
 
@@ -146,8 +147,15 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         // see if we should auto-configure
         setDefaults()
 
-        autoLogin()
+        // wait for any updates to finish
 
+        while updateRunning {
+            RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
+        }
+
+        if !userInformation.tickets {
+        autoLogin()
+        }
         stopMenuAnimationTimer()
 
         // set up menu titles w/translation
@@ -618,6 +626,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     func updateUserInfo() {
 
         myLogger.logit(.base, message:"Updating User Info")
+        updateRunning = true
 
 
         // make sure the domain we're using is the domain we should be using
@@ -823,7 +832,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     self.NoMADMenu.insertItem(self.NoMADMenuGetCertificate, at: (lockIndex + 1 ))
                     self.NoMADMenu.insertItem(self.NoMADMenuGetCertificateDate, at: (lockIndex + 2 ))
                 }
-                
+                self.updateRunning = false
             })
             
             // mark the time and clear the update scheduled flag
