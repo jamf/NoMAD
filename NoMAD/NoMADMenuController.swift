@@ -146,8 +146,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         // see if we should auto-configure
         setDefaults()
 
-        // Autologin if you should
-        userInformation.myLDAPServers.tickets.getDetails()
         autoLogin()
 
         stopMenuAnimationTimer()
@@ -172,10 +170,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // Show the login window when the menu item is clicked
     @IBAction func NoMADMenuClickLogIn(_ sender: NSMenuItem) {
 
-        if defaults.bool(forKey: Preferences.useKeychain) {
+        if defaults.bool(forKey: Preferences.useKeychain) && (defaults.string(forKey: Preferences.lastUser) != "" ) {
 
             // check if there's a last user
-            if (defaults.string(forKey: Preferences.lastUser) != "" ) {
                 var myPass = ""
                 var myErr: String?
                 let userPrinc = defaults.string(forKey: Preferences.lastUser)! + "@" + defaults.string(forKey: Preferences.kerberosRealm)!
@@ -187,7 +184,13 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     return
                 }
 
-                myErr = KerbUtil().getKerbCredentials(myPass, userPrinc)
+                let myKerbUtil = KerbUtil()
+                myErr = myKerbUtil.getKerbCredentials(myPass, userPrinc)
+
+                while ( !myKerbUtil.finished ) {
+                    RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
+                }
+
                 if myErr != nil {
                     myLogger.logit(.base, message:"Error attempting to automatically log in.")
                     loginWindow.window!.forceToFrontAndFocus(nil)
@@ -203,12 +206,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     if defaults.string(forKey: Preferences.signInCommand) != "" {
                         let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)
                         myLogger.logit(.base, message: myResult)
-                        return
                     }
+                    return
                 }
-            }
-            loginWindow.window!.forceToFrontAndFocus(nil)
-            return
         }
         loginWindow.window!.forceToFrontAndFocus(nil)
     }
@@ -523,8 +523,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.userInformation.myLDAPServers.currentDomain = defaults.string(forKey: Preferences.aDDomain)!
         }
 
-        autoLogin()
-
         self.updateUserInfo()
         // })
     }
@@ -559,7 +557,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // function to see if we should autologin and then proceede accordingly
     func autoLogin() {
         // only autologin if 1) we're set to use the keychain, 2) we have don't already have a Kerb ticket and 3) we can contact the LDAP servers
-        if (defaults.bool(forKey: Preferences.useKeychain)) && !userInformation.myLDAPServers.tickets.state && userInformation.myLDAPServers.currentState {
+        if (defaults.bool(forKey: Preferences.useKeychain)) {//&& !userInformation.myLDAPServers.tickets.state && userInformation.myLDAPServers.currentState {
             myLogger.logit(.info, message: "Attempting to auto-login")
             NoMADMenuClickLogIn(NoMADMenuLogIn)
         }
