@@ -630,6 +630,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     myPass = try myKeychainutil.findPassword(userPrinc)
                 } catch {
                     myLogger.logit(.base, message: "Unable to find password in keychain for auto-login.")
+                    updateUserInfo()
                     return
                 }
 
