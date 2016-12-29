@@ -156,12 +156,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
         }
 
-        if userInformation.status != "Logged In" && userInformation.connected {
-        autoLogin()
-
-            // update again
-            doTheNeedfull()
-        }
         stopMenuAnimationTimer()
 
         // set up menu titles w/translation
@@ -586,10 +580,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.userInformation.myLDAPServers.currentDomain = defaults.string(forKey: Preferences.aDDomain)!
         }
 
-        if !userInformation.loggedIn && userInformation.connected {
-            autoLogin()
-        }
-
         self.updateUserInfo()
         // })
     }
@@ -639,6 +629,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 do {
                     myPass = try myKeychainutil.findPassword(userPrinc)
                 } catch {
+                    myLogger.logit(.base, message: "Unable to find password in keychain for auto-login.")
                     return
                 }
 
@@ -653,6 +644,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     myLogger.logit(.base, message:"Automatically logged in.")
 
                     cliTask("/usr/bin/kswitch -p " +  userPrinc)
+
+                    // update the UI
+
+                    updateUserInfo()
 
                     // fire off the SignInCommand script if there is one
                     if defaults.string(forKey: Preferences.signInCommand) != "" {
@@ -694,7 +689,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     myLogger.logit(.base, message:"Error attempting to automatically log in.")
                     return
                 }
-            }
+            } else {
+                myLogger.logit(.base, message: "Auto-login not attempted.")
+        }
     }
 
     // change the menu item if it's dark
@@ -977,6 +974,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     self.NoMADMenu.insertItem(self.NoMADMenuGetCertificate, at: (lockIndex + 1 ))
                     self.NoMADMenu.insertItem(self.NoMADMenuGetCertificateDate, at: (lockIndex + 2 ))
                 }
+                // login if we need to
+                self.autoLogin()
                 self.updateRunning = false
             })
 
