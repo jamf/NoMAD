@@ -791,8 +791,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         while !reachCheck && (abs(reachCheckDate.timeIntervalSinceNow) < 5) {
             RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
-            myLogger.logit(.base, message: "Waiting for reachability check to return.")
-        }        
+            myLogger.logit(.debug, message: "Waiting for reachability check to return.")
+        }
+
+        if !reachCheck {
+            myLogger.logit(.base, message: "Reachability check timed out.")
+        }
 
         if abs(lastStatusCheck.timeIntervalSinceNow) > 3 {
 
