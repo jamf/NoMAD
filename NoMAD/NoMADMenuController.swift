@@ -562,7 +562,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 	                                myLogger.logit(.base, message: "Initiating unannounced password change recovery.")
 	                                // kill the tickets and show the loginwindow
 	                                cliTask("/usr/bin/kdestroy")
-	                                userInformation.unannouncedPasswordChange = false
 	                                loginWindow.window!.forceToFrontAndFocus(nil)
 	        } else if notification.actionButtonTitle == "Ignore" {
 	            return
@@ -980,20 +979,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 }
                 self.updateRunning = false
             })
-
-            // determine if we need to alert the user about the password change
-
-            if userInformation.unannouncedPasswordChange && defaults.bool(forKey: "UPCAlert") {
-                let notification = NSUserNotification()
-                notification.title = "Password Changed"
-                notification.informativeText = "Your password was changed, please re-sign into NoMAD to update your password."
-                //notification.deliveryDate = date
-                notification.hasActionButton = true
-                notification.actionButtonTitle = "NoMADMenuController-LogIn".translate
-                notification.otherButtonTitle = "Ignore"
-                notification.soundName = NSUserNotificationDefaultSoundName
-                userNotificationCenter.deliver(notification)
-            }
 
             // mark the time and clear the update scheduled flag
             

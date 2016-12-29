@@ -39,7 +39,6 @@ class UserInformation {
     // Password last set info
 
     var lastSetDate = NSDate()
-    var unannouncedPasswordChange : Bool = false
 
     var userCertDate = NSDate()
     var groups = [String]()
@@ -251,10 +250,22 @@ class UserInformation {
                     
                     // set a flag it we should alert the user
                     if (defaults.bool(forKey: Preferences.uPCAlert ) == true) {
-                        unannouncedPasswordChange = true
-                        NotificationQueue.default.enqueue(updateNotification, postingStyle: .now)
-                    } else {
-                        unannouncedPasswordChange = false
+
+                        // fire the notification
+
+                        myLogger.logit(.base, message: "Alerting user to UPC.")
+
+                        let notification = NSUserNotification()
+                        notification.title = "Password Changed"
+                        notification.informativeText = "Your password was changed, please re-sign into NoMAD to update your password."
+                        //notification.deliveryDate = date
+                        notification.hasActionButton = true
+                        notification.actionButtonTitle = "NoMADMenuController-LogIn".translate
+                        notification.otherButtonTitle = "Ignore"
+                        notification.soundName = NSUserNotificationDefaultSoundName
+                        NSUserNotificationCenter.default.deliver(notification)
+
+                        //NotificationQueue.default.enqueue(updateNotification, postingStyle: .now)
                     }
                 }
             } else {
