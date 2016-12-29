@@ -16,7 +16,7 @@ let updateNotification = Notification(name: Notification.Name(rawValue: "updateN
 
 @NSApplicationMain
 
-class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate {
 
     var refreshTimer: Timer?
     var refreshActivity: NSBackgroundActivityScheduler?

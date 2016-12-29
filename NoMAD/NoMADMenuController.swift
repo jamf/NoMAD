@@ -32,7 +32,7 @@ prefix func ~~(value: Int) -> Bool {
     return (value > 0) ? true : false
 }
 
-class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate, PreferencesWindowDelegate, NSMenuDelegate {
+class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate, PreferencesWindowDelegate, NSMenuDelegate, NSUserNotificationCenterDelegate {
 
     // menu item connections
     @IBOutlet weak var NoMADMenu: NSMenu!
@@ -64,6 +64,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     let preferencesWindow = PreferencesWindow()
     let loginWindow = LoginWindow()
     let passwordChangeWindow = PasswordChangeWindow()
+
+    let userNotificationCenter = NSUserNotificationCenter.default
 
     var originalGetCertificateMenu : NSMenuItem!
     var originalGetCertificateMenuDate : NSMenuItem!
@@ -124,6 +126,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         loginWindow.delegate = self
         passwordChangeWindow.delegate = self
         preferencesWindow.delegate = self
+        userNotificationCenter.delegate = self
 
         // Allows us to force windows to show when menu clicked.
         self.NoMADMenu.delegate = self
@@ -539,6 +542,33 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         NSUserNotificationCenter.default.deliver(notification)
     }
 
+    // Notification delegates
+
+	    // NSUserNotificationCenterDelegate implementation
+	    func userNotificationCenter(_ center: NSUserNotificationCenter, didDeliver notification: NSUserNotification) {
+	        //implementation
+	    }
+
+    func userNotificationCenter(_ center: NSUserNotificationCenter, didActivate notification: NSUserNotification) {
+	        if notification.actionButtonTitle == "NoMADMenuController-ChangePassword".translate {
+	            myLogger.logit(.base, message: "Initiating user password change.")
+	            if defaults.string(forKey: Preferences.changePasswordType) != "Kerberos"  {
+	                PasswordChange().passwordChange()
+	            } else {
+	                passwordChangeWindow.window!.forceToFrontAndFocus(nil)
+	            }
+
+	        } else if notification.actionButtonTitle == "NoMADMenuController-LogIn".translate {
+	                                myLogger.logit(.base, message: "Initiating unannounced password change recovery.")
+	                                // kill the tickets and show the loginwindow
+	                                cliTask("/usr/bin/kdestroy")
+	                                userInformation.unannouncedPasswordChange = false
+	                                loginWindow.window!.forceToFrontAndFocus(nil)
+	        } else if notification.actionButtonTitle == "Ignore" {
+	            return
+	        }
+    }
+
     // pulls user's entire LDAP record when asked
     func logEntireUserRecord() {
         let myResult = userInformation.myLDAPServers.returnFullRecord("sAMAccountName=" + defaults.string(forKey: Preferences.lastUser)!)
@@ -946,6 +976,20 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 }
                 self.updateRunning = false
             })
+
+            // determine if we need to alert the user about the password change
+
+            if userInformation.unannouncedPasswordChange && defaults.bool(forKey: "UPCAlert") {
+                let notification = NSUserNotification()
+                notification.title = "Password Changed"
+                notification.informativeText = "Your password was changed, please re-sign into NoMAD to update your password."
+                //notification.deliveryDate = date
+                notification.hasActionButton = true
+                notification.actionButtonTitle = "NoMADMenuController-LogIn".translate
+                notification.otherButtonTitle = "Ignore"
+                notification.soundName = NSUserNotificationDefaultSoundName
+                userNotificationCenter.deliver(notification)
+            }
 
             // mark the time and clear the update scheduled flag
             
