@@ -26,6 +26,8 @@ enum Preferences {
 
     // autoConfigure - r/w - bool - whether to use the autoconfigure mechanisms to set all of the defaults. Handled by AutoConfigure.swift
 
+    // configureChrome - r/w - bool - determines if we update the Chrome whitelisting for Kerberos auth
+
     // displayName - r/o - string - the long name of the currently signed in user
 
     // exportableKey - r/w - bool - determines if the private key for a NoMAD-generated certificate can be exported - default is false
@@ -98,6 +100,7 @@ enum Preferences {
     static let autoConfigure = "AutoConfigure"
     static let changePasswordType = "ChangePasswordType"
     static let caribouTime = "CaribouTime"
+    static let configureChrome = "ConfigureChrome"
     static let displayName = "DisplayName"
     static let exportableKey = "ExportableKey"
     static let getHelpType = "GetHelpType"

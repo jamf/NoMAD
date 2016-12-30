@@ -131,6 +131,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         // Allows us to force windows to show when menu clicked.
         self.NoMADMenu.delegate = self
 
+        // see if we should auto-configure
+        setDefaults()
+
         // if no preferences are set, we show the preferences pane
         if (defaults.string(forKey: Preferences.aDDomain) == "" ) {
             preferencesWindow.window!.forceToFrontAndFocus(nil)
@@ -147,13 +150,16 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             myLogger.logit(.info, message:"Not using Self Service.")
         }
 
-        // see if we should auto-configure
-        setDefaults()
-
         // wait for any updates to finish
 
         while updateRunning {
             RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
+        }
+
+        // configure Chrome
+
+        if defaults.bool(forKey: Preferences.configureChrome) {
+            configureChrome()
         }
 
         stopMenuAnimationTimer()
@@ -741,8 +747,50 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // function to configure Chrome
 
     func configureChrome() {
-        cliTask("defaults write com.google.Chrome AuthServerWhiteList \"*." + defaults.string(forKey: Preferences.aDDomain)! + "\"")
-        cliTask("defaults write com.google.Chrome AuthNegotiateDelegateWhitelist \"*." + defaults.string(forKey: Preferences.aDDomain)! + "\"")
+
+        // create new instance of defaults for com.google.Chrome
+
+        let chromeDefaults = UserDefaults.init(suiteName: "com.google.Chrome")
+        let chromeDomain = "*" + defaults.string(forKey: Preferences.aDDomain)!
+        var change = false
+
+        // find the keys and add the domain
+
+        let chromeAuthServer = chromeDefaults?.string(forKey: "AuthServerWhiteList")
+        var chromeAuthServerArray = chromeAuthServer?.components(separatedBy: ",")
+
+        if chromeAuthServerArray != nil {
+            if !((chromeAuthServerArray?.contains(chromeDomain))!) {
+                chromeAuthServerArray?.append(chromeDomain)
+                change = true
+            }
+        } else {
+            chromeAuthServerArray = [chromeDomain]
+            change = true
+        }
+
+        let chromeAuthNegotiate = chromeDefaults?.string(forKey: "AuthNegotiateDelegateWhitelist")
+        var chromeAuthNegotiateArray = chromeAuthNegotiate?.components(separatedBy: ",")
+
+        if chromeAuthNegotiateArray != nil {
+            if !((chromeAuthNegotiateArray?.contains(chromeDomain))!) {
+            chromeAuthNegotiateArray?.append(chromeDomain)
+                change = true
+            }
+        } else {
+            chromeAuthNegotiateArray = [chromeDomain]
+            change = true
+        }
+
+        // write it back
+
+        if change {
+        chromeDefaults?.set(chromeAuthServerArray?.joined(separator: ","), forKey: "AuthServerWhiteList")
+        chromeDefaults?.set(chromeAuthNegotiateArray?.joined(separator: ","), forKey: "AuthNegotiateDelegateWhitelist")
+        }
+
+        //cliTask("defaults write com.google.Chrome AuthServerWhiteList \"*." + defaults.string(forKey: Preferences.aDDomain)! + "\"")
+        //cliTask("defaults write com.google.Chrome AuthNegotiateDelegateWhitelist \"*." + defaults.string(forKey: Preferences.aDDomain)! + "\"")
     }
 
     // update the user info and build the actual menu
