@@ -830,6 +830,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             // network isn't reachable
             myLogger.logit(.base, message: "Network is not reachable, delaying lookups.")
             self.lastStatusCheck = Date()
+            self.updateRunning = false
+            return
         }
             reachCheck = true
         })
