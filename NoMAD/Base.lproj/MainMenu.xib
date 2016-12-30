@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11542" systemVersion="16C48b" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="16D17a" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11542"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -25,13 +25,13 @@
                     <modifierMask key="keyEquivalentModifierMask" option="YES"/>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="7uv-39-xiX"/>
-                <menuItem title="Log In 2" toolTip="Log in." id="XL2-b8-IwM">
+                <menuItem title="Log In 2" toolTip="Sign in with your network account." id="XL2-b8-IwM">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="NoMADMenuClickLogIn:" target="Gp4-Xp-pEc" id="wVm-5I-piH"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Sign In" alternate="YES" id="Wa6-S1-lXm">
+                <menuItem title="Sign In" alternate="YES" toolTip="Sign in with your network account." id="Wa6-S1-lXm">
                     <modifierMask key="keyEquivalentModifierMask" control="YES" option="YES"/>
                     <connections>
                         <action selector="NoMADMenuClickLogInAlternate:" target="Gp4-Xp-pEc" id="Ght-9J-Q4Q"/>
@@ -43,13 +43,13 @@
                         <action selector="NoMADMenuClickChangePassword:" target="Gp4-Xp-pEc" id="lgn-ZO-gUO"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Sign Out" id="w1A-iF-wAU">
+                <menuItem title="Sign Out" toolTip="Sign out of your network account." id="w1A-iF-wAU">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="NoMADMenuClickLogOut:" target="Gp4-Xp-pEc" id="DXe-en-Xqw"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Lock Screen" id="3Pf-2O-qR7">
+                <menuItem title="Lock Screen" toolTip="Lock your screen." id="3Pf-2O-qR7">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="NoMADMenuClickLockScreen:" target="Gp4-Xp-pEc" id="1Up-40-AIC"/>
@@ -62,7 +62,7 @@
                         <action selector="NoMADMenuClickGetCertificate:" target="Gp4-Xp-pEc" id="Ux3-1h-v3f"/>
                     </connections>
                 </menuItem>
-                <menuItem title="CertificateDate" alternate="YES" toolTip="Certificate expire date." id="A9U-v2-LiT">
+                <menuItem title="CertificateDate" alternate="YES" toolTip="Certificate expiration date." id="A9U-v2-LiT">
                     <modifierMask key="keyEquivalentModifierMask" option="YES"/>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="wcV-DA-kNE"/>

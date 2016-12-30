@@ -60,7 +60,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         Password.stringValue = ""
         changePasswordField1.stringValue = ""
         changePasswordField2.stringValue = ""
-
+        setWindowToLogin()
         NotificationCenter.default.post(updateNotification)
         delegate?.updateUserInfo()
     }
@@ -176,9 +176,10 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                 myLogger.logit(LogLevel.debug, message:"Lets try to sync the passwords, prompting user.")
                 let alertController = NSAlert()
                 // TODO: replace with localized text
-                alertController.messageText = "Your network and local passwords are not the same. Please enter the password for your Mac."
-                alertController.addButton(withTitle: "Cancel")
+                alertController.messageText = (defaults.string(forKey: Preferences.messageLocalSync) ?? "Your network and local passwords are not the same. Please enter the password for your Mac.")
                 alertController.addButton(withTitle: "Sync")
+                alertController.addButton(withTitle: "Cancel")
+                //alertController.addButton(withTitle: "Sync")
 
                 let localPassword = NSSecureTextField(frame: CGRect(x: 0, y: 0, width: 200, height: 24))
                 alertController.accessoryView = localPassword
@@ -192,7 +193,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 
                 alertController.beginSheetModal(for: self.window!, completionHandler: { [unowned self] (returnCode) -> Void in
                     myLogger.logit(LogLevel.debug, message: "Sheet Modal completed")
-                    if ( returnCode == NSAlertSecondButtonReturn ) {
+                    if ( returnCode == NSAlertFirstButtonReturn ) {
                         let currentLocalPassword = localPassword.stringValue
                         let newPassword = self.Password.stringValue
                         let localPasswordIsCorrect = noMADUser.checkCurrentConsoleUserPassword(currentLocalPassword)
@@ -233,6 +234,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                             myLogger.logit(LogLevel.base, message: "Error changing keychain password")
                             myError = "Could not change your local keychain password."
                         }
+                        self.close()
                     } else {
                         myLogger.logit(.base, message:"Local sync cancelled by user.")
                     }
@@ -409,6 +411,10 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         logInButton.isEnabled = false
 
         passwordLabel.stringValue = "Old Password"
+
+        // put focus into the first change field
+        
+        changePasswordField1.becomeFirstResponder()
 
         self.window?.setContentSize(changeSize)
 
