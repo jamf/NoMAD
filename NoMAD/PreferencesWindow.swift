@@ -117,7 +117,7 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
 
         // find the keys and add the domain
 
-        let chromeAuthServer = chromeDefaults?.string(forKey: "AuthServerWhiteList")
+        let chromeAuthServer = chromeDefaults?.string(forKey: "AuthServerWhitelist")
         var chromeAuthServerArray = chromeAuthServer?.components(separatedBy: ",")
 
         if chromeAuthServerArray != nil {
@@ -146,7 +146,7 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
         // write it back
 
         if change {
-            chromeDefaults?.set(chromeAuthServerArray?.joined(separator: ","), forKey: "AuthServerWhiteList")
+            chromeDefaults?.set(chromeAuthServerArray?.joined(separator: ","), forKey: "AuthServerWhitelist")
             chromeDefaults?.set(chromeAuthNegotiateArray?.joined(separator: ","), forKey: "AuthNegotiateDelegateWhitelist")
         }
     }

@@ -75,6 +75,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     var lastStatusCheck = Date().addingTimeInterval(-5000)
     var updateScheduled = false
     var updateRunning = false
+    var menuAnimated = false
 
     //let myShareMounter = ShareMounter()
 
@@ -734,14 +735,19 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
     // function to start the menu throbbing
     func startMenuAnimationTimer() {
-        menuAnimationTimer = Timer(timeInterval: 1, target: self, selector: #selector(animateMenuItem), userInfo: nil, repeats: true)
+
+        if !menuAnimated {
+        menuAnimationTimer = Timer(timeInterval: 0.2, target: self, selector: #selector(animateMenuItem), userInfo: nil, repeats: true)
         statusItem.menu = NSMenu()
         RunLoop.current.add(menuAnimationTimer, forMode: RunLoopMode.defaultRunLoopMode)
         menuAnimationTimer.fire()
+            menuAnimated = true
+        }
     }
 
     func stopMenuAnimationTimer() {
         menuAnimationTimer.invalidate()
+        menuAnimated = false
     }
 
     // function to configure Chrome
@@ -756,7 +762,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         // find the keys and add the domain
 
-        let chromeAuthServer = chromeDefaults?.string(forKey: "AuthServerWhiteList")
+        let chromeAuthServer = chromeDefaults?.string(forKey: "AuthServerWhitelist")
         var chromeAuthServerArray = chromeAuthServer?.components(separatedBy: ",")
 
         if chromeAuthServerArray != nil {
@@ -785,11 +791,11 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         // write it back
 
         if change {
-        chromeDefaults?.set(chromeAuthServerArray?.joined(separator: ","), forKey: "AuthServerWhiteList")
+        chromeDefaults?.set(chromeAuthServerArray?.joined(separator: ","), forKey: "AuthServerWhitelist")
         chromeDefaults?.set(chromeAuthNegotiateArray?.joined(separator: ","), forKey: "AuthNegotiateDelegateWhitelist")
         }
 
-        //cliTask("defaults write com.google.Chrome AuthServerWhiteList \"*." + defaults.string(forKey: Preferences.aDDomain)! + "\"")
+        //cliTask("defaults write com.google.Chrome AuthServerWhitelist \"*." + defaults.string(forKey: Preferences.aDDomain)! + "\"")
         //cliTask("defaults write com.google.Chrome AuthNegotiateDelegateWhitelist \"*." + defaults.string(forKey: Preferences.aDDomain)! + "\"")
     }
 
@@ -814,6 +820,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         let reachCheckDate = Date()
 
         let reachCheckQueue = DispatchQueue(label: "com.trusourcelabs.NoMAD.reachability", attributes: [])
+
+        startMenuAnimationTimer()
 
         reachCheckQueue.async(execute: {
 
@@ -845,6 +853,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             myLogger.logit(.base, message: "Reachability check timed out.")
         }
 
+        stopMenuAnimationTimer()
+
         if abs(lastStatusCheck.timeIntervalSinceNow) > 3 {
 
             // through the magic of code blocks we'll update in the background
@@ -857,7 +867,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
                 self.userInformation.getUserInfo()
 
-                //self.menuAnimationTimer.invalidate()
+                self.menuAnimationTimer.invalidate()
 
                 DispatchQueue.main.sync(execute: { () -> Void in
 
@@ -1034,6 +1044,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             
             lastStatusCheck = Date()
             updateScheduled = false
+
+            // just in case we're still throbbing
+
+            stopMenuAnimationTimer()
 
             if let expireDate = defaults.object(forKey: Preferences.lastCertificateExpiration) as? Date {
                 if expireDate != Date.distantPast {
