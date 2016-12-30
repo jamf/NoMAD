@@ -40,6 +40,6 @@
 	<key>NSPrincipalClass</key>
 	<string>NoMAD.NoMADApplication</string>
 	<key>NSUserNotificationAlertStyle</key>
-	<string>Alert</string>
+	<string>alert</string>
 </dict>
 </plist>
