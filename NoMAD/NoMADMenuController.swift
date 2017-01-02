@@ -737,7 +737,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     func startMenuAnimationTimer() {
 
         if !menuAnimated {
-        menuAnimationTimer = Timer(timeInterval: 0.2, target: self, selector: #selector(animateMenuItem), userInfo: nil, repeats: true)
+        menuAnimationTimer = Timer(timeInterval: 0.5, target: self, selector: #selector(animateMenuItem), userInfo: nil, repeats: true)
         statusItem.menu = NSMenu()
         RunLoop.current.add(menuAnimationTimer, forMode: RunLoopMode.defaultRunLoopMode)
         menuAnimationTimer.fire()
@@ -791,6 +791,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         // write it back
 
         if change {
+            myLogger.logit(.base, message: "Adding keys to Chrome preferences.")
+            
         chromeDefaults?.set(chromeAuthServerArray?.joined(separator: ","), forKey: "AuthServerWhitelist")
         chromeDefaults?.set(chromeAuthNegotiateArray?.joined(separator: ","), forKey: "AuthNegotiateDelegateWhitelist")
         }
@@ -1048,6 +1050,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             // just in case we're still throbbing
 
             stopMenuAnimationTimer()
+            stopMenuAnimationTimer()
+
 
             if let expireDate = defaults.object(forKey: Preferences.lastCertificateExpiration) as? Date {
                 if expireDate != Date.distantPast {
