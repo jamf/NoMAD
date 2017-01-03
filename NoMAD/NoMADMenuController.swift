@@ -733,6 +733,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         }
     }
 
+    func connectionCheck() -> Bool {
+        return userInformation.connected
+    }
+
     // function to start the menu throbbing
     func startMenuAnimationTimer() {
 
@@ -746,6 +750,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     }
 
     func stopMenuAnimationTimer() {
+        menuAnimationTimer.invalidate()
         menuAnimationTimer.invalidate()
         menuAnimated = false
     }
@@ -983,11 +988,14 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                             self.NoMADMenu.removeItem(self.NoMADMenuHome)
 
                         }
-
-                        // Share Mounter setup taken out for now
-
-                        //self.myShareMounter.asyncMountShare("smb:" + defaults.stringForKey("UserHome")!)
-                        self.myShareMounter.mount()
+                    }
+                    
+                    if self.userInformation.status == "Logged In" {
+                    self.myShareMounter.connectedState = self.userInformation.connected
+                    self.myShareMounter.userPrincipal = self.userInformation.userPrincipal
+                    self.myShareMounter.getMountedShares()
+                    self.myShareMounter.getMounts()
+                    self.myShareMounter.mountShares()
                     }
                 })
 

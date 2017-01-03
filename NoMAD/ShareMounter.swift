@@ -14,21 +14,34 @@ import Foundation
 import NetFS
 import CoreServices
 
-enum mountStatus: Int {
-    case unmounted = 0
-    case toBeMounted = 1
-    case notInGroup = 2
-    case mounting = 3
-    case mounted = 4
-    case errorOnMount = 5
+enum mountStatus {
+    case unmounted, toBeMounted, notInGroup, mounting, mounted, errorOnMount
+}
+
+enum shareKeys {
+    static let homeMount = "HomeMount"
+    static let mount = "Mount"
+    static let shares = "Shares"
+    static let groups = "Groups"
+    static let connectedOnly = "ConnectedOnly"
+    static let options = "Options"
+    static let name = "Name"
+    static let autoMount = "Automount"
+    static let localMount = "LocalMount"
+    static let url = "URL"
 }
 
 struct share_info {
     var groups: [String]
-    var share_url: URL
-    var title: String
+    var url: URL
+    var name: String
     var options: [String]
+    var connectedOnly: Bool
     var mountStatus: mountStatus?
+    var localMount: String?
+    var autoMount: Bool
+    var reqID: AsyncRequestID?
+    var attemptDate: Date?
 }
 
 struct mounting_shares_info {
@@ -38,75 +51,67 @@ struct mounting_shares_info {
 }
 
 class ShareMounter {
-
+    var sharePrefs: UserDefaults? = nil
     var all_shares = [share_info]()
     let ws = NSWorkspace.init()
     //var prefs: [String]
     lazy var userPrincipal: String = ""
     var mountedShares = [URL]()
+    var knownShares = [URL]()
     lazy var shareCount = 0
     lazy var myGroups = [String]()
     lazy var mountHome: Bool = false
     lazy var all_mounting_shares = [mounting_shares_info]()
-    let shareDefaults = UserDefaults.init(suiteName: "com.trusourcelabs.NoMAD.Shares")
-
-    //lazy var sharesMounting = [URL]()
+    var connectedState: Bool = false
 
     init() {
-        // read in the preference files
-        myLogger.logit(.debug, message: "Looking for ShareMounter preferences.")
-        //prefs = ["/Library/Preferences/ShareMounter.plist", NSHomeDirectory() + "/Library/Preferences/ShareMounter.plist"]
+        sharePrefs = UserDefaults.init(suiteName: "com.trusourcelabs.NoMAD.shares")
     }
 
-    func mount() {
-        for share in all_shares {
-            if !mountedShares.contains(share.share_url) {
-                for group in myGroups {
-                    if share.groups.contains(group) || share.groups == [""] {
-                        // time to mount
-                        shareCount += 1
-                        //print("***Incrementing shareCount***")
-                        //print(shareCount)
-                        myLogger.logit(.debug, message: "Attempting to mount: " + String(describing: share.share_url))
-                        asyncMountShare(share.share_url, options: share.options)
-                        break
-                    }
-                }
-            } else {
-                myLogger.logit(.debug, message: "Already mounted.")
+    // Utility functions
+
+    func getMounts() {
+
+        // check for home mount
+
+        let homeDict = sharePrefs?.dictionary(forKey: shareKeys.homeMount)!
+        if ((homeDict?["Mount"]) as! Bool) {
+
+            // adding the home mount to the shares
+            myLogger.logit(.debug, message: "Adding home share to automounts.")
+            var currentShare = share_info(groups: homeDict?[shareKeys.groups] as! [String], url: URL(string: "smb:" + (defaults.string(forKey: Preferences.userHome))!)!, name: "Home Sharepoint", options: homeDict?[shareKeys.options] as! [String], connectedOnly: true, mountStatus: mountStatus.toBeMounted, localMount: nil, autoMount: true, reqID: nil, attemptDate: nil)
+
+            if mountedShares.contains(currentShare.url) {
+                currentShare.mountStatus = .mounted
+            }
+
+            if !knownShares.contains(URL(string: "smb:" + (defaults.string(forKey: Preferences.userHome))!)!) {
+            self.all_shares.append(currentShare)
             }
         }
-    }
 
-    // function to find shares from ShareMounter.plist files
+        let mounts = (sharePrefs?.array(forKey: shareKeys.shares))! as! [NSDictionary]
 
-    func getSharesToMount() {
-        // zero out the shares to mount
-        all_shares.removeAll()
+        for mount in mounts {
+            // get all the pieces
+            var currentShare = share_info(groups: mount["Groups"]! as! [String], url: URL(string: mount["URL"] as! String)!, name: mount["Name"] as! String, options: mount["Options"] as! [String], connectedOnly: mount["ConnectedOnly"] as! Bool, mountStatus: .unmounted, localMount: mount["LocalMount"] as! String, autoMount: true, reqID: nil, attemptDate: nil)
 
-        // TODO: use defaults
-        // TODO: don't rewrite the same share into the list of shares to be mounted
+            // see if we know about it
 
-        for place in prefs {
-            let myDictionary = NSDictionary.init(contentsOfFile: place)
-            if myDictionary != nil {
-                if (myDictionary?.object(forKey: "include_smb_home"))! as! Bool && defaults.string(forKey: Preferences.userHome) != "" {
-                    myLogger.logit(.debug, message: "Including user home in shares to mount.")
-                    let currentShare = share_info(groups: [""], share_url: URL(string: "smb:" + (defaults.string(forKey: Preferences.userHome))!)!, title: "Home Sharepoint", options: [], mountStatus: mountStatus.toBeMounted)
-                    self.all_shares.append(currentShare)
-                } else {
-                    myLogger.logit(.debug, message: "Not including user home in shares to mount.")
-                }
-                let shares = (myDictionary?.object(forKey: "network_shares"))! as! [NSDictionary]
-                for i in shares {
-                    // pull any options that may be included
-                    let mountOptions = i.object(forKey: "mount_options") ?? []
-                    let currentShare = share_info(groups: i.object(forKey: "groups")! as! Array, share_url: URL(string: i.object(forKey: "share_url")! as! String)!, title: i.object(forKey: "title")! as! String, options: mountOptions as! [String],mountStatus: mountStatus.toBeMounted )
-                    self.all_shares.append(currentShare)
-                }
+            if knownShares.contains(currentShare.url) {
+                //myLogger.logit(.debug, message: "Skipping known share:" + String(describing: currentShare.url))
+                continue
             }
+
+            // check if it's already mounted
+
+            if mountedShares.contains(currentShare.url) {
+                currentShare.mountStatus = .mounted
+            }
+
+            knownShares.append(currentShare.url)
+            all_shares.append(currentShare)
         }
-        myLogger.logit(.debug, message: "Shares to be mounted: " + String(describing: all_shares))
     }
 
     // create a dictionary for open options
@@ -130,18 +135,64 @@ class ShareMounter {
 
     // the actual mounting of the shares - we do this asynchronously
 
-    func asyncMountShare(_ serverAddress: URL, options: [String]) {
+    func mountShares() {
+
+        if all_shares.count == 0 {
+            // no need to continue
+            return
+        }
+
+        // find out what groups we're in
+
+        let myGroups = defaults.array(forKey: Preferences.groups)
+
+        for i in 0...(all_shares.count - 1) {
+
+            myLogger.logit(.debug, message: "Evaluating mount: " + all_shares[i].name)
 
         // TODO: ensure the URL is reachable before attempting to mount
+
+            // loop through all the reasons to not mount this share
+
+            if all_shares[i].mountStatus == .mounted {
+                // already mounted
+                myLogger.logit(.debug, message: "Skipping mount because it's already mounted.")
+                continue
+            }
+
+            if !all_shares[i].autoMount {
+                // not to be automounted
+                myLogger.logit(.debug, message: "Skipping mount because it's not set to Automount.")
+                continue
+            }
+
+            if all_shares[i].connectedOnly && !connectedState {
+                // not connected
+                myLogger.logit(.debug, message: "Skipping mount because we're not connected.")
+                continue
+            }
+
+            // check for groups
+
+            if all_shares[i].groups != [] {
+                for group in myGroups! {
+                    if all_shares[i].groups.contains(group as! String) {
+                        all_shares[i].mountStatus = .toBeMounted
+                        break
+                    }
+                }
+            } else {
+                all_shares[i].mountStatus = .toBeMounted
+            }
 
         let open_options : CFMutableDictionary = openOptionsDict()
         var mount_options = mountOptionsDict()
 
-        if options.count > 0 {
+        if all_shares[i].options.count > 0 {
             var mountFlagValue = 0
 
             // big thanks to @frogor for the mount flags table
-            for option in options {
+            for option in all_shares[i].options {
                 switch option {
                 case "MNT_RDONLY"            : mountFlagValue += 0x00000001
                 case "MNT_SYNCHRONOUS"       : mountFlagValue += 0x00000002
@@ -175,10 +226,12 @@ class ShareMounter {
         var requestID: AsyncRequestID? = nil
         let queue = DispatchQueue.main
 
-        let mounting_share = mounting_shares_info(share_url: serverAddress, reqID: &requestID, mount_time: Date())
-        all_mounting_shares.append(mounting_share)
+        if all_shares[i].mountStatus == .toBeMounted {
 
-        let mountError = NetFSMountURLAsync(serverAddress as CFURL!,
+            myLogger.logit(.debug, message: "Attempting to mount: " + String(describing: all_shares[i].url))
+            var mountError: Int32? = nil
+
+            mountError = NetFSMountURLAsync(all_shares[i].url as CFURL!,
                                             nil,
                                             userPrincipal as CFString!,
                                             nil,
@@ -186,16 +239,35 @@ class ShareMounter {
                                             mount_options,
                                             &requestID,
                                             queue)
-        {(stat:Int32, requestID:AsyncRequestID?, mountpoints:CFArray?) -> Void in
-            myLogger.logit(.debug, message: "Mounted \(mountpoints)")
-            print(requestID!)
-            //print("***Decrementing shareCount***")
-            //print(self.shareCount)
-
-            self.shareCount -= 1
+            {(stat:Int32, requestID:AsyncRequestID?, mountpoints:CFArray?) -> Void in
+                print(requestID!)
+                for i in 0...(self.all_shares.count - 1) {
+                    if self.all_shares[i].reqID == requestID {
+                        if stat == 0{
+                            myLogger.logit(.debug, message: "Mounted share: " + self.all_shares[i].name)
+                            self.all_shares[i].mountStatus = .mounted
+                            self.all_shares[i].reqID = nil
+                        } else {
+                            myLogger.logit(.debug, message: "Error on mounting share: " + self.all_shares[i].name)
+                            self.all_shares[i].mountStatus = .errorOnMount
+                            self.all_shares[i].reqID = nil
+                        }
+                    }
+                }
+            }
+            all_shares[i].mountStatus = .mounting
+            all_shares[i].reqID = requestID
+            all_shares[i].attemptDate = Date()
+        } else if all_shares[i].mountStatus == .errorOnMount {
+            // clean up any errored mounts
+            let mountInterval = (all_shares[i].attemptDate?.timeIntervalSinceNow)!
+            if abs(mountInterval) > 5 * 60 {
+                all_shares[i].mountStatus == .toBeMounted
+            }
+            }
         }
-        myLogger.logit(.base, message: "Mounting error: " + String(describing: mountError))
     }
+
 
     // synchronous share mount function
     // this makes the app go all beach-bally so
