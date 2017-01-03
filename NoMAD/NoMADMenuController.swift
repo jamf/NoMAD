@@ -77,7 +77,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     var updateRunning = false
     var menuAnimated = false
 
-    //let myShareMounter = ShareMounter()
+    let myShareMounter = ShareMounter()
 
     var menuAnimationTimer = Timer()
 
@@ -987,7 +987,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         // Share Mounter setup taken out for now
 
                         //self.myShareMounter.asyncMountShare("smb:" + defaults.stringForKey("UserHome")!)
-                        //self.myShareMounter.mount()
+                        self.myShareMounter.mount()
                     }
                 })
 
