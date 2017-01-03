@@ -122,7 +122,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         DistributedNotificationCenter.default.addObserver(self, selector: #selector(interfaceModeChanged), name: NSNotification.Name(rawValue: "AppleInterfaceThemeChangedNotification"), object: nil)
 
-        startMenuAnimationTimer()
+        //startMenuAnimationTimer()
 
         loginWindow.delegate = self
         passwordChangeWindow.delegate = self
@@ -163,7 +163,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             configureChrome()
         }
 
-        stopMenuAnimationTimer()
+        //stopMenuAnimationTimer()
 
         // set up menu titles w/translation
         NoMADMenuLockScreen.title = "Lock Screen".translate

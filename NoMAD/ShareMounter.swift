@@ -154,10 +154,12 @@ class ShareMounter {
 
             // loop through all the reasons to not mount this share
 
-            if all_shares[i].mountStatus == .mounted {
+            if all_shares[i].mountStatus == .mounted && mountedShares.contains(all_shares[i].url){
                 // already mounted
                 myLogger.logit(.debug, message: "Skipping mount because it's already mounted.")
                 continue
+            } else {
+                all_shares[i].mountStatus == .unmounted
             }
 
             if !all_shares[i].autoMount {
@@ -371,7 +373,7 @@ class ShareMounter {
                     myLogger.logit(.debug, message: "Volume: " + share.path + " is not a network volume.")
                 }
             } catch {
-                myLogger.logit(.debug, message: "Promblem getting the retained value of the share.")
+                myLogger.logit(.debug, message: "Problem getting the retained value of the share.")
                 continue
             }
         }
