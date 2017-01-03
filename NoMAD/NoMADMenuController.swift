@@ -864,7 +864,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             dateFormatter.dateStyle = .medium
             dateFormatter.timeStyle = .short
 
-            myWorkQueue.async(execute: {
+            myWorkQueue.sync(execute: {
                 //self.startMenuAnimationTimer()
 
                 self.userInformation.getUserInfo()
