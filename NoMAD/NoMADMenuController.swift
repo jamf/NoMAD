@@ -747,6 +747,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
     func stopMenuAnimationTimer() {
         menuAnimationTimer.invalidate()
+        //menuAnimationTimer.invalidate()
         menuAnimated = false
     }
 
@@ -823,8 +824,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         let reachCheckQueue = DispatchQueue(label: "com.trusourcelabs.NoMAD.reachability", attributes: [])
 
+        if !menuAnimated {
         startMenuAnimationTimer()
-
+        }
+        
         reachCheckQueue.async(execute: {
 
         let host = defaults.string(forKey: Preferences.aDDomain)
@@ -854,9 +857,11 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         if !reachCheck {
             myLogger.logit(.base, message: "Reachability check timed out.")
         }
-
+        
+        if menuAnimated {
         stopMenuAnimationTimer()
-
+        }
+        
         if abs(lastStatusCheck.timeIntervalSinceNow) > 3 {
 
             // through the magic of code blocks we'll update in the background
@@ -869,7 +874,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
                 self.userInformation.getUserInfo()
 
-                self.menuAnimationTimer.invalidate()
+                //self.menuAnimationTimer.invalidate()
 
                 DispatchQueue.main.sync(execute: { () -> Void in
 
@@ -1049,8 +1054,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
             // just in case we're still throbbing
 
-            stopMenuAnimationTimer()
-            stopMenuAnimationTimer()
+            //stopMenuAnimationTimer()
+            //stopMenuAnimationTimer()
 
 
             if let expireDate = defaults.object(forKey: Preferences.lastCertificateExpiration) as? Date {
