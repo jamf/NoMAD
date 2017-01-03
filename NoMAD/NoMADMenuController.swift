@@ -739,16 +739,18 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         if !menuAnimated {
         menuAnimationTimer = Timer(timeInterval: 0.5, target: self, selector: #selector(animateMenuItem), userInfo: nil, repeats: true)
         statusItem.menu = NSMenu()
-        RunLoop.current.add(menuAnimationTimer, forMode: RunLoopMode.defaultRunLoopMode)
+        RunLoop.current.add(menuAnimationTimer, forMode: RunLoopMode.commonModes)
         menuAnimationTimer.fire()
             menuAnimated = true
         }
     }
 
     func stopMenuAnimationTimer() {
+        if menuAnimated{
         menuAnimationTimer.invalidate()
         //menuAnimationTimer.invalidate()
         menuAnimated = false
+        }
     }
 
     // function to configure Chrome
@@ -821,12 +823,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         var reachCheck = false
         let reachCheckDate = Date()
+        
 
-        let reachCheckQueue = DispatchQueue(label: "com.trusourcelabs.NoMAD.reachability", attributes: [])
-
-        if !menuAnimated {
-        startMenuAnimationTimer()
-        }
+        let reachCheckQueue = DispatchQueue(label: "com.trusourcelabs.NoMAD.reachability", qos: .background, attributes: [] )
         
         reachCheckQueue.async(execute: {
 
@@ -851,15 +850,11 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         while !reachCheck && (abs(reachCheckDate.timeIntervalSinceNow) < 5) {
             RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
-            myLogger.logit(.debug, message: "Waiting for reachability check to return.")
+            //myLogger.logit(.debug, message: "Waiting for reachability check to return.")
         }
 
         if !reachCheck {
             myLogger.logit(.base, message: "Reachability check timed out.")
-        }
-        
-        if menuAnimated {
-        stopMenuAnimationTimer()
         }
         
         if abs(lastStatusCheck.timeIntervalSinceNow) > 3 {
@@ -876,7 +871,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
                 //self.menuAnimationTimer.invalidate()
 
-                DispatchQueue.main.sync(execute: { () -> Void in
+                DispatchQueue.main.async(execute: { () -> Void in
 
                     // build the menu
 
