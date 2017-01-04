@@ -603,7 +603,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         } else {
             statusItem.image = iconOnOn
         }
-        print("***Animation pulse***")
     }
 
     func testSite(caURL: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
