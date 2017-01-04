@@ -864,14 +864,14 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             dateFormatter.dateStyle = .medium
             dateFormatter.timeStyle = .short
 
-            myWorkQueue.sync(execute: {
+            myWorkQueue.async(execute: {
                 //self.startMenuAnimationTimer()
 
                 self.userInformation.getUserInfo()
 
                 //self.menuAnimationTimer.invalidate()
 
-                DispatchQueue.main.async(execute: { () -> Void in
+                DispatchQueue.main.sync(execute: { () -> Void in
 
                     // build the menu
 
@@ -990,6 +990,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         //self.myShareMounter.mount()
                     }
                 })
+
+                //self.startMenuAnimationTimer()
+
+                self.userInformation.getUserInfo()
+
+                //self.menuAnimationTimer.invalidate()
 
                 // check if we need to renew the ticket
 
