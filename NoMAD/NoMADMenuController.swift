@@ -991,12 +991,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     }
                 })
 
-                //self.startMenuAnimationTimer()
-
-                self.userInformation.getUserInfo()
-
-                //self.menuAnimationTimer.invalidate()
-
                 // check if we need to renew the ticket
 
                 if defaults.bool(forKey: Preferences.renewTickets) && self.userInformation.status == "Logged In" && ( abs(self.userInformation.myLDAPServers.tickets.expire.timeIntervalSinceNow) <= Double(defaults.integer(forKey: Preferences.secondsToRenew))) {
