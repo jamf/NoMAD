@@ -154,7 +154,7 @@ class ShareMounter {
 
             // loop through all the reasons to not mount this share
 
-            if all_shares[i].mountStatus == .mounted && mountedShares.contains(all_shares[i].url){
+            if all_shares[i].mountStatus == .mounted || all_shares[i].mountStatus == .mounting || mountedShares.contains(all_shares[i].url){
                 // already mounted
                 myLogger.logit(.debug, message: "Skipping mount because it's already mounted.")
                 continue
@@ -186,6 +186,8 @@ class ShareMounter {
             } else {
                 all_shares[i].mountStatus = .toBeMounted
             }
+
+        if all_shares[i].mountStatus == .toBeMounted {
 
         let open_options : CFMutableDictionary = openOptionsDict()
         var mount_options = mountOptionsDict()
@@ -228,8 +230,6 @@ class ShareMounter {
         var requestID: AsyncRequestID? = nil
         let queue = DispatchQueue.main
 
-        if all_shares[i].mountStatus == .toBeMounted {
-
             myLogger.logit(.debug, message: "Attempting to mount: " + String(describing: all_shares[i].url))
             var mountError: Int32? = nil
 
@@ -260,6 +260,7 @@ class ShareMounter {
             all_shares[i].mountStatus = .mounting
             all_shares[i].reqID = requestID
             all_shares[i].attemptDate = Date()
+
         } else if all_shares[i].mountStatus == .errorOnMount {
             // clean up any errored mounts
             let mountInterval = (all_shares[i].attemptDate?.timeIntervalSinceNow)!
@@ -350,24 +351,16 @@ class ShareMounter {
                 switch myType! {
                 case "smbfs"    :
                     myLogger.logit(.debug, message: "Volume: " + share.path + " is an SMB network volume.")
-                    let shareCFURL = NetFSCopyURLForRemountingVolume(share as CFURL!).takeRetainedValue() as NSURL
-                    let shareURL = URL(string: (shareCFURL.scheme! + "://" + shareCFURL.host! + shareCFURL.path!))
-                    mountedShares.append(shareURL!)
+                    mountedShares.append(getURL(share: share))
                 case "afpfs"    :
                     myLogger.logit(.debug, message: "Volume: " + share.path + " is an AFP network volume.")
-                    let shareCFURL = NetFSCopyURLForRemountingVolume(share as CFURL!).takeRetainedValue() as NSURL
-                    let shareURL = URL(string: (shareCFURL.scheme! + "://" + shareCFURL.host! + shareCFURL.path!))
-                    mountedShares.append(shareURL!)
+                    mountedShares.append(getURL(share: share))
                 case "nfsfs"    :
                     myLogger.logit(.debug, message: "Volume: " + share.path + " is an NFS network volume.")
-                    let shareCFURL = NetFSCopyURLForRemountingVolume(share as CFURL!).takeRetainedValue() as NSURL
-                    let shareURL = URL(string: (shareCFURL.scheme! + "://" + shareCFURL.host! + shareCFURL.path!))
-                    mountedShares.append(shareURL!)
+                    mountedShares.append(getURL(share: share))
                 case "webdavfs"    :
                     myLogger.logit(.debug, message: "Volume: " + share.path + " is a WebDAV network volume.")
-                    let shareCFURL = NetFSCopyURLForRemountingVolume(share as CFURL!).takeRetainedValue() as NSURL
-                    let shareURL = URL(string: (shareCFURL.scheme! + "://" + shareCFURL.host! + shareCFURL.path!))
-                    mountedShares.append(shareURL!)
+                    mountedShares.append(getURL(share: share))
                 default :
                     // not a remote share
                     myLogger.logit(.debug, message: "Volume: " + share.path + " is not a network volume.")
@@ -378,5 +371,15 @@ class ShareMounter {
             }
         }
         myLogger.logit(.debug, message: "Mounted shares: " + String(describing: mountedShares) )
+    }
+
+    private func getURL(share: URL) -> URL {
+        let shareURLUnmanaged = NetFSCopyURLForRemountingVolume(share as CFURL)
+        if shareURLUnmanaged != nil {
+            let shareURL: URL = shareURLUnmanaged?.takeRetainedValue() as! URL
+            return URL(string: (shareURL.scheme! + "://" + shareURL.host! + shareURL.path))!
+        } else {
+            return URL(fileURLWithPath: "")
+        }
     }
 }

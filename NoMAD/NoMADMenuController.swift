@@ -80,8 +80,11 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     let myShareMounter = ShareMounter()
 
     var menuAnimationTimer = Timer()
+    var delayTimer = Timer()
 
     let myWorkQueue = DispatchQueue(label: "com.trusourcelabs.NoMAD.background_work_queue", attributes: [])
+    let shareMounterQueue = DispatchQueue(label: "com.trusourcelabs.NoMAD.shareMounting", attributes: [])
+    let reachCheckQueue = DispatchQueue(label: "com.trusourcelabs.NoMAD.reachability", attributes: [])
 
     var selfService: SelfServiceType?
 
@@ -122,7 +125,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         DistributedNotificationCenter.default.addObserver(self, selector: #selector(interfaceModeChanged), name: NSNotification.Name(rawValue: "AppleInterfaceThemeChangedNotification"), object: nil)
 
-        //startMenuAnimationTimer()
+        startMenuAnimationTimer()
 
         loginWindow.delegate = self
         passwordChangeWindow.delegate = self
@@ -163,7 +166,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             configureChrome()
         }
 
-        //stopMenuAnimationTimer()
+        stopMenuAnimationTimer()
 
         // set up menu titles w/translation
         NoMADMenuLockScreen.title = "Lock Screen".translate
@@ -741,9 +744,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     func startMenuAnimationTimer() {
 
         if !menuAnimated {
-        menuAnimationTimer = Timer(timeInterval: 0.5, target: self, selector: #selector(animateMenuItem), userInfo: nil, repeats: true)
-        statusItem.menu = NSMenu()
-        RunLoop.current.add(menuAnimationTimer, forMode: RunLoopMode.defaultRunLoopMode)
+        menuAnimationTimer = Timer(timeInterval: 0.25, target: self, selector: #selector(animateMenuItem), userInfo: nil, repeats: true)
+            //statusItem.menu = NSMenu()
+        RunLoop.main.add(menuAnimationTimer, forMode: RunLoopMode.defaultRunLoopMode)
         menuAnimationTimer.fire()
             menuAnimated = true
         }
@@ -826,8 +829,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         var reachCheck = false
         let reachCheckDate = Date()
 
-        let reachCheckQueue = DispatchQueue(label: "com.trusourcelabs.NoMAD.reachability", attributes: [])
-
         startMenuAnimationTimer()
 
         reachCheckQueue.async(execute: {
@@ -852,15 +853,13 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         })
 
         while !reachCheck && (abs(reachCheckDate.timeIntervalSinceNow) < 5) {
-            RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
+            RunLoop.main.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
             myLogger.logit(.debug, message: "Waiting for reachability check to return.")
         }
 
         if !reachCheck {
             myLogger.logit(.base, message: "Reachability check timed out.")
         }
-
-        stopMenuAnimationTimer()
 
         if abs(lastStatusCheck.timeIntervalSinceNow) > 3 {
 
@@ -870,11 +869,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             dateFormatter.timeStyle = .short
 
             myWorkQueue.async(execute: {
-                //self.startMenuAnimationTimer()
 
                 self.userInformation.getUserInfo()
-
-                self.menuAnimationTimer.invalidate()
 
                 DispatchQueue.main.sync(execute: { () -> Void in
 
@@ -989,13 +985,18 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
                         }
                     }
-                    
+
                     if self.userInformation.status == "Logged In" {
-                    self.myShareMounter.connectedState = self.userInformation.connected
-                    self.myShareMounter.userPrincipal = self.userInformation.userPrincipal
-                    self.myShareMounter.getMountedShares()
-                    self.myShareMounter.getMounts()
-                    self.myShareMounter.mountShares()
+
+                    // we put this in a serial queue to ensure we don't overthread
+
+                    self.shareMounterQueue.async(execute: {
+                        self.myShareMounter.connectedState = self.userInformation.connected
+                        self.myShareMounter.userPrincipal = self.userInformation.userPrincipal
+                        self.myShareMounter.getMountedShares()
+                        self.myShareMounter.getMounts()
+                        self.myShareMounter.mountShares()
+                        })
                     }
                 })
 
@@ -1050,16 +1051,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 self.updateRunning = false
             })
 
+            stopMenuAnimationTimer()
+
             // mark the time and clear the update scheduled flag
             
             lastStatusCheck = Date()
             updateScheduled = false
-
-            // just in case we're still throbbing
-
-            stopMenuAnimationTimer()
-            stopMenuAnimationTimer()
-
 
             if let expireDate = defaults.object(forKey: Preferences.lastCertificateExpiration) as? Date {
                 if expireDate != Date.distantPast {
@@ -1071,7 +1068,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         } else {
             myLogger.logit(.info, message:"Time between system checks is too short, delaying")
             if ( !updateScheduled ) {
-                Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(updateUserInfo), userInfo: nil, repeats: false)
+                delayTimer = Timer(timeInterval: 3.0, target: self, selector: #selector(updateUserInfo), userInfo: nil, repeats: false) //Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(updateUserInfo), userInfo: nil, repeats: false)
+                RunLoop.main.add(delayTimer, forMode: RunLoopMode.defaultRunLoopMode)
+                //delayTimer.fire()
                 updateScheduled = true
             }
         }
