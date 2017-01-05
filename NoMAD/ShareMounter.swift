@@ -26,7 +26,7 @@ enum shareKeys {
     static let connectedOnly = "ConnectedOnly"
     static let options = "Options"
     static let name = "Name"
-    static let autoMount = "Automount"
+    static let autoMount = "AutoMount"
     static let localMount = "LocalMount"
     static let url = "URL"
 }
@@ -42,6 +42,7 @@ struct share_info {
     var autoMount: Bool
     var reqID: AsyncRequestID?
     var attemptDate: Date?
+    var localMountPoints: String?
 }
 
 struct mounting_shares_info {
@@ -64,6 +65,8 @@ class ShareMounter {
     lazy var all_mounting_shares = [mounting_shares_info]()
     var connectedState: Bool = false
 
+    var mountedSharePaths = [URL:String]()
+
     init() {
         sharePrefs = UserDefaults.init(suiteName: "com.trusourcelabs.NoMAD.shares")
     }
@@ -79,7 +82,7 @@ class ShareMounter {
 
             // adding the home mount to the shares
             myLogger.logit(.debug, message: "Adding home share to automounts.")
-            var currentShare = share_info(groups: homeDict?[shareKeys.groups] as! [String], url: URL(string: "smb:" + (defaults.string(forKey: Preferences.userHome))!)!, name: "Home Sharepoint", options: homeDict?[shareKeys.options] as! [String], connectedOnly: true, mountStatus: mountStatus.toBeMounted, localMount: nil, autoMount: true, reqID: nil, attemptDate: nil)
+            var currentShare = share_info(groups: homeDict?[shareKeys.groups] as! [String], url: URL(string: "smb:" + (defaults.string(forKey: Preferences.userHome))!)!, name: "Home Sharepoint", options: homeDict?[shareKeys.options] as! [String], connectedOnly: true, mountStatus: mountStatus.toBeMounted, localMount: nil, autoMount: true, reqID: nil, attemptDate: nil, localMountPoints: nil)
 
             if mountedShares.contains(currentShare.url) {
                 currentShare.mountStatus = .mounted
@@ -94,24 +97,38 @@ class ShareMounter {
 
         for mount in mounts {
             // get all the pieces
-            var currentShare = share_info(groups: mount["Groups"]! as! [String], url: URL(string: mount["URL"] as! String)!, name: mount["Name"] as! String, options: mount["Options"] as! [String], connectedOnly: mount["ConnectedOnly"] as! Bool, mountStatus: .unmounted, localMount: mount["LocalMount"] as! String, autoMount: true, reqID: nil, attemptDate: nil)
+            var currentShare = share_info(groups: mount["Groups"]! as! [String], url: URL(string: mount["URL"] as! String)!, name: mount["Name"] as! String, options: mount["Options"] as! [String], connectedOnly: mount["ConnectedOnly"] as! Bool, mountStatus: .unmounted, localMount: mount["LocalMount"] as! String, autoMount: mount[shareKeys.autoMount] as! Bool, reqID: nil, attemptDate: nil, localMountPoints: nil)
 
             // see if we know about it
 
             if knownShares.contains(currentShare.url) {
-                //myLogger.logit(.debug, message: "Skipping known share:" + String(describing: currentShare.url))
-                continue
-            }
-
-            // check if it's already mounted
-
-            if mountedShares.contains(currentShare.url) {
-                currentShare.mountStatus = .mounted
-            }
-
+                myLogger.logit(.debug, message: "Skipping known share:" + String(describing: currentShare.url))
+            } else {
             knownShares.append(currentShare.url)
             all_shares.append(currentShare)
+            }
+            // TODO: Sync up if any new shares are in the prefs, or if any known shares have been removed
+            // Also need to ensure that we are up to date on the pref bits, i.e. AutoMount in case they've changed
+
         }
+        refreshMounts()
+    }
+
+    // refresh what's been mounted
+    func refreshMounts() {
+
+        if all_shares.count == 0 {
+            return
+        }
+
+    for index in 0...(all_shares.count - 1) {
+        if mountedShares.contains(all_shares[index].url) {
+            all_shares[index].mountStatus = .mounted
+            all_shares[index].localMountPoints = mountedSharePaths[all_shares[index].url]
+        } else if all_shares[index].mountStatus != .mounting {
+            all_shares[index].mountStatus = .unmounted
+        }
+    }
     }
 
     // create a dictionary for open options
@@ -249,6 +266,8 @@ class ShareMounter {
                             myLogger.logit(.debug, message: "Mounted share: " + self.all_shares[i].name)
                             self.all_shares[i].mountStatus = .mounted
                             self.all_shares[i].reqID = nil
+                            let mounts = mountpoints as! Array<String>
+                            self.all_shares[i].localMountPoints = mounts[0] ?? ""
                         } else {
                             myLogger.logit(.debug, message: "Error on mounting share: " + self.all_shares[i].name)
                             self.all_shares[i].mountStatus = .errorOnMount
@@ -327,6 +346,7 @@ class ShareMounter {
         // zero out the currently mounted shares
 
         mountedShares.removeAll()
+        mountedSharePaths.removeAll()
 
         let myShares = fm.mountedVolumeURLs(includingResourceValuesForKeys: nil, options: FileManager.VolumeEnumerationOptions(rawValue: 0))
 
@@ -351,16 +371,24 @@ class ShareMounter {
                 switch myType! {
                 case "smbfs"    :
                     myLogger.logit(.debug, message: "Volume: " + share.path + " is an SMB network volume.")
-                    mountedShares.append(getURL(share: share))
+                    let shareURL = getURL(share: share)
+                    mountedShares.append(shareURL)
+                    mountedSharePaths[shareURL] = share.path
                 case "afpfs"    :
                     myLogger.logit(.debug, message: "Volume: " + share.path + " is an AFP network volume.")
-                    mountedShares.append(getURL(share: share))
+                    let shareURL = getURL(share: share)
+                    mountedShares.append(shareURL)
+                    mountedSharePaths[shareURL] = share.path
                 case "nfsfs"    :
                     myLogger.logit(.debug, message: "Volume: " + share.path + " is an NFS network volume.")
-                    mountedShares.append(getURL(share: share))
+                    let shareURL = getURL(share: share)
+                    mountedShares.append(shareURL)
+                    mountedSharePaths[shareURL] = share.path
                 case "webdavfs"    :
                     myLogger.logit(.debug, message: "Volume: " + share.path + " is a WebDAV network volume.")
-                    mountedShares.append(getURL(share: share))
+                    let shareURL = getURL(share: share)
+                    mountedShares.append(shareURL)
+                    mountedSharePaths[shareURL] = share.path
                 default :
                     // not a remote share
                     myLogger.logit(.debug, message: "Volume: " + share.path + " is not a network volume.")

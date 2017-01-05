@@ -54,6 +54,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     @IBOutlet weak var NoMADMenuLogInAlternate: NSMenuItem!
 
     let NoMADMenuHome = NSMenuItem()
+    let myShareMenuItem = NSMenuItem()
 
     // menu bar icons
     var iconOnOn = NSImage(named: "NoMAD-statusicon-on-on")
@@ -705,6 +706,29 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         }
     }
 
+    // Share Mount functions
+
+    @objc func mountShareFromMenu(share: URL) {
+
+    }
+
+    func openShareFromMenu(_ sender: AnyObject) {
+
+        print("***" + sender.title + "***")
+
+        for share in myShareMounter.all_shares {
+            if share.name == sender.title {
+                if share.mountStatus != .mounted && share.mountStatus != .mounting {
+                myShareMounter.syncMountShare(share.url, options: share.options)
+                } else if share.mountStatus == .mounted {
+                    print(share.localMountPoints ?? "")
+                    // open up the local shares
+                    NSWorkspace.shared().open(URL(fileURLWithPath: share.localMountPoints!, isDirectory: true))
+                }
+            }
+        }
+    }
+
     // change the menu item if it's dark
 
     func interfaceModeChanged() {
@@ -998,6 +1022,51 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         self.myShareMounter.mountShares()
                         })
                     }
+                    // build the Shares Menu
+
+                    if self.myShareMounter.all_shares.count > 0 {
+                        // Menu Items and Menu
+
+                        self.myShareMenuItem.title = "File Servers"
+
+                        let myShareMenu = NSMenu()
+                        for share in self.myShareMounter.all_shares {
+                            myShareMenu.addItem(withTitle: share.name, action: nil, keyEquivalent: "")
+                            myShareMenu.item(withTitle: share.name)?.action = #selector(self.openShareFromMenu)
+                            myShareMenu.item(withTitle: share.name)?.target = self.NoMADMenuLogOut.target
+                            myShareMenu.item(withTitle: share.name)?.toolTip = String(describing: share.url)
+                            if share.mountStatus == .mounted {
+                                myShareMenu.item(withTitle: share.name)?.isEnabled = true
+                                myShareMenu.item(withTitle: share.name)?.state = 1
+                            } else if share.mountStatus == .mounting {
+                                myShareMenu.item(withTitle: share.name)?.isEnabled = false
+                                myShareMenu.item(withTitle: share.name)?.state = 2
+                            } else if share.mountStatus == .unmounted {
+                                myShareMenu.item(withTitle: share.name)?.isEnabled = true
+                                myShareMenu.item(withTitle: share.name)?.state = 0
+                            }
+                        }
+
+                        myShareMenu.addItem(NSMenuItem.separator())
+                        myShareMenu.addItem(withTitle: "Edit...", action: nil, keyEquivalent: "")
+
+                        // add the menu to the menu item
+                        self.myShareMenuItem.submenu = myShareMenu
+
+                        // light it up
+                        if !self.NoMADMenu.items.contains(self.myShareMenuItem) {
+                            let lockIndex = self.NoMADMenu.index(of: self.NoMADMenuLockScreen)
+                            self.NoMADMenu.insertItem(self.myShareMenuItem, at: (lockIndex + 1 ))
+                        }
+                    } else {
+                        // remove the menu if it exists
+                        
+                        if self.NoMADMenu.items.contains(self.myShareMenuItem) {
+                            self.NoMADMenu.removeItem(self.myShareMenuItem)
+                        }
+                        
+                    }
+
                 })
 
                 // check if we need to renew the ticket
@@ -1005,9 +1074,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 if defaults.bool(forKey: Preferences.renewTickets) && self.userInformation.status == "Logged In" && ( abs(self.userInformation.myLDAPServers.tickets.expire.timeIntervalSinceNow) <= Double(defaults.integer(forKey: Preferences.secondsToRenew))) {
                     self.renewTickets()
                 }
-
-                // check if we need to notify the user
-
 
                 // reset the counter if the password change is over the default
 
