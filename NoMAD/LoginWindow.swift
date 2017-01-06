@@ -182,6 +182,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                 //alertController.addButton(withTitle: "Sync")
 
                 let localPassword = NSSecureTextField(frame: CGRect(x: 0, y: 0, width: 200, height: 24))
+                localPassword.becomeFirstResponder()
+                
                 alertController.accessoryView = localPassword
                 guard self.window != nil else {
                     myLogger.logit(LogLevel.debug, message: "Window does not exist.")
