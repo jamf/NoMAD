@@ -1014,7 +1014,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
                     // we put this in a serial queue to ensure we don't overthread
 
-                    self.shareMounterQueue.async(execute: {
+                    self.shareMounterQueue.sync(execute: {
                         self.myShareMounter.connectedState = self.userInformation.connected
                         self.myShareMounter.userPrincipal = self.userInformation.userPrincipal
                         self.myShareMounter.getMountedShares()
