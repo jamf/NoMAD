@@ -12,6 +12,7 @@
 		1A08F1EF1D36CE0C00FA68C4 /* PreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A08F1EE1D36CE0C00FA68C4 /* PreferencesWindow.xib */; };
 		1A08F1F31D36DA0900FA68C4 /* NoMADApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A08F1F21D36DA0900FA68C4 /* NoMADApplication.swift */; };
 		1A206B2D1D58312800539FA6 /* KeychainUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A206B2C1D58312800539FA6 /* KeychainUtil.swift */; };
+		1A22AEC11E200D600012220D /* ShareEditWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A22AEC01E200D600012220D /* ShareEditWindow.xib */; };
 		1A24EF481D7F01B3006A1866 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A24EF471D7F01B3006A1866 /* Logger.swift */; };
 		1A26AFF51D3BE620000776A4 /* WindowsCATools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A26AFF41D3BE620000776A4 /* WindowsCATools.swift */; };
 		1A26AFF71D46E4BF000776A4 /* GetHelp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A26AFF61D46E4BF000776A4 /* GetHelp.swift */; };
@@ -63,6 +64,7 @@
 		1A08F1EE1D36CE0C00FA68C4 /* PreferencesWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PreferencesWindow.xib; sourceTree = "<group>"; };
 		1A08F1F21D36DA0900FA68C4 /* NoMADApplication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NoMADApplication.swift; sourceTree = "<group>"; };
 		1A206B2C1D58312800539FA6 /* KeychainUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = KeychainUtil.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		1A22AEC01E200D600012220D /* ShareEditWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ShareEditWindow.xib; sourceTree = "<group>"; };
 		1A24EF471D7F01B3006A1866 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		1A26AFF41D3BE620000776A4 /* WindowsCATools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = WindowsCATools.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		1A26AFF61D46E4BF000776A4 /* GetHelp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetHelp.swift; sourceTree = "<group>"; };
@@ -128,6 +130,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1A22AEBF1E200D0A0012220D /* Share Mount */ = {
+			isa = PBXGroup;
+			children = (
+				1ADCEC611D75476D005D33F5 /* ShareMounter.swift */,
+				1A22AEC01E200D600012220D /* ShareEditWindow.xib */,
+			);
+			name = "Share Mount";
+			sourceTree = "<group>";
+		};
 		1AE1DFBC1DA69CF100456E3E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -144,7 +155,6 @@
 				34E186BD1D9C681000265138 /* DNSResolver.h */,
 				34E186BE1D9C681000265138 /* DNSResolver.m */,
 				345226E81DAA266B0066C922 /* Network.swift */,
-				1ADCEC611D75476D005D33F5 /* ShareMounter.swift */,
 			);
 			name = Networking;
 			sourceTree = "<group>";
@@ -256,6 +266,7 @@
 		84CC67DD1D30A18A00115C76 /* NoMAD */ = {
 			isa = PBXGroup;
 			children = (
+				1A22AEBF1E200D0A0012220D /* Share Mount */,
 				1AFBDC681DEE4C0800C19AE1 /* Networking */,
 				1AFBDC6E1DEE4DC400C19AE1 /* CoreBits */,
 				1AE1DFBC1DA69CF100456E3E /* Resources */,
@@ -367,6 +378,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				84CC67E11D30A18A00115C76 /* Assets.xcassets in Resources */,
+				1A22AEC11E200D600012220D /* ShareEditWindow.xib in Resources */,
 				1AFBDC671DE675C000C19AE1 /* DefaultPreferences.plist in Resources */,
 				346CD2751DA2065D00255F66 /* Localizable.strings in Resources */,
 				1AE1DFC11DA6B1E100456E3E /* Languages.plist in Resources */,
