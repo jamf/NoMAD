@@ -143,7 +143,7 @@ clearLibDefaults = false
 
     // Checks if the password entered matches the password
     // for the current console user's default keychain.
-    func checkKeychainPassword(_ password: String) throws -> Bool {
+    func checkKeychainPassword(_ password: String, _ lockFirst: Bool = false ) throws -> Bool {
         var getDefaultKeychain: OSStatus
         var myDefaultKeychain: SecKeychain?
         var err: OSStatus
@@ -152,6 +152,10 @@ clearLibDefaults = false
         getDefaultKeychain = SecKeychainCopyDefault(&myDefaultKeychain)
         if ( getDefaultKeychain == errSecNoDefaultKeychain ) {
             throw NoMADUserError.itemNotFound("Could not find Default Keychain")
+        }
+
+        if lockFirst {
+            err = SecKeychainLock(myDefaultKeychain)
         }
 
         // Test if the keychain password is correct by trying to unlock it.
