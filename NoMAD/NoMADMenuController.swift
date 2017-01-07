@@ -888,6 +888,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             myLogger.logit(.base, message: "Reachability check timed out.")
             self.lastStatusCheck = Date()
         }
+        
+        if abs(lastStatusCheck.timeIntervalSinceNow) > 3 || firstRun {
 
         if abs(lastStatusCheck.timeIntervalSinceNow) > 3 {
 
@@ -899,6 +901,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             myWorkQueue.async(execute: {
 
                 // don't do this if we don't have a network
+
+                self.userInformation.getUserInfo()
 
                 DispatchQueue.main.sync(execute: { () -> Void in
 
@@ -1145,9 +1149,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 delayTimer = Timer(timeInterval: 3.0, target: self, selector: #selector(updateUserInfo), userInfo: nil, repeats: false) //Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(updateUserInfo), userInfo: nil, repeats: false)
                 RunLoop.main.add(delayTimer, forMode: RunLoopMode.defaultRunLoopMode)
                 //delayTimer.fire()
+                Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(updateUserInfo), userInfo: nil, repeats: false)
+
                 updateScheduled = true
             }
         }
         stopMenuAnimationTimer()
     }
+}
 }

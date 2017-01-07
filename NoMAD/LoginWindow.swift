@@ -156,6 +156,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 
             if defaults.bool(forKey: Preferences.keychainPasswordMatch) && consoleUserIsAD && consoleUserPasswordIsCorrect {
 
+                myLogger.logit(LogLevel.debug, message: "Checking if keychain password needs to be chagned.")
+
                 let keychainUtil = KeychainUtil()
 
                 var storedPassword: String
