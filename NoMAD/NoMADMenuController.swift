@@ -891,8 +891,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         if abs(lastStatusCheck.timeIntervalSinceNow) > 3 || firstRun {
 
-        if abs(lastStatusCheck.timeIntervalSinceNow) > 3 {
-
             // through the magic of code blocks we'll update in the background
             let dateFormatter = DateFormatter()
             dateFormatter.dateStyle = .medium
@@ -1127,8 +1125,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
             })
 
-            stopMenuAnimationTimer()
-
             // mark the time and clear the update scheduled flag
             
             lastStatusCheck = Date()
@@ -1154,11 +1150,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(updateUserInfo), userInfo: nil, repeats: false)
 
                 updateScheduled = true
-                stopMenuAnimationTimer()
-
             }
         }
         stopMenuAnimationTimer()
     }
-}
 }
