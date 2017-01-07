@@ -17,7 +17,7 @@ class PasswordChange {
 
     func passwordChange() {
         if let passwordChangeType = defaults.string(forKey: Preferences.changePasswordType),
-            let passwordChangeOptions = defaults.string(forKey: Preferences.passwordChangeOptions) {
+            let passwordChangeOptions = defaults.string(forKey: Preferences.changePasswordOptions) {
             switch passwordChangeType {
             case "Task":
                 let result = cliTask(passwordChangeOptions)

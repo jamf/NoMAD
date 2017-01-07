@@ -101,6 +101,7 @@ enum Preferences {
     static let aDDomain = "ADDomain"
     static let autoConfigure = "AutoConfigure"
     static let changePasswordType = "ChangePasswordType"
+    static let changePasswordOptions = "ChangePasswordOptions"
     static let caribouTime = "CaribouTime"
     static let configureChrome = "ConfigureChrome"
     static let displayName = "DisplayName"
@@ -121,7 +122,8 @@ enum Preferences {
     static let lastPasswordExpireDate = "LastPasswordExpireDate"
     static let messageLocalSync = "MessageLocalSync"
     static let passwordExpireAlertTime = "PasswordExpireAlertTime"
-    static let passwordChangeOptions = "PasswordChangeOptions"
+
+    // static let passwordChangeOptions = "PasswordChangeOptions"
 
     /// Should NoMAD automatically attempt to renew Kerberos tickets on behalf of the user.
     static let renewTickets = "RenewTickets"

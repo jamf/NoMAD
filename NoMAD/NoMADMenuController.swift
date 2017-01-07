@@ -74,6 +74,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     let userInformation = UserInformation()
 
     var lastStatusCheck = Date().addingTimeInterval(-5000)
+    var firstRun = true
     var updateScheduled = false
     var updateRunning = false
     var menuAnimated = false
@@ -126,8 +127,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         DistributedNotificationCenter.default.addObserver(self, selector: #selector(interfaceModeChanged), name: NSNotification.Name(rawValue: "AppleInterfaceThemeChangedNotification"), object: nil)
 
-        startMenuAnimationTimer()
-
         loginWindow.delegate = self
         passwordChangeWindow.delegate = self
         preferencesWindow.delegate = self
@@ -167,7 +166,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             configureChrome()
         }
 
-        stopMenuAnimationTimer()
+        firstRun = false
 
         // set up menu titles w/translation
         NoMADMenuLockScreen.title = "Lock Screen".translate
@@ -582,17 +581,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // everything to do on a network change
     func doTheNeedfull() {
 
-        //   let qualityBackground = QOS_CLASS_BACKGROUND
-        //    let backgroundQueue = dispatch_get_global_queue(qualityBackground, 0)
-        //dispatch_async(myWorkQueue, {
-
         if ( self.userInformation.myLDAPServers.getDomain() == "not set" ) {
             //self.userInformation.myLDAPServers.tickets.getDetails()
             self.userInformation.myLDAPServers.currentDomain = defaults.string(forKey: Preferences.aDDomain)!
         }
 
         self.updateUserInfo()
-        // })
     }
 
     // simple function to renew tickets
@@ -766,7 +760,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
     // function to start the menu throbbing
     func startMenuAnimationTimer() {
-
         if !menuAnimated {
         menuAnimationTimer = Timer(timeInterval: 0.25, target: self, selector: #selector(animateMenuItem), userInfo: nil, repeats: true)
             //statusItem.menu = NSMenu()
@@ -777,9 +770,20 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     }
 
     func stopMenuAnimationTimer() {
+        if menuAnimated{
         menuAnimationTimer.invalidate()
         menuAnimationTimer.invalidate()
         menuAnimated = false
+        }
+
+        // now set it rights
+        if self.userInformation.status == "Connected" {
+            self.statusItem.image = self.iconOnOff
+        } else if self.userInformation.status == "Logged In" && self.userInformation.myLDAPServers.tickets.state {
+            self.statusItem.image = self.iconOnOn
+        } else {
+            self.statusItem.image = self.iconOffOff
+        }
     }
 
     // function to configure Chrome
@@ -840,6 +844,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         myLogger.logit(.base, message:"Updating User Info")
         updateRunning = true
 
+        startMenuAnimationTimer()
 
         // make sure the domain we're using is the domain we should be using
 
@@ -869,9 +874,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         if (flag.rawValue != UInt32(kSCNetworkFlagsReachable)) {
             // network isn't reachable
             myLogger.logit(.base, message: "Network is not reachable, delaying lookups.")
-            self.lastStatusCheck = Date()
-            self.updateRunning = false
-            return
+            //self.lastStatusCheck = Date()
         }
             reachCheck = true
         })
@@ -883,6 +886,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         if !reachCheck {
             myLogger.logit(.base, message: "Reachability check timed out.")
+            self.lastStatusCheck = Date()
         }
 
         if abs(lastStatusCheck.timeIntervalSinceNow) > 3 {
@@ -894,12 +898,11 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
             myWorkQueue.async(execute: {
 
-                self.userInformation.getUserInfo()
+                // don't do this if we don't have a network
 
                 DispatchQueue.main.sync(execute: { () -> Void in
 
                     // build the menu
-
 
                     self.statusItem.menu = self.NoMADMenu
 
@@ -1112,8 +1115,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     self.NoMADMenu.insertItem(self.NoMADMenuGetCertificate, at: (lockIndex + 1 ))
                     self.NoMADMenu.insertItem(self.NoMADMenuGetCertificateDate, at: (lockIndex + 2 ))
                 }
+
                 // login if we need to
-                self.autoLogin()
+                if reachCheck { self.autoLogin() }
                 self.updateRunning = false
             })
 
@@ -1133,6 +1137,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             }
         } else {
             myLogger.logit(.info, message:"Time between system checks is too short, delaying")
+
+            // clear the menu animation
+            self.updateRunning = false
+
             if ( !updateScheduled ) {
                 delayTimer = Timer(timeInterval: 3.0, target: self, selector: #selector(updateUserInfo), userInfo: nil, repeats: false) //Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(updateUserInfo), userInfo: nil, repeats: false)
                 RunLoop.main.add(delayTimer, forMode: RunLoopMode.defaultRunLoopMode)
@@ -1140,5 +1148,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 updateScheduled = true
             }
         }
+        stopMenuAnimationTimer()
     }
 }
