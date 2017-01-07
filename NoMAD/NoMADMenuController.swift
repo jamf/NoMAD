@@ -1123,6 +1123,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 // login if we need to
                 if reachCheck { self.autoLogin() }
                 self.updateRunning = false
+                self.stopMenuAnimationTimer()
+
             })
 
             stopMenuAnimationTimer()
@@ -1152,6 +1154,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(updateUserInfo), userInfo: nil, repeats: false)
 
                 updateScheduled = true
+                stopMenuAnimationTimer()
+
             }
         }
         stopMenuAnimationTimer()

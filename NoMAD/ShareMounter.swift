@@ -85,8 +85,13 @@ class ShareMounter: NSWindowController, NSWindowDelegate {
     func getMounts() {
 
         // check for home mount
-
-        let homeDict = sharePrefs?.dictionary(forKey: shareKeys.homeMount)!
+        
+        let homeDict = sharePrefs?.dictionary(forKey: shareKeys.homeMount)
+        
+        if homeDict == nil {
+            return
+        }
+        
         if ((homeDict?["Mount"]) as! Bool) {
 
             // adding the home mount to the shares
