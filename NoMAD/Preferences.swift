@@ -94,6 +94,8 @@ enum Preferences {
 
     // userShortName - r/o - string - the user's short name as pulled from AD
 
+    // userUPN - r/o - string - the current users UPN
+
     // verbose - r/w - bool - determines if verbose logging is enabled or not
     
     // x509CA - r/w - string - URL for the Windows WebCA for certificate generation
@@ -146,6 +148,7 @@ enum Preferences {
     static let useKeychain = "UseKeychain"
     static let userAging = "UserAging"
     static let userShortName = "UserShortName"
+    static let userUPN = "UserUPN"
 
     /// Should verbose logging be used. This will significantly increase log spew.
     static let verbose = "Verbose"

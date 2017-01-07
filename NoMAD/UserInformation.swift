@@ -310,6 +310,7 @@ class UserInformation {
             defaults.set(userPrincipalShort, forKey: Preferences.lastUser)
             defaults.set(userPasswordExpireDate, forKey: Preferences.lastPasswordExpireDate)
             defaults.set(groups, forKey: Preferences.groups)
+            defaults.set(UPN, forKey: Preferences.userUPN)
         }
     }
 }
