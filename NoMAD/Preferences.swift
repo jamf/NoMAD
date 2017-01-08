@@ -41,6 +41,7 @@ enum Preferences {
 
     // kerberosRealm - r/w - string - determines the Kerberos realm to use for all Kerberos activites. If left blank this will be set to the all-caps version of the AD Domain
 
+    // keychainItems - r/w - [String] - Array of keychain item names to be synced when changing passwords
     // keychainPasswordMatch - r/w - bool - determines if we should keep the keychain password the same as the login password if possible
 
     // lastCertificateExpiration - r/o - date - keeps track of the most future expiration date of certificates associated with the user's NT Principal for the Subj. Alternate Name on the certificate
@@ -113,6 +114,7 @@ enum Preferences {
     static let groups = "Groups"
     static let hidePrefs = "HidePrefs"
     static let kerberosRealm = "KerberosRealm"
+    static let keychainItems = "KeychainItems"
     static let keychainPasswordMatch = "KeychainPasswordMatch"
     static let lastCertificateExpiration = "LastCertificateExpiration"
     static let loginComamnd = "LoginComamnd"

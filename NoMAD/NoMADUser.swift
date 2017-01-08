@@ -307,18 +307,10 @@ clearLibDefaults = false
 
         // Test if the keychain password is correct by trying to unlock it.
 
-        var oldPasswordMutable = oldPassword
+        let oldPasswordLength = UInt32(oldPassword.characters.count)
+        let newPasswordLength = UInt32(newPassword1.characters.count)
 
-        err = SecKeychainUnlock(myDefaultKeychain, UInt32(oldPasswordMutable.characters.count), &oldPasswordMutable, true)
-
-        if err != noErr {
-            myLogger.logit(LogLevel.base, message: "Error unlocking default keychain to sync password.")
-            throw NoMADUserError.invalidResult("Error unlocking default keychain.")
-            return
-        }
-
-        err = SecKeychainChangePassword(myDefaultKeychain, UInt32(oldPassword.characters.count), oldPassword, UInt32(newPassword1.characters.count), newPassword1)
-
+        err = SecKeychainChangePassword(myDefaultKeychain, oldPasswordLength, oldPassword, newPasswordLength, newPassword1)
         if (err == noErr) {
             myLogger.logit(LogLevel.info, message: "Changed keychain password successfully.")
             return

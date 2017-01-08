@@ -51,7 +51,7 @@ struct mounting_shares_info {
     var mount_time: Date
 }
 
-class ShareMounter: NSWindowController, NSWindowDelegate {
+class ShareMounter: NSArrayController {
     var sharePrefs: UserDefaults? = UserDefaults.init(suiteName: "com.trusourcelabs.NoMAD.shares")
     var all_shares = [share_info]()
     let ws = NSWorkspace.init()
@@ -66,14 +66,6 @@ class ShareMounter: NSWindowController, NSWindowDelegate {
     var connectedState: Bool = false
 
     var mountedSharePaths = [URL:String]()
-
-    override var windowNibName: String? {
-        return "Share Edit Window"
-    }
-
-    override func windowWillLoad() {
-
-    }
 
         func windowShouldClose(_ sender: Any) -> Bool {
             return true

@@ -772,7 +772,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     func stopMenuAnimationTimer() {
         if menuAnimated{
         menuAnimationTimer.invalidate()
-        menuAnimationTimer.invalidate()
         menuAnimated = false
         }
 
@@ -1144,9 +1143,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.updateRunning = false
 
             if ( !updateScheduled ) {
-                delayTimer = Timer(timeInterval: 3.0, target: self, selector: #selector(updateUserInfo), userInfo: nil, repeats: false) //Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(updateUserInfo), userInfo: nil, repeats: false)
-                RunLoop.main.add(delayTimer, forMode: RunLoopMode.defaultRunLoopMode)
-                //delayTimer.fire()
                 Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(updateUserInfo), userInfo: nil, repeats: false)
 
                 updateScheduled = true
