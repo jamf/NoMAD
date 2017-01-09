@@ -206,7 +206,9 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                             let alertController = NSAlert()
                             alertController.messageText = "Invalid password. Please try again."
                             alertController.beginSheetModal(for: self.window!, completionHandler: nil)
+                            if myError != nil {
                             myLogger.logit(.base, message:myError!)
+                            }
                             myLogger.logit(.base, message:"Local password wrong.")
                             EXIT_FAILURE
                             // TODO: figure out if this is the proper way to handle this.
