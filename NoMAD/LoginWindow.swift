@@ -150,6 +150,41 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 
             let consoleUserIsAD = noMADUser.currentConsoleUserIsADuser()
 
+            // check to see if the keychain password is correct
+            // this is specific to the usecase where we're using the keychain, an AD user and
+            // the password was changed outside of NoMAD
+
+            if consoleUserIsAD && consoleUserPasswordIsCorrect {
+
+                myLogger.logit(LogLevel.debug, message: "Checking if keychain password needs to be chagned.")
+
+                let keychainUtil = KeychainUtil()
+
+                var storedPassword: String
+
+                do {
+                    storedPassword = try keychainUtil.findPassword(userNameChecked) } catch {
+                        myLogger.logit(LogLevel.debug, message: "Can't get password from keychain.")
+                        storedPassword = currentPassword
+                }
+
+                // check to make sure the entered password isn't the stored one
+
+                if storedPassword != currentPassword {
+                    // see if the keychain is still unlocked and we can use it
+                    let passWrong = try! noMADUser.checkKeychainPassword(storedPassword, true)
+
+                    if passWrong {
+                        // we need to update the keychain password to the new one
+                        do {
+                            try noMADUser.changeKeychainPassword(storedPassword, newPassword1: currentPassword, newPassword2: currentPassword)
+                            myLogger.logit(LogLevel.debug, message: "Updating keychain password to the new AD password.")
+                        } catch {
+                            myLogger.logit(LogLevel.debug, message: "Couldn't update keychain password to the new AD password.")
+                        }
+                    }
+                }
+            }
 
             // make sure the just logged in user is the current user and then reset the password warning
             // TODO: @mactroll - why is this 1296000?
