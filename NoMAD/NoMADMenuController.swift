@@ -320,7 +320,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         if ( certCATest != "" && certTemplateTest != "" ) {
 
-            let lastExpireTemp = defaults.object(forKey: Preferences.lastCertificateExpiration)
+            let lastExpireTemp = defaults.object(forKey: Preferences.lastCertificateExpiration) ?? ""
             var lastExpire: Date?
 
             if (String(describing: lastExpireTemp)) == "" {
