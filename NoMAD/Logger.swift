@@ -44,6 +44,9 @@ class Logger {
         if (defaults.bool(forKey: "Verbose") == true) {
             loglevel = .debug
             logit(.debug, message: "Debug logging enabled")
+        } else if (CommandLine.arguments.contains("-v")) {
+            loglevel = .debug
+            logit(.debug, message: "Debug logging enabled via flag")
         } else {
             loglevel = .base
         }
