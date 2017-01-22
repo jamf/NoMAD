@@ -528,7 +528,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 
     fileprivate func testLDAP ( _ host: String ) -> Bool {
 
-        if defaults.integer(forKey: Preferences.verbose) >= 1 {
+        if defaults.bool(forKey: Preferences.verbose) {
             myLogger.logit(.info, message:"Testing " + host + ".")
         }
         let attribute = "defaultNamingContext"

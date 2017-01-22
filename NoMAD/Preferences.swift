@@ -26,6 +26,8 @@ enum Preferences {
 
     // autoConfigure - r/w - bool - whether to use the autoconfigure mechanisms to set all of the defaults. Handled by AutoConfigure.swift
 
+    // configureChrome - r/w - bool - determines if we update the Chrome whitelisting for Kerberos auth
+
     // displayName - r/o - string - the long name of the currently signed in user
 
     // exportableKey - r/w - bool - determines if the private key for a NoMAD-generated certificate can be exported - default is false
@@ -72,6 +74,8 @@ enum Preferences {
 
     // template - r/w - string - the certificate template to be used for an X509 enrollment
 
+    // uPCAlert - r/w - bool - determines if we alert the user that the password was changed outside of NoMAD
+
     // userPrincipal - r/o - string - the Kerberos principal for the currently signed in user
 
     // userPasswordExpireDate - r/o - date - the last time the user was warned about their password expiring ***
@@ -95,7 +99,9 @@ enum Preferences {
     static let aDDomain = "ADDomain"
     static let autoConfigure = "AutoConfigure"
     static let changePasswordType = "ChangePasswordType"
+    static let changePasswordOptions = "ChangePasswordOptions"
     static let caribouTime = "CaribouTime"
+    static let configureChrome = "ConfigureChrome"
     static let displayName = "DisplayName"
     static let exportableKey = "ExportableKey"
     static let getHelpType = "GetHelpType"
@@ -113,7 +119,8 @@ enum Preferences {
     static let lastPasswordExpireDate = "LastPasswordExpireDate"
     static let messageLocalSync = "MessageLocalSync"
     static let passwordExpireAlertTime = "PasswordExpireAlertTime"
-    static let passwordChangeOptions = "PasswordChangeOptions"
+
+    // static let passwordChangeOptions = "PasswordChangeOptions"
 
     /// Should NoMAD automatically attempt to renew Kerberos tickets on behalf of the user.
     static let renewTickets = "RenewTickets"
@@ -125,6 +132,7 @@ enum Preferences {
     static let signInCommand = "SignInCommand"
     static let stateChangeAction = "StateChangeAction"
     static let template = "Template"
+    static let uPCAlert = "UPCAlert"
     static let userPrincipal = "UserPrincipal"
     static let userHome = "UserHome"
     static let userPasswordExpireDate = "UserPasswordExpireDate"

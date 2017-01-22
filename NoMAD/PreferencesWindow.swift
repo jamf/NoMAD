@@ -68,6 +68,13 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
         if KerberosRealmField.stringValue == "" {
             defaults.set(ADDomainTextField.stringValue.uppercased(), forKey: Preferences.kerberosRealm)
         }
+
+        // update the Chrome configuration
+
+        if defaults.bool(forKey: Preferences.configureChrome) {
+            configureChrome()
+        }
+
         NotificationCenter.default.post(updateNotification)
     }
 
@@ -97,6 +104,50 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
                     return
                 }
             }
+        }
+    }
+
+    func configureChrome() {
+
+        // create new instance of defaults for com.google.Chrome
+
+        let chromeDefaults = UserDefaults.init(suiteName: "com.google.Chrome")
+        let chromeDomain = "*" + defaults.string(forKey: Preferences.aDDomain)!
+        var change = false
+
+        // find the keys and add the domain
+
+        let chromeAuthServer = chromeDefaults?.string(forKey: "AuthServerWhitelist")
+        var chromeAuthServerArray = chromeAuthServer?.components(separatedBy: ",")
+
+        if chromeAuthServerArray != nil {
+            if !((chromeAuthServerArray?.contains(chromeDomain))!) {
+                chromeAuthServerArray?.append(chromeDomain)
+                change = true
+            }
+        } else {
+            chromeAuthServerArray = [chromeDomain]
+            change = true
+        }
+
+        let chromeAuthNegotiate = chromeDefaults?.string(forKey: "AuthNegotiateDelegateWhitelist")
+        var chromeAuthNegotiateArray = chromeAuthNegotiate?.components(separatedBy: ",")
+
+        if chromeAuthNegotiateArray != nil {
+            if !((chromeAuthNegotiateArray?.contains(chromeDomain))!) {
+                chromeAuthNegotiateArray?.append(chromeDomain)
+                change = true
+            }
+        } else {
+            chromeAuthNegotiateArray = [chromeDomain]
+            change = true
+        }
+
+        // write it back
+
+        if change {
+            chromeDefaults?.set(chromeAuthServerArray?.joined(separator: ","), forKey: "AuthServerWhitelist")
+            chromeDefaults?.set(chromeAuthNegotiateArray?.joined(separator: ","), forKey: "AuthNegotiateDelegateWhitelist")
         }
     }
 }
