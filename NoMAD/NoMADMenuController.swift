@@ -248,20 +248,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     myLogger.logit(.base, message:"Error attempting to automatically log in.")
                     loginWindow.window!.forceToFrontAndFocus(nil)
                     return
-                } else {
-                    myLogger.logit(.base, message:"Automatically logging in.")
-
-                    cliTask("/usr/bin/kswitch -p " +  userPrinc)
-
-                    // update the UI if we've logged in correctly
-                    self.updateUserInfo()
-
-                    // fire off the SignInCommand script if there is one
-                    if defaults.string(forKey: Preferences.signInCommand) != "" {
-                        let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)
-                        myLogger.logit(.base, message: myResult)
-                        return
-                    }
                 }
         }
         loginWindow.window!.forceToFrontAndFocus(nil)
@@ -632,13 +618,84 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // function to see if we should autologin and then proceede accordingly
     func autoLogin() {
         // only autologin if 1) we're set to use the keychain, 2) we have don't already have a Kerb ticket and 3) we can contact the LDAP servers
-        if (defaults.bool(forKey: Preferences.useKeychain)) && !userInformation.myLDAPServers.tickets.state && userInformation.myLDAPServers.currentState {
-            myLogger.logit(.info, message: "Attempting to auto-login")
-            NoMADMenuClickLogIn(NoMADMenuLogIn)
 
-            // we should recheck in 30 secs to see if we need to auto-login again
+            if defaults.bool(forKey: Preferences.useKeychain) && (defaults.string(forKey: Preferences.lastUser) != "" ) && !userInformation.myLDAPServers.tickets.state && userInformation.myLDAPServers.currentState {
 
-            //    Timer.scheduledTimer(timeInterval: 30, target: self, selector: #selector(autoLogin), userInfo: nil, repeats: false)
+                let myKeychainutil = KeychainUtil()
+
+                myLogger.logit(.info, message: "Attempting to auto-login")
+
+                // check if there's a last user
+                var myPass = ""
+                var myErr: String?
+                let userPrinc = defaults.string(forKey: Preferences.lastUser)! + "@" + defaults.string(forKey: Preferences.kerberosRealm)!
+
+                do {
+                    myPass = try myKeychainutil.findPassword(userPrinc)
+                } catch {
+                    myLogger.logit(.base, message: "Unable to find password in keychain for auto-login.")
+                    updateUserInfo()
+                    return
+                }
+
+                let myKerbUtil = KerbUtil()
+                myErr = myKerbUtil.getKerbCredentials(myPass, userPrinc)
+
+                while ( !myKerbUtil.finished ) {
+                    RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
+                }
+
+                if myErr == nil {
+                    myLogger.logit(.base, message:"Automatically logged in.")
+
+                    cliTask("/usr/bin/kswitch -p " +  userPrinc)
+
+                    // update the UI
+
+                    updateUserInfo()
+
+                    // fire off the SignInCommand script if there is one
+                    if defaults.string(forKey: Preferences.signInCommand) != "" {
+                        let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)
+                        myLogger.logit(.base, message: myResult)
+                    }
+                    return
+                } else if (myErr?.contains("Cannot contact any KDC for requested realm"))! {
+                    myLogger.logit(.base, message:"Autologin can't find KDCs.")
+                    return
+                } else if (myErr?.contains("kGSSMinorErrorCode=-1765328378"))! {
+                    myLogger.logit(.base, message:"Autologin failed because of unkown user.")
+                    return
+                } else if (myErr?.contains("Preauthentication failed"))! {
+                    myLogger.logit(.base, message:"Autologin password error.")
+                    // password failed, let's delete it so as to not fail again
+                    var myKeychainItem: SecKeychainItem?
+                    var myErr: OSStatus
+                    let serviceName = "NoMAD"
+                    var passLength: UInt32 = 0
+                    var passPtr: UnsafeMutableRawPointer? = nil
+                    let name = defaults.string(forKey: Preferences.lastUser)! + "@" + defaults.string(forKey: Preferences.kerberosRealm)!
+
+                    myErr = SecKeychainFindGenericPassword(nil,
+                                                           UInt32(serviceName.characters.count),
+                                                           serviceName,
+                                                           UInt32(name.characters.count),
+                                                           name,
+                                                           &passLength,
+                                                           &passPtr, &myKeychainItem)
+                    if (myErr == 0) {
+                        SecKeychainItemDelete(myKeychainItem!)
+                    } else {
+                        myLogger.logit(.base, message:"Error deleting Keychain entry.")
+                    }
+                    // now show the window
+                    loginWindow.window!.forceToFrontAndFocus(nil)
+                } else  {
+                    myLogger.logit(.base, message:"Error attempting to automatically log in.")
+                    return
+                }
+            } else {
+                myLogger.logit(.base, message: "Auto-login not attempted.")
         }
     }
 
