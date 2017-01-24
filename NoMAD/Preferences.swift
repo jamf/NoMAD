@@ -55,6 +55,8 @@ enum Preferences {
 
     // lastPasswordExpireDate - r/o - date - an array of users and the date their password will expire. Used to keep track of passwords being changed outside of NoMAD.
 
+    // lDAPoverSSL - r/w - bool - flag to use LDAPS instead of LDAP
+
     // passwordExpireAlertTime - r/w - date - when to start complaining about a password that is about to expire. Defaults to 1296000 secs or 15 days.
 
     // passwordChangeOptions - r/w - string - similar to getHelp, this sets options for the passwordChangeType to use
@@ -113,6 +115,7 @@ enum Preferences {
     static let loginComamnd = "LoginComamnd"
     static let loginItem = "LoginItem"
     static let lDAPServerList = "LDAPServerList"
+    static let lDAPoverSSL = "LDAPOverSSL"
     static let localPasswordSync = "LocalPasswordSync"
     static let lastUser = "LastUser"
     static let lastPasswordWarning = "LastPasswordWarning"
