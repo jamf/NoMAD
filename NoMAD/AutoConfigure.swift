@@ -67,10 +67,9 @@ private func getADSettings() {
 
     let net_config = SCDynamicStoreCreate(nil, "net" as CFString, nil, nil)
     let ad_info = [ SCDynamicStoreCopyValue(net_config, "com.apple.opendirectoryd.ActiveDirectory" as CFString)]
+    if ad_info[0] != nil {
 
     let adDict = ad_info[0]! as! NSDictionary
-
-    if adDict.count > 1 {
             let myDomain = adDict["DomainNameDns"] as! String
                 myLogger.logit(.base, message: "Setting AD Domain to the domain the machine is currently bound to.")
                 defaults.set(myDomain, forKey: Preferences.aDDomain)

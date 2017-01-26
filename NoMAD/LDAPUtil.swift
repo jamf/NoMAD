@@ -34,6 +34,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 
     var URIPrefix = "ldap://"
     var port = "389"
+    var maxSSF = ""
 
     let tickets = KlistUtil()
 
@@ -58,6 +59,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         if defaults.bool(forKey: Preferences.lDAPoverSSL) {
             URIPrefix = "ldaps://"
             port = "636"
+            maxSSF = "-O maxssf=0 "
         }
 
         //myLogger.logit(.notice, message:"Looking up tickets.")
@@ -256,6 +258,10 @@ class LDAPServers : NSObject, DNSResolverDelegate {
             arguments.append("-s")
             arguments.append("base")
         }
+        if maxSSF != "" {
+            arguments.append("-O")
+            arguments.append("maxssf=0")
+        }
         arguments.append("-H")
         arguments.append(URIPrefix + self.currentServer)
         arguments.append("-b")
@@ -283,7 +289,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     }
 
     func returnFullRecord(_ searchTerm: String) -> String {
-        let myResult = cliTaskNoTerm("/usr/bin/ldapsearch -N -Q -LLL -H " + URIPrefix + self.currentServer + " -b " + self.defaultNamingContext + " " + searchTerm )
+        let myResult = cliTaskNoTerm("/usr/bin/ldapsearch -N -Q -LLL " + maxSSF + "-H " + URIPrefix + self.currentServer + " -b " + self.defaultNamingContext + " " + searchTerm )
         return myResult
     }
 
@@ -541,7 +547,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
             myLogger.logit(.info, message:"Testing " + host + ".")
         }
         let attribute = "defaultNamingContext"
-        let myLDAPResult = cliTask("/usr/bin/ldapsearch -N -LLL -Q -l 3 -s base -H " + URIPrefix + host + " " + attribute)
+        let myLDAPResult = cliTask("/usr/bin/ldapsearch -N -LLL -Q " + maxSSF + "-l 3 -s base -H " + URIPrefix + host + " " + attribute)
         if myLDAPResult != "" && !myLDAPResult.contains("GSSAPI Error") && !myLDAPResult.contains("Can't contact") {
             let ldifResult = cleanLDIF(myLDAPResult)
             if ( ldifResult.count > 0 ) {
@@ -671,7 +677,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
                         
                         // if socket test works, then attempt ldapsearch to get default naming context
                         let attribute = "defaultNamingContext"
-                        let myLDAPResult = cliTaskNoTerm("/usr/bin/ldapsearch -N -LLL -Q -l 3 -s base -H " + URIPrefix + hosts[i].host + " " + attribute)
+                        let myLDAPResult = cliTaskNoTerm("/usr/bin/ldapsearch -N -LLL -Q " + maxSSF + "-l 3 -s base -H " + URIPrefix + hosts[i].host + " " + attribute)
                         if myLDAPResult != "" && !myLDAPResult.contains("GSSAPI Error") && !myLDAPResult.contains("Can't contact") {
                             let ldifResult = cleanLDIF(myLDAPResult)
                             if ( ldifResult.count > 0 ) {
