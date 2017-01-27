@@ -5,14 +5,14 @@
 	<key>Lock Screen</key>
 	<dict>
 		<key>value</key>
-		<string>Lock Screen</string>
+		<string>Écran Verrouillé</string>
 		<key>comment</key>
 		<string>Menu Item to Lock the Screen</string>
 	</dict>
 	<key>NoMADMenuController-LogIn</key>
 	<dict>
 		<key>value</key>
-		<string>Sign In</string>
+		<string>Connecter</string>
 		<key>comment</key>
 		<string>Menu item to Sign In</string>
 	</dict>
@@ -26,21 +26,21 @@
 	<key>NoMADMenuController-NotConnected</key>
 	<dict>
 		<key>value</key>
-		<string>Not Connected</string>
+		<string>Pas connecté</string>
 		<key>comment</key>
 		<string>Text in the menu bar to show that NoMAD can not find the Domain</string>
 	</dict>
 	<key>NoMADMenuController-ChangePassword</key>
 	<dict>
 		<key>value</key>
-		<string>Change Password</string>
+		<string>Changer le mot de passe</string>
 		<key>comment</key>
 		<string>Menu Item to Change Password</string>
 	</dict>
 	<key>UserName</key>
 	<dict>
 		<key>value</key>
-		<string>User Name</string>
+		<string>Nom d&apos;utilisateur</string>
 		<key>comment</key>
 		<string>Users&apos;s full name.</string>
 	</dict>
@@ -49,28 +49,21 @@
 		<key>comment</key>
 		<string>Menu item to open software portal.</string>
 		<key>value</key>
-		<string>Get Software</string>
+		<string>Obtenir le logiciel</string>
 	</dict>
 	<key>NoMADMenuController-GetHelp</key>
 	<dict>
 		<key>value</key>
-		<string>Get Help</string>
+		<string>Obtenir de l&apos;aide</string>
 		<key>comment</key>
 		<string>Menu item to open up the support options.</string>
 	</dict>
 	<key>NoMADMenuController-Preferences</key>
 	<dict>
 		<key>value</key>
-		<string>Preferences</string>
+		<string>Préférences</string>
 		<key>comment</key>
 		<string>Menu item to open Preferences window.</string>
-	</dict>
-	<key>NoMADMenuController-Quit</key>
-	<dict>
-		<key>value</key>
-		<string>Quit</string>
-		<key>comment</key>
-		<string>Menu item to quit NoMAD.</string>
 	</dict>
 </dict>
 </plist>

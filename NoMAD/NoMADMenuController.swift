@@ -930,10 +930,21 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         }
                     } else {
                         self.statusItem.image = self.iconOffOff
+                        
+                        // if online we don't set a status message
+                        
+                        if self.userInformation.connected {
+                        // we do this twice b/c doing it only once seems to make it less than full width
+                        self.statusItem.title = self.userInformation.status.translate
+                        self.statusItem.title = self.userInformation.status.translate
+                        } else {
+                            
+                            // use the custom message if it exists
 
                         // we do this twice b/c doing it only once seems to make it less than full width
-                        self.statusItem.title = defaults.string(forKey: Preferences.messageNotConnected) ?? "Not Connected"
-                        self.statusItem.title = defaults.string(forKey: Preferences.messageNotConnected) ?? "Not Connected"
+                        self.statusItem.title = defaults.string(forKey: Preferences.messageNotConnected) ?? self.userInformation.status.translate
+                        self.statusItem.title = defaults.string(forKey: Preferences.messageNotConnected) ?? self.userInformation.status.translate
+                        }
                     }
 
                     if ( self.userInformation.userPrincipalShort != "No User" ) {

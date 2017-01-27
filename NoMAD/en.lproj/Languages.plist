@@ -44,5 +44,33 @@
 		<key>comment</key>
 		<string>User&apos;s full name</string>
 	</dict>
+	<key>NoMADMenuController-GetSoftware</key>
+	<dict>
+		<key>comment</key>
+		<string>Menu item to open software portal.</string>
+		<key>value</key>
+		<string>Get Software</string>
+	</dict>
+	<key>NoMADMenuController-GetHelp</key>
+	<dict>
+		<key>value</key>
+		<string>Get Help</string>
+		<key>comment</key>
+		<string>Menu item to open up the support options.</string>
+	</dict>
+	<key>NoMADMenuController-Preferences</key>
+	<dict>
+		<key>value</key>
+		<string>Preferences</string>
+		<key>comment</key>
+		<string>Menu item to open Preferences window.</string>
+	</dict>
+	<key>NoMADMenuController-Quit</key>
+	<dict>
+		<key>value</key>
+		<string>Quitter</string>
+		<key>comment</key>
+		<string>Menu item to quit NoMAD.</string>
+	</dict>
 </dict>
 </plist>
