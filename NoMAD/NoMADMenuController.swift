@@ -932,8 +932,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         self.statusItem.image = self.iconOffOff
 
                         // we do this twice b/c doing it only once seems to make it less than full width
-                        self.statusItem.title = self.userInformation.status.translate
-                        self.statusItem.title = self.userInformation.status.translate
+                        self.statusItem.title = defaults.string(forKey: Preferences.messageNotConnected) ?? "Not Connected"
+                        self.statusItem.title = defaults.string(forKey: Preferences.messageNotConnected) ?? "Not Connected"
                     }
 
                     if ( self.userInformation.userPrincipalShort != "No User" ) {

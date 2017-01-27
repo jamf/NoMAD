@@ -57,6 +57,8 @@ enum Preferences {
 
     // lDAPoverSSL - r/w - bool - flag to use LDAPS instead of LDAP
 
+    // messageNotConnected - r/w - string - text to display in menu bar when not connected
+
     // passwordExpireAlertTime - r/w - date - when to start complaining about a password that is about to expire. Defaults to 1296000 secs or 15 days.
 
     // passwordChangeOptions - r/w - string - similar to getHelp, this sets options for the passwordChangeType to use
@@ -121,6 +123,7 @@ enum Preferences {
     static let lastPasswordWarning = "LastPasswordWarning"
     static let lastPasswordExpireDate = "LastPasswordExpireDate"
     static let messageLocalSync = "MessageLocalSync"
+    static let messageNotConnected = "MessageNotConnected"
     static let passwordExpireAlertTime = "PasswordExpireAlertTime"
 
     // static let passwordChangeOptions = "PasswordChangeOptions"
