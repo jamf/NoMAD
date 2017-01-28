@@ -7,9 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1A08F1EB1D36CDC200FA68C4 /* LoginWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A08F1EA1D36CDC200FA68C4 /* LoginWindow.xib */; };
-		1A08F1ED1D36CDF700FA68C4 /* PasswordChangeWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A08F1EC1D36CDF700FA68C4 /* PasswordChangeWindow.xib */; };
-		1A08F1EF1D36CE0C00FA68C4 /* PreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A08F1EE1D36CE0C00FA68C4 /* PreferencesWindow.xib */; };
 		1A08F1F31D36DA0900FA68C4 /* NoMADApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A08F1F21D36DA0900FA68C4 /* NoMADApplication.swift */; };
 		1A206B2D1D58312800539FA6 /* KeychainUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A206B2C1D58312800539FA6 /* KeychainUtil.swift */; };
 		1A24EF481D7F01B3006A1866 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A24EF471D7F01B3006A1866 /* Logger.swift */; };
@@ -34,6 +31,9 @@
 		841453761E3C01220085890B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 841453781E3C01220085890B /* InfoPlist.strings */; };
 		8414537B1E3C01220085890B /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8414537D1E3C01220085890B /* Localizable.strings */; };
 		841453801E3C01230085890B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 841453821E3C01230085890B /* InfoPlist.strings */; };
+		841453831E3C2D7D0085890B /* PasswordChangeWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 841453851E3C2D7D0085890B /* PasswordChangeWindow.xib */; };
+		841453881E3C2D940085890B /* PreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8414538A1E3C2D940085890B /* PreferencesWindow.xib */; };
+		8414538D1E3C2DA10085890B /* LoginWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8414538F1E3C2DA10085890B /* LoginWindow.xib */; };
 		8454EFDB1D34ADA600422D4E /* NSTaskWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454EFDA1D34ADA600422D4E /* NSTaskWrapper.swift */; };
 		8454EFDD1D34ADEE00422D4E /* PasswordChangeWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454EFDC1D34ADEE00422D4E /* PasswordChangeWindow.swift */; };
 		8454EFE51D35968100422D4E /* LoginWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454EFE41D35968100422D4E /* LoginWindow.swift */; };
@@ -60,9 +60,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		1A08F1EA1D36CDC200FA68C4 /* LoginWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoginWindow.xib; sourceTree = "<group>"; };
-		1A08F1EC1D36CDF700FA68C4 /* PasswordChangeWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PasswordChangeWindow.xib; sourceTree = "<group>"; };
-		1A08F1EE1D36CE0C00FA68C4 /* PreferencesWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PreferencesWindow.xib; sourceTree = "<group>"; };
 		1A08F1F21D36DA0900FA68C4 /* NoMADApplication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NoMADApplication.swift; sourceTree = "<group>"; };
 		1A206B2C1D58312800539FA6 /* KeychainUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = KeychainUtil.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		1A24EF471D7F01B3006A1866 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
@@ -92,6 +89,12 @@
 		841453771E3C01220085890B /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8414537C1E3C01220085890B /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		841453811E3C01230085890B /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		841453841E3C2D7D0085890B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PasswordChangeWindow.xib; sourceTree = "<group>"; };
+		841453871E3C2D8B0085890B /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/PasswordChangeWindow.strings; sourceTree = "<group>"; };
+		841453891E3C2D940085890B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindow.xib; sourceTree = "<group>"; };
+		8414538C1E3C2D970085890B /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/PreferencesWindow.strings; sourceTree = "<group>"; };
+		8414538E1E3C2DA10085890B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LoginWindow.xib; sourceTree = "<group>"; };
+		841453911E3C2DA30085890B /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/LoginWindow.strings; sourceTree = "<group>"; };
 		8454EFDA1D34ADA600422D4E /* NSTaskWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSTaskWrapper.swift; sourceTree = "<group>"; };
 		8454EFDC1D34ADEE00422D4E /* PasswordChangeWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PasswordChangeWindow.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		8454EFE41D35968100422D4E /* LoginWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = LoginWindow.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -159,13 +162,13 @@
 			children = (
 				1A26AFF61D46E4BF000776A4 /* GetHelp.swift */,
 				8454EFE41D35968100422D4E /* LoginWindow.swift */,
-				1A08F1EA1D36CDC200FA68C4 /* LoginWindow.xib */,
+				8414538F1E3C2DA10085890B /* LoginWindow.xib */,
 				84CC68041D30A25500115C76 /* NoMADMenuController.swift */,
 				346CD2731DA205B500255F66 /* MainMenu.xib */,
 				8454EFDC1D34ADEE00422D4E /* PasswordChangeWindow.swift */,
-				1A08F1EC1D36CDF700FA68C4 /* PasswordChangeWindow.xib */,
+				841453851E3C2D7D0085890B /* PasswordChangeWindow.xib */,
 				84996CAC1D503F9700793747 /* PreferencesWindow.swift */,
-				1A08F1EE1D36CE0C00FA68C4 /* PreferencesWindow.xib */,
+				8414538A1E3C2D940085890B /* PreferencesWindow.xib */,
 				1AFBDC6F1DEE4F4800C19AE1 /* SelfServiceManager.swift */,
 			);
 			name = UI;
@@ -380,10 +383,10 @@
 				1AE1DFC11DA6B1E100456E3E /* Languages.plist in Resources */,
 				346CD2711DA205B500255F66 /* MainMenu.xib in Resources */,
 				8414537B1E3C01220085890B /* Localizable.strings in Resources */,
-				1A08F1EF1D36CE0C00FA68C4 /* PreferencesWindow.xib in Resources */,
-				1A08F1EB1D36CDC200FA68C4 /* LoginWindow.xib in Resources */,
+				841453881E3C2D940085890B /* PreferencesWindow.xib in Resources */,
+				8414538D1E3C2DA10085890B /* LoginWindow.xib in Resources */,
 				841453761E3C01220085890B /* InfoPlist.strings in Resources */,
-				1A08F1ED1D36CDF700FA68C4 /* PasswordChangeWindow.xib in Resources */,
+				841453831E3C2D7D0085890B /* PasswordChangeWindow.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -492,6 +495,33 @@
 				841453811E3C01230085890B /* fr */,
 			);
 			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		841453851E3C2D7D0085890B /* PasswordChangeWindow.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				841453841E3C2D7D0085890B /* Base */,
+				841453871E3C2D8B0085890B /* fr */,
+			);
+			name = PasswordChangeWindow.xib;
+			sourceTree = "<group>";
+		};
+		8414538A1E3C2D940085890B /* PreferencesWindow.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				841453891E3C2D940085890B /* Base */,
+				8414538C1E3C2D970085890B /* fr */,
+			);
+			name = PreferencesWindow.xib;
+			sourceTree = "<group>";
+		};
+		8414538F1E3C2DA10085890B /* LoginWindow.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8414538E1E3C2DA10085890B /* Base */,
+				841453911E3C2DA30085890B /* fr */,
+			);
+			name = LoginWindow.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
