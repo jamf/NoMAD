@@ -65,5 +65,33 @@
 		<key>comment</key>
 		<string>Menu item to open Preferences window.</string>
 	</dict>
+	<key>NoMADMenuController-RenewTickets</key>
+	<dict>
+		<key>comment</key>
+		<string>Menu item to renew Kerberos tickets</string>
+		<key>value</key>
+		<string>Renouveler le billet</string>
+	</dict>
+	<key>NoMADMenuController-PasswordExpiresInDays</key>
+	<dict>
+		<key>comment</key>
+		<string>Long text for how many days until your password expires</string>
+		<key>value</key>
+		<string>Le mot de passe expire: %@ jours</string>
+	</dict>
+	<key>PasswordDoesNotExpire</key>
+	<dict>
+		<key>value</key>
+		<string>Le mot de passe n&apos;expire pas</string>
+		<key>comment</key>
+		<string>menu item for when the password has no expiration date</string>
+	</dict>
+	<key>d</key>
+	<dict>
+		<key>value</key>
+		<string>j</string>
+		<key>comment</key>
+		<string>short form of days</string>
+	</dict>
 </dict>
 </plist>

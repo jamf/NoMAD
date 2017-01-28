@@ -514,7 +514,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         }
         else {
             self.NoMADMenuLogIn.isEnabled = true
-            self.NoMADMenuLogIn.title = NSLocalizedString("NoMADMenuController-RenewTickets", comment: "Menu; Button; Renew Tickets")
+            self.NoMADMenuLogIn.title = "NoMADMenuController-RenewTickets".translate
             self.NoMADMenuLogIn.action = #selector(self.renewTickets)
             self.NoMADMenuLogOut.isEnabled = true
             if (self.NoMADMenuChangePassword != nil) {
@@ -906,18 +906,16 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                             let daysToGo = Int(abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow)/86400)
                             // we do this twice b/c doing it only once seems to make it less than full width
                             if Int(daysToGo) > 4 {
-                                self.statusItem.title = (String(daysToGo) + "d" )
-                                self.statusItem.title = (String(daysToGo) + "d" )
-                                self.NoMADMenuPasswordExpires.title = String.localizedStringWithFormat(
-                                    NSLocalizedString("NoMADMenuController-PasswordExpiresInDays", comment: "Menu Text; Password expires in: %@ days"), String(daysToGo))
+                                self.statusItem.title = (String(daysToGo) + "d".translate )
+                                self.statusItem.title = (String(daysToGo) + "d".translate )
+                                self.NoMADMenuPasswordExpires.title = String(format: "NoMADMenuController-PasswordExpiresInDays".translate, String(daysToGo))
                             } else {
 
-                                let myMutableString = NSMutableAttributedString(string: String(daysToGo) + "d")
+                                let myMutableString = NSMutableAttributedString(string: String(daysToGo) + "d".translate)
                                 myMutableString.addAttribute(NSForegroundColorAttributeName, value: NSColor.red, range: NSRange(location: 0, length: 2))
                                 self.statusItem.attributedTitle = myMutableString
                                 self.statusItem.attributedTitle = myMutableString
-                                self.NoMADMenuPasswordExpires.title = String.localizedStringWithFormat(
-                                    NSLocalizedString("NoMADMenuController-PasswordExpiresInDays", comment: "Menu Text; Password expires in: %@ days"), String(daysToGo))
+                                self.NoMADMenuPasswordExpires.title = String(format: "NoMADMenuController-PasswordExpiresInDays".translate, String(daysToGo))
                             }
                         } else {
 
@@ -925,8 +923,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                             self.statusItem.title = ""
                             self.statusItem.title = ""
                             self.NoMADMenuTicketLife.title = dateFormatter.string(from: self.userInformation.myLDAPServers.tickets.expire as Date) + " " + self.userInformation.myLDAPServers.currentServer
-                            self.statusItem.toolTip = "Password does not expire."
-                            self.NoMADMenuPasswordExpires.title = "Password does not expire."
+                            self.statusItem.toolTip = "PasswordDoesNotExpire".translate
+                            self.NoMADMenuPasswordExpires.title = "PasswordDoesNotExpire".translate
                         }
                     } else {
                         self.statusItem.image = self.iconOffOff

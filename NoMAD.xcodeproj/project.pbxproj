@@ -95,6 +95,7 @@
 		8414538C1E3C2D970085890B /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/PreferencesWindow.strings; sourceTree = "<group>"; };
 		8414538E1E3C2DA10085890B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LoginWindow.xib; sourceTree = "<group>"; };
 		841453911E3C2DA30085890B /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/LoginWindow.strings; sourceTree = "<group>"; };
+		841453921E3D5F4B0085890B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		8454EFDA1D34ADA600422D4E /* NSTaskWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSTaskWrapper.swift; sourceTree = "<group>"; };
 		8454EFDC1D34ADEE00422D4E /* PasswordChangeWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PasswordChangeWindow.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		8454EFE41D35968100422D4E /* LoginWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = LoginWindow.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -485,6 +486,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				8414537C1E3C01220085890B /* fr */,
+				841453921E3D5F4B0085890B /* en */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
