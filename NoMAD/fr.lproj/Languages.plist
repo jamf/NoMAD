@@ -5,14 +5,14 @@
 	<key>Lock Screen</key>
 	<dict>
 		<key>value</key>
-		<string>Écran Verrouillé</string>
+		<string>Vérouiller l'écran</string>
 		<key>comment</key>
 		<string>Menu Item to Lock the Screen</string>
 	</dict>
 	<key>NoMADMenuController-LogIn</key>
 	<dict>
 		<key>value</key>
-		<string>Connecter</string>
+		<string>Se connecter</string>
 		<key>comment</key>
 		<string>Menu item to Sign In</string>
 	</dict>
@@ -49,7 +49,7 @@
 		<key>comment</key>
 		<string>Menu item to open software portal.</string>
 		<key>value</key>
-		<string>Obtenir le logiciel</string>
+		<string>Logiciels à la demande</string>
 	</dict>
 	<key>NoMADMenuController-GetHelp</key>
 	<dict>
@@ -70,19 +70,19 @@
 		<key>comment</key>
 		<string>Menu item to renew Kerberos tickets</string>
 		<key>value</key>
-		<string>Renouveler le billet</string>
+		<string>Renouveler le ticket</string>
 	</dict>
 	<key>NoMADMenuController-PasswordExpiresInDays</key>
 	<dict>
 		<key>comment</key>
 		<string>Long text for how many days until your password expires</string>
 		<key>value</key>
-		<string>Le mot de passe expire: %@ jours</string>
+		<string>Le mot de passe expire dans %@ jours</string>
 	</dict>
 	<key>PasswordDoesNotExpire</key>
 	<dict>
 		<key>value</key>
-		<string>Le mot de passe n&apos;expire pas</string>
+		<string>Le mot de passe n&apos;expire jamais</string>
 		<key>comment</key>
 		<string>menu item for when the password has no expiration date</string>
 	</dict>
