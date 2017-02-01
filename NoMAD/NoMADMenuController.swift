@@ -52,6 +52,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     @IBOutlet weak var NoMADMenuGetCertificateDate: NSMenuItem!
     @IBOutlet weak var NoMADMenuTicketLife: NSMenuItem!
     @IBOutlet weak var NoMADMenuLogInAlternate: NSMenuItem!
+    @IBOutlet weak var NoMADMenuSeperatorSoftwareAndHelp: NSMenuItem!
 
     let NoMADMenuHome = NSMenuItem()
 
@@ -151,6 +152,17 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         } else {
             NoMADMenuGetSoftware.isHidden = true
             myLogger.logit(.info, message:"Not using Self Service.")
+        }
+        
+        if defaults.bool(forKey: Preferences.hideHelp) {
+            NoMADMenuGetHelp.isHidden = true
+            myLogger.logit(.info, message:"Not using Get Help.")
+        }
+        
+        // hide divider if both getHelp and getSoftware are hidden
+        
+        if (NoMADMenuGetHelp.isHidden) && (NoMADMenuGetSoftware.isHidden) {
+            NoMADMenuSeperatorSoftwareAndHelp.isHidden = true
         }
 
         // wait for any updates to finish

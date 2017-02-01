@@ -36,6 +36,8 @@ enum Preferences {
     // getHelp Options - r/w - string - options for configuring the actions of the selected getHelpType
 
     // groups - r/o - string - a list of AD groups that the currently signed in user is a member of
+    
+    // hideHelp - r/w - bool - determines if the Get Help menu item should be shown
 
     // hidePrefs - r/w - bool - determines if the Preferences menu item should be shown
 
@@ -111,6 +113,7 @@ enum Preferences {
     static let getHelpType = "GetHelpType"
     static let getHelpOptions = "GetHelpOptions"
     static let groups = "Groups"
+    static let hideHelp = "HideHelp"
     static let hidePrefs = "HidePrefs"
     static let kerberosRealm = "KerberosRealm"
     static let lastCertificateExpiration = "LastCertificateExpiration"
