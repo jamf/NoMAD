@@ -394,13 +394,6 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)
             myLogger.logit(LogLevel.base, message: myResult)
         }
-
-        // fire off the SignInCommand script if there is one
-
-        if defaults.string(forKey: Preferences.signInCommand) != "" {
-            let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)
-            myLogger.logit(LogLevel.base, message: myResult)
-        }
     }
 
     fileprivate func setWindowToLogin() {
