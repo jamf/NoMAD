@@ -93,6 +93,97 @@
 		<key>comment</key>
 		<string>menu item for when the password has no expiration date</string>
 	</dict>
+	<key>PasswordChangeSuccessful</key>
+	<dict>
+		<key>value</key>
+		<string>Password changed successfully. Note: it may take up to an hour for your password expiration time to be updated.</string>
+		<key>comment</key>
+		<string>message to let user know password changed successfully</string>
+	</dict>
+	<key>InvalidPassword</key>
+	<dict>
+		<key>value</key>
+		<string>Invalid password. Please try again.</string>
+		<key>comment</key>
+		<string>error when password is wrong</string>
+	</dict>
+	<key>InvalidUsername</key>
+	<dict>
+		<key>value</key>
+		<string>Invalid username. Please try again.</string>
+		<key>comment</key>
+		<string>error when username is wrong</string>
+	</dict>
+	<key>PasswordExpire</key>
+	<dict>
+		<key>value</key>
+		<string>Your password has expired. Please reset your password now.</string>
+		<key>comment</key>
+		<string>error when password has expired</string>
+	</dict>
+	<key>PasswordAboutToExpire</key>
+	<dict>
+		<key>value</key>
+		<string>Password about to expire!</string>
+		<key>comment</key>
+		<string>message when password is about to expire</string>
+	</dict>
+	<key>PasswordExpiresOn</key>
+	<dict>
+		<key>value</key>
+		<string>Your network password is about to expire on </string>
+		<key>comment</key>
+		<string>Your network password is about to expire on &lt;date&gt;</string>
+	</dict>
+	<key>PasswordMismatch</key>
+	<dict>
+		<key>value</key>
+		<string>New passwords don&apos;t match.</string>
+		<key>comment</key>
+		<string>error when new passwords don&apos;t match</string>
+	</dict>
+	<key>NetworkLocalMismatch</key>
+	<dict>
+		<key>value</key>
+		<string>Your network and local passwords are not the same. Please enter the password for your Mac.</string>
+		<key>comment</key>
+		<string>error when network and local passwords do not match</string>
+	</dict>
+	<key>ValidCertificate</key>
+	<dict>
+		<key>value</key>
+		<string>You already have a valid certificate.</string>
+		<key>comment</key>
+		<string>user already has a valid certificate</string>
+	</dict>
+	<key>Cancel</key>
+	<dict>
+		<key>value</key>
+		<string>Cancel</string>
+		<key>comment</key>
+		<string>button for cancelling actions</string>
+	</dict>
+	<key>RequestAnyway</key>
+	<dict>
+		<key>value</key>
+		<string>Request Anyway</string>
+		<key>comment</key>
+		<string>button to request anyway</string>
+	</dict>
+	<key>CertConnectionError</key>
+	<dict>
+		<key>value</key>
+		<string>Connection error. Please ensure SSL certificates are trusted and the URL is correct for your X509 CA.</string>
+		<key>comment</key>
+		<string>message when Certificate Authority can&apos;t be reached</string>
+	</dict>
+	<key>CAConfigError</key>
+	<dict>
+		<key>value</key>
+		<string>Please ensure your Certificate Authority settings are correct.</string>
+		<key>comment</key>
+		<string>error when CA can&apos;t be found</string>
+	</dict>
 	<key>d</key>
 	<dict>
 		<key>value</key>

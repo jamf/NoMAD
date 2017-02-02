@@ -5,7 +5,7 @@
 	<key>Lock Screen</key>
 	<dict>
 		<key>value</key>
-		<string>Vérouiller l'écran</string>
+		<string>Vérouiller l&apos;écran</string>
 		<key>comment</key>
 		<string>Menu Item to Lock the Screen</string>
 	</dict>
@@ -85,6 +85,97 @@
 		<string>Le mot de passe n&apos;expire jamais</string>
 		<key>comment</key>
 		<string>menu item for when the password has no expiration date</string>
+	</dict>
+	<key>PasswordChangeSuccessful</key>
+	<dict>
+		<key>value</key>
+		<string>Le mot de passe a été changé avec succès. Remarque: le délai d&apos;expiration du mot de passe peut prendre jusqu&apos;à une heure pour être mis à jour.</string>
+		<key>comment</key>
+		<string>message to let user know password changed successfully</string>
+	</dict>
+	<key>InvalidPassword</key>
+	<dict>
+		<key>value</key>
+		<string>Mot de passe invalide. Veuillez réessayer.</string>
+		<key>comment</key>
+		<string>error when password is wrong</string>
+	</dict>
+	<key>InvalidUsername</key>
+	<dict>
+		<key>value</key>
+		<string>Nom d&apos;utilisateur invalide. Veuillez réessayer.</string>
+		<key>comment</key>
+		<string>error when username is wrong</string>
+	</dict>
+	<key>PasswordExpire</key>
+	<dict>
+		<key>value</key>
+		<string>Votre mot de passe a expiré. Veuillez réinitialiser votre mot de passe maintenant.</string>
+		<key>comment</key>
+		<string>error when password has expired</string>
+	</dict>
+	<key>PasswordAboutToExpire</key>
+	<dict>
+		<key>value</key>
+		<string>Mot de passe à expiration!</string>
+		<key>comment</key>
+		<string>message when password is about to expire</string>
+	</dict>
+	<key>PasswordExpiresOn</key>
+	<dict>
+		<key>value</key>
+		<string>Votre mot de passe réseau est sur le point d&apos;expirer </string>
+		<key>comment</key>
+		<string>Your network password is about to expire on &lt;date&gt;</string>
+	</dict>
+	<key>PasswordMismatch</key>
+	<dict>
+		<key>value</key>
+		<string>Les nouveaux mots de passe ne correspondent pas.</string>
+		<key>comment</key>
+		<string>error when new passwords don&apos;t match</string>
+	</dict>
+	<key>NetworkLocalMismatch</key>
+	<dict>
+		<key>value</key>
+		<string>Vos mot de passe réseau et locaux sont différents. Entrez votre mot de passe réseau pour mettre à jour votre session.</string>
+		<key>comment</key>
+		<string>error when network and local passwords do not match</string>
+	</dict>
+	<key>ValidCertificate</key>
+	<dict>
+		<key>value</key>
+		<string>Vous avez déjà un certificat valide.</string>
+		<key>comment</key>
+		<string>user already has a valid certificate</string>
+	</dict>
+	<key>Cancel</key>
+	<dict>
+		<key>value</key>
+		<string>Annuler</string>
+		<key>comment</key>
+		<string>button for cancelling actions</string>
+	</dict>
+	<key>RequestAnyway</key>
+	<dict>
+		<key>value</key>
+		<string>Demander à nouveau</string>
+		<key>comment</key>
+		<string>button to request anyway</string>
+	</dict>
+	<key>CertConnectionError</key>
+	<dict>
+		<key>value</key>
+		<string>Erreur de connexion. Assurez-vous que les certificats SSL sont approuvés et que l&apos;URL est correcte pour votre X509 CA.</string>
+		<key>comment</key>
+		<string>message when Certificate Authority can&apos;t be reached</string>
+	</dict>
+	<key>CAConfigError</key>
+	<dict>
+		<key>value</key>
+		<string>Assurez-vous que les paramètres de l&apos;autorité de certification sont corrects.</string>
+		<key>comment</key>
+		<string>error when CA can&apos;t be found</string>
 	</dict>
 	<key>d</key>
 	<dict>

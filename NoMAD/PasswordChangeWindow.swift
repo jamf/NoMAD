@@ -86,7 +86,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
                 EXIT_FAILURE
             } else {
                 let alertController = NSAlert()
-                alertController.messageText = "Password changed successfully. Note: it may take up to an hour for your password expiration time to be updated."
+                alertController.messageText = "PasswordChangeSuccessful".translate
 
                 alertController.beginSheetModal(for: self.window!, completionHandler: {( response ) in
                     if ( response == 0 ) {
@@ -100,7 +100,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
         } else {
 
             let alertController = NSAlert()
-            alertController.messageText = "New passwords don't match!"
+            alertController.messageText = "PasswordMismatch".translate
             alertController.beginSheetModal(for: self.window!, completionHandler: nil)
             EXIT_FAILURE
         }

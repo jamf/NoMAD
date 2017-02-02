@@ -344,9 +344,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
             if (lastExpire?.timeIntervalSinceNow)! > 2592000 {
                 let alertController = NSAlert()
-                alertController.messageText = "You already have a valid certificate."
-                alertController.addButton(withTitle: "Cancel")
-                alertController.addButton(withTitle: "Request anyway")
+                alertController.messageText = "ValidCertificate".translate
+                alertController.addButton(withTitle: "Cancel".translate)
+                alertController.addButton(withTitle: "RequestAnyway".translate)
 
                 myResponse = alertController.runModal()
 
@@ -384,7 +384,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
             if !caSSLTest {
                 let certAlertController = NSAlert()
-                certAlertController.messageText = "Connection error. Please ensure SSL certificates are trusted and the URL is correct for your X509 CA."
+                certAlertController.messageText = "CertConnectionError".translate
                 certAlertController.runModal()
             } else {
 
@@ -394,7 +394,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         } else {
             let certAlertController = NSAlert()
-            certAlertController.messageText = "Please ensure your Certificate Authority settings are correct."
+            certAlertController.messageText = "CAConfigError".translate
             certAlertController.runModal()
         }
 
@@ -1028,15 +1028,15 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     if ( abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) < Double(defaults.integer(forKey: Preferences.lastPasswordWarning)) ) {
                         if ( abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) > Double(345600) ) {
                             // expire is between default and four days so notify once a day
-                            self.showNotification("Password about to expire!", text: "Your network password is about to expire on " + dateFormatter.string(from: self.userInformation.userPasswordExpireDate as Date), date: Date())
+                            self.showNotification("PasswordAboutToExpire".translate, text: "PasswordExpiresOn".translate + dateFormatter.string(from: self.userInformation.userPasswordExpireDate as Date), date: Date())
                             defaults.set((abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) - 86400 ), forKey: Preferences.lastPasswordWarning)
                         } else if ( abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) > Double(86400) ) {
                             // expire is between 4 days and 1 day so notifiy every 12 hours
-                            self.showNotification("Password about to expire!", text: "Your network password is about to expire on " + dateFormatter.string(from: self.userInformation.userPasswordExpireDate as Date), date: Date())
+                            self.showNotification("PasswordAboutToExpire".translate, text: "PasswordExpiresOn".translate + dateFormatter.string(from: self.userInformation.userPasswordExpireDate as Date), date: Date())
                             defaults.set( (abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) - 23200 ), forKey: Preferences.lastPasswordWarning)
                         } else {
                             // expire is less than 1 day so notifiy every hour
-                            self.showNotification("Password about to expire!", text: "Your network password is about to expire on " + dateFormatter.string(from: self.userInformation.userPasswordExpireDate as Date), date: Date())
+                            self.showNotification("PasswordAboutToExpire".translate, text: "PasswordExpiresOn".translate + dateFormatter.string(from: self.userInformation.userPasswordExpireDate as Date), date: Date())
                             defaults.set((abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) - 3600 ), forKey: Preferences.lastPasswordWarning)
                         }
                     }

@@ -63,8 +63,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "406"
             endingLineNumber = "406"
-            landmarkName = "NoMADMenuClickGetSoftware(_:)"
-            landmarkType = "7">
+            landmarkName = "NoMADMenuController"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
