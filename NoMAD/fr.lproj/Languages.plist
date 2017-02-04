@@ -184,5 +184,12 @@
 		<key>comment</key>
 		<string>short form of days</string>
 	</dict>
+	<key>HomeSharepoint</key>
+	<dict>
+		<key>value</key>
+		<string>Le dossier Home</string>
+		<key>comment</key>
+		<string>Menu item for opening up a user&apos;s home sharepoint from their AD profile</string>
+	</dict>
 </dict>
 </plist>

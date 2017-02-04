@@ -141,6 +141,7 @@
 		1AE1DFBC1DA69CF100456E3E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				8414537D1E3C01220085890B /* Localizable.strings */,
 				1AFBDC661DE675C000C19AE1 /* DefaultPreferences.plist */,
 				1AE1DFC31DA6B1E100456E3E /* Languages.plist */,
 			);
@@ -225,7 +226,6 @@
 		1AFBDC6E1DEE4DC400C19AE1 /* CoreBits */ = {
 			isa = PBXGroup;
 			children = (
-				8414537D1E3C01220085890B /* Localizable.strings */,
 				841453781E3C01220085890B /* InfoPlist.strings */,
 				84CC67DE1D30A18A00115C76 /* AppDelegate.swift */,
 				84CC67E01D30A18A00115C76 /* Assets.xcassets */,

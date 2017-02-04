@@ -311,11 +311,33 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
     // Sleep the screen when clicked
     @IBAction func NoMADMenuClickLockScreen(_ sender: NSMenuItem) {
+
+        lockScreenImmediate()
+
+        return
+
         //  cliTask("/System/Library/CoreServices/Menu\\ Extras/User.menu/Contents/Resources/CGSession -suspend")
         let registry: io_registry_entry_t = IORegistryEntryFromPath(kIOMasterPortDefault, "IOService:/IOResources/IODisplayWrangler")
         let _ = IORegistryEntrySetCFProperty(registry, "IORequestIdle" as CFString!, true as CFTypeRef!)
         IOObjectRelease(registry)
 
+    }
+
+    func lockScreenImmediate() -> Void {
+
+        //
+        // Thanks to @ftiff for this
+        // www.github.com/ftiff
+        //
+
+        // Note: Private -- Do not use!
+        // http://stackoverflow.com/questions/34669958/swift-how-to-call-a-c-function-loaded-from-a-dylib
+
+        let libHandle = dlopen("/System/Library/PrivateFrameworks/login.framework/Versions/Current/login", RTLD_LAZY)
+        let sym = dlsym(libHandle, "SACLockScreenImmediate")
+        typealias myFunction = @convention(c) (Void) -> Void
+        let SACLockScreenImmediate = unsafeBitCast(sym, to: myFunction.self)
+        SACLockScreenImmediate()
     }
 
     // gets a cert from the Windows CA
@@ -988,7 +1010,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     if self.userInformation.connected && defaults.integer(forKey: Preferences.showHome) == 1 {
 
                         if ( self.userInformation.userHome != "" && self.NoMADMenu.items.contains(self.NoMADMenuHome) == false ) {
-                            self.NoMADMenuHome.title = "Home Sharepoint"
+                            self.NoMADMenuHome.title = "HomeSharepoint".translate
                             self.NoMADMenuHome.action = #selector(self.homeClicked)
                             self.NoMADMenuHome.target = self.NoMADMenuLogOut.target
                             self.NoMADMenuHome.isEnabled = true
@@ -996,7 +1018,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                             let prefIndex = self.NoMADMenu.index(of: self.NoMADMenuPreferences)
                             self.NoMADMenu.insertItem(self.NoMADMenuHome, at: (prefIndex - 1 ))
                         } else if self.userInformation.userHome != "" && self.NoMADMenu.items.contains(self.NoMADMenuHome) {
-                            self.NoMADMenuHome.title = "Home Sharepoint"
+                            self.NoMADMenuHome.title = "HomeSharepoint".translate
                             self.NoMADMenuHome.action = #selector(self.homeClicked)
                             self.NoMADMenuHome.target = self.NoMADMenuLogOut.target
                             self.NoMADMenuHome.isEnabled = true

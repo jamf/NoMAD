@@ -41,6 +41,8 @@ enum Preferences {
 
     // hidePrefs - r/w - bool - determines if the Preferences menu item should be shown
 
+    // hideRenew - r/w/ -bool - determines if the Renew Tickets menu item shoudl be shown
+
     // kerberosRealm - r/w - string - determines the Kerberos realm to use for all Kerberos activites. If left blank this will be set to the all-caps version of the AD Domain
 
     // lastCertificateExpiration - r/o - date - keeps track of the most future expiration date of certificates associated with the user's NT Principal for the Subj. Alternate Name on the certificate
@@ -114,6 +116,7 @@ enum Preferences {
     static let getHelpOptions = "GetHelpOptions"
     static let groups = "Groups"
     static let hideHelp = "HideHelp"
+    static let hideRenew = "HideRenew"
     static let hidePrefs = "HidePrefs"
     static let kerberosRealm = "KerberosRealm"
     static let lastCertificateExpiration = "LastCertificateExpiration"
