@@ -167,16 +167,6 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 
                 let keychainUtil = KeychainUtil()
 
-            // check to see if the keychain password is correct
-            // this is specific to the usecase where we're using the keychain, an AD user and
-            // the password was changed outside of NoMAD
-
-            if defaults.bool(forKey: Preferences.keychainPasswordMatch) && consoleUserIsAD && consoleUserPasswordIsCorrect {
-
-                myLogger.logit(LogLevel.debug, message: "Checking if keychain password needs to be chagned.")
-
-                let keychainUtil = KeychainUtil()
-
                 var storedPassword: String
 
                 do {
