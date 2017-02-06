@@ -35,6 +35,7 @@ class KlistUtil {
     var realm = ""
 
     init() {
+        dateFormatter.locale = Locale(identifier: "en_US")
         dateFormatter.dateFormat = "yyyyMMddHHmmss"
         realm = defaults.string(forKey: "KerberosRealm") ?? ""
     }
@@ -106,6 +107,7 @@ class KlistUtil {
                         myLogger.logit(.debug, message: "Looking at ticket: " + String(describing: ticket))
 
                         if let tick = ticket["Principal"] as? String {
+                            print(ticket)
                             let issue = dateFormatter.date(from: (ticket["Issued"] as? String)!)
                             let expire = dateFormatter.date(from: (ticket["Expires"] as? String)!)
                             let myTicket = Ticket(Issued: issue!, Expires: expire!, Principal: tick )

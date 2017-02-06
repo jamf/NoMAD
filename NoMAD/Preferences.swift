@@ -36,8 +36,12 @@ enum Preferences {
     // getHelp Options - r/w - string - options for configuring the actions of the selected getHelpType
 
     // groups - r/o - string - a list of AD groups that the currently signed in user is a member of
+    
+    // hideHelp - r/w - bool - determines if the Get Help menu item should be shown
 
     // hidePrefs - r/w - bool - determines if the Preferences menu item should be shown
+
+    // hideRenew - r/w/ -bool - determines if the Renew Tickets menu item shoudl be shown
 
     // kerberosRealm - r/w - string - determines the Kerberos realm to use for all Kerberos activites. If left blank this will be set to the all-caps version of the AD Domain
 
@@ -57,6 +61,10 @@ enum Preferences {
     // lastPasswordWarning - r/o - date - the date of the last time the user was warned that their password is about to expire. Used to keep track of how often to warn the user about their impending expiration.
 
     // lastPasswordExpireDate - r/o - date - an array of users and the date their password will expire. Used to keep track of passwords being changed outside of NoMAD.
+
+    // lDAPoverSSL - r/w - bool - flag to use LDAPS instead of LDAP
+
+    // messageNotConnected - r/w - string - text to display in menu bar when not connected
 
     // passwordExpireAlertTime - r/w - date - when to start complaining about a password that is about to expire. Defaults to 1296000 secs or 15 days.
 
@@ -112,6 +120,8 @@ enum Preferences {
     static let getHelpType = "GetHelpType"
     static let getHelpOptions = "GetHelpOptions"
     static let groups = "Groups"
+    static let hideHelp = "HideHelp"
+    static let hideRenew = "HideRenew"
     static let hidePrefs = "HidePrefs"
     static let kerberosRealm = "KerberosRealm"
     static let keychainItems = "KeychainItems"
@@ -120,11 +130,13 @@ enum Preferences {
     static let loginComamnd = "LoginComamnd"
     static let loginItem = "LoginItem"
     static let lDAPServerList = "LDAPServerList"
+    static let lDAPoverSSL = "LDAPOverSSL"
     static let localPasswordSync = "LocalPasswordSync"
     static let lastUser = "LastUser"
     static let lastPasswordWarning = "LastPasswordWarning"
     static let lastPasswordExpireDate = "LastPasswordExpireDate"
     static let messageLocalSync = "MessageLocalSync"
+    static let messageNotConnected = "MessageNotConnected"
     static let passwordExpireAlertTime = "PasswordExpireAlertTime"
 
     // static let passwordChangeOptions = "PasswordChangeOptions"

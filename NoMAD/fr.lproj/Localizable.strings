@@ -1,0 +1,3 @@
+/* Days to go before expiration message */
+
+"NoMADMenuController-PasswordExpiresInDays" = "Le mot de passe expire dans %@ jours"

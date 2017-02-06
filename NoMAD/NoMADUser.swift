@@ -58,7 +58,19 @@ class NoMADUser {
             throw NoMADUserError.invalidResult("Unable to get ODRecord for the current console user.")
         }
         currentConsoleUserRecord = unwrappedCurrentConsoleUserRecord
-clearLibDefaults = false
+        clearLibDefaults = false
+    }
+    
+    func currentConsoleUserMatchesNoMADUser() -> Bool {
+        if ( userName == NoMADUser.currentConsoleUserName ) {
+            if let originalAuthenticationAuthority = try? String(describing: currentConsoleUserRecord.values(forAttribute: kODAttributeTypeAuthenticationAuthority)) {
+                if ( originalAuthenticationAuthority.contains(realm) ) {
+                    return true
+                }
+            }
+        }
+        return false
+        
     }
 
     // MARK: Read-Only Functions
@@ -106,6 +118,7 @@ clearLibDefaults = false
      - parameters:
      - password: The user's current password as a String.
      */
+    /*
     func checkCurrentConsoleUserPassword(_ password: String) -> Bool {
         do {
             try currentConsoleUserRecord.verifyPassword(password)
@@ -113,6 +126,22 @@ clearLibDefaults = false
         } catch let unknownError as NSError {
             myLogger.logit(LogLevel.base, message: "Local User Password is incorrect. Error: " + unknownError.description)
             return false
+        }
+    }
+    */
+    func checkCurrentConsoleUserPassword(_ password: String) -> String {
+     
+        do {
+            try currentConsoleUserRecord.verifyPassword(password)
+            return "Valid"
+        } catch let unknownError as NSError {
+            myLogger.logit(LogLevel.base, message: "Current Console User password verification failed. Error: " + unknownError.description)
+            
+            if unknownError.description.contains("password has expired") {
+                return "Expired"
+            } else {
+                return "Invalid"
+            }
         }
     }
 
@@ -131,7 +160,7 @@ clearLibDefaults = false
         var myError: String? = nil
 
         myWorkQueue.async(execute: {
-        myError = GetCredentials.getKerbCredentials( password, self.kerberosPrincipal )
+            myError = GetCredentials.getKerbCredentials( password, self.kerberosPrincipal )
         })
 
         while ( !GetCredentials.finished ) {
@@ -171,7 +200,7 @@ clearLibDefaults = false
             myLogger.logit(LogLevel.base, message: "Unknown keychain unlocking error: " + err.description)
             throw NoMADUserError.unknownError("Unknown keychain unlocking error: " + err.description)
         }
-
+        
     }
 
     // MARK: Write Functions
@@ -482,7 +511,7 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
             remoteUserPasswordIsCorrect = true
         }
         // Checks if console password is correct.
-        let consoleUserPasswordIsCorrect = noMADUser.checkCurrentConsoleUserPassword(currentPassword)
+        let consoleUserPasswordResult = noMADUser.checkCurrentConsoleUserPassword(currentPassword)
         // Checks if keychain password is correct
         let keychainPasswordIsCorrect = try noMADUser.checkKeychainPassword(currentPassword)
         // Check if we want to store the password in the keychain.
@@ -496,8 +525,19 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
 
         let consoleUserIsAD = noMADUser.currentConsoleUserIsADuser()
 
-
-        if !consoleUserIsAD {
+        let currentConsoleUserMatchesNoMADUser = noMADUser.currentConsoleUserMatchesNoMADUser()
+        
+        
+        let passwordChangeMethod: String
+        if (consoleUserIsAD && currentConsoleUserMatchesNoMADUser) {
+            passwordChangeMethod = "OD"
+        } else {
+            passwordChangeMethod = "NoMAD"
+        }
+        
+        
+        
+        if ( passwordChangeMethod == "NoMAD" ) {
             myLogger.logit(LogLevel.debug, message: "Console user is not AD, trying to change using remote password.")
             // Check if the current password entered matches the remote user.
             guard remoteUserPasswordIsCorrect else {
@@ -518,19 +558,26 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
         }
 
 
-        if consoleUserIsAD || doLocalPasswordSync {
-            if consoleUserIsAD {
+        if ( passwordChangeMethod == "OD" ) || ( passwordChangeMethod == "NoMAD" && doLocalPasswordSync ) {
+            if ( passwordChangeMethod == "OD" ) {
                 myLogger.logit(LogLevel.debug, message: "Console user is AD, trying to change using console password.")
             }
-            if doLocalPasswordSync && !consoleUserIsAD {
+            if ( passwordChangeMethod == "NoMAD" && doLocalPasswordSync ) {
                 myLogger.logit(LogLevel.debug, message: "Local Password sync is enabled, let's try to sync.")
             }
             // Check if the current password entered matches the console user.
-            guard consoleUserPasswordIsCorrect else {
+            ///////
+            // This needs to be fixed.
+            ///////
+            if consoleUserPasswordResult == "Invalid" {
                 myError = "Current password does not match console user's password. Can't change console user's password."
                 return myError
+            } else if ( consoleUserPasswordResult == "Expired") {
+                myLogger.logit(LogLevel.debug, message: "Password has expired. Must change.")
+            } else {
+                myLogger.logit(LogLevel.debug, message: "Console user's password is correct.")
             }
-
+            
             // Try to change the current console user's password.
             do {
                 try noMADUser.changeCurrentConsoleUserPassword(currentPassword, newPassword1: newPassword1, newPassword2: newPassword2, forceChange: true)

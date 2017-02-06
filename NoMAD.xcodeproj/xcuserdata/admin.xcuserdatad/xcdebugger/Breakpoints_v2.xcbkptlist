@@ -63,8 +63,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "406"
             endingLineNumber = "406"
-            landmarkName = "NoMADMenuClickGetCertificate(_:)"
-            landmarkType = "7">
+            landmarkName = "NoMADMenuController"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -80,6 +80,22 @@
             startingLineNumber = "270"
             endingLineNumber = "270"
             landmarkName = "LogInClick(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "NoMAD/NoMADUser.swift"
+            timestampString = "507611819.687122"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "370"
+            endingLineNumber = "370"
+            landmarkName = "updateKeychainItem(_:newPassword2:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -1,3 +1,7 @@
+***Main Web Site***
+
+This gitlab page is used primarily for code stroage and issue tracking. For the most up to ddate information on NoMAD, and installer donwloads, please see [nomad.menu](http://www.nomad.menu)
+
 ***NoMAD***
 
 Get all of AD, with none of the bind! From now on you'll have no mo' need of AD.
@@ -36,27 +40,6 @@ Sample screen shot:
 
 ![NoMad Screen Shot](https://gitlab.com/Mactroll/NoMAD/raw/master/screen-shot "NoMAD Screen Shot")
 
-***Documentation***
-
-[Wiki](https://gitlab.com/Mactroll/NoMAD/wikis/home "NoMAD Wiki")
-
-***Current Version***
-
-v1.0 RC2
-
-Standalone App:
-
-[NoMAD-1.0RC3.zip](/uploads/617af8794bc5bd824abc34395a188fbc/NoMAD-1.0RC3.zip)
-
-Package installer:
-
-[NoMAD.pkg](/uploads/6ab29eb84c47cb31fbbf4e46ebd2b6f1/NoMAD.pkg)
-
-***Video Walkthrough***
-
-If you want to get a better idea of what NoMAD can do for you, here's a quick walkthrough of some of the major features.
-
-[NoMAD video Walkthrough](https://www.youtube.com/watch?v=Z27GOBl1bWY)
 
 ***Have Questions?***
 
