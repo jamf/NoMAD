@@ -1074,7 +1074,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     if self.myShareMounter.all_shares.count > 0 {
                         // Menu Items and Menu
 
-                        self.myShareMenuItem.title = "File Servers"
+                        self.myShareMenuItem.title = "FileServers".translate
 
                         let myShareMenu = NSMenu()
                         for share in self.myShareMounter.all_shares {
@@ -1095,7 +1095,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         }
 
                         myShareMenu.addItem(NSMenuItem.separator())
-                        myShareMenu.addItem(withTitle: "Edit...", action: nil, keyEquivalent: "")
+                        myShareMenu.addItem(withTitle: "Edit...".translate, action: nil, keyEquivalent: "")
 
                         // add the menu to the menu item
                         self.myShareMenuItem.submenu = myShareMenu

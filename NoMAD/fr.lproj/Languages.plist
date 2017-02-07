@@ -191,5 +191,19 @@
 		<key>comment</key>
 		<string>Menu item for opening up a user&apos;s home sharepoint from their AD profile</string>
 	</dict>
+	<key>FileServers</key>
+	<dict>
+		<key>value</key>
+		<string>Partages</string>
+		<key>comment</key>
+		<string>Menu item for File Servers</string>
+	</dict>
+	<key>Edit...</key>
+	<dict>
+		<key>value</key>
+		<string>Modifier...</string>
+		<key>comment</key>
+		<string>Menu item for editing</string>
+	</dict>
 </dict>
 </plist>
