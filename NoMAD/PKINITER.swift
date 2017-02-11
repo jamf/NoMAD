@@ -23,6 +23,7 @@ func findPKINITer() -> Bool {
         myLogger.logit(.info, message:"Enabling PKINIT functionality")
         return true
     } else {
+    
         return false
     }
 }
