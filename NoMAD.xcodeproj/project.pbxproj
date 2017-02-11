@@ -73,7 +73,6 @@
 		1AA2B6361E4DEE420088DF03 /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/PreferencesWindow.strings; sourceTree = "<group>"; };
 		1AA2B6371E4DEE420088DF03 /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1AA2B6381E4DEE420088DF03 /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/PasswordChangeWindow.strings; sourceTree = "<group>"; };
-		1AA2B63C1E4DEE430088DF03 /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/Localizable.strings; sourceTree = "<group>"; };
 		1AA2B63E1E4DEE440088DF03 /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1AA2B63F1E4DEE440088DF03 /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/LoginWindow.strings; sourceTree = "<group>"; };
 		1AA2B6401E4DEE5A0088DF03 /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = sv; path = sv.lproj/Languages.plist; sourceTree = "<group>"; };
@@ -477,7 +476,6 @@
 		1AA2B63D1E4DEE430088DF03 /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				1AA2B63C1E4DEE430088DF03 /* sv */,
 				1AA2B6451E4DEEAF0088DF03 /* de */,
 			);
 			name = Localizable.strings;
