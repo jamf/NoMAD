@@ -33,7 +33,7 @@ prefix func ~~(value: Int) -> Bool {
 }
 
 class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate, PreferencesWindowDelegate, NSMenuDelegate, NSUserNotificationCenterDelegate {
-
+@objc 
     // menu item connections
     @IBOutlet weak var NoMADMenu: NSMenu!
     @IBOutlet weak var NoMADMenuUserName: NSMenuItem!
@@ -53,6 +53,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     @IBOutlet weak var NoMADMenuTicketLife: NSMenuItem!
     @IBOutlet weak var NoMADMenuLogInAlternate: NSMenuItem!
     @IBOutlet weak var NoMADMenuSeperatorSoftwareAndHelp: NSMenuItem!
+    @IBOutlet weak var NoMADMenuSeperatorTicketLife: NSMenuItem!
 
     let NoMADMenuHome = NSMenuItem()
 
@@ -78,6 +79,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     var updateScheduled = false
     var updateRunning = false
     var menuAnimated = false
+
+    // for PKINIT additions
+
+    var PKINIT = false
 
     //let myShareMounter = ShareMounter()
 
@@ -143,6 +148,26 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             preferencesWindow.window!.forceToFrontAndFocus(nil)
         } else {
             doTheNeedfull()
+        }
+
+        // Add a PKINIT menu if PKINITer is in the bundle
+
+        if findPKINITer() {
+
+            // we have PKINITer so build the menu
+            // TODO: translate these items
+
+            let PKINITMenuItem = NSMenuItem()
+            PKINITMenuItem.title = "Smartcard Sign In"
+            PKINITMenuItem.toolTip = "Sign in with a Smartcard."
+            PKINITMenuItem.action = #selector(smartcardSignIn)
+            PKINITMenuItem.target = self.NoMADMenuLogOut.target
+            PKINITMenuItem.isEnabled = true
+
+            // add the menu
+
+            NoMADMenu.insertItem(PKINITMenuItem, at: (NoMADMenu.index(of: self.NoMADMenuSeperatorTicketLife) + 1))
+
         }
 
         // find out if a Self Service Solution exists - hide the menu item if it's not there
@@ -467,6 +492,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // quit when asked
     @IBAction func NoMADMenuClickQuit(_ sender: NSMenuItem) {
         NSApplication.shared().terminate(self)
+    }
+
+    // show PKINITer when asked
+
+    func smartcardSignIn() {
+        launchPKINITer()
     }
 
     // connect to the Home share if it's available
