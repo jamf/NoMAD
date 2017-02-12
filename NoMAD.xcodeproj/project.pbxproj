@@ -85,6 +85,13 @@
 		1AA2B6471E4DEEB00088DF03 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/LoginWindow.strings; sourceTree = "<group>"; };
 		1AA2B6481E4DEF760088DF03 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = de; path = de.lproj/Languages.plist; sourceTree = "<group>"; };
 		1AA2B6491E4FBDD60088DF03 /* PKINITER.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PKINITER.swift; sourceTree = "<group>"; };
+		1AA2B64F1E5101790088DF03 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/LoginWindow.strings; sourceTree = "<group>"; };
+		1AA2B6501E5101790088DF03 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		1AA2B6511E5101790088DF03 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/PasswordChangeWindow.strings; sourceTree = "<group>"; };
+		1AA2B6521E5101790088DF03 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/PreferencesWindow.strings; sourceTree = "<group>"; };
+		1AA2B6531E51017A0088DF03 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/Localizable.strings; sourceTree = "<group>"; };
+		1AA2B6541E51017A0088DF03 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		1AA2B6551E51017A0088DF03 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = da; path = da.lproj/Languages.plist; sourceTree = "<group>"; };
 		1ADCEC611D75476D005D33F5 /* ShareMounter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareMounter.swift; sourceTree = "<group>"; };
 		1AE1DFC21DA6B1E100456E3E /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Base; path = Base.lproj/Languages.plist; sourceTree = "<group>"; };
 		1AE1DFC51DA6B52300456E3E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = en; path = en.lproj/Languages.plist; sourceTree = "<group>"; };
@@ -379,6 +386,7 @@
 				en,
 				Base,
 				fr,
+				da,
 			);
 			mainGroup = 84CC67D21D30A18A00115C76;
 			productRefGroup = 84CC67DC1D30A18A00115C76 /* Products */;
@@ -477,6 +485,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				1AA2B6451E4DEEAF0088DF03 /* de */,
+				1AA2B6531E51017A0088DF03 /* da */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -489,6 +498,7 @@
 				841453711E3BF5290085890B /* fr */,
 				1AA2B6401E4DEE5A0088DF03 /* sv */,
 				1AA2B6481E4DEF760088DF03 /* de */,
+				1AA2B6551E51017A0088DF03 /* da */,
 			);
 			name = Languages.plist;
 			sourceTree = "<group>";
@@ -500,6 +510,7 @@
 				841453701E3BF5290085890B /* fr */,
 				1AA2B6351E4DEE410088DF03 /* sv */,
 				1AA2B6411E4DEEAE0088DF03 /* de */,
+				1AA2B6501E5101790088DF03 /* da */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
@@ -511,6 +522,7 @@
 				1AA2B6341E4DECE70088DF03 /* Base */,
 				1AA2B6371E4DEE420088DF03 /* sv */,
 				1AA2B6431E4DEEAF0088DF03 /* de */,
+				1AA2B6541E51017A0088DF03 /* da */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -532,6 +544,7 @@
 				841453871E3C2D8B0085890B /* fr */,
 				1AA2B6381E4DEE420088DF03 /* sv */,
 				1AA2B6441E4DEEAF0088DF03 /* de */,
+				1AA2B6511E5101790088DF03 /* da */,
 			);
 			name = PasswordChangeWindow.xib;
 			sourceTree = "<group>";
@@ -543,6 +556,7 @@
 				8414538C1E3C2D970085890B /* fr */,
 				1AA2B6361E4DEE420088DF03 /* sv */,
 				1AA2B6421E4DEEAE0088DF03 /* de */,
+				1AA2B6521E5101790088DF03 /* da */,
 			);
 			name = PreferencesWindow.xib;
 			sourceTree = "<group>";
@@ -554,6 +568,7 @@
 				841453911E3C2DA30085890B /* fr */,
 				1AA2B63F1E4DEE440088DF03 /* sv */,
 				1AA2B6471E4DEEB00088DF03 /* de */,
+				1AA2B64F1E5101790088DF03 /* da */,
 			);
 			name = LoginWindow.xib;
 			sourceTree = "<group>";
