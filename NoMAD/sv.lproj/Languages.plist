@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Lock Screen</key>
+	<dict>
+		<key>value</key>
+		<string>Lås Skärmen</string>
+		<key>comment</key>
+		<string>Menyentry för att låsa skärmen</string>
+	</dict>
+	<key>NoMADMenuController-LogIn</key>
+	<dict>
+		<key>value</key>
+		<string>Logga in</string>
+		<key>comment</key>
+		<string>Menyentry för att logga in</string>
+	</dict>
+	<key>NoMADMenuController-Connected</key>
+	<dict>
+		<key>value</key>
+		<string></string>
+		<key>comment</key>
+		<string>Felmeddelande i menyn att NoMAD inte kan hitta Domänen</string>
+	</dict>
+	<key>NoMADMenuController-NotConnected</key>
+	<dict>
+		<key>value</key>
+		<string>Ej ansluten</string>
+		<key>comment</key>
+		<string>Felmeddelande i menyn att NoMAD inte kan hitta Domänen</string>
+	</dict>
+	<key>NoMADMenuController-ChangePassword</key>
+	<dict>
+		<key>value</key>
+		<string>Ändra lösenord</string>
+		<key>comment</key>
+		<string>Menyentry om att ändra lösenord</string>
+	</dict>
+	<key>UserName</key>
+	<dict>
+		<key>value</key>
+		<string>Namn</string>
+		<key>comment</key>
+		<string>Användarens Namn</string>
+	</dict>
+	<key>New item</key>
+	<string></string>
+</dict>
+</plist>
