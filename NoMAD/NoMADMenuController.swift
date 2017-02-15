@@ -898,7 +898,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         // check for network reachability
         // we do this in the background and then time out if it doesn't complete
 
-        var reachCheck = true //false
+        var reachCheck = false
         let reachCheckDate = Date()
         
         reachCheckQueue.async(execute: {
@@ -906,6 +906,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         let host = defaults.string(forKey: Preferences.aDDomain)
         let myReach = SCNetworkReachabilityCreateWithName(nil, host!)
         var flag = SCNetworkReachabilityFlags.reachable
+
+         myLogger.logit(.debug, message: "Starting reachability check.")
 
         if !SCNetworkReachabilityGetFlags(myReach!, &flag) {
             myLogger.logit(.base, message: "Can't determine network reachability.")
@@ -922,7 +924,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         while !reachCheck && (abs(reachCheckDate.timeIntervalSinceNow) < 5) {
             RunLoop.main.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
-            //myLogger.logit(.debug, message: "Waiting for reachability check to return.")
+            myLogger.logit(.debug, message: "Waiting for reachability check to return.")
+            myLogger.logit(.debug, message: "Counting... " + String(abs(reachCheckDate.timeIntervalSinceNow)))
         }
 
         if !reachCheck {
@@ -972,6 +975,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         if self.userInformation.passwordAging {
 
                             self.statusItem.toolTip = dateFormatter.string(from: self.userInformation.userPasswordExpireDate as Date)
+                            
                             self.NoMADMenuTicketLife.title = dateFormatter.string(from: self.userInformation.myLDAPServers.tickets.expire as Date) + " " + self.userInformation.myLDAPServers.currentServer
 
                             let daysToGo = Int(abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow)/86400)
@@ -993,7 +997,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                             // we do this twice b/c doing it only once seems to make it less than full width
                             self.statusItem.title = ""
                             self.statusItem.title = ""
-                            self.NoMADMenuTicketLife.title = dateFormatter.string(from: self.userInformation.myLDAPServers.tickets.expire as Date) + " " + self.userInformation.myLDAPServers.currentServer
+                            self.NoMADMenuTicketLife.title = dateFormatter.string(from: self.userInformation.myLDAPServers.tickets.expire as Date) + " " + self.userInformation.myLDAPServers.currentServer + "NoMAD Version: " + String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!) + " " +  String(describing: Bundle.main.infoDictionary!["CFBundleVersion"]!)
                             self.statusItem.toolTip = "PasswordDoesNotExpire".translate
                             self.NoMADMenuPasswordExpires.title = "PasswordDoesNotExpire".translate
                         }
