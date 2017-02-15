@@ -192,14 +192,20 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         // wait for any updates to finish
 
-        while updateRunning {
-            RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
-        }
+        //while updateRunning {
+        //RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
+        //}
 
         // configure Chrome
 
         if defaults.bool(forKey: Preferences.configureChrome) {
             configureChrome()
+        }
+
+        // hide the Quit button if told to
+
+        if CommandLine.arguments.contains("-noquit") || defaults.bool(forKey: Preferences.hideQuit) {
+            NoMADMenuQuit.isHidden = true
         }
 
         firstRun = false
@@ -892,7 +898,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         // check for network reachability
         // we do this in the background and then time out if it doesn't complete
 
-        var reachCheck = false
+        var reachCheck = true //false
         let reachCheckDate = Date()
         
         reachCheckQueue.async(execute: {

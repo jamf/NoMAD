@@ -41,7 +41,9 @@ enum Preferences {
 
     // hidePrefs - r/w - bool - determines if the Preferences menu item should be shown
 
-    // hideRenew - r/w/ -bool - determines if the Renew Tickets menu item shoudl be shown
+    // hideRenew - r/w - bool - determines if the Renew Tickets menu item should be shown
+
+    // hideQuit = r/w - bool - determines if the Quit menu item should be shown
 
     // kerberosRealm - r/w - string - determines the Kerberos realm to use for all Kerberos activites. If left blank this will be set to the all-caps version of the AD Domain
 
@@ -118,6 +120,7 @@ enum Preferences {
     static let hideHelp = "HideHelp"
     static let hideRenew = "HideRenew"
     static let hidePrefs = "HidePrefs"
+    static let hideQuit = "HideQuit"
     static let kerberosRealm = "KerberosRealm"
     static let lastCertificateExpiration = "LastCertificateExpiration"
     static let loginComamnd = "LoginComamnd"
