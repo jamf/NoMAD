@@ -139,6 +139,8 @@
 		BF34324A1D52844300CE8F89 /* NoMADTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NoMADTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF34324C1D52844300CE8F89 /* NoMADTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoMADTests.swift; sourceTree = "<group>"; };
 		BF34324E1D52844300CE8F89 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DFD8CDFA1E507B6200BED42E /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		DFD8CDFB1E507B6200BED42E /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = sv; path = sv.lproj/Languages.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -387,6 +389,7 @@
 				Base,
 				fr,
 				da,
+				sv,
 			);
 			mainGroup = 84CC67D21D30A18A00115C76;
 			productRefGroup = 84CC67DC1D30A18A00115C76 /* Products */;
@@ -496,9 +499,9 @@
 				1AE1DFC21DA6B1E100456E3E /* Base */,
 				1AE1DFC51DA6B52300456E3E /* en */,
 				841453711E3BF5290085890B /* fr */,
-				1AA2B6401E4DEE5A0088DF03 /* sv */,
 				1AA2B6481E4DEF760088DF03 /* de */,
 				1AA2B6551E51017A0088DF03 /* da */,
+				DFD8CDFB1E507B6200BED42E /* sv */,
 			);
 			name = Languages.plist;
 			sourceTree = "<group>";
@@ -508,9 +511,9 @@
 			children = (
 				346CD2721DA205B500255F66 /* Base */,
 				841453701E3BF5290085890B /* fr */,
-				1AA2B6351E4DEE410088DF03 /* sv */,
 				1AA2B6411E4DEEAE0088DF03 /* de */,
 				1AA2B6501E5101790088DF03 /* da */,
+				DFD8CDFA1E507B6200BED42E /* sv */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
