@@ -28,6 +28,8 @@ enum Preferences {
 
     // configureChrome - r/w - bool - determines if we update the Chrome whitelisting for Kerberos auth
 
+    // changePasswordCommand - r/w - string - script to run on successful password change
+
     // displayName - r/o - string - the long name of the currently signed in user
 
     // exportableKey - r/w - bool - determines if the private key for a NoMAD-generated certificate can be exported - default is false
@@ -108,6 +110,7 @@ enum Preferences {
 
     static let aDDomain = "ADDomain"
     static let autoConfigure = "AutoConfigure"
+    static let changePasswordCommand = "ChangePasswordCommand"
     static let changePasswordType = "ChangePasswordType"
     static let changePasswordOptions = "ChangePasswordOptions"
     static let caribouTime = "CaribouTime"
