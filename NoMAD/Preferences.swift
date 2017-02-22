@@ -32,6 +32,8 @@ enum Preferences {
 
     // displayName - r/o - string - the long name of the currently signed in user
 
+    // dontMatchKerbPrefs - r/w - bool - determines if kpasswd server is written out to kerb pref file during password change
+
     // exportableKey - r/w - bool - determines if the private key for a NoMAD-generated certificate can be exported - default is false
 
     // getHelpType - r/w - string - determines what method is triggered when a user selects the Get Help menu item
@@ -118,6 +120,7 @@ enum Preferences {
     static let caribouTime = "CaribouTime"
     static let configureChrome = "ConfigureChrome"
     static let displayName = "DisplayName"
+    static let dontMatchKerbPrefs = "DontMatchKerbPrefs"
     static let exportableKey = "ExportableKey"
     static let getHelpType = "GetHelpType"
     static let getHelpOptions = "GetHelpOptions"
