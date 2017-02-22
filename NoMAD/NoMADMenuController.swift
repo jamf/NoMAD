@@ -33,7 +33,7 @@ prefix func ~~(value: Int) -> Bool {
 }
 
 class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate, PreferencesWindowDelegate, NSMenuDelegate, NSUserNotificationCenterDelegate {
-
+@objc 
     // menu item connections
     @IBOutlet weak var NoMADMenu: NSMenu!
     @IBOutlet weak var NoMADMenuUserName: NSMenuItem!
@@ -53,6 +53,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     @IBOutlet weak var NoMADMenuTicketLife: NSMenuItem!
     @IBOutlet weak var NoMADMenuLogInAlternate: NSMenuItem!
     @IBOutlet weak var NoMADMenuSeperatorSoftwareAndHelp: NSMenuItem!
+    @IBOutlet weak var NoMADMenuSeperatorTicketLife: NSMenuItem!
 
     let NoMADMenuHome = NSMenuItem()
     let myShareMenuItem = NSMenuItem()
@@ -146,6 +147,26 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             doTheNeedfull()
         }
 
+        // Add a PKINIT menu if PKINITer is in the bundle
+
+        if findPKINITer() {
+
+            // we have PKINITer so build the menu
+            // TODO: translate these items
+
+            let PKINITMenuItem = NSMenuItem()
+            PKINITMenuItem.title = "Smartcard Sign In"
+            PKINITMenuItem.toolTip = "Sign in with a Smartcard."
+            PKINITMenuItem.action = #selector(smartcardSignIn)
+            PKINITMenuItem.target = self.NoMADMenuLogOut.target
+            PKINITMenuItem.isEnabled = true
+
+            // add the menu
+
+            NoMADMenu.insertItem(PKINITMenuItem, at: (NoMADMenu.index(of: self.NoMADMenuSeperatorTicketLife) + 1))
+
+        }
+
         // find out if a Self Service Solution exists - hide the menu item if it's not there
         myLogger.logit(.notice, message:"Looking for Self Service applications")
         if let discoveredService = SelfServiceManager().discoverSelfService() {
@@ -168,14 +189,20 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         // wait for any updates to finish
 
-        while updateRunning {
-            RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
-        }
+        //while updateRunning {
+        //RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
+        //}
 
         // configure Chrome
 
         if defaults.bool(forKey: Preferences.configureChrome) {
             configureChrome()
+        }
+
+        // hide the Quit button if told to
+
+        if CommandLine.arguments.contains("-noquit") || defaults.bool(forKey: Preferences.hideQuit) {
+            NoMADMenuQuit.isHidden = true
         }
 
         firstRun = false
@@ -468,6 +495,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // quit when asked
     @IBAction func NoMADMenuClickQuit(_ sender: NSMenuItem) {
         NSApplication.shared().terminate(self)
+    }
+
+    // show PKINITer when asked
+
+    func smartcardSignIn() {
+        launchPKINITer()
     }
 
     // connect to the Home share if it's available
@@ -899,6 +932,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         let myReach = SCNetworkReachabilityCreateWithName(nil, host!)
         var flag = SCNetworkReachabilityFlags.reachable
 
+         myLogger.logit(.debug, message: "Starting reachability check.")
+
         if !SCNetworkReachabilityGetFlags(myReach!, &flag) {
             myLogger.logit(.base, message: "Can't determine network reachability.")
             self.lastStatusCheck = Date()
@@ -964,6 +999,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         if self.userInformation.passwordAging {
 
                             self.statusItem.toolTip = dateFormatter.string(from: self.userInformation.userPasswordExpireDate as Date)
+                            
                             self.NoMADMenuTicketLife.title = dateFormatter.string(from: self.userInformation.myLDAPServers.tickets.expire as Date) + " " + self.userInformation.myLDAPServers.currentServer
 
                             let daysToGo = Int(abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow)/86400)
@@ -985,7 +1021,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                             // we do this twice b/c doing it only once seems to make it less than full width
                             self.statusItem.title = ""
                             self.statusItem.title = ""
-                            self.NoMADMenuTicketLife.title = dateFormatter.string(from: self.userInformation.myLDAPServers.tickets.expire as Date) + " " + self.userInformation.myLDAPServers.currentServer
+                            self.NoMADMenuTicketLife.title = dateFormatter.string(from: self.userInformation.myLDAPServers.tickets.expire as Date) + " " + self.userInformation.myLDAPServers.currentServer + "NoMAD Version: " + String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!) + " " +  String(describing: Bundle.main.infoDictionary!["CFBundleVersion"]!)
                             self.statusItem.toolTip = "PasswordDoesNotExpire".translate
                             self.NoMADMenuPasswordExpires.title = "PasswordDoesNotExpire".translate
                         }

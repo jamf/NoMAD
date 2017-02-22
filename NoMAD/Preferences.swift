@@ -28,6 +28,8 @@ enum Preferences {
 
     // configureChrome - r/w - bool - determines if we update the Chrome whitelisting for Kerberos auth
 
+    // changePasswordCommand - r/w - string - script to run on successful password change
+
     // displayName - r/o - string - the long name of the currently signed in user
 
     // exportableKey - r/w - bool - determines if the private key for a NoMAD-generated certificate can be exported - default is false
@@ -41,7 +43,9 @@ enum Preferences {
 
     // hidePrefs - r/w - bool - determines if the Preferences menu item should be shown
 
-    // hideRenew - r/w/ -bool - determines if the Renew Tickets menu item shoudl be shown
+    // hideRenew - r/w - bool - determines if the Renew Tickets menu item should be shown
+
+    // hideQuit = r/w - bool - determines if the Quit menu item should be shown
 
     // kerberosRealm - r/w - string - determines the Kerberos realm to use for all Kerberos activites. If left blank this will be set to the all-caps version of the AD Domain
 
@@ -111,6 +115,7 @@ enum Preferences {
 
     static let aDDomain = "ADDomain"
     static let autoConfigure = "AutoConfigure"
+    static let changePasswordCommand = "ChangePasswordCommand"
     static let changePasswordType = "ChangePasswordType"
     static let changePasswordOptions = "ChangePasswordOptions"
     static let caribouTime = "CaribouTime"
@@ -123,6 +128,7 @@ enum Preferences {
     static let hideHelp = "HideHelp"
     static let hideRenew = "HideRenew"
     static let hidePrefs = "HidePrefs"
+    static let hideQuit = "HideQuit"
     static let kerberosRealm = "KerberosRealm"
     static let keychainItems = "KeychainItems"
     static let keychainPasswordMatch = "KeychainPasswordMatch"

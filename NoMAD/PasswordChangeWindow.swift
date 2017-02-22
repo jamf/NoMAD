@@ -88,6 +88,13 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
                 let alertController = NSAlert()
                 alertController.messageText = "PasswordChangeSuccessful".translate
 
+                // fire off the password change script
+
+                if defaults.string(forKey: Preferences.changePasswordCommand) != "" {
+                    let myResult = cliTask(defaults.string(forKey: Preferences.changePasswordCommand)!)
+                    myLogger.logit(LogLevel.base, message: myResult)
+                }
+
                 alertController.beginSheetModal(for: self.window!, completionHandler: {( response ) in
                     if ( response == 0 ) {
                         self.close()

@@ -1,0 +1,3 @@
+/* Days to go before expiration message */
+
+"NoMADMenuController-PasswordExpiresInDays" = "Adgangskoden udløber om %@ dag(e)"

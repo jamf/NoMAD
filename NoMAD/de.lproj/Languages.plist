@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Lock Screen</key>
+	<dict>
+		<key>value</key>
+		<string>Bildschirm sperren</string>
+		<key>comment</key>
+		<string>Men&#252;punkt um den Bildschirm zu sperren</string>
+	</dict>
+	<key>NoMADMenuController-LogIn</key>
+	<dict>
+		<key>value</key>
+		<string>Anmelden</string>
+		<key>comment</key>
+		<string>Men&#252;punkt zum Anmelden</string>
+	</dict>
+	<key>NoMADMenuController-Connected</key>
+	<dict>
+		<key>value</key>
+		<string></string>
+		<key>comment</key>
+		<string>Text in der Men&#252;leiste der anzeigt, dass NoMAD die Dom&#228;ne finden kann</string>
+	</dict>
+	<key>NoMADMenuController-NotConnected</key>
+	<dict>
+		<key>value</key>
+		<string>Nicht verbunden</string>
+		<key>comment</key>
+		<string>Text in der Men&#252;leiste der anzeigt, dass NoMAD die Dom&#228;ne nicht finden kann</string>
+	</dict>
+	<key>NoMADMenuController-ChangePassword</key>
+	<dict>
+		<key>value</key>
+		<string>Passwort &#228;ndern</string>
+		<key>comment</key>
+		<string>Men&#252;punkt um das Passwort zu &#228;ndern</string>
+	</dict>
+	<key>UserName</key>
+	<dict>
+		<key>value</key>
+		<string>Benutzername</string>
+		<key>comment</key>
+		<string>Vollst&#228;ndiger Benutzername.</string>
+	</dict>
+	<key>NoMADMenuController-GetSoftware</key>
+	<dict>
+		<key>comment</key>
+		<string>Men&#252;punkt um das Software Portal zu &#246;ffnen.</string>
+		<key>value</key>
+		<string>Software installieren</string>
+	</dict>
+	<key>NoMADMenuController-GetHelp</key>
+	<dict>
+		<key>value</key>
+		<string>Hilfe anfordern</string>
+		<key>comment</key>
+		<string>Men&#252;punkt um Hilfeoptionen anzuzeigen.</string>
+	</dict>
+	<key>NoMADMenuController-Preferences</key>
+	<dict>
+		<key>value</key>
+		<string>Einstellungen</string>
+		<key>comment</key>
+		<string>Men&#252;punkt der das Einstellungsfenster &#246;ffnet.</string>
+	</dict>
+	<key>NoMADMenuController-Quit</key>
+	<dict>
+		<key>value</key>
+		<string>Beenden</string>
+		<key>comment</key>
+		<string>Men&#252;punkt um NoMAD zu beenden.</string>
+	</dict>
+	<key>NoMADMenuController-RenewTickets</key>
+	<dict>
+		<key>comment</key>
+		<string>Men&#252;punkt um Kerberos tickets zu erneuern.</string>
+		<key>value</key>
+		<string>Tickets erneuern</string>
+	</dict>
+	<key>NoMADMenuController-PasswordExpiresInDays</key>
+	<dict>
+		<key>comment</key>
+		<string>Anzeige f&#252;r verbleibende Tage bis das Passwort abl&#228;uft</string>
+		<key>value</key>
+		<string>Passwort l&#228;uft ab in: %@ Tagen</string>
+	</dict>
+	<key>PasswordDoesNotExpire</key>
+	<dict>
+		<key>value</key>
+		<string>Passwort l&#228;uft nicht ab</string>
+		<key>comment</key>
+		<string>Men&#252;punkt wenn kein Ablaufdatum f&#252;r das Passwort gesetzt ist.</string>
+	</dict>
+	<key>PasswordChangeSuccessful</key>
+	<dict>
+		<key>value</key>
+		<string>Passwort erfolgreich ge&#228;ndert. Hinweis: Es kann bis zu eine Stunde dauern bis das Ablaufdatum aktualisiert wird.</string>
+		<key>comment</key>
+		<string>Nachricht um den Benutzer zu informieren dass das Passwort efolgreich ge&#228;ndert wurde</string>
+	</dict>
+	<key>InvalidPassword</key>
+	<dict>
+		<key>value</key>
+		<string>Ung&#252;ltiges Passwort. Bitte erneut eingeben.</string>
+		<key>comment</key>
+		<string>Fehlermeldung wenn das Passwort inkorrekt eingegeben wurde</string>
+	</dict>
+	<key>InvalidUsername</key>
+	<dict>
+		<key>value</key>
+		<string>Ung&#252;ltiger Benutzername. Bitte erneut eingeben.</string>
+		<key>comment</key>
+		<string>Fehlermeldung wenn der Benutzername inkorrekt eingegeben wurde</string>
+	</dict>
+	<key>PasswordExpire</key>
+	<dict>
+		<key>value</key>
+		<string>Passwort ist abgelaufen. Bitte das Passwort jetzt &#228;ndern.</string>
+		<key>comment</key>
+		<string>Fehlermeldung wenn das Passwort abgelaufen ist</string>
+	</dict>
+	<key>PasswordAboutToExpire</key>
+	<dict>
+		<key>value</key>
+		<string>Passwort l&#228;uft bald ab!</string>
+		<key>comment</key>
+		<string>Nachricht wenn das Passwort bald abl&#228;uft</string>
+	</dict>
+	<key>PasswordExpiresOn</key>
+	<dict>
+		<key>value</key>
+		<string>Netzwerk-Passwort l&#228;uft ab am </string>
+		<key>comment</key>
+		<string>Netzwerk-Passwort l&#228;uft ab am &lt;date&gt;</string>
+	</dict>
+	<key>PasswordMismatch</key>
+	<dict>
+		<key>value</key>
+		<string>Neue Passw&#246;rter stimmen nicht &#252;berein.</string>
+		<key>comment</key>
+		<string>Fehlermeldung wenn neue Passw&#246;rter nicht &#252;bereinstimmen</string>
+	</dict>
+	<key>NetworkLocalMismatch</key>
+	<dict>
+		<key>value</key>
+		<string>Netzwerk-Passwort und lokales Passwort stimmen nicht &#252;berein. Bitte geben Sie das Passwort f&#252;r Ihren Mac ein.</string>
+		<key>comment</key>
+		<string>Fehlermeldung wenn Netzwerk- und lokales Passwort nicht &#252;bereinstimmen</string>
+	</dict>
+	<key>ValidCertificate</key>
+	<dict>
+		<key>value</key>
+		<string>G&#252;ltiges Zertifikat bereits vorhanden.</string>
+		<key>comment</key>
+		<string>Benutzer hat bereits ein g&#252;ltiges Zertifikat</string>
+	</dict>
+	<key>Cancel</key>
+	<dict>
+		<key>value</key>
+		<string>Abbrechen</string>
+		<key>comment</key>
+		<string>Schaltfl&#228;che zum Abbrechen</string>
+	</dict>
+	<key>RequestAnyway</key>
+	<dict>
+		<key>value</key>
+		<string>Trotzdem anfordern</string>
+		<key>comment</key>
+		<string>Schaltfl&#228;che um trotzdem ein Zertifikat anzufordern</string>
+	</dict>
+	<key>CertConnectionError</key>
+	<dict>
+		<key>value</key>
+		<string>Verbindungsfehler. Stellen Sie sicher dass die URL f&#252;r Ihre X509 CA korrekt ist und den SSL Zertifkaten vertraut wird.</string>
+		<key>comment</key>
+		<string>Nachricht wenn Zertifikatsstelle nicht erreicht werden kann</string>
+	</dict>
+	<key>CAConfigError</key>
+	<dict>
+		<key>value</key>
+		<string>Bitte &#252;berpr&#252;fen Sie ob die Einstellungen f&#252;r Ihre Zertifkatsstelle korrekt sind.</string>
+		<key>comment</key>
+		<string>Fehlermeldung wenn Zertifkatsstelle nicht gefunden werden kann</string>
+	</dict>
+	<key>d</key>
+	<dict>
+		<key>value</key>
+		<string>d</string>
+		<key>comment</key>
+		<string>K&#252;rzel f&#252;r Tage</string>
+	</dict>
+	<key>HomeSharepoint</key>
+	<dict>
+		<key>value</key>
+		<string>Netzwerk-Benutzerzeichnis</string>
+		<key>comment</key>
+		<string>Men&#252;punkt um das Netzwerk-Benutzerzeichnis aus dem AD-Profil zu &#246;ffnen</string>
+	</dict>
+	<key>FileServers</key>
+	<dict>
+		<key>value</key>
+		<string>Dateiserver</string>
+		<key>comment</key>
+		<string>Men&#252;punkt f&#252;r Dateiserver</string>
+	</dict>
+	<key>Edit...</key>
+	<dict>
+		<key>value</key>
+		<string>Bearbeiten...</string>
+		<key>comment</key>
+		<string>Men&#252;punkt zum Bearbeiten</string>
+	</dict>
+</dict>
+</plist>
