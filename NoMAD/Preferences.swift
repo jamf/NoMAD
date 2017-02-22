@@ -36,6 +36,8 @@ enum Preferences {
 
     // exportableKey - r/w - bool - determines if the private key for a NoMAD-generated certificate can be exported - default is false
 
+    // getCertAutomatically - r/w - bool - determines if a certificate is automatically requested for the user if one does not already exist
+
     // getHelpType - r/w - string - determines what method is triggered when a user selects the Get Help menu item
     // getHelp Options - r/w - string - options for configuring the actions of the selected getHelpType
 
@@ -122,6 +124,7 @@ enum Preferences {
     static let displayName = "DisplayName"
     static let dontMatchKerbPrefs = "DontMatchKerbPrefs"
     static let exportableKey = "ExportableKey"
+    static let getCertAutomatically = "GetCertificateAutomatically"
     static let getHelpType = "GetHelpType"
     static let getHelpOptions = "GetHelpOptions"
     static let groups = "Groups"
