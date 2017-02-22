@@ -67,6 +67,8 @@ enum Preferences {
 
     // messageNotConnected - r/w - string - text to display in menu bar when not connected
 
+    // messagePasswordChangePolicy - r/w - string - message to show the help button in the password change window
+
     // passwordExpireAlertTime - r/w - date - when to start complaining about a password that is about to expire. Defaults to 1296000 secs or 15 days.
 
     // passwordChangeOptions - r/w - string - similar to getHelp, this sets options for the passwordChangeType to use
@@ -136,6 +138,7 @@ enum Preferences {
     static let lastPasswordExpireDate = "LastPasswordExpireDate"
     static let messageLocalSync = "MessageLocalSync"
     static let messageNotConnected = "MessageNotConnected"
+    static let messagePasswordChangePolicy = "MessagePasswordChangePolicy"
     static let passwordExpireAlertTime = "PasswordExpireAlertTime"
 
     // static let passwordChangeOptions = "PasswordChangeOptions"

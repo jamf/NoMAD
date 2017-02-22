@@ -20,7 +20,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
     @IBOutlet weak var oldPassword: NSSecureTextField!
     @IBOutlet weak var newPasswordAgain: NSSecureTextField!
     @IBOutlet weak var passwordChangeButton: NSButton!
-
+    @IBOutlet weak var HelpButton: NSButton!
 
     override var windowNibName: String! {
         return "PasswordChangeWindow"
@@ -36,6 +36,16 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
         oldPassword.stringValue = ""
         newPassword.stringValue = ""
         newPasswordAgain.stringValue = ""
+
+        // show the policy button
+
+        if let passwordPolicyText = defaults.string(forKey: Preferences.messagePasswordChangePolicy) {
+            HelpButton.isEnabled = true
+            HelpButton.isHidden = false
+        } else {
+            HelpButton.isEnabled = false
+            HelpButton.isHidden = true
+        }
 
         // set the button text
         passwordChangeButton.title = "NoMADMenuController-ChangePassword".translate
@@ -111,6 +121,13 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
             alertController.beginSheetModal(for: self.window!, completionHandler: nil)
             EXIT_FAILURE
         }
+    }
+
+    @IBAction func HelpButtonClicked(_ sender: Any) {
+
+        let alertController = NSAlert()
+        alertController.messageText = defaults.string(forKey: Preferences.messagePasswordChangePolicy)!
+        alertController.beginSheetModal(for: self.window!, completionHandler: nil)
     }
 
     /**
