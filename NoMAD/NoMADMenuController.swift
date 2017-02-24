@@ -32,6 +32,11 @@ prefix func ~~(value: Int) -> Bool {
     return (value > 0) ? true : false
 }
 
+// for delegates
+let preferencesWindow = PreferencesWindow()
+let passwordChangeWindow = PasswordChangeWindow()
+let loginWindow = LoginWindow()
+
 class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate, PreferencesWindowDelegate, NSMenuDelegate, NSUserNotificationCenterDelegate {
     @objc
     // menu item connections
@@ -61,11 +66,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     var iconOnOn = NSImage(named: "NoMAD-statusicon-on-on")
     var iconOnOff = NSImage(named: "NoMAD-statusicon-on-off")
     var iconOffOff = NSImage(named: "NoMAD-statusicon-off-off")
-
-    // for delegates
-    let preferencesWindow = PreferencesWindow()
-    let loginWindow = LoginWindow()
-    let passwordChangeWindow = PasswordChangeWindow()
 
     let userNotificationCenter = NSUserNotificationCenter.default
 
@@ -101,6 +101,13 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     override func awakeFromNib() {
 
         myLogger.logit(.base, message:"---Starting NoMAD---")
+
+        // AppleEvents
+
+        LSSetDefaultHandlerForURLScheme("nomad" as CFString, "com.trusourcelabs.NoMAD" as CFString)
+        let eventManager = NSAppleEventManager.shared()
+
+        eventManager.setEventHandler(self, andSelector: #selector(handleAppleEvent), forEventClass: AEEventClass(kInternetEventClass), andEventID: AEEventID(kAEGetURL))
 
         // check for Dark Mode
 
@@ -611,7 +618,11 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         }
 
         if defaults.bool(forKey: Preferences.hidePrefs) {
-            self.NoMADMenuPreferences.isEnabled = false
+            //self.NoMADMenuPreferences.isEnabled = false
+            NoMADMenuPreferences.isHidden = true
+            NoMADMenuPreferences.isEnabled = false
+            NoMADMenuSpewLogs.isHidden = true
+
             myLogger.logit(.notice, message:NSLocalizedString("NoMADMenuController-PreferencesDisabled", comment: "Log; Text; Preferences Disabled"))
         }
 
@@ -813,6 +824,52 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         } else {
             self.statusItem.image = self.iconOffOff
         }
+    }
+
+
+    func handleAppleEvent(_ event: NSAppleEventDescriptor, withReplyEvent: NSAppleEventDescriptor) {
+        let fullCommand = URL(string: (event.paramDescriptor(forKeyword: keyDirectObject)?.stringValue)!)
+
+        let command = fullCommand?.host
+
+        switch command! {
+
+        // TODO: Lots of error handling and such
+        // like not opening windows when not connected
+
+        case "getcertificate":
+            getCert(false)
+        case "gethelp" :
+            GetHelp().getHelp()
+        case "getsoftware" :
+            NoMADMenuClickGetSoftware(NoMADMenuGetSoftware)
+        case "open": break
+        case "passwordchange":
+            passwordChangeWindow.window!.forceToFrontAndFocus(nil)
+        case "prefs":
+            preferencesWindow.window!.forceToFrontAndFocus(nil)
+        case "signin":
+            if let user = fullCommand?.user {
+                let password = fullCommand?.password
+                let userPrinc = user + "@" + defaults.string(forKey: Preferences.kerberosRealm)!
+                let myKerbUtil = KerbUtil()
+                let myErr = myKerbUtil.getKerbCredentials(password, userPrinc)
+                print(myErr)
+                if myErr == nil {
+                    let keychainUtil = KeychainUtil()
+                    let status = keychainUtil.updatePassword(userPrinc, pass: password!)
+                    print(status)
+                }
+                doTheNeedfull()
+            } else {
+            loginWindow.window!.forceToFrontAndFocus(nil)
+            }
+        case "update":
+            doTheNeedfull()
+        default:
+            break
+        }
+        print("****EVENT***")
     }
 
     // function to start the menu throbbing

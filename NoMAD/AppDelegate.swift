@@ -22,6 +22,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var refreshActivity: NSBackgroundActivityScheduler?
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        
         myLogger.logit(.base, message:"---NoMAD Initialized---")
         let version = String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!)
         let build = String(describing: Bundle.main.infoDictionary!["CFBundleVersion"]!)

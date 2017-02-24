@@ -92,6 +92,8 @@ enum Preferences {
 
     // template - r/w - string - the certificate template to be used for an X509 enrollment
 
+    // titleSignIn - r/w - string - Title of the Sign In window
+
     // uPCAlert - r/w - bool - determines if we alert the user that the password was changed outside of NoMAD
 
     // userPrincipal - r/o - string - the Kerberos principal for the currently signed in user
@@ -159,6 +161,7 @@ enum Preferences {
     static let signInCommand = "SignInCommand"
     static let stateChangeAction = "StateChangeAction"
     static let template = "Template"
+    static let titleSignIn = "TitleSignIn"
     static let uPCAlert = "UPCAlert"
     static let userPrincipal = "UserPrincipal"
     static let userHome = "UserHome"
