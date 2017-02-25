@@ -32,6 +32,8 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 
     var lastNetwork = ""
 
+    let myDNSQueue = DispatchQueue(label: "com.trusourcelabs.NoMAD.background_dns_queue", attributes: [])
+
     var URIPrefix = "ldap://"
     var port = "389"
     var maxSSF = ""
@@ -562,11 +564,15 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 
     fileprivate func checkConnectivity( _ domain: String ) -> Bool {
 
+        self.resolver = DNSResolver.init()
+
         self.resolver.queryType = "SRV"
         self.resolver.queryValue = "_ldap._tcp." + domain
         if (site != "") {
             self.resolver.queryValue = "_ldap._tcp." + site + "._sites." + domain
         }
+
+        myLogger.logit(.debug, message: "Starting DNS query for LDAP SRV..")
 
         self.resolver.startQuery()
 
@@ -594,6 +600,8 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         }
         var results = [String]()
 
+        myLogger.logit(.debug, message: "Starting DNS query for SRV records.")
+
         self.resolver.startQuery()
 
         while ( !self.resolver.finished ) {
@@ -618,16 +626,51 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     // Uses DNSResolver
 
     func getHosts(_ domain: String ) {
+
+        //myDNSQueue.async(execute: {
+
+        let queryDate = NSDate()
+
+        if domain.components(separatedBy: ".").last == "local"  {
+            // .local domain need to special case
+            myLogger.logit(.debug, message: "Using a .local domain.")
+
+            if !self.resolver.finished {
+                myLogger.logit(.debug, message: "DNS query already running.")
+                while ( !self.resolver.finished ) && (abs(queryDate.timeIntervalSinceNow) < 3) {
+                    RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
+                    myLogger.logit(.debug, message: "Waiting for DNS query to return.")
+                    myLogger.logit(.debug, message: "Counting... " + String(abs(queryDate.timeIntervalSinceNow)))
+                }
+            }
+
+        }
+
         self.resolver.queryType = "SRV"
 
         self.resolver.queryValue = "_ldap._tcp." + domain
-        if (site != "") {
-            self.resolver.queryValue = "_ldap._tcp." + site + "._sites." + domain
+        if (self.site != "") {
+            self.resolver.queryValue = "_ldap._tcp." + self.site + "._sites." + domain
         }
+
+        // check for a query already running
+
+        myLogger.logit(.debug, message: "Starting DNS query for SRV records.")
+
         self.resolver.startQuery()
 
-        while ( !self.resolver.finished ) {
+        while ( !self.resolver.finished ) && (abs(queryDate.timeIntervalSinceNow) < 3) {
             RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
+            myLogger.logit(.debug, message: "Waiting for DNS query to return.")
+            myLogger.logit(.debug, message: "Counting... " + String(abs(queryDate.timeIntervalSinceNow)))
+        }
+
+        if !self.resolver.finished {
+            myLogger.logit(.debug, message: "DNS query timed out.")
+            self.resolver.stopQuery()
+            self.currentState = false
+            self.hosts.removeAll()
+            return
         }
 
         if (self.resolver.error == nil) {
@@ -646,7 +689,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 
             // now to sort them
 
-            hosts = newHosts.sorted { (x, y) -> Bool in
+            self.hosts = newHosts.sorted { (x, y) -> Bool in
                 return ( x.priority <= y.priority )
             }
             self.currentState = true
@@ -654,8 +697,10 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         } else {
             myLogger.logit(.debug, message: "Query Error: " + self.resolver.error.localizedDescription)
             self.currentState = false
-            hosts.removeAll()
+            self.hosts.removeAll()
         }
+        //})
+
     }
 
 
