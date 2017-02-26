@@ -631,21 +631,6 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 
         let queryDate = NSDate()
 
-        if domain.components(separatedBy: ".").last == "local"  {
-            // .local domain need to special case
-            myLogger.logit(.debug, message: "Using a .local domain.")
-
-            if !self.resolver.finished {
-                myLogger.logit(.debug, message: "DNS query already running.")
-                while ( !self.resolver.finished ) && (abs(queryDate.timeIntervalSinceNow) < 3) {
-                    RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
-                    myLogger.logit(.debug, message: "Waiting for DNS query to return.")
-                    myLogger.logit(.debug, message: "Counting... " + String(abs(queryDate.timeIntervalSinceNow)))
-                }
-            }
-
-        }
-
         self.resolver.queryType = "SRV"
 
         self.resolver.queryValue = "_ldap._tcp." + domain
