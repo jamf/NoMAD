@@ -35,7 +35,7 @@
 	<key>LocalPasswordSync</key>
 	<false/>
 	<key>LastUser</key>
-	<string></string>
+	<string>Not Connected</string>
 	<key>LastPasswordWarning</key>
 	<string>1296000</string>
 	<key>LastPasswordExpireDate</key>

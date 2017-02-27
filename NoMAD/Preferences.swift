@@ -69,6 +69,20 @@ enum Preferences {
 
     // lDAPoverSSL - r/w - bool - flag to use LDAPS instead of LDAP
 
+    // menuHomeDirectory - r/w - string - title of the Home Directory menu
+
+    // menuGetHelp - r/w - string - title of the Get Help menu
+
+    // menuGetSoftware - r/w - string - title of the Get Software menu
+
+    // menuPasswordExpires - r/w - string - title of the Password Expires menu before someone logs in
+
+    // menuRenewTickets - r/w - string - title of the Rewnew Tickets menu
+
+    // menuUserName - r/w - string - title of the User Name menu before anyone is logged in
+
+    // messageLocalSync - r/w - string - text to display when the user is asked for their local password to allow the local accont password to be synced from the network account
+
     // messageNotConnected - r/w - string - text to display in menu bar when not connected
 
     // messagePasswordChangePolicy - r/w - string - message to show the help button in the password change window
@@ -144,6 +158,12 @@ enum Preferences {
     static let lastUser = "LastUser"
     static let lastPasswordWarning = "LastPasswordWarning"
     static let lastPasswordExpireDate = "LastPasswordExpireDate"
+    static let menuHomeDirectory = "MenuHomeDirectory"
+    static let menuGetHelp = "MenuGetHelp"
+    static let menuGetSoftware = "MenuGetSoftware"
+    static let menuPasswordExpires = "MenuPasswordExpires"
+    static let menuRenewTickets = "MenuRenewTickets"
+    static let menuUserName = "MenuUserName"
     static let messageLocalSync = "MessageLocalSync"
     static let messageNotConnected = "MessageNotConnected"
     static let messagePasswordChangePolicy = "MessagePasswordChangePolicy"
