@@ -860,6 +860,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         case "prefs":
             preferencesWindow.window!.forceToFrontAndFocus(nil)
         case "signin":
+            if self.userInformation.connected && !self.userInformation.myLDAPServers.tickets.state {
             if let user = fullCommand?.user {
                 let password = fullCommand?.password
                 let userPrinc = user + "@" + defaults.string(forKey: Preferences.kerberosRealm)!
@@ -875,6 +876,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             } else {
             loginWindow.window!.forceToFrontAndFocus(nil)
             }
+            }
+//        case "status":
+//            print(event)
+//            print(withReplyEvent)
         case "update":
             doTheNeedfull()
         default:

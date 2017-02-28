@@ -105,8 +105,7 @@
         // Create the DNS Query and reference it in self->_dnsService
         err = DNSServiceQueryRecord(
                                     &self->_dnsService,
-                                    //kDNSServiceFlagsReturnIntermediates,
-                                    kDNSServiceFlagsTimeout,
+                                    (kDNSServiceFlagsReturnIntermediates + kDNSServiceFlagsTimeout),
                                     0, // query on all interfaces.
                                     dnsNameCStr,
                                     recordType,
