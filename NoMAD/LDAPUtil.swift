@@ -629,8 +629,6 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 
         //myDNSQueue.async(execute: {
 
-        let queryDate = NSDate()
-
         self.resolver.queryType = "SRV"
 
         self.resolver.queryValue = "_ldap._tcp." + domain
@@ -644,18 +642,9 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 
         self.resolver.startQuery()
 
-        while ( !self.resolver.finished ) && (abs(queryDate.timeIntervalSinceNow) < 3) {
+        while ( !self.resolver.finished ) {
             RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
             myLogger.logit(.debug, message: "Waiting for DNS query to return.")
-            myLogger.logit(.debug, message: "Counting... " + String(abs(queryDate.timeIntervalSinceNow)))
-        }
-
-        if !self.resolver.finished {
-            myLogger.logit(.debug, message: "DNS query timed out.")
-            self.resolver.stopQuery()
-            self.currentState = false
-            self.hosts.removeAll()
-            return
         }
 
         if (self.resolver.error == nil) {

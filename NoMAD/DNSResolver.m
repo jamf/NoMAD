@@ -106,7 +106,7 @@
         err = DNSServiceQueryRecord(
                                     &self->_dnsService,
                                     //kDNSServiceFlagsReturnIntermediates,
-                                    kDNSServiceFlagsTimeout,
+                                    kDNSServiceFlagsTimeout + kDNSServiceFlagsReturnIntermediates,
                                     0, // query on all interfaces.
                                     dnsNameCStr,
                                     recordType,

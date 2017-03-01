@@ -63,9 +63,18 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     let NoMADMenuHome = NSMenuItem()
 
     // menu bar icons
-    var iconOnOn = NSImage(named: "NoMAD-statusicon-on-on")
-    var iconOnOff = NSImage(named: "NoMAD-statusicon-on-off")
-    var iconOffOff = NSImage(named: "NoMAD-statusicon-off-off")
+    
+    
+
+    var iconOnOn = NSImage()
+    var iconOnOff = NSImage()
+    var iconOffOff = NSImage()
+    
+    var myIconOn = NSImage()
+    var myIconOff = NSImage()
+    
+    var myIconOnDark = NSImage()
+    var myIconOffDark = NSImage()
 
     let userNotificationCenter = NSUserNotificationCenter.default
 
@@ -108,26 +117,52 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         let eventManager = NSAppleEventManager.shared()
 
         eventManager.setEventHandler(self, andSelector: #selector(handleAppleEvent), forEventClass: AEEventClass(kInternetEventClass), andEventID: AEEventID(kAEGetURL))
+        
+        // set up Icons - we need 2 sets of 2 for light and dark modes
+        
+        if defaults.string(forKey: Preferences.iconOn) != nil {
+            myIconOn = NSImage.init(contentsOfFile: defaults.string(forKey: Preferences.iconOn)!)!
+        } else {
+            myIconOn = NSImage(named: "NoMAD-statusicon-on-on")!
+        }
+        
+        if defaults.string(forKey: Preferences.iconOff) != nil {
+            myIconOff = NSImage.init(contentsOfFile: defaults.string(forKey: Preferences.iconOff)!)!
+        } else {
+            myIconOff = NSImage(named: "NoMAD-statusicon-off-off")!
+        }
+        
+        if defaults.string(forKey: Preferences.iconOnDark) != nil {
+            myIconOnDark = NSImage.init(contentsOfFile: defaults.string(forKey: Preferences.iconOnDark)!)!
+        } else {
+            myIconOnDark = NSImage(named: "NoMAD-LogoAlternate-on")!
+        }
+        
+        if defaults.string(forKey: Preferences.iconOffDark) != nil {
+            myIconOffDark = NSImage.init(contentsOfFile: defaults.string(forKey: Preferences.iconOffDark)!)!
+        } else {
+            myIconOffDark = NSImage(named: "NoMAD-LogoAlternate-off")!
+        }
 
         // check for Dark Mode
 
         if UserDefaults.standard.persistentDomain(forName: UserDefaults.globalDomain)?["AppleInterfaceStyle"] == nil {
             if !defaults.bool(forKey: Preferences.caribouTime) {
-                iconOnOn = NSImage(named: "NoMAD-statusicon-on-on")
-                iconOnOff = NSImage(named: "NoMAD-statusicon-on-off")
-                iconOffOff = NSImage(named: "NoMAD-statusicon-off-off")
+                iconOnOn = myIconOn
+                iconOnOff = NSImage(named: "NoMAD-statusicon-on-off")!
+                iconOffOff = myIconOff
             } else {
-                iconOnOn = NSImage(named: "NoMAD-Caribou-on")
-                iconOffOff = NSImage(named: "NoMAD-Caribou-off")
+                iconOnOn = NSImage(named: "NoMAD-Caribou-on")!
+                iconOffOff = NSImage(named: "NoMAD-Caribou-off")!
             }
         } else {
             if !defaults.bool(forKey: Preferences.caribouTime) {
-                iconOnOn = NSImage(named: "NoMAD-LogoAlternate-on")
+                iconOnOn = myIconOnDark
                 //iconOnOff = NSImage(named: "NoMAD-statusicon-on-off")
-                iconOffOff = NSImage(named: "NoMAD-LogoAlternate-off")
+                iconOffOff = myIconOffDark
             } else {
-                iconOnOn = NSImage(named: "NoMAD-Caribou-dark-on")
-                iconOffOff = NSImage(named: "NoMAD-Caribou-dark-off")
+                iconOnOn = NSImage(named: "NoMAD-Caribou-dark-on")!
+                iconOffOff = NSImage(named: "NoMAD-Caribou-dark-off")!
             }
         }
 
@@ -811,21 +846,21 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     func interfaceModeChanged() {
         if UserDefaults.standard.persistentDomain(forName: UserDefaults.globalDomain)?["AppleInterfaceStyle"] == nil {
             if !defaults.bool(forKey: Preferences.caribouTime) {
-                iconOnOn = NSImage(named: "NoMAD-statusicon-on-on")
-                iconOnOff = NSImage(named: "NoMAD-statusicon-on-off")
-                iconOffOff = NSImage(named: "NoMAD-statusicon-off-off")
+                iconOnOn = myIconOn
+                iconOnOff = NSImage(named: "NoMAD-statusicon-on-off")!
+                iconOffOff = myIconOff
             } else {
-                iconOnOn = NSImage(named: "NoMAD-Caribou-on")
-                iconOffOff = NSImage(named: "NoMAD-Caribou-off")
+                iconOnOn = NSImage(named: "NoMAD-Caribou-on")!
+                iconOffOff = NSImage(named: "NoMAD-Caribou-off")!
             }
         } else {
             if !defaults.bool(forKey: Preferences.caribouTime) {
-                iconOnOn = NSImage(named: "NoMAD-LogoAlternate-on")
+                iconOnOn = myIconOnDark
                 //iconOnOff = NSImage(named: "NoMAD-statusicon-on-off")
-                iconOffOff = NSImage(named: "NoMAD-LogoAlternate-off")
+                iconOffOff = myIconOffDark
             } else {
-                iconOnOn = NSImage(named: "NoMAD-Caribou-dark-on")
-                iconOffOff = NSImage(named: "NoMAD-Caribou-dark-off")
+                iconOnOn = NSImage(named: "NoMAD-Caribou-dark-on")!
+                iconOffOff = NSImage(named: "NoMAD-Caribou-dark-off")!
             }
         }
         if self.userInformation.status == "Connected" {
@@ -860,6 +895,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         case "prefs":
             preferencesWindow.window!.forceToFrontAndFocus(nil)
         case "signin":
+            if self.userInformation.connected && !self.userInformation.myLDAPServers.tickets.state {
             if let user = fullCommand?.user {
                 let password = fullCommand?.password
                 let userPrinc = user + "@" + defaults.string(forKey: Preferences.kerberosRealm)!
@@ -874,6 +910,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 doTheNeedfull()
             } else {
             loginWindow.window!.forceToFrontAndFocus(nil)
+            }
+            } else {
+                myLogger.logit(.debug, message: "Asked to open the sign in window, but not connected or already signed in.")
             }
         case "update":
             doTheNeedfull()
