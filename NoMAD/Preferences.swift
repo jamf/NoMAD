@@ -50,6 +50,14 @@ enum Preferences {
     // hideRenew - r/w - bool - determines if the Renew Tickets menu item should be shown
 
     // hideQuit = r/w - bool - determines if the Quit menu item should be shown
+    
+    // iconOff = r/w - string - file path to an icon for when you're off the network
+    
+    // iconOffDark = r/w - string - file path to an icon for when you're off the network
+    
+    // iconOn = r/w - string - file path to an icon for when you're on the network
+    
+    // iconOnDark = r/w - string - file path to an icon for when you're on the network
 
     // kerberosRealm - r/w - string - determines the Kerberos realm to use for all Kerberos activites. If left blank this will be set to the all-caps version of the AD Domain
 
@@ -148,6 +156,10 @@ enum Preferences {
     static let hideRenew = "HideRenew"
     static let hidePrefs = "HidePrefs"
     static let hideQuit = "HideQuit"
+    static let iconOff = "IconOff"
+    static let iconOffDark = "IconOffDark"
+    static let iconOn = "IconOn"
+    static let iconOnDark = "IconOnDark"
     static let kerberosRealm = "KerberosRealm"
     static let lastCertificateExpiration = "LastCertificateExpiration"
     static let loginComamnd = "LoginComamnd"
