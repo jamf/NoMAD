@@ -82,6 +82,7 @@
     DNSServiceErrorType	err;
     const char *		dnsNameCStr;
     int					socketProtocol;
+    int                 flags;
 
     // version (always 0), info (self because it's easy to reference?), retain, release, copyDescription
     CFSocketContext		context = { 0, (__bridge void *) self, NULL, NULL, NULL };
@@ -102,10 +103,18 @@
 
         //uint32_t interfaceIndex = if_nametoindex("utun1");
 
+        // check for .local
+
+        if ( [self.queryValue hasSuffix:@".local"]) {
+            flags = (kDNSServiceFlagsReturnIntermediates + kDNSServiceFlagsTimeout);
+        } else {
+            flags = kDNSServiceFlagsReturnIntermediates;
+        }
+
         // Create the DNS Query and reference it in self->_dnsService
         err = DNSServiceQueryRecord(
                                     &self->_dnsService,
-                                    (kDNSServiceFlagsReturnIntermediates + kDNSServiceFlagsTimeout),
+                                    flags,
                                     0, // query on all interfaces.
                                     dnsNameCStr,
                                     recordType,
