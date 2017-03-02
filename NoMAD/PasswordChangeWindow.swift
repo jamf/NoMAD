@@ -91,7 +91,15 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
              */
             if myError != "" {
                 let alertController = NSAlert()
-                alertController.messageText = myError
+                var errorText = myError
+
+                // make errors more readable
+
+                if myError.contains("Failed to change invalid password: 4") {
+                    errorText = "New password doesn't meet policy requirements."
+                }
+
+                alertController.messageText = errorText
                 alertController.beginSheetModal(for: self.window!, completionHandler: nil)
                 EXIT_FAILURE
             } else {
@@ -100,8 +108,8 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 
                 // fire off the password change script
 
-                if defaults.string(forKey: Preferences.changePasswordCommand) != "" {
-                    let myResult = cliTask(defaults.string(forKey: Preferences.changePasswordCommand)!)
+                if let passwordChangeScript = defaults.string(forKey: Preferences.changePasswordCommand) {
+                    let myResult = cliTask(passwordChangeScript)
                     myLogger.logit(LogLevel.base, message: myResult)
                 }
 
