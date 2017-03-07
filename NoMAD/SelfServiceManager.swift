@@ -8,13 +8,13 @@
 
 import Foundation
 
-
 /// The software self-service apps that NoMAD can discover.
 ///
 /// - casper: JAMF Software
 /// - lanrev: HEAT Software
 /// - munki: OpenSource Software
 /// - custom: Filesystem path to a self-service app
+
 enum SelfServiceType {
     case casper
     case lanrev

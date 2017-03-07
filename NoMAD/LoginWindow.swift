@@ -45,13 +45,12 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         }
 
         changePasswordButton.title = "NoMADMenuController-LogIn".translate
-        self.window?.title = "NoMAD - " + "NoMADMenuController-LogIn".translate
+        self.window?.title = defaults.string(forKey: Preferences.titleSignIn) ?? "NoMAD - " + "NoMADMenuController-LogIn".translate
 
         userName.stringValue = defaults.string(forKey: Preferences.lastUser)!
         Password.becomeFirstResponder()
 
         setWindowToLogin()
-
         self.window?.center()
 
     }

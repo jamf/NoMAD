@@ -42,8 +42,6 @@ public func setDefaults() {
             defaults.set("", forKey: Preferences.autoConfigure)
 
         default:
-            // see if we're on AD
-            getADSettings()
             break
         }
     }
@@ -62,8 +60,6 @@ public func setDefaults() {
 }
 
 private func getADSettings() {
-
-    // TODO: do this programatically? Although may need to be root to see AD prefs
 
     let net_config = SCDynamicStoreCreate(nil, "net" as CFString, nil, nil)
     let ad_info = [ SCDynamicStoreCopyValue(net_config, "com.apple.opendirectoryd.ActiveDirectory" as CFString)]

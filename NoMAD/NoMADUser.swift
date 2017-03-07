@@ -447,13 +447,13 @@ class NoMADUser {
 
             // test to see if the realm already exists, if not build it
 
-            if kerbRealms[defaults.string(forKey: Preferences.kerberosRealm)!] != nil {
+            if kerbRealms[defaults.string(forKey: Preferences.kerberosRealm)!] != nil || defaults.bool(forKey: Preferences.dontMatchKerbPrefs) {
                 myLogger.logit(LogLevel.debug, message: "Existing Kerberos configuration for realm. Skipping adding KDC to Kerberos prefs.")
                 return false
             } else {
                 // build a dictionary and add the KDC into it then write it back to defaults
                 let realm = NSMutableDictionary()
-                realm.setValue(myLDAPServers.currentServer, forKey: "kdc")
+                //realm.setValue(myLDAPServers.currentServer, forKey: "kdc")
                 realm.setValue(myLDAPServers.currentServer, forKey: "kpasswd")
                 kerbRealms[defaults.string(forKey: Preferences.kerberosRealm)!] = realm
                 kerbPrefs?.set(kerbRealms, forKey: "realms")

@@ -28,6 +28,7 @@
 
 -(void)startQuery;
 -(void)stopQuery;
+-(void)stopQueryWithError:(NSError *)error;
 
 @end
 

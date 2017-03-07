@@ -32,7 +32,11 @@ enum Preferences {
 
     // displayName - r/o - string - the long name of the currently signed in user
 
+    // dontMatchKerbPrefs - r/w - bool - determines if kpasswd server is written out to kerb pref file during password change
+
     // exportableKey - r/w - bool - determines if the private key for a NoMAD-generated certificate can be exported - default is false
+
+    // getCertAutomatically - r/w - bool - determines if a certificate is automatically requested for the user if one does not already exist
 
     // getHelpType - r/w - string - determines what method is triggered when a user selects the Get Help menu item
     // getHelp Options - r/w - string - options for configuring the actions of the selected getHelpType
@@ -46,6 +50,14 @@ enum Preferences {
     // hideRenew - r/w - bool - determines if the Renew Tickets menu item should be shown
 
     // hideQuit = r/w - bool - determines if the Quit menu item should be shown
+    
+    // iconOff = r/w - string - file path to an icon for when you're off the network
+    
+    // iconOffDark = r/w - string - file path to an icon for when you're off the network
+    
+    // iconOn = r/w - string - file path to an icon for when you're on the network
+    
+    // iconOnDark = r/w - string - file path to an icon for when you're on the network
 
     // kerberosRealm - r/w - string - determines the Kerberos realm to use for all Kerberos activites. If left blank this will be set to the all-caps version of the AD Domain
 
@@ -68,7 +80,23 @@ enum Preferences {
 
     // lDAPoverSSL - r/w - bool - flag to use LDAPS instead of LDAP
 
+    // menuHomeDirectory - r/w - string - title of the Home Directory menu
+
+    // menuGetHelp - r/w - string - title of the Get Help menu
+
+    // menuGetSoftware - r/w - string - title of the Get Software menu
+
+    // menuPasswordExpires - r/w - string - title of the Password Expires menu before someone logs in
+
+    // menuRenewTickets - r/w - string - title of the Rewnew Tickets menu
+
+    // menuUserName - r/w - string - title of the User Name menu before anyone is logged in
+
+    // messageLocalSync - r/w - string - text to display when the user is asked for their local password to allow the local accont password to be synced from the network account
+
     // messageNotConnected - r/w - string - text to display in menu bar when not connected
+
+    // messagePasswordChangePolicy - r/w - string - message to show the help button in the password change window
 
     // passwordExpireAlertTime - r/w - date - when to start complaining about a password that is about to expire. Defaults to 1296000 secs or 15 days.
 
@@ -88,6 +116,8 @@ enum Preferences {
     // stateChangeAction - r/w - string - the shell script, or other binary, to be triggered whenever the network changes
 
     // template - r/w - string - the certificate template to be used for an X509 enrollment
+
+    // titleSignIn - r/w - string - Title of the Sign In window
 
     // uPCAlert - r/w - bool - determines if we alert the user that the password was changed outside of NoMAD
 
@@ -121,7 +151,9 @@ enum Preferences {
     static let caribouTime = "CaribouTime"
     static let configureChrome = "ConfigureChrome"
     static let displayName = "DisplayName"
+    static let dontMatchKerbPrefs = "DontMatchKerbPrefs"
     static let exportableKey = "ExportableKey"
+    static let getCertAutomatically = "GetCertificateAutomatically"
     static let getHelpType = "GetHelpType"
     static let getHelpOptions = "GetHelpOptions"
     static let groups = "Groups"
@@ -129,6 +161,10 @@ enum Preferences {
     static let hideRenew = "HideRenew"
     static let hidePrefs = "HidePrefs"
     static let hideQuit = "HideQuit"
+    static let iconOff = "IconOff"
+    static let iconOffDark = "IconOffDark"
+    static let iconOn = "IconOn"
+    static let iconOnDark = "IconOnDark"
     static let kerberosRealm = "KerberosRealm"
     static let keychainItems = "KeychainItems"
     static let keychainPasswordMatch = "KeychainPasswordMatch"
@@ -141,8 +177,15 @@ enum Preferences {
     static let lastUser = "LastUser"
     static let lastPasswordWarning = "LastPasswordWarning"
     static let lastPasswordExpireDate = "LastPasswordExpireDate"
+    static let menuHomeDirectory = "MenuHomeDirectory"
+    static let menuGetHelp = "MenuGetHelp"
+    static let menuGetSoftware = "MenuGetSoftware"
+    static let menuPasswordExpires = "MenuPasswordExpires"
+    static let menuRenewTickets = "MenuRenewTickets"
+    static let menuUserName = "MenuUserName"
     static let messageLocalSync = "MessageLocalSync"
     static let messageNotConnected = "MessageNotConnected"
+    static let messagePasswordChangePolicy = "MessagePasswordChangePolicy"
     static let passwordExpireAlertTime = "PasswordExpireAlertTime"
 
     // static let passwordChangeOptions = "PasswordChangeOptions"
@@ -157,6 +200,7 @@ enum Preferences {
     static let signInCommand = "SignInCommand"
     static let stateChangeAction = "StateChangeAction"
     static let template = "Template"
+    static let titleSignIn = "TitleSignIn"
     static let uPCAlert = "UPCAlert"
     static let userPrincipal = "UserPrincipal"
     static let userHome = "UserHome"
