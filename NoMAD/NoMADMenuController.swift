@@ -892,14 +892,61 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         }
     }
 
-    func connectionCheck() -> Bool {
-        return userInformation.connected
+
+    func handleAppleEvent(_ event: NSAppleEventDescriptor, withReplyEvent: NSAppleEventDescriptor) {
+        let fullCommand = URL(string: (event.paramDescriptor(forKeyword: keyDirectObject)?.stringValue)!)
+
+        let command = fullCommand?.host
+
+        switch command! {
+
+        // TODO: Lots of error handling and such
+        // like not opening windows when not connected
+
+        case "getcertificate":
+            getCert(false)
+        case "gethelp" :
+            GetHelp().getHelp()
+        case "getsoftware" :
+            NoMADMenuClickGetSoftware(NoMADMenuGetSoftware)
+        case "open": break
+        case "passwordchange":
+            passwordChangeWindow.window!.forceToFrontAndFocus(nil)
+        case "prefs":
+            preferencesWindow.window!.forceToFrontAndFocus(nil)
+        case "signin":
+            if self.userInformation.connected && !self.userInformation.myLDAPServers.tickets.state {
+            if let user = fullCommand?.user {
+                let password = fullCommand?.password
+                let userPrinc = user + "@" + defaults.string(forKey: Preferences.kerberosRealm)!
+                let myKerbUtil = KerbUtil()
+                let myErr = myKerbUtil.getKerbCredentials(password, userPrinc)
+                print(myErr)
+                if myErr == nil {
+                    let keychainUtil = KeychainUtil()
+                    let status = keychainUtil.updatePassword(userPrinc, pass: password!)
+                    print(status)
+                }
+                doTheNeedfull()
+            } else {
+            loginWindow.window!.forceToFrontAndFocus(nil)
+            }
+            }
+//        case "status":
+//            print(event)
+//            print(withReplyEvent)
+        case "update":
+            doTheNeedfull()
+        default:
+            break
+        }
+        print("****EVENT***")
     }
 
     // function to start the menu throbbing
     func startMenuAnimationTimer() {
         if !menuAnimated {
-        menuAnimationTimer = Timer(timeInterval: 0.25, target: self, selector: #selector(animateMenuItem), userInfo: nil, repeats: true)
+            menuAnimationTimer = Timer(timeInterval: 0.5, target: self, selector: #selector(animateMenuItem), userInfo: nil, repeats: true)
             //statusItem.menu = NSMenu()
             RunLoop.main.add(menuAnimationTimer, forMode: RunLoopMode.defaultRunLoopMode)
             menuAnimationTimer.fire()
@@ -909,8 +956,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
     func stopMenuAnimationTimer() {
         if menuAnimated{
-        menuAnimationTimer.invalidate()
-        menuAnimated = false
+            menuAnimationTimer.invalidate()
+            //menuAnimationTimer.invalidate()
+            menuAnimated = false
         }
 
         // now set it rights
@@ -994,8 +1042,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         var reachCheck = false
         let reachCheckDate = Date()
-
-        startMenuAnimationTimer()
 
         reachCheckQueue.async(execute: {
 
@@ -1277,8 +1323,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 // login if we need to
                 if reachCheck { self.autoLogin() }
                 self.updateRunning = false
-                self.stopMenuAnimationTimer()
-
             })
             
             // mark the time and clear the update scheduled flag
