@@ -5,14 +5,14 @@
 	<key>Lock Screen</key>
 	<dict>
 		<key>value</key>
-		<string>Lock Screen</string>
+		<string>Lås skærm</string>
 		<key>comment</key>
 		<string>Menu Item to Lock the Screen</string>
 	</dict>
 	<key>NoMADMenuController-LogIn</key>
 	<dict>
 		<key>value</key>
-		<string>Sign In</string>
+		<string>Log ind</string>
 		<key>comment</key>
 		<string>Menu item to Sign In</string>
 	</dict>
@@ -26,21 +26,21 @@
 	<key>NoMADMenuController-NotConnected</key>
 	<dict>
 		<key>value</key>
-		<string>Not Connected</string>
+		<string>Ikke logget ind</string>
 		<key>comment</key>
 		<string>Text in the menu bar to show that NoMAD can not find the Domain</string>
 	</dict>
 	<key>NoMADMenuController-ChangePassword</key>
 	<dict>
 		<key>value</key>
-		<string>Change Password</string>
+		<string>Skift adgangskode</string>
 		<key>comment</key>
 		<string>Menu Item to Change Password</string>
 	</dict>
 	<key>UserName</key>
 	<dict>
 		<key>value</key>
-		<string>User Name</string>
+		<string>Brugernavn</string>
 		<key>comment</key>
 		<string>Users&apos;s full name.</string>
 	</dict>
@@ -49,26 +49,26 @@
 		<key>comment</key>
 		<string>Menu item to open software portal.</string>
 		<key>value</key>
-		<string>Get Software</string>
+		<string>Hent software</string>
 	</dict>
 	<key>NoMADMenuController-GetHelp</key>
 	<dict>
 		<key>value</key>
-		<string>Get Help</string>
+		<string>Få hjælp</string>
 		<key>comment</key>
 		<string>Menu item to open up the support options.</string>
 	</dict>
 	<key>NoMADMenuController-Preferences</key>
 	<dict>
 		<key>value</key>
-		<string>Preferences</string>
+		<string>Præferencer</string>
 		<key>comment</key>
 		<string>Menu item to open Preferences window.</string>
 	</dict>
 	<key>NoMADMenuController-Quit</key>
 	<dict>
 		<key>value</key>
-		<string>Quit</string>
+		<string>Afslut</string>
 		<key>comment</key>
 		<string>Menu item to quit NoMAD.</string>
 	</dict>
@@ -77,110 +77,110 @@
 		<key>comment</key>
 		<string>Menu item to renew Kerberos tickets</string>
 		<key>value</key>
-		<string>Renew Tickets</string>
+		<string>Forny billet</string>
 	</dict>
 	<key>NoMADMenuController-PasswordExpiresInDays</key>
 	<dict>
 		<key>comment</key>
 		<string>Long text for how many days until your password expires</string>
 		<key>value</key>
-		<string>Password expires in: %@ days</string>
+		<string>Adgangskode udøber om %@ dag(e)</string>
 	</dict>
 	<key>PasswordDoesNotExpire</key>
 	<dict>
 		<key>value</key>
-		<string>Password does not expire</string>
+		<string>Din adgangskode udløber aldrig</string>
 		<key>comment</key>
 		<string>menu item for when the password has no expiration date</string>
 	</dict>
 	<key>PasswordChangeSuccessful</key>
 	<dict>
 		<key>value</key>
-		<string>Password changed successfully. Note: it may take up to an hour for your password expiration time to be updated.</string>
+		<string>Din adgangskode er blevet ændret. Bemærk at der kan gå op til en time før det er fuldstændig opdateret (alle steder).</string>
 		<key>comment</key>
 		<string>message to let user know password changed successfully</string>
 	</dict>
 	<key>InvalidPassword</key>
 	<dict>
 		<key>value</key>
-		<string>Invalid password. Please try again.</string>
+		<string>Ugyldig adgangskode. Prøv venligst igen</string>
 		<key>comment</key>
 		<string>error when password is wrong</string>
 	</dict>
 	<key>InvalidUsername</key>
 	<dict>
 		<key>value</key>
-		<string>Invalid username. Please try again.</string>
+		<string>Ugyldigt brugernavn. Prøv venligst igen</string>
 		<key>comment</key>
 		<string>error when username is wrong</string>
 	</dict>
 	<key>PasswordExpire</key>
 	<dict>
 		<key>value</key>
-		<string>Your password has expired. Please reset your password now.</string>
+		<string>Din adgangskode er udløbet.</string>
 		<key>comment</key>
 		<string>error when password has expired</string>
 	</dict>
 	<key>PasswordAboutToExpire</key>
 	<dict>
 		<key>value</key>
-		<string>Password about to expire!</string>
+		<string>Din adgangskode er tæt på at udløbe - skift den!</string>
 		<key>comment</key>
 		<string>message when password is about to expire</string>
 	</dict>
 	<key>PasswordExpiresOn</key>
 	<dict>
 		<key>value</key>
-		<string>Your network password is about to expire on </string>
+		<string>Din netværks adgangskode udløber</string>
 		<key>comment</key>
 		<string>Your network password is about to expire on &lt;date&gt;</string>
 	</dict>
 	<key>PasswordMismatch</key>
 	<dict>
 		<key>value</key>
-		<string>New passwords don&apos;t match.</string>
+		<string>De nye adgangskoder er ikke ens</string>
 		<key>comment</key>
 		<string>error when new passwords don&apos;t match</string>
 	</dict>
 	<key>NetworkLocalMismatch</key>
 	<dict>
 		<key>value</key>
-		<string>Your network and local passwords are not the same. Please enter the password for your Mac.</string>
+		<string>Din adgangskode til din Mac og netværks adgangskoden matcher ikke. Indtast adgangskode til netværket for at opdatere.</string>
 		<key>comment</key>
 		<string>error when network and local passwords do not match</string>
 	</dict>
 	<key>ValidCertificate</key>
 	<dict>
 		<key>value</key>
-		<string>You already have a valid certificate.</string>
+		<string>Har gyldigt certifkat</string>
 		<key>comment</key>
 		<string>user already has a valid certificate</string>
 	</dict>
 	<key>Cancel</key>
 	<dict>
 		<key>value</key>
-		<string>Cancel</string>
+		<string>Annuller</string>
 		<key>comment</key>
 		<string>button for cancelling actions</string>
 	</dict>
 	<key>RequestAnyway</key>
 	<dict>
 		<key>value</key>
-		<string>Request Anyway</string>
+		<string>Anmod alligevel</string>
 		<key>comment</key>
 		<string>button to request anyway</string>
 	</dict>
 	<key>CertConnectionError</key>
 	<dict>
 		<key>value</key>
-		<string>Connection error. Please ensure SSL certificates are trusted and the URL is correct for your X509 CA.</string>
+		<string>Tilslutning fejlede! Sørg for at SSL certifikat er gyldigt og adresse til X509 CA er korrekt.</string>
 		<key>comment</key>
 		<string>message when Certificate Authority can&apos;t be reached</string>
 	</dict>
 	<key>CAConfigError</key>
 	<dict>
 		<key>value</key>
-		<string>Please ensure your Certificate Authority settings are correct.</string>
+		<string>Sørg for at parametrene for CA er korrekte</string>
 		<key>comment</key>
 		<string>error when CA can&apos;t be found</string>
 	</dict>
@@ -194,7 +194,7 @@
 	<key>HomeSharepoint</key>
 	<dict>
 		<key>value</key>
-		<string>Home Sharepoint</string>
+		<string>Hjemmemappe</string>
 		<key>comment</key>
 		<string>Menu item for opening up a user&apos;s home sharepoint from their AD profile</string>
 	</dict>

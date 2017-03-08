@@ -45,13 +45,12 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         }
 
         changePasswordButton.title = "NoMADMenuController-LogIn".translate
-        self.window?.title = "NoMAD - " + "NoMADMenuController-LogIn".translate
+        self.window?.title = defaults.string(forKey: Preferences.titleSignIn) ?? "NoMAD - " + "NoMADMenuController-LogIn".translate
 
         userName.stringValue = defaults.string(forKey: Preferences.lastUser)!
         Password.becomeFirstResponder()
 
         setWindowToLogin()
-
         self.window?.center()
 
     }
@@ -108,7 +107,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                     //print(userName.stringValue)
                     //print(defaults.string(forKey: "userPrincipal"))
                     let alertController = NSAlert()
-                    alertController.messageText = "Your password has expired. Please reset your password now."
+                    alertController.messageText = "PasswordExpire".translate
                     alertController.addButton(withTitle: "Change Password")
                     alertController.beginSheetModal(for: self.window!, completionHandler: { [unowned self] (returnCode) -> Void in
                         if returnCode == NSAlertFirstButtonReturn {
@@ -118,14 +117,14 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                     })
                 case "Client (" + userNameChecked + ") unknown":
                     let alertController = NSAlert()
-                    alertController.messageText = "Invalid username. Please try again."
+                    alertController.messageText = "InvalidUsername".translate
                     alertController.beginSheetModal(for: self.window!, completionHandler: nil)
                     myLogger.logit(.base, message:myError!)
                     EXIT_FAILURE
                 //
                 default:
                     let alertController = NSAlert()
-                    alertController.messageText = "Invalid password. Please try again."
+                    alertController.messageText = "InvalidPassword".translate
                     alertController.beginSheetModal(for: self.window!, completionHandler: nil)
                     myLogger.logit(.base, message:myError!)
                     EXIT_FAILURE
@@ -218,7 +217,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                 myLogger.logit(LogLevel.debug, message:"Lets try to sync the passwords, prompting user.")
                 let alertController = NSAlert()
                 // TODO: replace with localized text
-                alertController.messageText = (defaults.string(forKey: Preferences.messageLocalSync) ?? "Your network and local passwords are not the same. Please enter the password for your Mac.")
+                alertController.messageText = (defaults.string(forKey: Preferences.messageLocalSync) ?? "NetworkLocalMismatch".translate)
                 alertController.addButton(withTitle: "Sync")
                 alertController.addButton(withTitle: "Cancel")
                 //alertController.addButton(withTitle: "Sync")
@@ -246,7 +245,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                         // if it's not, let's exit.
                         guard ( consoleUserPasswordResult != "Invalid" ) else {
                             let alertController = NSAlert()
-                            alertController.messageText = "Invalid password. Please try again."
+                            alertController.messageText = "InvalidPassword".translate
                             alertController.beginSheetModal(for: self.window!, completionHandler: nil)
                             if myError != nil {
                             myLogger.logit(.base, message:myError!)
@@ -352,7 +351,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                 EXIT_FAILURE
             } else {
                 let alertController = NSAlert()
-                alertController.messageText = "Password changed successfully. Note: it may take up to an hour for your password expiration time to be updated."
+                alertController.messageText = "PasswordChangeSuccessful".translate
 
                 alertController.beginSheetModal(for: self.window!, completionHandler: {( response ) in
                     if ( response == 0 ) {
@@ -382,17 +381,10 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         } else {
 
             let alertController = NSAlert()
-            alertController.messageText = "New passwords don't match!"
+            alertController.messageText = "PasswordMismatch".translate
             alertController.beginSheetModal(for: self.window!, completionHandler: nil)
             EXIT_FAILURE
 
-        }
-
-        // fire off the SignInCommand script if there is one
-
-        if defaults.string(forKey: Preferences.signInCommand) != "" {
-            let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)
-            myLogger.logit(LogLevel.base, message: myResult)
         }
 
         // fire off the SignInCommand script if there is one

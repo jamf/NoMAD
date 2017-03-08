@@ -20,7 +20,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
     @IBOutlet weak var oldPassword: NSSecureTextField!
     @IBOutlet weak var newPasswordAgain: NSSecureTextField!
     @IBOutlet weak var passwordChangeButton: NSButton!
-
+    @IBOutlet weak var HelpButton: NSButton!
 
     override var windowNibName: String! {
         return "PasswordChangeWindow"
@@ -36,6 +36,16 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
         oldPassword.stringValue = ""
         newPassword.stringValue = ""
         newPasswordAgain.stringValue = ""
+
+        // show the policy button
+
+        if let passwordPolicyText = defaults.string(forKey: Preferences.messagePasswordChangePolicy) {
+            HelpButton.isEnabled = true
+            HelpButton.isHidden = false
+        } else {
+            HelpButton.isEnabled = false
+            HelpButton.isHidden = true
+        }
 
         // set the button text
         passwordChangeButton.title = "NoMADMenuController-ChangePassword".translate
@@ -81,12 +91,27 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
              */
             if myError != "" {
                 let alertController = NSAlert()
-                alertController.messageText = myError
+                var errorText = myError
+
+                // make errors more readable
+
+                if myError.contains("Failed to change invalid password: 4") {
+                    errorText = "New password doesn't meet policy requirements."
+                }
+
+                alertController.messageText = errorText
                 alertController.beginSheetModal(for: self.window!, completionHandler: nil)
                 EXIT_FAILURE
             } else {
                 let alertController = NSAlert()
-                alertController.messageText = "Password changed successfully. Note: it may take up to an hour for your password expiration time to be updated."
+                alertController.messageText = "PasswordChangeSuccessful".translate
+
+                // fire off the password change script
+
+                if let passwordChangeScript = defaults.string(forKey: Preferences.changePasswordCommand) {
+                    let myResult = cliTask(passwordChangeScript)
+                    myLogger.logit(LogLevel.base, message: myResult)
+                }
 
                 alertController.beginSheetModal(for: self.window!, completionHandler: {( response ) in
                     if ( response == 0 ) {
@@ -100,10 +125,17 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
         } else {
 
             let alertController = NSAlert()
-            alertController.messageText = "New passwords don't match!"
+            alertController.messageText = "PasswordMismatch".translate
             alertController.beginSheetModal(for: self.window!, completionHandler: nil)
             EXIT_FAILURE
         }
+    }
+
+    @IBAction func HelpButtonClicked(_ sender: Any) {
+
+        let alertController = NSAlert()
+        alertController.messageText = defaults.string(forKey: Preferences.messagePasswordChangePolicy)!
+        alertController.beginSheetModal(for: self.window!, completionHandler: nil)
     }
 
     /**

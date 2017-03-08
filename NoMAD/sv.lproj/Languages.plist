@@ -5,44 +5,44 @@
 	<key>Lock Screen</key>
 	<dict>
 		<key>value</key>
-		<string>Lock Screen</string>
+		<string>Lås Skärmen</string>
 		<key>comment</key>
-		<string>Menu Item to Lock the Screen</string>
+		<string>Menyentry för att låsa skärmen</string>
 	</dict>
 	<key>NoMADMenuController-LogIn</key>
 	<dict>
 		<key>value</key>
-		<string>Sign In</string>
+		<string>Logga in</string>
 		<key>comment</key>
-		<string>Menu item to Sign In</string>
+		<string>Menyentry för att logga in</string>
 	</dict>
 	<key>NoMADMenuController-Connected</key>
 	<dict>
 		<key>value</key>
 		<string></string>
 		<key>comment</key>
-		<string>Text in the menu bar to show that NoMAD can find the Domain</string>
+		<string>Felmeddelande i menyn att NoMAD inte kan hitta Domänen</string>
 	</dict>
 	<key>NoMADMenuController-NotConnected</key>
 	<dict>
 		<key>value</key>
-		<string>Not Connected</string>
+		<string>Ej ansluten</string>
 		<key>comment</key>
-		<string>Text in the menu bar to show that NoMAD can not find the Domain</string>
+		<string>Felmeddelande i menyn att NoMAD inte kan hitta Domänen</string>
 	</dict>
 	<key>NoMADMenuController-ChangePassword</key>
 	<dict>
 		<key>value</key>
-		<string>Change Password</string>
+		<string>Ändra lösenord</string>
 		<key>comment</key>
-		<string>Menu Item to Change Password</string>
+		<string>Menyentry om att ändra lösenord</string>
 	</dict>
 	<key>UserName</key>
 	<dict>
 		<key>value</key>
-		<string>User Name</string>
+		<string>Namn</string>
 		<key>comment</key>
-		<string>Users&apos;s full name.</string>
+		<string>Användarens Namn</string>
 	</dict>
 	<key>NoMADMenuController-GetSoftware</key>
 	<dict>

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SystemConfiguration
 
 // site information
 
@@ -41,8 +42,6 @@ public func setDefaults() {
             defaults.set("", forKey: Preferences.autoConfigure)
 
         default:
-            // see if we're on AD
-            getADSettings()
             break
         }
     }
@@ -62,15 +61,13 @@ public func setDefaults() {
 
 private func getADSettings() {
 
-    // TODO: do this programatically? Although may need to be root to see AD prefs
+    let net_config = SCDynamicStoreCreate(nil, "net" as CFString, nil, nil)
+    let ad_info = [ SCDynamicStoreCopyValue(net_config, "com.apple.opendirectoryd.ActiveDirectory" as CFString)]
+    if ad_info[0] != nil {
 
-    let myADConfig = cliTask("/usr/sbin/dsconfigad -show").components(separatedBy: "\n")
-
-    if myADConfig.count > 0 {
-        for line in myADConfig {
-            if line.contains("Active Directory Domain") {
+    let adDict = ad_info[0]! as! NSDictionary
+            let myDomain = adDict["DomainNameDns"] as! String
                 myLogger.logit(.base, message: "Setting AD Domain to the domain the machine is currently bound to.")
-                let myDomain = (line as NSString).substring(from: 35)
                 defaults.set(myDomain, forKey: Preferences.aDDomain)
                 defaults.set(myDomain.uppercased(), forKey: Preferences.kerberosRealm)
                 defaults.set(false, forKey: Preferences.verbose)
@@ -79,11 +76,7 @@ private func getADSettings() {
                 defaults.set("", forKey: Preferences.userCommandTask1)
                 defaults.set(7200, forKey: Preferences.secondsToRenew)
                 defaults.set(1, forKey: Preferences.renewTickets)
-                break
-            }
-        }
     }
-
 }
 
 private func addToLoginItems() {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11542" systemVersion="16C48b" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="16E144f" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11542"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -24,7 +24,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" unifiedTitleAndToolbar="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="392" height="201"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="777"/>
             <value key="minSize" type="size" width="392" height="137"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="392" height="201"/>
@@ -43,18 +43,18 @@
                         </connections>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7aV-Ds-e5U">
-                        <rect key="frame" x="18" y="139" width="100" height="17"/>
+                        <rect key="frame" x="6" y="139" width="112" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Kerberos Realm" id="Ufb-5N-kJA">
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Kerberos Realm" id="Ufb-5N-kJA">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GR5-zh-rHp">
-                        <rect key="frame" x="61" y="111" width="57" height="17"/>
+                        <rect key="frame" x="18" y="111" width="100" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="x509 CA" id="owP-RF-Kec">
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="x509 CA" id="owP-RF-Kec">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -85,9 +85,9 @@
                         </connections>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RPm-NT-ZhG">
-                        <rect key="frame" x="58" y="86" width="60" height="17"/>
+                        <rect key="frame" x="28" y="86" width="90" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Template" id="Kes-CY-FXH">
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Template" id="Kes-CY-FXH">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -106,16 +106,16 @@
                         </connections>
                     </textField>
                     <textField toolTip="The name of your AD Domain." horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZGq-je-gSa">
-                        <rect key="frame" x="46" y="164" width="72" height="17"/>
+                        <rect key="frame" x="18" y="164" width="100" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="AD Domain" id="3PC-dv-g1C">
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="AD Domain" id="3PC-dv-g1C">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
                     <button identifier="UseKeychain" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fuH-hz-11s">
-                        <rect key="frame" x="40" y="46" width="104" height="18"/>
+                        <rect key="frame" x="18" y="46" width="142" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="check" title="Use Keychain" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="7Oh-A9-P92">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -126,7 +126,7 @@
                         </connections>
                     </button>
                     <button identifier="ShowHome" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oH0-Xw-3nC">
-                        <rect key="frame" x="191" y="46" width="137" height="18"/>
+                        <rect key="frame" x="191" y="46" width="183" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="check" title="Show Home Folder" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="wDv-Uk-9vU">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -134,17 +134,6 @@
                         </buttonCell>
                         <connections>
                             <binding destination="bcB-Up-qaA" name="value" keyPath="values.ShowHome" id="6De-7S-gwB"/>
-                        </connections>
-                    </button>
-                    <button identifier="RenewTickets" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gA7-HJ-fUd">
-                        <rect key="frame" x="40" y="26" width="104" height="18"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <buttonCell key="cell" type="check" title="Renew Ticket" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="1RW-ej-qej">
-                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                        <connections>
-                            <binding destination="bcB-Up-qaA" name="value" keyPath="values.RenewTickets" id="7JM-st-KfU"/>
                         </connections>
                     </button>
                     <textField identifier="SecondsToRenew" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1ai-OG-Wah">
@@ -160,7 +149,7 @@
                         </connections>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="k40-8P-xNt">
-                        <rect key="frame" x="295" y="23" width="57" height="17"/>
+                        <rect key="frame" x="295" y="23" width="79" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Seconds" id="qpU-ge-el4">
                             <font key="font" metaFont="system"/>
@@ -168,6 +157,17 @@
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
+                    <button identifier="RenewTickets" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gA7-HJ-fUd">
+                        <rect key="frame" x="18" y="23" width="142" height="18"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="check" title="Renew Ticket" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="1RW-ej-qej">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <binding destination="bcB-Up-qaA" name="value" keyPath="values.RenewTickets" id="7JM-st-KfU"/>
+                        </connections>
+                    </button>
                 </subviews>
             </view>
             <connections>

@@ -58,12 +58,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NoMAD/NoMADMenuController.swift"
-            timestampString = "499803535.822901"
+            timestampString = "510020309.01881"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "406"
-            endingLineNumber = "406"
-            landmarkName = "NoMADMenuClickGetCertificate(_:)"
+            startingLineNumber = "441"
+            endingLineNumber = "441"
+            landmarkName = "NoMADMenuClickGetSoftware(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
