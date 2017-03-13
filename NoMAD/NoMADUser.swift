@@ -145,6 +145,22 @@ class NoMADUser {
         }
     }
 
+    // function to pre-flight the local password change
+
+    func preflightCurrentConsoleUserPassword(_ password: String) -> String {
+        do {
+        try currentConsoleUserRecord.passwordChangeAllowed(password)
+        return "Valid"
+        } catch let unknownError as NSError {
+            myLogger.logit(LogLevel.base, message: "Current Console User password pre-flight failed. Error: " + unknownError.description)
+            if unknownError.description.contains("password has expired") {
+                return "Expired"
+            } else {
+                return "Invalid"
+            }
+        }
+    }
+
     /**
      Checks if the password entered is correct for the user account
      that is signed in to NoMAD.
@@ -527,15 +543,17 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
         // Check if we want to sync the console user's password with the remote AD password.
         // Only used if console user is not AD.
         var doLocalPasswordSync = false
+
         if defaults.bool(forKey: Preferences.localPasswordSync) {
+
             doLocalPasswordSync = true
+            noMADUser.preflightCurrentConsoleUserPassword(newPassword1)
         }
 
         let consoleUserIsAD = noMADUser.currentConsoleUserIsADuser()
 
         let currentConsoleUserMatchesNoMADUser = noMADUser.currentConsoleUserMatchesNoMADUser()
-        
-        
+
         let passwordChangeMethod: String
         if (consoleUserIsAD && currentConsoleUserMatchesNoMADUser) {
             passwordChangeMethod = "OD"

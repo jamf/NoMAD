@@ -243,6 +243,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             NoMADMenuSeperatorSoftwareAndHelp.isHidden = true
         }
 
+        // Hide Renew Tickets
+
         // wait for any updates to finish
 
         //while updateRunning {
