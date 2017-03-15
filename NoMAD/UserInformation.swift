@@ -304,6 +304,8 @@ class UserInformation {
                 getCertDate()
             }
 
+            userHome = userHome.replacingOccurrences(of: " ", with: "%20")
+
             defaults.set(userHome, forKey: Preferences.userHome)
             defaults.set(userDisplayName, forKey: Preferences.displayName)
             defaults.set(userPrincipal, forKey: Preferences.userPrincipal)
