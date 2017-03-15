@@ -147,17 +147,13 @@ class NoMADUser {
 
     // function to pre-flight the local password change
 
-    func preflightCurrentConsoleUserPassword(_ password: String) -> String {
+    func preflightCurrentConsoleUserPassword(_ password: String) throws -> String {
         do {
         try currentConsoleUserRecord.passwordChangeAllowed(password)
         return "Valid"
         } catch let unknownError as NSError {
             myLogger.logit(LogLevel.base, message: "Current Console User password pre-flight failed. Error: " + unknownError.description)
-            if unknownError.description.contains("password has expired") {
-                return "Expired"
-            } else {
-                return "Invalid"
-            }
+            throw NoMADUserError.unknownError("Local password doesn't meet policy requirements.")
         }
     }
 
@@ -521,6 +517,11 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
         return myError
     }
 
+    if defaults.bool(forKey: Preferences.localPasswordSync) {
+
+        // preflight here
+    }
+
     do {
         let noMADUser = try NoMADUser(kerberosPrincipal: username)
 
@@ -547,7 +548,12 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
         if defaults.bool(forKey: Preferences.localPasswordSync) {
 
             doLocalPasswordSync = true
-            noMADUser.preflightCurrentConsoleUserPassword(newPassword1)
+            do {
+            try noMADUser.preflightCurrentConsoleUserPassword(newPassword1)
+            } catch let error as NoMADUserError {
+                myLogger.logit(LogLevel.base, message: error.description)
+                return error.description
+            }
         }
 
         let consoleUserIsAD = noMADUser.currentConsoleUserIsADuser()

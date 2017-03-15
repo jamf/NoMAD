@@ -210,6 +210,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             // the user has it set to sync the local and remote password AND
             // the console user is not an AD account
             // Then prompt the user for their password
+            
             if consoleUserPasswordResult != "Valid" && doLocalPasswordSync && !consoleUserIsAD {
                 myLogger.logit(LogLevel.debug, message:"Local user's password does not match remote user.")
                 myLogger.logit(LogLevel.debug, message:"Local Sync is enabled.")
