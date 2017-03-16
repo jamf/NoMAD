@@ -171,7 +171,7 @@ class UserInformation {
                 }
                 if ( computedExpireDateRaw != nil) {
                     // Windows Server 2008 and Newer
-                    if ( Int(computedExpireDateRaw!) == 9223372036854775807) || defaults.objectIsForced(forKey: Preferences.userAging) {
+                    if ( Int(computedExpireDateRaw!) == 9223372036854775807) || defaults.bool(forKey: Preferences.hideExpiration) {
                         // Password doesn't expire
                         passwordAging = false
                         defaults.set(false, forKey: Preferences.userAging)

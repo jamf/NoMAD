@@ -517,11 +517,6 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
         return myError
     }
 
-    if defaults.bool(forKey: Preferences.localPasswordSync) {
-
-        // preflight here
-    }
-
     do {
         let noMADUser = try NoMADUser(kerberosPrincipal: username)
 
@@ -547,12 +542,35 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
 
         if defaults.bool(forKey: Preferences.localPasswordSync) {
 
+            if defaults.bool(forKey: Preferences.localPasswordSyncOnMatchOnly) {
+                // check to see if local name matches network name
+
+                myLogger.logit(.debug, message: "Checking to see if user names match before syncing password.")
+
+                if NSUserName() == username {
+                    // names match let's set the sync and preflight
+                    myLogger.logit(.debug, message: "User names match, syncing password.")
+
+                    doLocalPasswordSync = true
+                    do {
+                        try noMADUser.preflightCurrentConsoleUserPassword(newPassword1)
+                    } catch let error as NoMADUserError {
+                        myLogger.logit(LogLevel.base, message: error.description)
+                        return error.description
+                    }
+
+                } else {
+                    myLogger.logit(.debug, message: "User names do not match, not syncing password.")
+                }
+            } else {
+
             doLocalPasswordSync = true
             do {
             try noMADUser.preflightCurrentConsoleUserPassword(newPassword1)
             } catch let error as NoMADUserError {
                 myLogger.logit(LogLevel.base, message: error.description)
                 return error.description
+            }
             }
         }
 

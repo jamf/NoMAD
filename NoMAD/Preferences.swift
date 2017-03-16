@@ -42,6 +42,8 @@ enum Preferences {
     // getHelp Options - r/w - string - options for configuring the actions of the selected getHelpType
 
     // groups - r/o - string - a list of AD groups that the currently signed in user is a member of
+
+    // hideExpiration - r/w - bool - determines if NoMAD shows expiration dates to users or not
     
     // hideHelp - r/w - bool - determines if the Get Help menu item should be shown
 
@@ -68,6 +70,8 @@ enum Preferences {
     // lDAPServerList - r/w - string - specifies a specfic or set of specific LDAP servers to be used instead of having NoMAD do the normal DNS and site lookups for the best AD Domain Controller
 
     // localPasswordSync - r/w - bool - determines if NoMAD will keep the network password in sync with the local user account password on the Mac
+
+    // localPasswordSyncOnMatchOnly - r/w - bool - only do the local password sync if the ad short name matches the local user name
 
     // lastUser - r/o - string - used to stash the short name of the last signed in user. Used for autologin and other functions requiring persistance between sessions.
 
@@ -109,6 +113,10 @@ enum Preferences {
     // selfServicePath - r/w - string - path to a self service application for "Get Software"
 
     // signInCommand - r/w - string - the shell script, or other binary, to be triggered whenever a succesful sign in occurs
+
+    // siteIgnore - r/w - bool - determines if NoMAD ignores the site that comes back from AD. Generally this will mean NoMAD will use the globally advertised DCs instead of a particular site's.
+
+    // siteForce - r/w - bool - forces NoMAD to use a particular site
 
     // stateChangeAction - r/w - string - the shell script, or other binary, to be triggered whenever the network changes
 
@@ -152,6 +160,7 @@ enum Preferences {
     static let getHelpType = "GetHelpType"
     static let getHelpOptions = "GetHelpOptions"
     static let groups = "Groups"
+    static let hideExpiration = "HideExpiration"
     static let hideHelp = "HideHelp"
     static let hideRenew = "HideRenew"
     static let hidePrefs = "HidePrefs"
@@ -167,6 +176,7 @@ enum Preferences {
     static let lDAPServerList = "LDAPServerList"
     static let lDAPoverSSL = "LDAPOverSSL"
     static let localPasswordSync = "LocalPasswordSync"
+    static let localPasswordSyncOnMatchOnly = "LocalPasswordSyncOnMatchOnly"
     static let lastUser = "LastUser"
     static let lastPasswordWarning = "LastPasswordWarning"
     static let lastPasswordExpireDate = "LastPasswordExpireDate"

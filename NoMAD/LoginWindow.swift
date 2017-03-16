@@ -142,9 +142,29 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             // Check if we want to sync the console user's password with the remote AD password.
             // Only used if console user is not AD.
             var doLocalPasswordSync = false
+
             if defaults.bool(forKey: Preferences.localPasswordSync) {
-                doLocalPasswordSync = true
+
+                if defaults.bool(forKey: Preferences.localPasswordSyncOnMatchOnly) {
+                    // check to see if local name matches network name
+
+                    myLogger.logit(.debug, message: "Checking to see if user names match before syncing password.")
+
+                    if NSUserName() == userName.stringValue {
+                        // names match let's set the sync and preflight
+                        myLogger.logit(.debug, message: "User names match, syncing password.")
+
+                        doLocalPasswordSync = true
+
+                    } else {
+                        myLogger.logit(.debug, message: "User names do not match, not syncing password.")
+                    }
+                } else {
+
+                    doLocalPasswordSync = true
+                }
             }
+
 
             let consoleUserIsAD = noMADUser.currentConsoleUserIsADuser()
             let currentConsoleUserMatchesNoMADUser = noMADUser.currentConsoleUserMatchesNoMADUser()
