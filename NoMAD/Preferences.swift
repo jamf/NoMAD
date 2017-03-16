@@ -191,6 +191,8 @@ enum Preferences {
     static let secondsToRenew = "SecondsToRenew"
     static let selfServicePath = "SelfServicePath"
     static let signInCommand = "SignInCommand"
+    static let siteIgnore = "SiteIgnore"
+    static let siteForce = "SiteForce"
     static let stateChangeAction = "StateChangeAction"
     static let template = "Template"
     static let titleSignIn = "TitleSignIn"
