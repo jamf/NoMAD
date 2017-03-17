@@ -31,6 +31,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 
     //var noMADUser: NoMADUser? = nil
 
+    var suppressPasswordChange = false
+
 
     override var windowNibName: String! {
         return "LoginWindow"
@@ -144,6 +146,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             var doLocalPasswordSync = false
 
             if defaults.bool(forKey: Preferences.localPasswordSync) {
+                
+                if !suppressPasswordChange {
 
                 if defaults.bool(forKey: Preferences.localPasswordSyncOnMatchOnly) {
                     // check to see if local name matches network name
@@ -163,7 +167,10 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 
                     doLocalPasswordSync = true
                 }
+                }
             }
+
+            suppressPasswordChange = false
 
 
             let consoleUserIsAD = noMADUser.currentConsoleUserIsADuser()

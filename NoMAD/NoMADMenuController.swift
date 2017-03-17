@@ -611,7 +611,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
     @IBAction func NoMADMenuClickLogInAlternate(_ sender: AnyObject) {
         //loginWindow.showWindow(nil)
+
+        // set flag to ignore pssword sync
         loginWindow.window!.forceToFrontAndFocus(nil)
+        loginWindow.suppressPasswordChange = true
     }
 
     // this will update the menu when it's clicked
