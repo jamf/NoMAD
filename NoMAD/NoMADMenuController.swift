@@ -630,6 +630,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         if self.userInformation.connected == false {
 
+            self.NoMADMenuLogIn.isHidden = false
             self.NoMADMenuLogIn.isEnabled = false
             self.NoMADMenuLogIn.title = "NoMADMenuController-LogIn".translate
             self.NoMADMenuLogOut.isEnabled = false
@@ -647,6 +648,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.NoMADMenuLogIn.isEnabled = true
             self.NoMADMenuLogIn.title = "NoMADMenuController-LogIn".translate
             self.NoMADMenuLogIn.action = #selector(self.NoMADMenuClickLogIn)
+            self.NoMADMenuLogIn.isHidden = false
             self.NoMADMenuLogOut.isEnabled = false
             if (self.NoMADMenuChangePassword != nil) {
                 self.NoMADMenuChangePassword.isEnabled = false
@@ -656,7 +658,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             }
         }
         else {
-            self.NoMADMenuLogIn.isEnabled = true
+            if defaults.bool(forKey: Preferences.hideRenew) {
+                self.NoMADMenuLogIn.isEnabled = false
+            } else {
+                self.NoMADMenuLogIn.isEnabled = true
+            }
+
             self.NoMADMenuLogIn.title = defaults.string(forKey: Preferences.menuRenewTickets) ?? "NoMADMenuController-RenewTickets".translate
             self.NoMADMenuLogIn.action = #selector(self.renewTickets)
             self.NoMADMenuLogOut.isEnabled = true
