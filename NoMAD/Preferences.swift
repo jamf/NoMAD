@@ -106,6 +106,8 @@ enum Preferences {
     // passwordChangeOptions - r/w - string - similar to getHelp, this sets options for the passwordChangeType to use
     // passwordChangeType - r/w - string - the method to use when the Change Password menu item is selected
 
+    // passwordPolicy - r/w - dictionary - password policy object to evaluate password complexity
+
     // renewTickets - r/w - bool - determines if NoMAD should auto-renew tickets
 
     // showHome - r/w - bool - determines if the user's network home share should be displayed as a menu item
@@ -193,9 +195,7 @@ enum Preferences {
     static let messageNotConnected = "MessageNotConnected"
     static let messagePasswordChangePolicy = "MessagePasswordChangePolicy"
     static let passwordExpireAlertTime = "PasswordExpireAlertTime"
-
-    // static let passwordChangeOptions = "PasswordChangeOptions"
-
+    static let passwordPolicy = "PasswordPolicy"
     /// Should NoMAD automatically attempt to renew Kerberos tickets on behalf of the user.
     static let renewTickets = "RenewTickets"
 

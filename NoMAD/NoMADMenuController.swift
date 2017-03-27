@@ -730,7 +730,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     }
 
     // pulls user's entire LDAP record when asked
-    func logEntireUserRecord() {
+    @objc func logEntireUserRecord() {
         let myResult = userInformation.myLDAPServers.returnFullRecord("sAMAccountName=" + defaults.string(forKey: Preferences.lastUser)!)
         myLogger.logit(.base, message:myResult)
     }
