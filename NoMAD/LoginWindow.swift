@@ -28,6 +28,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
     @IBOutlet var logInButton: NSButton!
     @IBOutlet weak var changePasswordField1: NSSecureTextField!
     @IBOutlet weak var changePasswordField2: NSSecureTextField!
+    @IBOutlet weak var signInSpinner: NSProgressIndicator!
+    @IBOutlet weak var changePasswordSpinner: NSProgressIndicator!
 
     //var noMADUser: NoMADUser? = nil
 
@@ -71,6 +73,11 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
     //to login and verify that everything is correct.
 
     @IBAction func LogInClick(_ sender: Any) {
+
+        // set the spinner to spinning
+
+        signInSpinner.isHidden = false
+        signInSpinner.startAnimation(nil)
 
         var userNameChecked = ""
 
@@ -256,6 +263,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                 alertController.accessoryView = localPassword
                 guard self.window != nil else {
                     myLogger.logit(LogLevel.debug, message: "Window does not exist.")
+                    signInSpinner.isHidden = true
+                    signInSpinner.stopAnimation(nil)
                     EXIT_FAILURE
                     // TODO: figure out if this is the proper way to handle this.
                     return
@@ -279,6 +288,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                             myLogger.logit(.base, message:myError!)
                             }
                             myLogger.logit(.base, message:"Local password wrong.")
+                            self.signInSpinner.isHidden = true
+                            self.signInSpinner.stopAnimation(nil)
                             EXIT_FAILURE
                             // TODO: figure out if this is the proper way to handle this.
                             return
@@ -296,6 +307,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                             alertController.messageText = myError!
                             alertController.beginSheetModal(for: self.window!, completionHandler: nil)
                             myLogger.logit(LogLevel.debug, message:myError!)
+                            self.signInSpinner.isHidden = true
+                            self.signInSpinner.stopAnimation(nil)
                             EXIT_FAILURE
                             // TODO: figure out if this is the proper way to handle this.
                             return
@@ -325,6 +338,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                     myLogger.logit(LogLevel.info, message: "Console user is AD account.")
                 }
                 self.Password.stringValue = ""
+                signInSpinner.isHidden = true
+                signInSpinner.stopAnimation(nil)
                 self.close()
             }
         } catch let nomadUserError as NoMADUserError {
@@ -334,6 +349,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             myLogger.logit(.base, message:myError!)
             EXIT_FAILURE
             self.Password.stringValue = ""
+            signInSpinner.isHidden = true
+            signInSpinner.stopAnimation(nil)
             self.close()
         } catch {
             let alertController = NSAlert()
@@ -342,6 +359,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             myLogger.logit(.base, message:myError!)
             EXIT_FAILURE
             self.Password.stringValue = ""
+            signInSpinner.isHidden = true
+            signInSpinner.stopAnimation(nil)
             self.close()
         }
 
@@ -352,11 +371,18 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             myLogger.logit(LogLevel.base, message: myResult)
         }
 
+        signInSpinner.isHidden = true
+        signInSpinner.stopAnimation(nil)
+
         // DO NOT put self.close() here to try to save code,
         // it will mess up the local password sync code.
     }
 
     @IBAction func changePasswordButtonClick(_ sender: AnyObject) {
+
+        changePasswordSpinner.isHidden = false
+        changePasswordSpinner.startAnimation(nil)
+
         let userPrincipal: String
         if userName.stringValue.contains("@") {
             userPrincipal = userName.stringValue
@@ -376,6 +402,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                 let alertController = NSAlert()
                 alertController.messageText = myError
                 alertController.beginSheetModal(for: self.window!, completionHandler: nil)
+                changePasswordSpinner.isHidden = true
+                changePasswordSpinner.stopAnimation(nil)
                 EXIT_FAILURE
             } else {
                 let alertController = NSAlert()
@@ -396,10 +424,14 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                                 myError = GetCredentials.getKerbCredentials( newPassword1, (userPrincipal + "@" + defaults.string(forKey: Preferences.kerberosRealm)!))
                             }
                         }
+                        self.changePasswordSpinner.isHidden = true
+                        self.changePasswordSpinner.stopAnimation(nil)
 
                         self.setWindowToLogin()
                         self.close()
                     } else {
+                        self.changePasswordSpinner.isHidden = true
+                        self.changePasswordSpinner.stopAnimation(nil)
                         self.setWindowToLogin()
                         self.close()
                     }
@@ -407,7 +439,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             }
             myLogger.logit(.base, message:myError)
         } else {
-
+            changePasswordSpinner.isHidden = true
+            changePasswordSpinner.stopAnimation(nil)
             let alertController = NSAlert()
             alertController.messageText = "PasswordMismatch".translate
             alertController.beginSheetModal(for: self.window!, completionHandler: nil)
@@ -416,6 +449,9 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         }
 
         // fire off the SignInCommand script if there is one
+        
+        changePasswordSpinner.isHidden = true
+        changePasswordSpinner.stopAnimation(nil)
 
         if defaults.string(forKey: Preferences.signInCommand) != "" {
             let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)
