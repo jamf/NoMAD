@@ -256,12 +256,12 @@ class UserInformation {
                         myLogger.logit(.base, message: "Alerting user to UPC.")
 
                         let notification = NSUserNotification()
-                        notification.title = "Password Changed"
-                        notification.informativeText = "Your password was changed, please re-sign into NoMAD to update your password."
+                        notification.title = "UserInformation-PasswordChanged".translate
+                        notification.informativeText = "UserInformation-PwdChangedSignInAgain".translate
                         //notification.deliveryDate = date
                         notification.hasActionButton = true
-                        notification.actionButtonTitle = "NoMADMenuController-LogIn".translate
-                        notification.otherButtonTitle = "Ignore"
+                        notification.actionButtonTitle = "UserInformation-SignIn".translate
+                        notification.otherButtonTitle = "UserInformation-Ignore".translate
                         notification.soundName = NSUserNotificationDefaultSoundName
                         NSUserNotificationCenter.default.deliver(notification)
 
