@@ -42,7 +42,7 @@
 		<key>value</key>
 		<string>Nom d&apos;utilisateur</string>
 		<key>comment</key>
-		<string>Users&apos;s full name.</string>
+		<string>User&apos;s full name</string>
 	</dict>
 	<key>NoMADMenuController-GetSoftware</key>
 	<dict>

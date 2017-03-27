@@ -2,18 +2,11 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NoMADMenuController-ChangePassword</key>
-	<dict>
-		<key>value</key>
-		<string>Change Password</string>
-		<key>comment</key>
-		<string>Menu item to Change Password</string>
-	</dict>
 	<key>Lock Screen</key>
 	<dict>
 		<key>value</key>
 		<string>Lock Screen</string>
-		<key>Comment</key>
+		<key>comment</key>
 		<string>Menu Item to Lock the Screen</string>
 	</dict>
 	<key>SignIn</key>
@@ -36,6 +29,13 @@
 		<string>Not Connected</string>
 		<key>comment</key>
 		<string>Text in the menu bar to show that NoMAD can not find the Domain</string>
+	</dict>
+	<key>NoMADMenuController-ChangePassword</key>
+	<dict>
+		<key>value</key>
+		<string>Change Password</string>
+		<key>comment</key>
+		<string>Menu Item to Change Password</string>
 	</dict>
 	<key>UserName</key>
 	<dict>
@@ -68,7 +68,7 @@
 	<key>NoMADMenuController-Quit</key>
 	<dict>
 		<key>value</key>
-		<string>Quitter</string>
+		<string>Quit</string>
 		<key>comment</key>
 		<string>Menu item to quit NoMAD.</string>
 	</dict>
