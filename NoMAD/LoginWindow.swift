@@ -128,6 +128,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                     let alertController = NSAlert()
                     alertController.messageText = "InvalidUsername".translate
                     alertController.beginSheetModal(for: self.window!, completionHandler: nil)
+                    signInSpinner.isHidden = true
+                    signInSpinner.stopAnimation(nil)
                     myLogger.logit(.base, message:myError!)
                     EXIT_FAILURE
                 //
@@ -135,6 +137,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                     let alertController = NSAlert()
                     alertController.messageText = "InvalidPassword".translate
                     alertController.beginSheetModal(for: self.window!, completionHandler: nil)
+                    signInSpinner.isHidden = true
+                    signInSpinner.stopAnimation(nil)
                     myLogger.logit(.base, message:myError!)
                     EXIT_FAILURE
                 }
