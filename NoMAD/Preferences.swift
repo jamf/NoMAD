@@ -47,6 +47,8 @@ enum Preferences {
     
     // hideHelp - r/w - bool - determines if the Get Help menu item should be shown
 
+    // hideLockScreen - r/w - bool - determines if the Lock Screen menu item should be shown
+
     // hidePrefs - r/w - bool - determines if the Preferences menu item should be shown
 
     // hideRenew - r/w - bool - determines if the Renew Tickets menu item should be shown
@@ -162,6 +164,7 @@ enum Preferences {
     static let groups = "Groups"
     static let hideExpiration = "HideExpiration"
     static let hideHelp = "HideHelp"
+    static let hideLockScreen = "HideLockScreen"
     static let hideRenew = "HideRenew"
     static let hidePrefs = "HidePrefs"
     static let hideQuit = "HideQuit"

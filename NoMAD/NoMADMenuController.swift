@@ -269,6 +269,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         NoMADMenuLockScreen.title = "Lock Screen".translate
         NoMADMenuChangePassword.title = "NoMADMenuController-ChangePassword".translate
 
+        if defaults.bool(forKey: Preferences.hideLockScreen) {
+            NoMADMenuLockScreen.isHidden = true
+        }
+
         originalGetCertificateMenu = NoMADMenuGetCertificate
         originalGetCertificateMenuDate = NoMADMenuGetCertificateDate
 
