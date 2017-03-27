@@ -49,7 +49,7 @@ DQ
                         </connections>
                     </button>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="d7M-Ey-NxF">
-                        <rect key="frame" x="6" y="144" width="120" height="17"/>
+                        <rect key="frame" x="18" y="143" width="112" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="User Name" id="NYi-E8-wXM">
                             <font key="font" metaFont="system"/>
@@ -58,7 +58,7 @@ DQ
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xew-x2-EUn">
-                        <rect key="frame" x="18" y="116" width="108" height="17"/>
+                        <rect key="frame" x="18" y="115" width="112" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Password" id="k8Q-BQ-grp">
                             <font key="font" metaFont="system"/>
@@ -112,7 +112,7 @@ DQ
                         </secureTextFieldCell>
                     </secureTextField>
                     <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="k1C-nW-j8J">
-                        <rect key="frame" x="13" y="84" width="117" height="17"/>
+                        <rect key="frame" x="18" y="83" width="112" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="New Password" id="IM1-92-Doz">
                             <font key="font" metaFont="system"/>
@@ -121,7 +121,7 @@ DQ
                         </textFieldCell>
                     </textField>
                     <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="j1K-5G-BBH">
-                        <rect key="frame" x="6" y="52" width="124" height="17"/>
+                        <rect key="frame" x="18" y="51" width="112" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="New Password" id="Tdf-0W-Q1c">
                             <font key="font" metaFont="system"/>
