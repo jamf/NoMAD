@@ -1,9 +1,9 @@
 
 /* Class = "NSMenuItem"; ibShadowedToolTip = "Change your network password."; ObjectID = "0IM-ZO-KLA"; */
-"0IM-ZO-KLA.ibShadowedToolTip" = "Byt ditt nätverkslösenord.";
+"0IM-ZO-KLA.ibShadowedToolTip" = "Ändra ditt nätverkslösenord.";
 
 /* Class = "NSMenuItem"; title = "Change Password"; ObjectID = "0IM-ZO-KLA"; */
-"0IM-ZO-KLA.title" = "Byt lösenord";
+"0IM-ZO-KLA.title" = "Ändra lösenord";
 
 /* Class = "NSMenuItem"; ibShadowedToolTip = "Lock your screen."; ObjectID = "3Pf-2O-qR7"; */
 "3Pf-2O-qR7.ibShadowedToolTip" = "Lås skärmen.";
@@ -30,7 +30,7 @@
 "CUr-ED-n29.ibShadowedToolTip" = "Tid till ditt nätverkslösenord går ut.";
 
 /* Class = "NSMenuItem"; title = "password expires"; ObjectID = "CUr-ED-n29"; */
-"CUr-ED-n29.title" = "lösenordet går ut";
+"CUr-ED-n29.title" = "lösenordet gåt ut";
 
 /* Class = "NSMenuItem"; ibShadowedToolTip = "Time until your Kerberos ticket expires."; ObjectID = "QYf-mL-9ta"; */
 "QYf-mL-9ta.ibShadowedToolTip" = "Tid till din Kerberosbiljett går ut.";
@@ -51,7 +51,7 @@
 "XL2-b8-IwM.title" = "Logga in en andra användare";
 
 /* Class = "NSMenuItem"; title = "Get Software"; ObjectID = "fuo-5h-NuR"; */
-"fuo-5h-NuR.title" = "Hämta programvara";
+"fuo-5h-NuR.title" = "Hämta applikationer";
 
 /* Class = "NSMenuItem"; title = "Quit"; ObjectID = "gM7-FQ-f0l"; */
 "gM7-FQ-f0l.title" = "Avsluta";
@@ -76,9 +76,3 @@
 
 /* Class = "NSMenuItem"; title = "Sign Out"; ObjectID = "w1A-iF-wAU"; */
 "w1A-iF-wAU.title" = "Logga ut";
-
-/* Class = "NSMenuItem"; title = "Ticket Info"; ObjectID = "7uv-39-xiX"; */
-"7uv-39-xiX.title" = "Biljettinfo";
-
-/* Class = "NSMenuItem"; title = "Software and Help"; ObjectID = "wcV-DA-kNE"; */
-"wcV-DA-kNE.title" = "Programvara och hjälp";

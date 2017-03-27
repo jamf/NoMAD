@@ -5,70 +5,70 @@
 	<key>Lock Screen</key>
 	<dict>
 		<key>value</key>
-		<string>Lås skärmen</string>
+		<string>Lås Skärmen</string>
 		<key>comment</key>
-		<string>Menu Item to Lock the Screen</string>
+		<string>Menyentry för att låsa skärmen</string>
 	</dict>
 	<key>NoMADMenuController-LogIn</key>
 	<dict>
 		<key>value</key>
 		<string>Logga in</string>
 		<key>comment</key>
-		<string>Menu item to Sign In</string>
+		<string>Menyentry för att logga in</string>
 	</dict>
 	<key>NoMADMenuController-Connected</key>
 	<dict>
 		<key>value</key>
 		<string></string>
 		<key>comment</key>
-		<string>Text in the menu bar to show that NoMAD can find the Domain</string>
+		<string>Felmeddelande i menyn att NoMAD inte kan hitta Domänen</string>
 	</dict>
 	<key>NoMADMenuController-NotConnected</key>
 	<dict>
 		<key>value</key>
 		<string>Ej ansluten</string>
 		<key>comment</key>
-		<string>Text in the menu bar to show that NoMAD can not find the Domain</string>
+		<string>Felmeddelande i menyn att NoMAD inte kan hitta Domänen</string>
 	</dict>
 	<key>NoMADMenuController-ChangePassword</key>
 	<dict>
 		<key>value</key>
-		<string>Byt lösenord</string>
+		<string>Ändra lösenord</string>
 		<key>comment</key>
-		<string>Menu Item to Change Password</string>
+		<string>Menyentry om att ändra lösenord</string>
 	</dict>
 	<key>UserName</key>
 	<dict>
 		<key>value</key>
 		<string>Namn</string>
 		<key>comment</key>
-		<string>Users&apos;s full name.</string>
+		<string>Användarens Namn</string>
 	</dict>
 	<key>NoMADMenuController-GetSoftware</key>
 	<dict>
 		<key>comment</key>
 		<string>Menu item to open software portal.</string>
 		<key>value</key>
-		<string>Hämta programvara</string>
+		<string>Get Software</string>
 	</dict>
 	<key>NoMADMenuController-GetHelp</key>
 	<dict>
 		<key>value</key>
-		<string>Kontakta support</string>
+		<string>Get Help</string>
 		<key>comment</key>
 		<string>Menu item to open up the support options.</string>
 	</dict>
 	<key>NoMADMenuController-Preferences</key>
 	<dict>
 		<key>value</key>
-		<string>Inställningar</string>
+		<string>Preferences</string>
 		<key>comment</key>
 		<string>Menu item to open Preferences window.</string>
 	</dict>
 	<key>NoMADMenuController-Quit</key>
 	<dict>
 		<key>value</key>
-		<string>Avsluta</string>
+		<string>Quit</string>
 		<key>comment</key>
 		<string>Menu item to quit NoMAD.</string>
 	</dict>
@@ -77,110 +77,110 @@
 		<key>comment</key>
 		<string>Menu item to renew Kerberos tickets</string>
 		<key>value</key>
-		<string>Förnya biljetter</string>
+		<string>Renew Tickets</string>
 	</dict>
 	<key>NoMADMenuController-PasswordExpiresInDays</key>
 	<dict>
 		<key>comment</key>
 		<string>Long text for how many days until your password expires</string>
 		<key>value</key>
-		<string>Lösenordet går ut om %@ dagar</string>
+		<string>Password expires in: %@ days</string>
 	</dict>
 	<key>PasswordDoesNotExpire</key>
 	<dict>
 		<key>value</key>
-		<string>Lösenordet går inte ut</string>
+		<string>Password does not expire</string>
 		<key>comment</key>
 		<string>menu item for when the password has no expiration date</string>
 	</dict>
 	<key>PasswordChangeSuccessful</key>
 	<dict>
 		<key>value</key>
-		<string>Lösenordet har ändrats. Notera att det kan ta upp till en timme innan informationen om när lösenordet går ut uppdateras.</string>
+		<string>Password changed successfully. Note: it may take up to an hour for your password expiration time to be updated.</string>
 		<key>comment</key>
 		<string>message to let user know password changed successfully</string>
 	</dict>
 	<key>InvalidPassword</key>
 	<dict>
 		<key>value</key>
-		<string>Felaktigt lösenord, var god försök igen.</string>
+		<string>Invalid password. Please try again.</string>
 		<key>comment</key>
 		<string>error when password is wrong</string>
 	</dict>
 	<key>InvalidUsername</key>
 	<dict>
 		<key>value</key>
-		<string>Felaktigt användarnamn, var god försök igen.</string>
+		<string>Invalid username. Please try again.</string>
 		<key>comment</key>
 		<string>error when username is wrong</string>
 	</dict>
 	<key>PasswordExpire</key>
 	<dict>
 		<key>value</key>
-		<string>Ditt lösenord har gått ut. Byt ut ditt lösenord nu.</string>
+		<string>Your password has expired. Please reset your password now.</string>
 		<key>comment</key>
 		<string>error when password has expired</string>
 	</dict>
 	<key>PasswordAboutToExpire</key>
 	<dict>
 		<key>value</key>
-		<string>Ditt lösenord håller på att gå ut!</string>
+		<string>Password about to expire!</string>
 		<key>comment</key>
 		<string>message when password is about to expire</string>
 	</dict>
 	<key>PasswordExpiresOn</key>
 	<dict>
 		<key>value</key>
-		<string>Ditt nätverkslösenord kommer att gå ut </string>
+		<string>Your network password is about to expire on </string>
 		<key>comment</key>
 		<string>Your network password is about to expire on &lt;date&gt;</string>
 	</dict>
 	<key>PasswordMismatch</key>
 	<dict>
 		<key>value</key>
-		<string>Lösenorden matchar inte.</string>
+		<string>New passwords don&apos;t match.</string>
 		<key>comment</key>
 		<string>error when new passwords don&apos;t match</string>
 	</dict>
 	<key>NetworkLocalMismatch</key>
 	<dict>
 		<key>value</key>
-		<string>Nätverkslösenord och lokalt lösenord överensstämmer inte. Ange lösenordet för din Mac.</string>
+		<string>Your network and local passwords are not the same. Please enter the password for your Mac.</string>
 		<key>comment</key>
 		<string>error when network and local passwords do not match</string>
 	</dict>
 	<key>ValidCertificate</key>
 	<dict>
 		<key>value</key>
-		<string>Du har redan ett giltigt certifikat.</string>
+		<string>You already have a valid certificate.</string>
 		<key>comment</key>
 		<string>user already has a valid certificate</string>
 	</dict>
 	<key>Cancel</key>
 	<dict>
 		<key>value</key>
-		<string>Avbryt</string>
+		<string>Cancel</string>
 		<key>comment</key>
 		<string>button for cancelling actions</string>
 	</dict>
 	<key>RequestAnyway</key>
 	<dict>
 		<key>value</key>
-		<string>Begär ändå</string>
+		<string>Request Anyway</string>
 		<key>comment</key>
 		<string>button to request anyway</string>
 	</dict>
 	<key>CertConnectionError</key>
 	<dict>
 		<key>value</key>
-		<string>Anslutningsfel. Säkerställ att SSL-certifikaten är betrodda och att det är rätt adress till er x509 CA.</string>
+		<string>Connection error. Please ensure SSL certificates are trusted and the URL is correct for your X509 CA.</string>
 		<key>comment</key>
 		<string>message when Certificate Authority can&apos;t be reached</string>
 	</dict>
 	<key>CAConfigError</key>
 	<dict>
 		<key>value</key>
-		<string>Säkerställ att inställningen för er x509 CA är korrekt.</string>
+		<string>Please ensure your Certificate Authority settings are correct.</string>
 		<key>comment</key>
 		<string>error when CA can&apos;t be found</string>
 	</dict>
@@ -194,7 +194,7 @@
 	<key>HomeSharepoint</key>
 	<dict>
 		<key>value</key>
-		<string>Nätverkshemmapp</string>
+		<string>Home Sharepoint</string>
 		<key>comment</key>
 		<string>Menu item for opening up a user&apos;s home sharepoint from their AD profile</string>
 	</dict>
