@@ -25,6 +25,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
 
     // password policy
 
+    @IBOutlet weak var secondaryAlert: NSButton!
     @IBOutlet weak var policyAlert: NSButton!
     let caps: Set<Character> = Set("ABCDEFGHIJKLKMNOPQRSTUVWXYZ".characters)
     let lowers: Set<Character> = Set("abcdefghijklmnopqrstuvwxyz".characters)
@@ -60,8 +61,11 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
 
             // set up a text field delegate
             newPassword.delegate = self
+            newPasswordAgain.delegate = self
             policyAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusUnavailable)
+            secondaryAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusUnavailable)
 
+            passwordChangeButton.isEnabled = false
         }
 
         // blank out the password fields
@@ -219,7 +223,21 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
         if error == "" {
             policyAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusAvailable)
         } else {
+            policyAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusUnavailable)
             policyAlert.toolTip = error
+            passwordChangeButton.isEnabled = false
+
+        }
+
+        if newPasswordAgain.stringValue == newPassword.stringValue {
+            secondaryAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusAvailable)
+            passwordChangeButton.isEnabled = true
+
+        } else {
+            secondaryAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusUnavailable)
+            secondaryAlert.toolTip = "Passwords don't match."
+            passwordChangeButton.isEnabled = false
+
         }
     }
 
