@@ -285,6 +285,7 @@ class UserInformation {
 
             if  let userPrincipal = defaults.string(forKey: Preferences.userPrincipal) {
 
+                if userPrincipal != "" {
                 self.userPrincipal = userPrincipal
             self.passwordAging = defaults.bool(forKey: Preferences.userAging)
             self.userPasswordExpireDate = defaults.object(forKey: Preferences.lastPasswordExpireDate) as! NSDate
@@ -292,7 +293,7 @@ class UserInformation {
                 self.userDisplayName = defaults.string(forKey: Preferences.displayName)!
                 self.userShortName = defaults.string(forKey: Preferences.lastUser)!
                 self.userPrincipalShort = defaults.string(forKey: Preferences.lastUser)!
-
+                }
             }
         }
 
