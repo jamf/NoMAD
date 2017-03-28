@@ -29,6 +29,7 @@ enum shareKeys {
     static let autoMount = "AutoMount"
     static let localMount = "LocalMount"
     static let url = "URL"
+    static let userShares = "UserShares"
 }
 
 struct share_info {
@@ -99,7 +100,15 @@ class ShareMounter: NSArrayController {
             }
         }
 
-        let mounts = (sharePrefs?.array(forKey: shareKeys.shares))! as! [NSDictionary]
+        var mounts = (sharePrefs?.array(forKey: shareKeys.shares))! as! [NSDictionary]
+
+        let userMounts = (sharePrefs?.array(forKey: shareKeys.userShares))! as! [NSDictionary]
+
+        // need to mark the shares as user or system
+
+        if userMounts.count != 0 {
+            mounts.append(contentsOf: userMounts)
+        }
 
         for mount in mounts {
 
