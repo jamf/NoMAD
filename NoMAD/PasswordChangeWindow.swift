@@ -12,7 +12,7 @@ protocol PasswordChangeDelegate {
     func updateUserInfo()
 }
 
-class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
+class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDelegate {
 
     var delegate: PasswordChangeDelegate?
 
@@ -21,6 +21,23 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
     @IBOutlet weak var newPasswordAgain: NSSecureTextField!
     @IBOutlet weak var passwordChangeButton: NSButton!
     @IBOutlet weak var HelpButton: NSButton!
+    @IBOutlet weak var passwordChangeSpinner: NSProgressIndicator!
+
+    // password policy
+
+    @IBOutlet weak var secondaryAlert: NSButton!
+    @IBOutlet weak var policyAlert: NSButton!
+    let caps: Set<Character> = Set("ABCDEFGHIJKLKMNOPQRSTUVWXYZ".characters)
+    let lowers: Set<Character> = Set("abcdefghijklmnopqrstuvwxyz".characters)
+    let numbers: Set<Character> = Set("1234567890".characters)
+    let symbols: Set<Character> = Set("!\"@#$%^&*()_-+={}[]|:;<>,.?~`\\/".characters)
+    var passwordPolicy = [String : AnyObject ]()
+
+    var minLength: String = "0"
+    var minUpperCase: String = "0"
+    var minLowerCase: String = "0"
+    var minNumber: String = "0"
+    var minSymbol: String = "0"
 
     override var windowNibName: String! {
         return "PasswordChangeWindow"
@@ -31,6 +48,25 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
         super.windowDidLoad()
 
         self.window?.center()
+
+        // load in the password policy
+
+        if defaults.dictionary(forKey: Preferences.passwordPolicy) != nil {
+        passwordPolicy = defaults.dictionary(forKey: Preferences.passwordPolicy)! as [String : AnyObject ]
+            minLength = passwordPolicy["minLength"] as! String
+            minUpperCase = passwordPolicy["minUpperCase"] as! String
+            minLowerCase = passwordPolicy["minLowerCase"] as! String
+            minNumber = passwordPolicy["minNumber"] as! String
+            minSymbol = passwordPolicy["minSymbol"] as! String
+
+            // set up a text field delegate
+            newPassword.delegate = self
+            newPasswordAgain.delegate = self
+            policyAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusUnavailable)
+            secondaryAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusUnavailable)
+
+            passwordChangeButton.isEnabled = false
+        }
 
         // blank out the password fields
         oldPassword.stringValue = ""
@@ -65,6 +101,11 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
     }
 
     @IBAction func changePasswordClicked(_ sender: AnyObject) {
+
+        // start the spinner
+        passwordChangeSpinner.isHidden = false
+        passwordChangeSpinner.startAnimation(nil)
+
         let userPrincipal = defaults.string(forKey: Preferences.userPrincipal)!.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
         let currentPassword = oldPassword.stringValue
         let newPassword1 = newPassword.stringValue
@@ -101,10 +142,15 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 
                 alertController.messageText = errorText
                 alertController.beginSheetModal(for: self.window!, completionHandler: nil)
+                passwordChangeSpinner.isHidden = true
+                passwordChangeSpinner.stopAnimation(nil)
                 EXIT_FAILURE
             } else {
                 let alertController = NSAlert()
                 alertController.messageText = "PasswordChangeSuccessful".translate
+
+                passwordChangeSpinner.isHidden = true
+                passwordChangeSpinner.stopAnimation(nil)
 
                 // fire off the password change script
 
@@ -136,6 +182,63 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
         let alertController = NSAlert()
         alertController.messageText = defaults.string(forKey: Preferences.messagePasswordChangePolicy)!
         alertController.beginSheetModal(for: self.window!, completionHandler: nil)
+    }
+
+    func checkPassword(pass: String) -> String {
+
+        var result = ""
+
+        let capsOnly = String(pass.characters.filter({ (caps.contains($0))}))
+        let lowerOnly = String(pass.characters.filter({ (lowers.contains($0))}))
+        let numberOnly = String(pass.characters.filter({ (numbers.contains($0))}))
+        let symbolOnly = String(pass.characters.filter({ (symbols.contains($0))}))
+
+        if passwordPolicy.count != 0 {
+
+            if pass.characters.count < Int(minLength)! {
+                result.append("Length requirement not met.\n")
+            }
+
+            if capsOnly.characters.count < Int(minUpperCase)! {
+                result.append("Upper case character requirement not met.\n")
+            }
+
+            if lowerOnly.characters.count < Int(minLowerCase)! {
+                result.append("Lower case character requirement not met.\n")
+            }
+            if numberOnly.characters.count < Int(minNumber)! {
+                result.append("Numeric character requirement not met.\n")
+            }
+            if symbolOnly.characters.count < Int(minSymbol)! {
+                result.append("Symbolic character requirement not met.\n")
+            }
+        }
+
+        return result
+    }
+
+    override func controlTextDidChange(_ obj: Notification) {
+        let error = checkPassword(pass: newPassword.stringValue)
+
+        if error == "" {
+            policyAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusAvailable)
+        } else {
+            policyAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusUnavailable)
+            policyAlert.toolTip = error
+            passwordChangeButton.isEnabled = false
+
+        }
+
+        if newPasswordAgain.stringValue == newPassword.stringValue {
+            secondaryAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusAvailable)
+            passwordChangeButton.isEnabled = true
+
+        } else {
+            secondaryAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusUnavailable)
+            secondaryAlert.toolTip = "Passwords don't match."
+            passwordChangeButton.isEnabled = false
+
+        }
     }
 
     /**
@@ -423,22 +526,22 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate {
 
      let myFileManager = NSFileManager()
      let myPrefFile = NSHomeDirectory().stringByAppendingString("/Library/Preferences/com.apple.Kerberos.plist")
-
+     
      if ( !myFileManager.fileExistsAtPath(myPrefFile)) {
      // no existing pref file
-
+     
      let data = NSMutableDictionary()
      let realms = NSMutableDictionary()
      let realm = NSMutableDictionary()
-
+     
      realm.setValue(myLDAPServers.currentServer, forKey: "kdc")
      realm.setValue(myLDAPServers.currentServer, forKey: "kpasswd")
-
+     
      realms.setObject(realm, forKey: defaults.stringForKey("KerberosRealm")!)
      data.setObject(realms, forKey: "realms")
-
+     
      return data.writeToFile(myPrefFile, atomically: true)
-
+     
      }
      return false
      }

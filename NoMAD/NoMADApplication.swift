@@ -39,6 +39,8 @@ class NoMADApplication: NSApplication {
                     if NSApp.sendAction(#selector(NSText.selectAll(_:)), to:nil, from:self) { return }
                 case "b":
                     if NSApp.sendAction(#selector(NoMADMenuController.logEntireUserRecord), to: NoMADMenuController.self, from: self) { return }
+                case "w":
+                    NSApp.keyWindow?.close()
                 default:
                     break
                 }

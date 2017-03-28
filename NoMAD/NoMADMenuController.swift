@@ -240,6 +240,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             NoMADMenuSeperatorSoftwareAndHelp.isHidden = true
         }
 
+        // Hide Renew Tickets
+
         // wait for any updates to finish
 
         //while updateRunning {
@@ -263,6 +265,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         // set up menu titles w/translation
         NoMADMenuLockScreen.title = "Lock Screen".translate
         NoMADMenuChangePassword.title = "NoMADMenuController-ChangePassword".translate
+
+        if defaults.bool(forKey: Preferences.hideLockScreen) {
+            NoMADMenuLockScreen.isHidden = true
+        }
 
         originalGetCertificateMenu = NoMADMenuGetCertificate
         originalGetCertificateMenuDate = NoMADMenuGetCertificateDate
@@ -606,7 +612,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
     @IBAction func NoMADMenuClickLogInAlternate(_ sender: AnyObject) {
         //loginWindow.showWindow(nil)
+
+        // set flag to ignore pssword sync
         loginWindow.window!.forceToFrontAndFocus(nil)
+        loginWindow.suppressPasswordChange = true
     }
 
     // this will update the menu when it's clicked
@@ -622,6 +631,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         if self.userInformation.connected == false {
 
+            self.NoMADMenuLogIn.isHidden = false
             self.NoMADMenuLogIn.isEnabled = false
             self.NoMADMenuLogIn.title = "NoMADMenuController-LogIn".translate
             self.NoMADMenuLogOut.isEnabled = false
@@ -639,6 +649,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.NoMADMenuLogIn.isEnabled = true
             self.NoMADMenuLogIn.title = "NoMADMenuController-LogIn".translate
             self.NoMADMenuLogIn.action = #selector(self.NoMADMenuClickLogIn)
+            self.NoMADMenuLogIn.isHidden = false
             self.NoMADMenuLogOut.isEnabled = false
             if (self.NoMADMenuChangePassword != nil) {
                 self.NoMADMenuChangePassword.isEnabled = false
@@ -648,7 +659,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             }
         }
         else {
-            self.NoMADMenuLogIn.isEnabled = true
+            if defaults.bool(forKey: Preferences.hideRenew) {
+                self.NoMADMenuLogIn.isEnabled = false
+            } else {
+                self.NoMADMenuLogIn.isEnabled = true
+            }
+
             self.NoMADMenuLogIn.title = defaults.string(forKey: Preferences.menuRenewTickets) ?? "NoMADMenuController-RenewTickets".translate
             self.NoMADMenuLogIn.action = #selector(self.renewTickets)
             self.NoMADMenuLogOut.isEnabled = true
@@ -711,7 +727,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     }
 
     // pulls user's entire LDAP record when asked
-    func logEntireUserRecord() {
+    @objc func logEntireUserRecord() {
         let myResult = userInformation.myLDAPServers.returnFullRecord("sAMAccountName=" + defaults.string(forKey: Preferences.lastUser)!)
         myLogger.logit(.base, message:myResult)
     }

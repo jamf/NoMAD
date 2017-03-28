@@ -171,7 +171,7 @@ class UserInformation {
                 }
                 if ( computedExpireDateRaw != nil) {
                     // Windows Server 2008 and Newer
-                    if ( Int(computedExpireDateRaw!) == 9223372036854775807) {
+                    if ( Int(computedExpireDateRaw!) == 9223372036854775807) || defaults.bool(forKey: Preferences.hideExpiration) {
                         // Password doesn't expire
                         passwordAging = false
                         defaults.set(false, forKey: Preferences.userAging)
@@ -303,6 +303,8 @@ class UserInformation {
             if (defaults.string(forKey: Preferences.x509CA) ?? "" != "") {
                 getCertDate()
             }
+
+            userHome = userHome.replacingOccurrences(of: " ", with: "%20")
 
             defaults.set(userHome, forKey: Preferences.userHome)
             defaults.set(userDisplayName, forKey: Preferences.displayName)

@@ -145,6 +145,18 @@ class NoMADUser {
         }
     }
 
+    // function to pre-flight the local password change
+
+    func preflightCurrentConsoleUserPassword(_ password: String) throws -> String {
+        do {
+        try currentConsoleUserRecord.passwordChangeAllowed(password)
+        return "Valid"
+        } catch let unknownError as NSError {
+            myLogger.logit(LogLevel.base, message: "Current Console User password pre-flight failed. Error: " + unknownError.description)
+            throw NoMADUserError.unknownError("Local password doesn't meet policy requirements.")
+        }
+    }
+
     /**
      Checks if the password entered is correct for the user account
      that is signed in to NoMAD.
@@ -519,15 +531,45 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
         // Check if we want to sync the console user's password with the remote AD password.
         // Only used if console user is not AD.
         var doLocalPasswordSync = false
+
         if defaults.bool(forKey: Preferences.localPasswordSync) {
+
+            if defaults.bool(forKey: Preferences.localPasswordSyncOnMatchOnly) {
+                // check to see if local name matches network name
+
+                myLogger.logit(.debug, message: "Checking to see if user names match before syncing password.")
+
+                if NSUserName() == username {
+                    // names match let's set the sync and preflight
+                    myLogger.logit(.debug, message: "User names match, syncing password.")
+
+                    doLocalPasswordSync = true
+                    do {
+                        try noMADUser.preflightCurrentConsoleUserPassword(newPassword1)
+                    } catch let error as NoMADUserError {
+                        myLogger.logit(LogLevel.base, message: error.description)
+                        return error.description
+                    }
+
+                } else {
+                    myLogger.logit(.debug, message: "User names do not match, not syncing password.")
+                }
+            } else {
+
             doLocalPasswordSync = true
+            do {
+            try noMADUser.preflightCurrentConsoleUserPassword(newPassword1)
+            } catch let error as NoMADUserError {
+                myLogger.logit(LogLevel.base, message: error.description)
+                return error.description
+            }
+            }
         }
 
         let consoleUserIsAD = noMADUser.currentConsoleUserIsADuser()
 
         let currentConsoleUserMatchesNoMADUser = noMADUser.currentConsoleUserMatchesNoMADUser()
-        
-        
+
         let passwordChangeMethod: String
         if (consoleUserIsAD && currentConsoleUserMatchesNoMADUser) {
             passwordChangeMethod = "OD"

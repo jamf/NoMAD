@@ -333,12 +333,22 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         }
 
         guard let ldapPing: ADLDAPPing = ADLDAPPing(ldapPingBase64String: ldapPingBase64) else {
-            myLogger.logit(LogLevel.debug, message:"Resetting default naming context to: " + tempDefaultNamingContext)
+             myLogger.logit(LogLevel.debug, message:"Resetting default naming context to: " + tempDefaultNamingContext)
             defaultNamingContext = tempDefaultNamingContext
             return
         }
 
-        site = ldapPing.clientSite ?? ""
+        // calculate the site
+
+        if defaults.bool(forKey: Preferences.siteIgnore) {
+            site = ""
+            myLogger.logit(LogLevel.debug, message:"Sites being ignored due to preferences.")
+        } else if defaults.string(forKey: Preferences.siteForce) != "" && defaults.string(forKey: Preferences.siteForce) != nil {
+            site = defaults.string(forKey: Preferences.siteForce)!
+            myLogger.logit(LogLevel.debug, message:"Site being forced to site set in preferences.")
+        } else {
+            site = ldapPing.clientSite ?? ""
+        }
 
 
         if (ldapPing.flags.contains(.DS_CLOSEST_FLAG)) {
