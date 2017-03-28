@@ -102,6 +102,11 @@ class ShareMounter: NSArrayController {
         let mounts = (sharePrefs?.array(forKey: shareKeys.shares))! as! [NSDictionary]
 
         for mount in mounts {
+
+            // check for variable substitution
+
+            let cleanURL = subVariables(mount["URL"] as! String)
+
             // get all the pieces
             var currentShare = share_info(groups: mount["Groups"]! as! [String], url: URL(string: mount["URL"] as! String)!, name: mount["Name"] as! String, options: mount["Options"] as! [String], connectedOnly: mount["ConnectedOnly"] as! Bool, mountStatus: .unmounted, localMount: mount["LocalMount"] as! String, autoMount: mount[shareKeys.autoMount] as! Bool, reqID: nil, attemptDate: nil, localMountPoints: nil)
 
@@ -415,5 +420,24 @@ class ShareMounter: NSArrayController {
         } else {
             return URL(fileURLWithPath: "")
         }
+    }
+
+    fileprivate func subVariables(_ url: String) -> String? {
+        // TODO: get e-mail address as a variable
+        var createdURL = url
+
+        guard let domain = defaults.string(forKey: Preferences.aDDomain),
+            let fullName = defaults.string(forKey: Preferences.displayName)?.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed),
+            let serial = getSerial().addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed),
+            let shortName = defaults.string(forKey: Preferences.userShortName)
+            else {
+                myLogger.logit(.base, message: "Error doing variable substitution on file share.")
+                return nil
+        }
+        createdURL = createdURL.replacingOccurrences(of: "<<domain>>", with: domain)
+        createdURL = createdURL.replacingOccurrences(of: "<<fullname>>", with: fullName)
+        createdURL = createdURL.replacingOccurrences(of: "<<serial>>", with: serial)
+        createdURL = createdURL.replacingOccurrences(of: "<<shortname>>", with: shortName)
+        return createdURL.addingPercentEncoding(withAllowedCharacters: .alphanumerics)
     }
 }
