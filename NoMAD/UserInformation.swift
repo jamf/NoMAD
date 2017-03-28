@@ -278,6 +278,22 @@ class UserInformation {
                 UserPasswordSetDates[userPrincipal] = userPasswordSetDate
                 defaults.set(UserPasswordSetDates, forKey: Preferences.userPasswordSetDates)
             }
+        } else if defaults.bool(forKey: Preferences.persistExpiration) {
+
+            // we can't connect, so just use the last stashed information
+            // first we check to make sure someone has logged in before
+
+            if  let userPrincipal = defaults.string(forKey: Preferences.userPrincipal) {
+
+                self.userPrincipal = userPrincipal
+            self.passwordAging = defaults.bool(forKey: Preferences.userAging)
+            self.userPasswordExpireDate = defaults.object(forKey: Preferences.lastPasswordExpireDate) as! NSDate
+                self.realm = defaults.string(forKey: Preferences.kerberosRealm)!
+                self.userDisplayName = defaults.string(forKey: Preferences.displayName)!
+                self.userShortName = defaults.string(forKey: Preferences.lastUser)!
+                self.userPrincipalShort = defaults.string(forKey: Preferences.lastUser)!
+
+            }
         }
 
         // 4. if connected and with tickets, get all of user information

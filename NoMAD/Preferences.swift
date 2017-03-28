@@ -108,6 +108,8 @@ enum Preferences {
 
     // passwordPolicy - r/w - dictionary - password policy object to evaluate password complexity
 
+    // persistExpiratin - r/w - bool - determines if the expiration date should be shown regardless of connectivity
+
     // renewTickets - r/w - bool - determines if NoMAD should auto-renew tickets
 
     // showHome - r/w - bool - determines if the user's network home share should be displayed as a menu item
@@ -196,6 +198,8 @@ enum Preferences {
     static let messagePasswordChangePolicy = "MessagePasswordChangePolicy"
     static let passwordExpireAlertTime = "PasswordExpireAlertTime"
     static let passwordPolicy = "PasswordPolicy"
+    static let persistExpiration = "PersistExpiration"
+
     /// Should NoMAD automatically attempt to renew Kerberos tickets on behalf of the user.
     static let renewTickets = "RenewTickets"
 
