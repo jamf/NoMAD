@@ -102,13 +102,13 @@ class ShareMounter: NSArrayController {
 
         var mounts = (sharePrefs?.array(forKey: shareKeys.shares))! as! [NSDictionary]
 
-        let userMounts = (sharePrefs?.array(forKey: shareKeys.userShares))! as! [NSDictionary]
+        //let userMounts = (sharePrefs?.array(forKey: shareKeys.userShares))! as! [NSDictionary]
 
         // need to mark the shares as user or system
 
-        if userMounts.count != 0 {
-            mounts.append(contentsOf: userMounts)
-        }
+        //if userMounts.count != 0 {
+        //   mounts.append(contentsOf: userMounts)
+        //}
 
         for mount in mounts {
 
