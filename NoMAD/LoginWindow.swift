@@ -79,6 +79,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         signInSpinner.isHidden = false
         signInSpinner.startAnimation(nil)
 
+        logInButton.isEnabled = false
+
         var userNameChecked = ""
 
         // ensure that user entered just a shortname, in which case add the Kerberos realm
@@ -130,6 +132,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                     alertController.beginSheetModal(for: self.window!, completionHandler: nil)
                     signInSpinner.isHidden = true
                     signInSpinner.stopAnimation(nil)
+                    logInButton.isEnabled = true
                     myLogger.logit(.base, message:myError!)
                     EXIT_FAILURE
                 //
@@ -139,6 +142,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                     alertController.beginSheetModal(for: self.window!, completionHandler: nil)
                     signInSpinner.isHidden = true
                     signInSpinner.stopAnimation(nil)
+                    logInButton.isEnabled = true
                     myLogger.logit(.base, message:myError!)
                     EXIT_FAILURE
                 }
@@ -269,6 +273,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                     myLogger.logit(LogLevel.debug, message: "Window does not exist.")
                     signInSpinner.isHidden = true
                     signInSpinner.stopAnimation(nil)
+                    logInButton.isEnabled = true
                     EXIT_FAILURE
                     // TODO: figure out if this is the proper way to handle this.
                     return
@@ -294,6 +299,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                             myLogger.logit(.base, message:"Local password wrong.")
                             self.signInSpinner.isHidden = true
                             self.signInSpinner.stopAnimation(nil)
+                            self.logInButton.isEnabled = true
                             EXIT_FAILURE
                             // TODO: figure out if this is the proper way to handle this.
                             return
@@ -313,6 +319,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                             myLogger.logit(LogLevel.debug, message:myError!)
                             self.signInSpinner.isHidden = true
                             self.signInSpinner.stopAnimation(nil)
+                            self.logInButton.isEnabled = true
                             EXIT_FAILURE
                             // TODO: figure out if this is the proper way to handle this.
                             return
@@ -344,6 +351,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                 self.Password.stringValue = ""
                 signInSpinner.isHidden = true
                 signInSpinner.stopAnimation(nil)
+                logInButton.isEnabled = true
                 self.close()
             }
         } catch let nomadUserError as NoMADUserError {
@@ -355,6 +363,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             self.Password.stringValue = ""
             signInSpinner.isHidden = true
             signInSpinner.stopAnimation(nil)
+            logInButton.isEnabled = true
             self.close()
         } catch {
             let alertController = NSAlert()
@@ -365,6 +374,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             self.Password.stringValue = ""
             signInSpinner.isHidden = true
             signInSpinner.stopAnimation(nil)
+            logInButton.isEnabled = true
             self.close()
         }
 
@@ -377,6 +387,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 
         signInSpinner.isHidden = true
         signInSpinner.stopAnimation(nil)
+        logInButton.isEnabled = true
 
         // DO NOT put self.close() here to try to save code,
         // it will mess up the local password sync code.
@@ -386,6 +397,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 
         changePasswordSpinner.isHidden = false
         changePasswordSpinner.startAnimation(nil)
+        changePasswordButton.isEnabled = false
 
         let userPrincipal: String
         if userName.stringValue.contains("@") {
@@ -408,6 +420,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                 alertController.beginSheetModal(for: self.window!, completionHandler: nil)
                 changePasswordSpinner.isHidden = true
                 changePasswordSpinner.stopAnimation(nil)
+                changePasswordButton.isEnabled = true
                 EXIT_FAILURE
             } else {
                 let alertController = NSAlert()
@@ -430,12 +443,15 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                         }
                         self.changePasswordSpinner.isHidden = true
                         self.changePasswordSpinner.stopAnimation(nil)
+                        self.changePasswordButton.isEnabled = true
 
                         self.setWindowToLogin()
                         self.close()
                     } else {
                         self.changePasswordSpinner.isHidden = true
                         self.changePasswordSpinner.stopAnimation(nil)
+                        self.changePasswordButton.isEnabled = true
+
                         self.setWindowToLogin()
                         self.close()
                     }
@@ -445,6 +461,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         } else {
             changePasswordSpinner.isHidden = true
             changePasswordSpinner.stopAnimation(nil)
+            changePasswordButton.isEnabled = true
+
             let alertController = NSAlert()
             alertController.messageText = "PasswordMismatch".translate
             alertController.beginSheetModal(for: self.window!, completionHandler: nil)
@@ -456,6 +474,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         
         changePasswordSpinner.isHidden = true
         changePasswordSpinner.stopAnimation(nil)
+        changePasswordButton.isEnabled = true
 
         if defaults.string(forKey: Preferences.signInCommand) != "" {
             let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)

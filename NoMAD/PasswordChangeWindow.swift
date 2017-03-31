@@ -38,6 +38,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
     var minLowerCase: String = "0"
     var minNumber: String = "0"
     var minSymbol: String = "0"
+    var minMatches: String = "0"
 
     override var windowNibName: String! {
         return "PasswordChangeWindow"
@@ -58,6 +59,9 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
             minLowerCase = passwordPolicy["minLowerCase"] as! String
             minNumber = passwordPolicy["minNumber"] as! String
             minSymbol = passwordPolicy["minSymbol"] as! String
+            if passwordPolicy["minMatches"] != nil {
+                minMatches = passwordPolicy["minMatches"] as! String
+            }
 
             // set up a text field delegate
             newPassword.delegate = self
@@ -195,22 +199,38 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
 
         if passwordPolicy.count != 0 {
 
+            var totalMatches = 0
+
             if pass.characters.count < Int(minLength)! {
                 result.append("Length requirement not met.\n")
             }
 
             if capsOnly.characters.count < Int(minUpperCase)! {
                 result.append("Upper case character requirement not met.\n")
+            } else {
+                totalMatches += 1
             }
 
             if lowerOnly.characters.count < Int(minLowerCase)! {
                 result.append("Lower case character requirement not met.\n")
+            } else {
+                totalMatches += 1
             }
+
             if numberOnly.characters.count < Int(minNumber)! {
                 result.append("Numeric character requirement not met.\n")
+            } else {
+                totalMatches += 1
             }
+
             if symbolOnly.characters.count < Int(minSymbol)! {
                 result.append("Symbolic character requirement not met.\n")
+            } else {
+                totalMatches += 1
+            }
+
+            if totalMatches >= Int(minMatches)! && Int(minMatches) != 0 {
+                result = ""
             }
         }
 

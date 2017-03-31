@@ -64,8 +64,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     let myShareMenuItem = NSMenuItem()
 
     // menu bar icons
-    
-    
 
     var iconOnOn = NSImage()
     var iconOnOff = NSImage()
@@ -1122,7 +1120,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         self.statusItem.toolTip = dateFormatter.string(from: self.userInformation.userPasswordExpireDate as Date)
                         self.NoMADMenuTicketLife.title = "Not logged in." + " NoMAD Version: " + String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!) + " " +  String(describing: Bundle.main.infoDictionary!["CFBundleVersion"]!)
 
-                    } else if self.userInformation.status == "Logged In" && self.userInformation.myLDAPServers.tickets.state {
+                    } else if self.userInformation.status == "Logged In" && self.userInformation.myLDAPServers.tickets.state || defaults.bool(forKey: Preferences.persistExpiration) {
                         self.statusItem.image = self.iconOnOn
 
                         // if we're logged in we enable some options
