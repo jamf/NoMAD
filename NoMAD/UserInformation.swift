@@ -216,7 +216,7 @@ class UserInformation {
 
                     if ( passwordExpirationLength.characters.count > 15 ) {
                         passwordAging = false
-                    } else if ( passwordExpirationLength != "" ) {
+                    } else if ( passwordExpirationLength != "" ) && userPasswordUACFlag != "" {
                         if ~~( Int(userPasswordUACFlag)! & 0x10000 ) {
                             passwordAging = false
                             defaults.set(false, forKey: Preferences.userAging)

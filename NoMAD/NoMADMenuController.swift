@@ -390,7 +390,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             //loginWindow.window!.forceToFrontAndFocus(nil)
         }
 
-        cliTask("/usr/bin/kdestroy")
+        cliTask("/usr/bin/kdestroy -p " + defaults.string(forKey: Preferences.userPrincipal)!)
         userInformation.connected = false
         lastStatusCheck = Date().addingTimeInterval(-5000)
         updateUserInfo()
@@ -719,7 +719,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         } else if notification.actionButtonTitle == "NoMADMenuController-LogIn".translate {
             myLogger.logit(.base, message: "Initiating unannounced password change recovery.")
             // kill the tickets and show the loginwindow
-            cliTask("/usr/bin/kdestroy")
+            cliTask("/usr/bin/kdestroy -p " + defaults.string(forKey: Preferences.userPrincipal)!)
             loginWindow.window!.forceToFrontAndFocus(nil)
         } else if notification.actionButtonTitle == "Ignore" {
             return
