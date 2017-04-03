@@ -44,6 +44,8 @@ enum Preferences {
     // groups - r/o - string - a list of AD groups that the currently signed in user is a member of
 
     // hideExpiration - r/w - bool - determines if NoMAD shows expiration dates to users or not
+
+    // hideExpirationMessage - r/w - string - message to show in the menu bar for when your passowrd doesn't expire
     
     // hideHelp - r/w - bool - determines if the Get Help menu item should be shown
 
@@ -167,6 +169,7 @@ enum Preferences {
     static let getHelpOptions = "GetHelpOptions"
     static let groups = "Groups"
     static let hideExpiration = "HideExpiration"
+    static let hideExpirationMessage = "HideExpirationMessage"
     static let hideHelp = "HideHelp"
     static let hideLockScreen = "HideLockScreen"
     static let hideRenew = "HideRenew"
