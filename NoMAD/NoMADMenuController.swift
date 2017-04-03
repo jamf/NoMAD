@@ -198,8 +198,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             // TODO: translate these items
 
             let PKINITMenuItem = NSMenuItem()
-            PKINITMenuItem.title = "Smartcard Sign In"
-            PKINITMenuItem.toolTip = "Sign in with a Smartcard."
+            PKINITMenuItem.title = "NoMADMenuController-SmartcardSignIn".translate
+            PKINITMenuItem.toolTip = "NoMADMenuController-SignInWithSmartcard".translate
             PKINITMenuItem.action = #selector(smartcardSignIn)
             PKINITMenuItem.target = self.NoMADMenuLogOut.target
             PKINITMenuItem.isEnabled = true
@@ -634,7 +634,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
             self.NoMADMenuLogIn.isHidden = false
             self.NoMADMenuLogIn.isEnabled = false
-            self.NoMADMenuLogIn.title = "NoMADMenuController-LogIn".translate
+            self.NoMADMenuLogIn.title = "SignIn".translate
             self.NoMADMenuLogOut.isEnabled = false
             if (self.NoMADMenuChangePassword != nil) {
                 self.NoMADMenuChangePassword.isEnabled = false
@@ -648,7 +648,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         } else if self.userInformation.myLDAPServers.tickets.state == false {
 
             self.NoMADMenuLogIn.isEnabled = true
-            self.NoMADMenuLogIn.title = "NoMADMenuController-LogIn".translate
+            self.NoMADMenuLogIn.title = "SignIn".translate
             self.NoMADMenuLogIn.action = #selector(self.NoMADMenuClickLogIn)
             self.NoMADMenuLogIn.isHidden = false
             self.NoMADMenuLogOut.isEnabled = false
@@ -717,7 +717,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 passwordChangeWindow.window!.forceToFrontAndFocus(nil)
             }
 
-        } else if notification.actionButtonTitle == "NoMADMenuController-LogIn".translate {
+        } else if notification.actionButtonTitle == "SignIn".translate {
             myLogger.logit(.base, message: "Initiating unannounced password change recovery.")
             // kill the tickets and show the loginwindow
             cliTask("/usr/bin/kdestroy")
@@ -1098,7 +1098,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         // if we're not logged in we disable some options
 
                         self.statusItem.toolTip = dateFormatter.string(from: self.userInformation.userPasswordExpireDate as Date)
-                        self.NoMADMenuTicketLife.title = "Not logged in." + " NoMAD Version: " + String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!) + " " +  String(describing: Bundle.main.infoDictionary!["CFBundleVersion"]!)
+                        self.NoMADMenuTicketLife.title = "NoMADMenuController-NotLoggedIn".translate + " NoMAD Version: " + String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!) + " " +  String(describing: Bundle.main.infoDictionary!["CFBundleVersion"]!)
 
                     } else if self.userInformation.status == "Logged In" && self.userInformation.myLDAPServers.tickets.state || defaults.bool(forKey: Preferences.persistExpiration) {
                         self.statusItem.image = self.iconOnOn
@@ -1162,10 +1162,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         if self.userInformation.userPrincipalShort != "" {
                         self.NoMADMenuUserName.title = self.userInformation.userPrincipalShort
                         } else {
-                            self.NoMADMenuUserName.title = defaults.string(forKey: Preferences.menuUserName) ?? "Not Signed In"
+                            self.NoMADMenuUserName.title = defaults.string(forKey: Preferences.menuUserName) ?? "NoMADMenuController-NotSignedIn".translate
                         }
                     } else {
-                        self.NoMADMenuUserName.title = defaults.string(forKey: Preferences.lastUser) ?? "No User"
+                        self.NoMADMenuUserName.title = defaults.string(forKey: Preferences.lastUser) ?? "NoMADMenuController-NoUser".translate
                         self.NoMADMenuPasswordExpires.title = ""
                     }
 

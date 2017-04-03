@@ -48,8 +48,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
             return
         }
 
-        changePasswordButton.title = "NoMADMenuController-LogIn".translate
-        self.window?.title = defaults.string(forKey: Preferences.titleSignIn) ?? "NoMAD - " + "NoMADMenuController-LogIn".translate
+        changePasswordButton.title = "SignIn".translate
+        self.window?.title = defaults.string(forKey: Preferences.titleSignIn) ?? "NoMAD - " + "SignIn".translate
 
         userName.stringValue = defaults.string(forKey: Preferences.lastUser)!
         Password.becomeFirstResponder()
@@ -505,7 +505,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         logInButton.isHidden = false
         logInButton.isEnabled = true
 
-        passwordLabel.stringValue = "Password"
+        passwordLabel.stringValue = "LoginWindow-PasswordLabel".translate
         Password.stringValue = ""
 
         self.window?.setContentSize(loginSize)
@@ -535,7 +535,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         logInButton.isHidden = true
         logInButton.isEnabled = false
 
-        passwordLabel.stringValue = "Old Password"
+        passwordLabel.stringValue = "LoginWindow-OldPasswordLabel".translate
 
         // put focus into the first change field
         
