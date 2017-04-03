@@ -280,6 +280,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 NoMADMenuChangePassword.isHidden = true
             }
         }
+
+        // if we're set to show the sign in window on launch, show it, if we don't already have tickets
+
+        if defaults.bool(forKey: Preferences.signInWindowOnLaunch) && self.userInformation.connected && !self.userInformation.myLDAPServers.tickets.state {
+            NoMADMenuClickLogIn(NSMenuItem())
+        }
     }
 
     // MARK: IBActions

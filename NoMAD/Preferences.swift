@@ -120,7 +120,11 @@ enum Preferences {
 
     // selfServicePath - r/w - string - path to a self service application for "Get Software"
 
+    // signedIn - r/o - bool - flag to show if a user is currently signed in
+
     // signInCommand - r/w - string - the shell script, or other binary, to be triggered whenever a succesful sign in occurs
+
+    // signInWindowOnLaunch - r/w - bool - will show a sign in window on launch if there are no tickets
 
     // siteIgnore - r/w - bool - determines if NoMAD ignores the site that comes back from AD. Generally this will mean NoMAD will use the globally advertised DCs instead of a particular site's.
 
@@ -211,6 +215,8 @@ enum Preferences {
     static let secondsToRenew = "SecondsToRenew"
     static let selfServicePath = "SelfServicePath"
     static let signInCommand = "SignInCommand"
+    static let signInWindowOnLaunch = "SignInWindowOnLaunch"
+    static let signedIn = "SignedIn"
     static let siteIgnore = "SiteIgnore"
     static let siteForce = "SiteForce"
     static let stateChangeAction = "StateChangeAction"
