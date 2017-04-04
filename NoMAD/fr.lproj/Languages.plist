@@ -5,11 +5,11 @@
 	<key>Lock Screen</key>
 	<dict>
 		<key>value</key>
-		<string>Vérouiller l&apos;écran</string>
+		<string>Verrouiller l&apos;écran</string>
 		<key>comment</key>
 		<string>Menu Item to Lock the Screen</string>
 	</dict>
-	<key>NoMADMenuController-LogIn</key>
+	<key>SignIn</key>
 	<dict>
 		<key>value</key>
 		<string>Se connecter</string>
@@ -42,7 +42,7 @@
 		<key>value</key>
 		<string>Nom d&apos;utilisateur</string>
 		<key>comment</key>
-		<string>Users&apos;s full name.</string>
+		<string>User&apos;s full name</string>
 	</dict>
 	<key>NoMADMenuController-GetSoftware</key>
 	<dict>
@@ -138,7 +138,7 @@
 	<key>NetworkLocalMismatch</key>
 	<dict>
 		<key>value</key>
-		<string>Vos mot de passe réseau et locaux sont différents. Entrez votre mot de passe réseau pour mettre à jour votre session.</string>
+		<string>Vos mot de passe réseau et locaux sont différents. Entrez votre mot de passe locaux pour mettre à jour votre session.</string>
 		<key>comment</key>
 		<string>error when network and local passwords do not match</string>
 	</dict>

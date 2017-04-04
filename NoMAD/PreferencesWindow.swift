@@ -69,6 +69,12 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
             defaults.set(ADDomainTextField.stringValue.uppercased(), forKey: Preferences.kerberosRealm)
         }
 
+        // double check that we have a Kerberos Realm
+
+        if defaults.string(forKey: Preferences.kerberosRealm) == "" || defaults.string(forKey: Preferences.kerberosRealm) == nil {
+            defaults.set(defaults.string(forKey: Preferences.aDDomain)?.uppercased(), forKey: Preferences.kerberosRealm)
+        }
+
         // update the Chrome configuration
 
         if defaults.bool(forKey: Preferences.configureChrome) {

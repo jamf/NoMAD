@@ -180,6 +180,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         // see if we should auto-configure
         setDefaults()
 
+        // double check that we have a Kerberos Realm
+
+        if defaults.string(forKey: Preferences.kerberosRealm) == "" || defaults.string(forKey: Preferences.kerberosRealm) == nil {
+            defaults.set(defaults.string(forKey: Preferences.aDDomain)?.uppercased(), forKey: Preferences.kerberosRealm)
+        }
+
         // if no preferences are set, we show the preferences pane
         if (defaults.string(forKey: Preferences.aDDomain) == "" ) {
             preferencesWindow.window!.forceToFrontAndFocus(nil)
@@ -195,8 +201,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             // TODO: translate these items
 
             let PKINITMenuItem = NSMenuItem()
-            PKINITMenuItem.title = "Smartcard Sign In"
-            PKINITMenuItem.toolTip = "Sign in with a Smartcard."
+            PKINITMenuItem.title = "NoMADMenuController-SmartcardSignIn".translate
+            PKINITMenuItem.toolTip = "NoMADMenuController-SignInWithSmartcard".translate
             PKINITMenuItem.action = #selector(smartcardSignIn)
             PKINITMenuItem.target = self.NoMADMenuLogOut.target
             PKINITMenuItem.isEnabled = true
@@ -276,6 +282,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             if showPasswordChange == "None" {
                 NoMADMenuChangePassword.isHidden = true
             }
+        }
+
+        // if we're set to show the sign in window on launch, show it, if we don't already have tickets
+
+        if defaults.bool(forKey: Preferences.signInWindowOnLaunch) && self.userInformation.connected && !self.userInformation.myLDAPServers.tickets.state {
+            NoMADMenuClickLogIn(NSMenuItem())
         }
     }
 
@@ -631,7 +643,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
             self.NoMADMenuLogIn.isHidden = false
             self.NoMADMenuLogIn.isEnabled = false
-            self.NoMADMenuLogIn.title = "NoMADMenuController-LogIn".translate
+            self.NoMADMenuLogIn.title = "SignIn".translate
             self.NoMADMenuLogOut.isEnabled = false
             if (self.NoMADMenuChangePassword != nil) {
                 self.NoMADMenuChangePassword.isEnabled = false
@@ -645,7 +657,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         } else if self.userInformation.myLDAPServers.tickets.state == false {
 
             self.NoMADMenuLogIn.isEnabled = true
-            self.NoMADMenuLogIn.title = "NoMADMenuController-LogIn".translate
+            self.NoMADMenuLogIn.title = "SignIn".translate
             self.NoMADMenuLogIn.action = #selector(self.NoMADMenuClickLogIn)
             self.NoMADMenuLogIn.isHidden = false
             self.NoMADMenuLogOut.isEnabled = false
@@ -714,7 +726,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 passwordChangeWindow.window!.forceToFrontAndFocus(nil)
             }
 
-        } else if notification.actionButtonTitle == "NoMADMenuController-LogIn".translate {
+        } else if notification.actionButtonTitle == "SignIn".translate {
             myLogger.logit(.base, message: "Initiating unannounced password change recovery.")
             // kill the tickets and show the loginwindow
             cliTask("/usr/bin/kdestroy -p " + defaults.string(forKey: Preferences.userPrincipal)!)
@@ -915,7 +927,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         switch command! {
 
         // TODO: Lots of error handling and such
-        // like not opening windows when not connected
 
         case "getcertificate":
             getCert(false)
@@ -925,7 +936,11 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             NoMADMenuClickGetSoftware(NoMADMenuGetSoftware)
         case "open": break
         case "passwordchange":
+             if self.userInformation.connected && self.userInformation.myLDAPServers.tickets.state {
             passwordChangeWindow.window!.forceToFrontAndFocus(nil)
+             } else {
+                myLogger.logit(.debug, message: "User not currently signed in, unable to show change password window.")
+            }
         case "prefs":
             preferencesWindow.window!.forceToFrontAndFocus(nil)
         case "signin":
@@ -946,15 +961,11 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             loginWindow.window!.forceToFrontAndFocus(nil)
             }
             }
-//        case "status":
-//            print(event)
-//            print(withReplyEvent)
         case "update":
             doTheNeedfull()
         default:
             break
         }
-        print("****EVENT***")
     }
 
     // function to start the menu throbbing
@@ -1118,7 +1129,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         // if we're not logged in we disable some options
 
                         self.statusItem.toolTip = dateFormatter.string(from: self.userInformation.userPasswordExpireDate as Date)
-                        self.NoMADMenuTicketLife.title = "Not logged in." + " NoMAD Version: " + String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!) + " " +  String(describing: Bundle.main.infoDictionary!["CFBundleVersion"]!)
+                        self.NoMADMenuTicketLife.title = "NoMADMenuController-NotLoggedIn".translate + " NoMAD Version: " + String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!) + " " +  String(describing: Bundle.main.infoDictionary!["CFBundleVersion"]!)
 
                     } else if self.userInformation.status == "Logged In" && self.userInformation.myLDAPServers.tickets.state || defaults.bool(forKey: Preferences.persistExpiration) {
                         self.statusItem.image = self.iconOnOn
@@ -1154,8 +1165,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                             self.statusItem.title = ""
                             self.statusItem.title = ""
                             self.NoMADMenuTicketLife.title = dateFormatter.string(from: self.userInformation.myLDAPServers.tickets.expire as Date) + " " + self.userInformation.myLDAPServers.currentServer + " NoMAD Version: " + String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!) + " " +  String(describing: Bundle.main.infoDictionary!["CFBundleVersion"]!)
-                            self.statusItem.toolTip = "PasswordDoesNotExpire".translate
-                            self.NoMADMenuPasswordExpires.title = "PasswordDoesNotExpire".translate
+                            self.statusItem.toolTip = defaults.string(forKey: Preferences.hideExpirationMessage) ?? "PasswordDoesNotExpire".translate
+                            self.NoMADMenuPasswordExpires.title = defaults.string(forKey: Preferences.hideExpirationMessage) ?? "PasswordDoesNotExpire".translate
                         }
                     } else {
                         self.statusItem.image = self.iconOffOff
@@ -1182,10 +1193,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         if self.userInformation.userPrincipalShort != "" {
                         self.NoMADMenuUserName.title = self.userInformation.userPrincipalShort
                         } else {
-                            self.NoMADMenuUserName.title = defaults.string(forKey: Preferences.menuUserName) ?? "Not Signed In"
+                            self.NoMADMenuUserName.title = defaults.string(forKey: Preferences.menuUserName) ?? "NoMADMenuController-NotSignedIn".translate
                         }
                     } else {
-                        self.NoMADMenuUserName.title = defaults.string(forKey: Preferences.lastUser) ?? "No User"
+                        self.NoMADMenuUserName.title = defaults.string(forKey: Preferences.lastUser) ?? "NoMADMenuController-NoUser".translate
                         self.NoMADMenuPasswordExpires.title = ""
                     }
 

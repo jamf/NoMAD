@@ -148,6 +148,10 @@ class KlistUtil {
             }
             }
             getExpiration()
+
+            // write out if we have tickets
+
+            defaults.set(state, forKey: Preferences.signedIn)
         }
 
         func getPrincipal() -> String {

@@ -44,6 +44,8 @@ enum Preferences {
     // groups - r/o - string - a list of AD groups that the currently signed in user is a member of
 
     // hideExpiration - r/w - bool - determines if NoMAD shows expiration dates to users or not
+
+    // hideExpirationMessage - r/w - string - message to show in the menu bar for when your passowrd doesn't expire
     
     // hideHelp - r/w - bool - determines if the Get Help menu item should be shown
 
@@ -121,7 +123,11 @@ enum Preferences {
 
     // selfServicePath - r/w - string - path to a self service application for "Get Software"
 
+    // signedIn - r/o - bool - flag to show if a user is currently signed in
+
     // signInCommand - r/w - string - the shell script, or other binary, to be triggered whenever a succesful sign in occurs
+
+    // signInWindowOnLaunch - r/w - bool - will show a sign in window on launch if there are no tickets
 
     // siteIgnore - r/w - bool - determines if NoMAD ignores the site that comes back from AD. Generally this will mean NoMAD will use the globally advertised DCs instead of a particular site's.
 
@@ -172,6 +178,7 @@ enum Preferences {
     static let getHelpOptions = "GetHelpOptions"
     static let groups = "Groups"
     static let hideExpiration = "HideExpiration"
+    static let hideExpirationMessage = "HideExpirationMessage"
     static let hideHelp = "HideHelp"
     static let hideLockScreen = "HideLockScreen"
     static let hideRenew = "HideRenew"
@@ -215,6 +222,8 @@ enum Preferences {
     static let secondsToRenew = "SecondsToRenew"
     static let selfServicePath = "SelfServicePath"
     static let signInCommand = "SignInCommand"
+    static let signInWindowOnLaunch = "SignInWindowOnLaunch"
+    static let signedIn = "SignedIn"
     static let siteIgnore = "SiteIgnore"
     static let siteForce = "SiteForce"
     static let stateChangeAction = "StateChangeAction"
