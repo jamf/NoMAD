@@ -9,7 +9,7 @@
 		<key>comment</key>
 		<string>Menu Item to Lock the Screen</string>
 	</dict>
-	<key>Sign In</key>
+	<key>SignIn</key>
 	<dict>
 		<key>value</key>
 		<string>Logga in</string>
@@ -257,7 +257,7 @@
 	<key>UserInformation-PwdChangedSignInAgain</key>
 	<dict>
 		<key>value</key>
-        <string>Ditt lösenord har ändrats, logga in i NoMAD igen för att uppdatera ditt lösenord.</string>
+		<string>Ditt lösenord har ändrats, logga in i NoMAD igen för att uppdatera ditt lösenord.</string>
 		<key>comment</key>
 		<string>Notification text asking to sign in again</string>
 	</dict>
