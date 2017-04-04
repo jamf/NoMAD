@@ -191,19 +191,90 @@
 		<key>comment</key>
 		<string>Menu item for opening up a user&apos;s home sharepoint from their AD profile</string>
 	</dict>
-	<key>FileServers</key>
+	<key>LoginWindow-OldPasswordLabel</key>
 	<dict>
 		<key>value</key>
-		<string>Partages</string>
+		<string>Old Password</string>
 		<key>comment</key>
-		<string>Menu item for File Servers</string>
+		<string>Label for old password</string>
 	</dict>
-	<key>Edit...</key>
+	<key>LoginWindow-PasswordLabel</key>
 	<dict>
 		<key>value</key>
-		<string>Modifier...</string>
+		<string>Password</string>
 		<key>comment</key>
-		<string>Menu item for editing</string>
+		<string>Label for password</string>
 	</dict>
+	<key>NoMADMenuController-SmartcardSignIn</key>
+	<dict>
+		<key>value</key>
+		<string>Smartcard Sign In</string>
+		<key>comment</key>
+		<string>PKINIT smartcard menu sign in</string>
+	</dict>
+	<key>NoMADMenuController-SignInWithSmartcard</key>
+	<dict>
+		<key>value</key>
+		<string>Sign in with a Smartcard.</string>
+		<key>comment</key>
+		<string>PKINIT smartcard menu sign in tool tip</string>
+	</dict>
+	<key>NoMADMenuController-NotLoggedIn</key>
+	<dict>
+		<key>value</key>
+		<string>Not logged in.</string>
+		<key>comment</key>
+		<string>User info for ticket life when not signed in</string>
+	</dict>
+	<key>NoMADMenuController-NotSignedIn</key>
+	<dict>
+		<key>value</key>
+		<string>Not Signed In</string>
+		<key>comment</key>
+		<string>User info when not signed in</string>
+	</dict>
+	<key>NoMADMenuController-NoUser</key>
+	<dict>
+		<key>value</key>
+		<string>No User</string>
+		<key>comment</key>
+		<string>User info when no user is available</string>
+	</dict>
+	<key>UserInformation-PasswordChanged</key>
+	<dict>
+		<key>value</key>
+		<string>Password Changed</string>
+		<key>comment</key>
+		<string>Notification title when password changed</string>
+	</dict>
+	<key>UserInformation-PwdChangedSignInAgain</key>
+	<dict>
+		<key>value</key>
+		<string>Your password was changed, please re-sign into NoMAD to update your password.</string>
+		<key>comment</key>
+		<string>Notification text asking to sign in again</string>
+	</dict>
+	<key>UserInformation-Ignore</key>
+	<dict>
+		<key>value</key>
+		<string>Ignore</string>
+		<key>comment</key>
+		<string>Password change notification ignore button</string>
+	</dict>
+    <key>FileServers</key>
+    <dict>
+        <key>value</key>
+        <string>Partages</string>
+        <key>comment</key>
+        <string>Menu item for File Servers</string>
+    </dict>
+    <key>Edit...</key>
+    <dict>
+        <key>value</key>
+        <string>Modifier...</string>
+        <key>comment</key>
+        <string>Menu item for editing</string>
+    </dict>
+
 </dict>
 </plist>
