@@ -183,6 +183,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         // see if we should auto-configure
         setDefaults()
 
+        // double check that we have a Kerberos Realm
+
+        if defaults.string(forKey: Preferences.kerberosRealm) == "" || defaults.string(forKey: Preferences.kerberosRealm) == nil {
+            defaults.set(defaults.string(forKey: Preferences.aDDomain)?.uppercased(), forKey: Preferences.kerberosRealm)
+        }
+
         // if no preferences are set, we show the preferences pane
         if (defaults.string(forKey: Preferences.aDDomain) == "" ) {
             preferencesWindow.window!.forceToFrontAndFocus(nil)
@@ -901,7 +907,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         switch command! {
 
         // TODO: Lots of error handling and such
-        // like not opening windows when not connected
 
         case "getcertificate":
             getCert(false)
@@ -911,7 +916,11 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             NoMADMenuClickGetSoftware(NoMADMenuGetSoftware)
         case "open": break
         case "passwordchange":
+             if self.userInformation.connected && self.userInformation.myLDAPServers.tickets.state {
             passwordChangeWindow.window!.forceToFrontAndFocus(nil)
+             } else {
+                myLogger.logit(.debug, message: "User not currently signed in, unable to show change password window.")
+            }
         case "prefs":
             preferencesWindow.window!.forceToFrontAndFocus(nil)
         case "signin":
@@ -932,15 +941,11 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             loginWindow.window!.forceToFrontAndFocus(nil)
             }
             }
-//        case "status":
-//            print(event)
-//            print(withReplyEvent)
         case "update":
             doTheNeedfull()
         default:
             break
         }
-        print("****EVENT***")
     }
 
     // function to start the menu throbbing

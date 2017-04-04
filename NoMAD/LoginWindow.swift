@@ -204,7 +204,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
 
             if consoleUserIsAD && consoleUserPasswordResult != "Invalid" {
 
-                myLogger.logit(LogLevel.debug, message: "Checking if keychain password needs to be chagned.")
+                myLogger.logit(LogLevel.debug, message: "Checking if keychain password needs to be changed.")
 
                 let keychainUtil = KeychainUtil()
 
@@ -266,9 +266,10 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                 //alertController.addButton(withTitle: "Sync")
 
                 let localPassword = NSSecureTextField(frame: CGRect(x: 0, y: 0, width: 200, height: 24))
-                localPassword.becomeFirstResponder()
-                
                 alertController.accessoryView = localPassword
+
+                localPassword.becomeFirstResponder()
+
                 guard self.window != nil else {
                     myLogger.logit(LogLevel.debug, message: "Window does not exist.")
                     signInSpinner.isHidden = true
@@ -311,6 +312,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                         } catch {
                             myError = "Could not change the current console user's password."
                         }
+
                         // Check if we were able to change the local account password.
                         guard myError == nil else {
                             let alertController = NSAlert()
