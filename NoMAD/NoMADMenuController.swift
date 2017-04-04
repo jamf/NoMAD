@@ -87,6 +87,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     var updateRunning = false
     var menuAnimated = false
 
+    var signInOffered = false
+
     // for PKINIT additions
 
     var PKINIT = false
@@ -285,12 +287,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             if showPasswordChange == "None" {
                 NoMADMenuChangePassword.isHidden = true
             }
-        }
-
-        // if we're set to show the sign in window on launch, show it, if we don't already have tickets
-
-        if defaults.bool(forKey: Preferences.signInWindowOnLaunch) && self.userInformation.connected && !self.userInformation.myLDAPServers.tickets.state {
-            NoMADMenuClickLogIn(NSMenuItem())
         }
     }
 
@@ -1277,9 +1273,22 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 
                 // login if we need to
                 if reachCheck { self.autoLogin() }
+
+                // if we're set to show the sign in window on launch, show it, if we don't already have tickets
+
+                if defaults.bool(forKey: Preferences.signInWindowOnLaunch) && self.userInformation.connected && !self.userInformation.myLDAPServers.tickets.state && !self.signInOffered {
+
+                    // move this back to the foreground
+                    DispatchQueue.main.async {
+                        self.NoMADMenuClickLogIn(NSMenuItem())
+                        self.signInOffered = true
+                    }
+                }
+
+
                 self.updateRunning = false
             })
-            
+
             // mark the time and clear the update scheduled flag
             
             lastStatusCheck = Date()
