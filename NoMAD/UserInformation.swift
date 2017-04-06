@@ -242,6 +242,10 @@ class UserInformation {
                     if ((userPasswordSetDate.timeIntervalSince(passLastChangeDate as Date)) > 1 * 60 ){
 
                     myLogger.logit(.base, message: "Password was changed underneath us.")
+                        
+                    if (defaults.bool(forKey: Preferences.uPCAlertLogout ) == true) {
+                        cliTask("/usr/bin/kdestroy")
+                    }
 
                     // record the new password set date
 
