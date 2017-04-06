@@ -249,7 +249,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
 
         }
 
-        if newPasswordAgain.stringValue == newPassword.stringValue {
+        if newPasswordAgain.stringValue == newPassword.stringValue && error == "" {
             secondaryAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusAvailable)
             passwordChangeButton.isEnabled = true
 
