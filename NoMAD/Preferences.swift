@@ -118,7 +118,7 @@ enum Preferences {
 
     // uPCAlert - r/w - bool - determines if we alert the user that the password was changed outside of NoMAD
     
-    // uPCAlertAction - r/w - string - the shell script, or other binary, to be triggered whenever on uPCAlert
+    // uPCAlertAction - r/w - string - the shell script, or other binary, to be triggered on uPCAlert
 
     // userPrincipal - r/o - string - the Kerberos principal for the currently signed in user
 
@@ -197,7 +197,7 @@ enum Preferences {
     static let template = "Template"
     static let titleSignIn = "TitleSignIn"
     static let uPCAlert = "UPCAlert"
-    static let uPCAlertLogout = "UPCAlertLogout"
+    static let uPCAlertLogout = "UPCAlertAction"
     static let userPrincipal = "UserPrincipal"
     static let userHome = "UserHome"
     static let userPasswordExpireDate = "UserPasswordExpireDate"
