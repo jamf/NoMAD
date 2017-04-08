@@ -243,8 +243,9 @@ class UserInformation {
 
                     myLogger.logit(.base, message: "Password was changed underneath us.")
                         
-                    if (defaults.bool(forKey: Preferences.uPCAlertLogout ) == true) {
-                        cliTask("/usr/bin/kdestroy")
+                    if (defaults.string(forKey: Preferences.uPCAlertAction) != "" ) {
+                        myLogger.logit(.base, message: "Firing UPC Alert Action")
+                        cliTask(defaults.string(forKey: Preferences.uPCAlertAction)! + " &")
                     }
 
                     // record the new password set date
