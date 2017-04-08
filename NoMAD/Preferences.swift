@@ -197,7 +197,7 @@ enum Preferences {
     static let template = "Template"
     static let titleSignIn = "TitleSignIn"
     static let uPCAlert = "UPCAlert"
-    static let uPCAlertLogout = "UPCAlertAction"
+    static let uPCAlertAction = "UPCAlertAction"
     static let userPrincipal = "UserPrincipal"
     static let userHome = "UserHome"
     static let userPasswordExpireDate = "UserPasswordExpireDate"
