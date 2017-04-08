@@ -118,7 +118,7 @@ enum Preferences {
 
     // uPCAlert - r/w - bool - determines if we alert the user that the password was changed outside of NoMAD
     
-    // uPCAlertLogout - r/w - bool - logs user out when the password was changed outside of NoMAD
+    // uPCAlertAction - r/w - string - the shell script, or other binary, to be triggered whenever on uPCAlert
 
     // userPrincipal - r/o - string - the Kerberos principal for the currently signed in user
 
