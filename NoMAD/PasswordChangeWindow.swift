@@ -197,8 +197,6 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
         let numberOnly = String(pass.characters.filter({ (numbers.contains($0))}))
         let symbolOnly = String(pass.characters.filter({ (symbols.contains($0))}))
 
-        if passwordPolicy.count != 0 {
-
             var totalMatches = 0
 
             // TODO: set up all of these for translation
@@ -231,10 +229,9 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
                 totalMatches += 1
             }
 
-            if totalMatches >= Int(minMatches)! && Int(minMatches) != 0 && pass.characters.count < Int(minLength)! {
+            if totalMatches >= Int(minMatches)! && Int(minMatches) != 0 && pass.characters.count >= Int(minLength)! {
                 result = ""
             }
-        }
 
         return result
     }
@@ -244,6 +241,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
 
         if error == "" {
             policyAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusAvailable)
+            policyAlert.toolTip = "All requirements met."
         } else {
             policyAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusUnavailable)
             policyAlert.toolTip = error
@@ -253,6 +251,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
 
         if newPasswordAgain.stringValue == newPassword.stringValue && error == "" {
             secondaryAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusAvailable)
+            secondaryAlert.toolTip = "All requirements met."
             passwordChangeButton.isEnabled = true
 
         } else {
