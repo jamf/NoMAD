@@ -630,7 +630,12 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
             
             // Try to change the current console user's password.
             do {
-                try noMADUser.changeCurrentConsoleUserPassword(currentPassword, newPassword1: newPassword1, newPassword2: newPassword2, forceChange: true)
+                let changeSuccess = try noMADUser.changeCurrentConsoleUserPassword(currentPassword, newPassword1: newPassword1, newPassword2: newPassword2, forceChange: true)
+                
+                if changeSuccess {
+                    return "Unable to change password. Please try a different new password."
+                }
+                
             } catch let error as NoMADUserError {
                 myLogger.logit(LogLevel.base, message: error.description)
                 return error.description
