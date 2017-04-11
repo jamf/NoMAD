@@ -305,7 +305,7 @@ class NoMADUser {
      - newPassword2: (String) Must match newPassword1.
 
      */
-    func changeCurrentConsoleUserPassword(_ oldPassword: String, newPassword1: String, newPassword2: String, forceChange: Bool) throws -> Bool {
+    func changeCurrentConsoleUserPassword(_ oldPassword: String, newPassword1: String, newPassword2: String, forceChange: Bool) throws -> String {
         if (newPassword1 != newPassword2) {
             myLogger.logit(LogLevel.info, message: "New passwords do not match.")
             throw NoMADUserError.invalidParamater("New passwords do not match.")
@@ -323,10 +323,10 @@ class NoMADUser {
 
         do {
             try currentConsoleUserRecord.changePassword(oldPassword, toPassword: newPassword1)
-            return true
+            return ""
         } catch let unknownError as NSError {
             myLogger.logit(LogLevel.base, message: "Local User Password is incorrect. Error: " + unknownError.description)
-            return false
+            return unknownError.localizedDescription
         }
     }
 
@@ -632,8 +632,8 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
             do {
                 let changeSuccess = try noMADUser.changeCurrentConsoleUserPassword(currentPassword, newPassword1: newPassword1, newPassword2: newPassword2, forceChange: true)
                 
-                if changeSuccess {
-                    return "Unable to change password. Please try a different new password."
+                if changeSuccess != "" {
+                    return changeSuccess
                 }
                 
             } catch let error as NoMADUserError {

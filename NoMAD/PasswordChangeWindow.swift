@@ -49,6 +49,10 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
         super.windowDidLoad()
 
         self.window?.center()
+        
+        // make the old password the first field to fill in
+        
+        oldPassword.becomeFirstResponder()
 
         // load in the password policy
 
