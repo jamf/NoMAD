@@ -20,6 +20,7 @@
 		1AA2B64A1E4FBDD60088DF03 /* PKINITER.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AA2B6491E4FBDD60088DF03 /* PKINITER.swift */; };
 		1ADCEC621D75476D005D33F5 /* ShareMounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ADCEC611D75476D005D33F5 /* ShareMounter.swift */; };
 		1AE1DFC11DA6B1E100456E3E /* Languages.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1AE1DFC31DA6B1E100456E3E /* Languages.plist */; };
+		1AE7E9EE1E9E6ED600809DDC /* Printers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AE7E9ED1E9E6ED600809DDC /* Printers.swift */; };
 		1AFBDC651DE675B000C19AE1 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AFBDC641DE675B000C19AE1 /* Preferences.swift */; };
 		1AFBDC671DE675C000C19AE1 /* DefaultPreferences.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1AFBDC661DE675C000C19AE1 /* DefaultPreferences.plist */; };
 		1AFBDC701DEE4F4800C19AE1 /* SelfServiceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AFBDC6F1DEE4F4800C19AE1 /* SelfServiceManager.swift */; };
@@ -97,6 +98,7 @@
 		1ADCEC611D75476D005D33F5 /* ShareMounter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareMounter.swift; sourceTree = "<group>"; };
 		1AE1DFC21DA6B1E100456E3E /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Base; path = Base.lproj/Languages.plist; sourceTree = "<group>"; };
 		1AE1DFC51DA6B52300456E3E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = en; path = en.lproj/Languages.plist; sourceTree = "<group>"; };
+		1AE7E9ED1E9E6ED600809DDC /* Printers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Printers.swift; sourceTree = "<group>"; };
 		1AFBDC641DE675B000C19AE1 /* Preferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
 		1AFBDC661DE675C000C19AE1 /* DefaultPreferences.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DefaultPreferences.plist; sourceTree = "<group>"; };
 		1AFBDC6F1DEE4F4800C19AE1 /* SelfServiceManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelfServiceManager.swift; sourceTree = "<group>"; };
@@ -190,6 +192,7 @@
 				34E186BD1D9C681000265138 /* DNSResolver.h */,
 				34E186BE1D9C681000265138 /* DNSResolver.m */,
 				345226E81DAA266B0066C922 /* Network.swift */,
+				1AE7E9ED1E9E6ED600809DDC /* Printers.swift */,
 			);
 			name = Networking;
 			sourceTree = "<group>";
@@ -469,6 +472,7 @@
 				346CD27F1DA4776600255F66 /* Extensions.swift in Sources */,
 				1AA2B64A1E4FBDD60088DF03 /* PKINITER.swift in Sources */,
 				1A58C88C1DD9264D002C0769 /* CSRGen.swift in Sources */,
+				1AE7E9EE1E9E6ED600809DDC /* Printers.swift in Sources */,
 				1A24EF481D7F01B3006A1866 /* Logger.swift in Sources */,
 				1A08F1F31D36DA0900FA68C4 /* NoMADApplication.swift in Sources */,
 				34E186BF1D9C681000265138 /* DNSResolver.m in Sources */,

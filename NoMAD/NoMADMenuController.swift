@@ -90,6 +90,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
     let myShareMounter = ShareMounter()
 
+    var PKINIT = false
+
+    //let myShareMounter = ShareMounter()
+
     var menuAnimationTimer = Timer()
     var delayTimer = Timer()
 
