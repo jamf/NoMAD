@@ -260,7 +260,7 @@ class UserInformation {
                         notification.informativeText = "UserInformation-PwdChangedSignInAgain".translate
                         //notification.deliveryDate = date
                         notification.hasActionButton = true
-                        notification.actionButtonTitle = "UserInformation-SignIn".translate
+                        notification.actionButtonTitle = "SignIn".translate
                         notification.otherButtonTitle = "UserInformation-Ignore".translate
                         notification.soundName = NSUserNotificationDefaultSoundName
                         NSUserNotificationCenter.default.deliver(notification)
