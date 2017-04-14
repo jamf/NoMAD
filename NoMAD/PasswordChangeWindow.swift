@@ -241,7 +241,12 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
     }
 
     override func controlTextDidChange(_ obj: Notification) {
+
+        let compareField = obj.object
+
         let error = checkPassword(pass: newPassword.stringValue)
+
+        if obj.object.debugDescription == newPassword.debugDescription {
 
         if error == "" {
             policyAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusAvailable)
@@ -251,6 +256,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
             policyAlert.toolTip = error
             passwordChangeButton.isEnabled = false
 
+        }
         }
 
         if newPasswordAgain.stringValue == newPassword.stringValue && error == "" {
@@ -262,7 +268,15 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
             secondaryAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusUnavailable)
             secondaryAlert.toolTip = "Passwords don't match."
             passwordChangeButton.isEnabled = false
+            if compareField.unsafelyUnwrapped as! NSSecureTextField == newPasswordAgain {
+                let myAlert = NSAlert()
+                myAlert.messageText = error
+                myAlert.runModal()
+                newPassword.becomeFirstResponder()
+            }
         }
+
+
     }
 
 }
