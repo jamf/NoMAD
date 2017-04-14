@@ -63,7 +63,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "441"
             endingLineNumber = "441"
-            landmarkName = "NoMADMenuClickGetSoftware(_:)"
+            landmarkName = "NoMADMenuClickGetCertificate(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
