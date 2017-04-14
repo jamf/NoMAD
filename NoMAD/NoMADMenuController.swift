@@ -105,6 +105,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
     let statusItem = NSStatusBar.system().statusItem(withLength: NSVariableStatusItemLength)
 
+    var signInOffered = false
+
     /// Fired when the menu loads the first time
     override func awakeFromNib() {
 
