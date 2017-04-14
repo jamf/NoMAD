@@ -116,6 +116,8 @@ class KlistUtil {
 
                     let singleTicket = cliTask("/usr/bin/klist --json -c " + (dict["Cache name"]! as! String) )
 
+                    // breaks here on names with spaces
+
                     let jsonDict = try! JSONSerialization.jsonObject(with: singleTicket.data(using: String.Encoding.utf8)!, options: .mutableLeaves) as? [String: AnyObject]
 
                     // check if we have a ticket for the right realm
