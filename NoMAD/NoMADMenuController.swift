@@ -105,6 +105,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     var selfService: SelfServiceType?
 
     let statusItem = NSStatusBar.system().statusItem(withLength: NSVariableStatusItemLength)
+    
+    let PKINITMenuItem = NSMenuItem()
 
     /// Fired when the menu loads the first time
     override func awakeFromNib() {
@@ -205,7 +207,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             // we have PKINITer so build the menu
             // TODO: translate these items
 
-            let PKINITMenuItem = NSMenuItem()
             PKINITMenuItem.title = "NoMADMenuController-SmartcardSignIn".translate
             PKINITMenuItem.toolTip = "NoMADMenuController-SignInWithSmartcard".translate
             PKINITMenuItem.action = #selector(smartcardSignIn)
@@ -650,6 +651,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             if (self.NoMADMenuGetCertificate != nil)  {
                 self.NoMADMenuGetCertificate.isEnabled = false
             }
+            
+            if (self.PKINITMenuItem != nil ) {
+                self.PKINITMenuItem.isEnabled = false
+            }
 
             // twiddles what needs to be twiddled for connected but not logged in
 
@@ -665,6 +670,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             }
             if (self.NoMADMenuGetCertificate != nil)  {
                 self.NoMADMenuGetCertificate.isEnabled = false
+            }
+            if (self.PKINITMenuItem != nil ) {
+                self.PKINITMenuItem.isEnabled = false
             }
         }
         else {
@@ -682,6 +690,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             }
             if (self.NoMADMenuGetCertificate != nil)  {
                 self.NoMADMenuGetCertificate.isEnabled = true
+            }
+            if (self.PKINITMenuItem != nil ) {
+                self.PKINITMenuItem.isEnabled = true
             }
         }
 
