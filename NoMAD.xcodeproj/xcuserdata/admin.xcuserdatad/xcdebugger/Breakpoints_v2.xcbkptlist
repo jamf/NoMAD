@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NoMAD/NoMADMenuController.swift"
-            timestampString = "510020309.01881"
+            timestampString = "514505289.034998"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "441"
-            endingLineNumber = "441"
+            startingLineNumber = "444"
+            endingLineNumber = "444"
             landmarkName = "NoMADMenuClickGetCertificate(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -74,7 +74,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NoMAD/LoginWindow.swift"
-            timestampString = "499803535.822901"
+            timestampString = "514505289.034998"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "270"

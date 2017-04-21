@@ -40,6 +40,7 @@
 		84996CA81D503F8400793747 /* LDAPUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84996CA71D503F8400793747 /* LDAPUtil.swift */; };
 		84996CAB1D503F9100793747 /* KerbUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 84996CAA1D503F9100793747 /* KerbUtil.m */; };
 		84996CAD1D503F9700793747 /* PreferencesWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84996CAC1D503F9700793747 /* PreferencesWindow.swift */; };
+		84BB02891EA5718E00AE801D /* PKINITer.app in Resources */ = {isa = PBXBuildFile; fileRef = 84BB02881EA5718E00AE801D /* PKINITer.app */; };
 		84CC67DF1D30A18A00115C76 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CC67DE1D30A18A00115C76 /* AppDelegate.swift */; };
 		84CC67E11D30A18A00115C76 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 84CC67E01D30A18A00115C76 /* Assets.xcassets */; };
 		84CC67EC1D30A1A500115C76 /* GSS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84CC67EB1D30A1A500115C76 /* GSS.framework */; };
@@ -273,6 +274,7 @@
 		84CC67D21D30A18A00115C76 = {
 			isa = PBXGroup;
 			children = (
+				84BB02881EA5718E00AE801D /* PKINITer.app */,
 				84CC67DD1D30A18A00115C76 /* NoMAD */,
 				BF34324B1D52844300CE8F89 /* NoMADTests */,
 				84CC67DC1D30A18A00115C76 /* Products */,
