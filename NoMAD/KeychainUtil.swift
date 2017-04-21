@@ -51,6 +51,8 @@ class KeychainUtil {
 
         return myErr
     }
+    
+    // update the password
 
     func updatePassword(_ name: String, pass: String) -> Bool {
         if (try? findPassword(name)) != nil {
