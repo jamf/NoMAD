@@ -412,6 +412,8 @@
 				1AFBDC671DE675C000C19AE1 /* DefaultPreferences.plist in Resources */,
 				1AE1DFC11DA6B1E100456E3E /* Languages.plist in Resources */,
 				346CD2711DA205B500255F66 /* MainMenu.xib in Resources */,
+				1AA2B63B1E4DEE430088DF03 /* Localizable.strings in Resources */,
+				84BB02891EA5718E00AE801D /* PKINITer.app in Resources */,
 				841453881E3C2D940085890B /* PreferencesWindow.xib in Resources */,
 				8414538D1E3C2DA10085890B /* LoginWindow.xib in Resources */,
 				841453761E3C01220085890B /* InfoPlist.strings in Resources */,

@@ -77,8 +77,10 @@
             timestampString = "514505289.034998"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "270"
-            endingLineNumber = "270">
+            startingLineNumber = "291"
+            endingLineNumber = "291"
+            landmarkName = "LogInClick(_:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
