@@ -82,6 +82,12 @@ enum Preferences {
     // lastPasswordWarning - r/o - date - the date of the last time the user was warned that their password is about to expire. Used to keep track of how often to warn the user about their impending expiration.
 
     // lastPasswordExpireDate - r/o - date - an array of users and the date their password will expire. Used to keep track of passwords being changed outside of NoMAD.
+    
+    // LocalPasswordSyncDontSyncLocalUsers - r/w - array - and array of AD user names that shouldn't have their password synced locally.
+    
+    // LocalPasswordSyncDontSyncNetworkUsers - r/w - array - and array of AD user names that shouldn't have their password synced locally.
+
+    // LockedKeychainCheck - r/w - bool - check if the deafult keychain is locked
 
     // lDAPoverSSL - r/w - bool - flag to use LDAPS instead of LDAP
 
@@ -190,7 +196,10 @@ enum Preferences {
     static let lDAPServerList = "LDAPServerList"
     static let lDAPoverSSL = "LDAPOverSSL"
     static let localPasswordSync = "LocalPasswordSync"
+    static let localPasswordSyncDontSyncLocalUsers = "LocalPasswordSyncDontSyncLocalUsers"
+    static let localPasswordSyncDontSyncNetworkUsers = "LocalPasswordSyncDontSyncNetworkUsers"
     static let localPasswordSyncOnMatchOnly = "LocalPasswordSyncOnMatchOnly"
+    static let lockedKeychainCheck = "LockedKeychainCheck"
     static let lastUser = "LastUser"
     static let lastPasswordWarning = "LastPasswordWarning"
     static let lastPasswordExpireDate = "LastPasswordExpireDate"

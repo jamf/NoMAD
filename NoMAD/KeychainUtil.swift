@@ -71,6 +71,33 @@ class KeychainUtil {
         myErr = SecKeychainItemDelete(myKeychainItem!)
         return myErr
     }
+    
+    // check to see if the deafult Keychain is locked
+    
+    func checkLockedKeychain() -> Bool {
+        
+        var myKeychain: SecKeychain?
+        var myKeychainStatus = SecKeychainStatus()
+        
+        // get the default keychain
+        
+        myErr = SecKeychainCopyDefault(&myKeychain)
+        
+        if myErr == OSStatus(errSecSuccess) {
+            
+            myErr = SecKeychainGetStatus(myKeychain, &myKeychainStatus)
+            
+            if Int(myKeychainStatus) == 2 {
+                myLogger.logit(.debug, message: "Keychain is locked")
+                return true
+            }
+            myLogger.logit(.debug, message: "Keychain is unlocked")
+            return false
+        } else {
+            myLogger.logit(.debug, message: "Error checking to see if the Keychain is locked, assuming it is.")
+            return true
+        }
+    }
 
     // convience functions
 

@@ -107,6 +107,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     let statusItem = NSStatusBar.system().statusItem(withLength: NSVariableStatusItemLength)
     
     let PKINITMenuItem = NSMenuItem()
+    
+    let myKeychainutil = KeychainUtil()
 
     /// Fired when the menu loads the first time
     override func awakeFromNib() {
@@ -709,13 +711,15 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     }
 
     // display a user notifcation
-    func showNotification(_ title: String, text: String, date: Date) -> Void {
+    func showNotification(_ title: String, text: String, date: Date, action: String) -> Void {
         let notification = NSUserNotification()
         notification.title = title
         notification.informativeText = text
         //notification.deliveryDate = date
-        notification.hasActionButton = true
-        notification.actionButtonTitle = "NoMADMenuController-ChangePassword".translate
+        if action != "" {
+            notification.hasActionButton = true
+            notification.actionButtonTitle = action.translate
+        }
         notification.soundName = NSUserNotificationDefaultSoundName
         NSUserNotificationCenter.default.deliver(notification)
     }
@@ -795,8 +799,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         // only autologin if 1) we're set to use the keychain, 2) we have don't already have a Kerb ticket and 3) we can contact the LDAP servers
 
         if defaults.bool(forKey: Preferences.useKeychain) && (defaults.string(forKey: Preferences.lastUser) != "" ) && !userInformation.myLDAPServers.tickets.state && userInformation.myLDAPServers.currentState {
-
-            let myKeychainutil = KeychainUtil()
 
             myLogger.logit(.info, message: "Attempting to auto-login")
 
@@ -1251,15 +1253,15 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     if ( abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) < Double(defaults.integer(forKey: Preferences.lastPasswordWarning)) ) {
                         if ( abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) > Double(345600) ) {
                             // expire is between default and four days so notify once a day
-                            self.showNotification("PasswordAboutToExpire".translate, text: "PasswordExpiresOn".translate + dateFormatter.string(from: self.userInformation.userPasswordExpireDate as Date), date: Date())
+                            self.showNotification("PasswordAboutToExpire".translate, text: "PasswordExpiresOn".translate + dateFormatter.string(from: self.userInformation.userPasswordExpireDate as Date), date: Date(), action: "NoMADMenuController-ChangePassword")
                             defaults.set((abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) - 86400 ), forKey: Preferences.lastPasswordWarning)
                         } else if ( abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) > Double(86400) ) {
                             // expire is between 4 days and 1 day so notifiy every 12 hours
-                            self.showNotification("PasswordAboutToExpire".translate, text: "PasswordExpiresOn".translate + dateFormatter.string(from: self.userInformation.userPasswordExpireDate as Date), date: Date())
+                            self.showNotification("PasswordAboutToExpire".translate, text: "PasswordExpiresOn".translate + dateFormatter.string(from: self.userInformation.userPasswordExpireDate as Date), date: Date(), action: "NoMADMenuController-ChangePassword")
                             defaults.set( (abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) - 23200 ), forKey: Preferences.lastPasswordWarning)
                         } else {
                             // expire is less than 1 day so notifiy every hour
-                            self.showNotification("PasswordAboutToExpire".translate, text: "PasswordExpiresOn".translate + dateFormatter.string(from: self.userInformation.userPasswordExpireDate as Date), date: Date())
+                            self.showNotification("PasswordAboutToExpire".translate, text: "PasswordExpiresOn".translate + dateFormatter.string(from: self.userInformation.userPasswordExpireDate as Date), date: Date(), action: "NoMADMenuController-ChangePassword")
                             defaults.set((abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) - 3600 ), forKey: Preferences.lastPasswordWarning)
                         }
                     }
@@ -1299,6 +1301,14 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
                 self.updateRunning = false
             })
+            
+            // check for locked keychains
+            
+            if myKeychainutil.checkLockedKeychain() && defaults.bool(forKey: Preferences.lockedKeychainCheck) {
+                // notify on the keychain
+                myLogger.logit(.base, message: "Keychain is locked, showing notification.")
+                showNotification("Locked Keychain", text: "Your keychain is locked, you should fix this.", date: Date(), action: "Call someone.")
+            }
 
             // mark the time and clear the update scheduled flag
             
