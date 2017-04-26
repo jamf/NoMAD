@@ -1307,7 +1307,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             if myKeychainutil.checkLockedKeychain() && defaults.bool(forKey: Preferences.lockedKeychainCheck) {
                 // notify on the keychain
                 myLogger.logit(.base, message: "Keychain is locked, showing notification.")
-                showNotification("Locked Keychain", text: "Your keychain is locked, you should fix this.", date: Date(), action: "Call someone.")
+                keychainMinder.window?.forceToFrontAndFocus(nil)
             }
 
             // mark the time and clear the update scheduled flag

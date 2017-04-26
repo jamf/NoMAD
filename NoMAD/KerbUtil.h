@@ -23,6 +23,7 @@
 - (NSString *)changeKerbPassword:(NSString *)oldPassword :(NSString *)newPassword :(NSString *)userPrincipal;
 - (int)checkPassword:(NSString *)myPassword;
 - (int)changeKeychainPassword:(NSString *)oldPassword :(NSString *)newPassword;
+- (OSStatus)resetKeychain:(NSString *)password;
 
 @end
 

@@ -386,6 +386,18 @@ class NoMADUser {
         return status
     }
 
+    // resets local keychain
+
+    func resetLocalKeychain(_  newPassword: String) throws {
+        let kerbUtil = KerbUtil()
+
+        let myError = kerbUtil.resetKeychain(newPassword)
+
+        if myError != noErr {
+            throw NoMADUserError.invalidResult("Unable to reset local keychain.")
+        }
+    }
+
 
 
     // MARK: Class Functions
