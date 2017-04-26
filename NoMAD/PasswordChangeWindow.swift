@@ -57,14 +57,14 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
         // load in the password policy
 
         if defaults.dictionary(forKey: Preferences.passwordPolicy) != nil {
-        passwordPolicy = defaults.dictionary(forKey: Preferences.passwordPolicy)! as [String : AnyObject ]
-            minLength = passwordPolicy["minLength"] as! String
-            minUpperCase = passwordPolicy["minUpperCase"] as! String
-            minLowerCase = passwordPolicy["minLowerCase"] as! String
-            minNumber = passwordPolicy["minNumber"] as! String
-            minSymbol = passwordPolicy["minSymbol"] as! String
+            passwordPolicy = defaults.dictionary(forKey: Preferences.passwordPolicy)! as [String : AnyObject ]
+            minLength = passwordPolicy["minLength"] as? String ?? "0"
+            minUpperCase = passwordPolicy["minUpperCase"] as? String ?? "0"
+            minLowerCase = passwordPolicy["minLowerCase"] as? String ?? "0"
+            minNumber = passwordPolicy["minNumber"] as? String ?? "0"
+            minSymbol = passwordPolicy["minSymbol"] as? String ?? "0"
             if passwordPolicy["minMatches"] != nil {
-                minMatches = passwordPolicy["minMatches"] as! String
+                minMatches = passwordPolicy["minMatches"] as? String ?? "0"
             }
 
             // set up a text field delegate
