@@ -75,13 +75,17 @@ class KlistUtil {
             if returnAllTickets().contains("@" + defaults.string(forKey: "KerberosRealm")!) {
                 myLogger.logit(.base, message:"Ticket found for domain: " + defaults.string(forKey: "KerberosRealm")!)
                 state = true
+                defaults.set(state, forKey: Preferences.signedIn)
+
             } else {
                 myLogger.logit(.base, message:"No ticket found for domain: " + defaults.string(forKey: "KerberosRealm")!)
                 state = false
+                defaults.set(state, forKey: Preferences.signedIn)
             }
         } else {
             myLogger.logit(.base, message:"No tickets found.")
             state = false
+            defaults.set(state, forKey: Preferences.signedIn)
         }
     }
 
@@ -123,7 +127,9 @@ class KlistUtil {
                 }
             } catch {
                 myLogger.logit(.debug, message: "No tickets found")
-                state = false        }
+                state = false
+                defaults.set(state, forKey: Preferences.signedIn)
+            }
             getExpiration()
 
             // write out if we have tickets

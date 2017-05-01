@@ -226,6 +226,7 @@ enum Preferences {
     static let signInCommand = "SignInCommand"
     static let signInWindowOnLaunch = "SignInWindowOnLaunch"
     static let signedIn = "SignedIn"
+    static let signOutCommand = "SignOutCommand"
     static let siteIgnore = "SiteIgnore"
     static let siteForce = "SiteForce"
     static let stateChangeAction = "StateChangeAction"
