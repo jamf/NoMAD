@@ -27,11 +27,11 @@
             <rect key="screenRect" x="0.0" y="0.0" width="1280" height="777"/>
             <value key="minSize" type="size" width="392" height="137"/>
             <view key="contentView" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="392" height="201"/>
+                <rect key="frame" x="0.0" y="0.0" width="392" height="211"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <textField identifier="ADDomain" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="myy-KH-FKA">
-                        <rect key="frame" x="124" y="163" width="248" height="22"/>
+                        <rect key="frame" x="124" y="173" width="248" height="22"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="company.com" drawsBackground="YES" usesSingleLineMode="YES" id="dUx-kM-pRM">
                             <font key="font" metaFont="system"/>
@@ -43,7 +43,7 @@
                         </connections>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7aV-Ds-e5U">
-                        <rect key="frame" x="6" y="139" width="112" height="17"/>
+                        <rect key="frame" x="6" y="148" width="112" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Kerberos Realm" id="Ufb-5N-kJA">
                             <font key="font" metaFont="system"/>
@@ -52,7 +52,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GR5-zh-rHp">
-                        <rect key="frame" x="18" y="111" width="100" height="17"/>
+                        <rect key="frame" x="18" y="110" width="100" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="x509 CA" id="owP-RF-Kec">
                             <font key="font" metaFont="system"/>
@@ -61,7 +61,7 @@
                         </textFieldCell>
                     </textField>
                     <textField identifier="KerberosRealm" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nT1-7a-7Ki">
-                        <rect key="frame" x="124" y="136" width="248" height="22"/>
+                        <rect key="frame" x="124" y="146" width="248" height="22"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="optional" drawsBackground="YES" id="Q7A-Jc-5cc">
                             <font key="font" metaFont="system"/>
@@ -73,7 +73,7 @@
                         </connections>
                     </textField>
                     <textField identifier="X509CA" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CFh-rv-70X">
-                        <rect key="frame" x="124" y="106" width="248" height="22"/>
+                        <rect key="frame" x="124" y="108" width="248" height="22"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="optional" drawsBackground="YES" id="saW-aa-BZg">
                             <font key="font" metaFont="system"/>
@@ -85,7 +85,7 @@
                         </connections>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RPm-NT-ZhG">
-                        <rect key="frame" x="28" y="86" width="90" height="17"/>
+                        <rect key="frame" x="28" y="83" width="90" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Template" id="Kes-CY-FXH">
                             <font key="font" metaFont="system"/>
@@ -106,7 +106,7 @@
                         </connections>
                     </textField>
                     <textField toolTip="The name of your AD Domain." horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZGq-je-gSa">
-                        <rect key="frame" x="18" y="164" width="100" height="17"/>
+                        <rect key="frame" x="18" y="175" width="100" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="AD Domain" id="3PC-dv-g1C">
                             <font key="font" metaFont="system"/>
