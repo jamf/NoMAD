@@ -71,6 +71,8 @@ enum Preferences {
 
     // loginItem - r/w - bool - if set to true will create a new Launch Agent for NoMAD. This will set itself back to false after being used
 
+    // lDAPSchema - r/w - String - determines what LDAP attributes to use if not using AD
+
     // lDAPServerList - r/w - string - specifies a specfic or set of specific LDAP servers to be used instead of having NoMAD do the normal DNS and site lookups for the best AD Domain Controller
 
     // localPasswordSync - r/w - bool - determines if NoMAD will keep the network password in sync with the local user account password on the Mac
@@ -193,6 +195,7 @@ enum Preferences {
     static let lastCertificateExpiration = "LastCertificateExpiration"
     static let loginComamnd = "LoginComamnd"
     static let loginItem = "LoginItem"
+    static let lDAPSchema = "LDAPSchema"
     static let lDAPServerList = "LDAPServerList"
     static let lDAPoverSSL = "LDAPOverSSL"
     static let localPasswordSync = "LocalPasswordSync"
@@ -213,6 +216,7 @@ enum Preferences {
     static let messageNotConnected = "MessageNotConnected"
     static let messagePasswordChangePolicy = "MessagePasswordChangePolicy"
     static let passwordExpireAlertTime = "PasswordExpireAlertTime"
+    static let passwordExpireHideMenu = "PasswordExpireHideMenu"
     static let passwordPolicy = "PasswordPolicy"
     static let persistExpiration = "PersistExpiration"
 
