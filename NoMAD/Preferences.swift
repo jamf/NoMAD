@@ -93,6 +93,8 @@ enum Preferences {
 
     // lDAPoverSSL - r/w - bool - flag to use LDAPS instead of LDAP
 
+    // menuChangePassword - r/w - string - title of the Change Password menu
+
     // menuHomeDirectory - r/w - string - title of the Home Directory menu
 
     // menuGetHelp - r/w - string - title of the Get Help menu
@@ -206,6 +208,7 @@ enum Preferences {
     static let lastUser = "LastUser"
     static let lastPasswordWarning = "LastPasswordWarning"
     static let lastPasswordExpireDate = "LastPasswordExpireDate"
+    static let menuChangePassword = "MenuChangePassword"
     static let menuHomeDirectory = "MenuHomeDirectory"
     static let menuGetHelp = "MenuGetHelp"
     static let menuGetSoftware = "MenuGetSoftware"

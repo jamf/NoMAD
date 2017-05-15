@@ -276,7 +276,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         // set up menu titles w/translation
         NoMADMenuLockScreen.title = "Lock Screen".translate
-        NoMADMenuChangePassword.title = "NoMADMenuController-ChangePassword".translate
+        NoMADMenuChangePassword.title = defaults.string(forKey: Preferences.menuChangePassword) ?? "NoMADMenuController-ChangePassword".translate
 
         if defaults.bool(forKey: Preferences.hideLockScreen) {
             NoMADMenuLockScreen.isHidden = true
