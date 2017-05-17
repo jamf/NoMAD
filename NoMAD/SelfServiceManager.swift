@@ -34,6 +34,8 @@ class SelfServiceManager {
         if defaults.string(forKey: Preferences.selfServicePath) != "" {
             myLogger.logit(.info, message:"Using custom self-service path")
             return .custom
+        } else if defaults.string(forKey: Preferences.selfServicePath) == "None" {
+            return nil
         }
 
         // now look for any others
