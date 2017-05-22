@@ -39,6 +39,8 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
     var minNumber: String = "0"
     var minSymbol: String = "0"
     var minMatches: String = "0"
+    
+    var policy: PasswordPolicy?
 
     override var windowNibName: String! {
         return "PasswordChangeWindow"
@@ -58,15 +60,9 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
 
         if defaults.dictionary(forKey: Preferences.passwordPolicy) != nil {
             passwordPolicy = defaults.dictionary(forKey: Preferences.passwordPolicy)! as [String : AnyObject ]
-            minLength = passwordPolicy["minLength"] as? String ?? "0"
-            minUpperCase = passwordPolicy["minUpperCase"] as? String ?? "0"
-            minLowerCase = passwordPolicy["minLowerCase"] as? String ?? "0"
-            minNumber = passwordPolicy["minNumber"] as? String ?? "0"
-            minSymbol = passwordPolicy["minSymbol"] as? String ?? "0"
-            if passwordPolicy["minMatches"] != nil {
-                minMatches = passwordPolicy["minMatches"] as? String ?? "0"
-            }
-
+            
+            policy = PasswordPolicy(policy: passwordPolicy)
+            
             // set up a text field delegate
             newPassword.delegate = self
             newPasswordAgain.delegate = self

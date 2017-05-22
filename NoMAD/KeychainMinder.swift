@@ -83,7 +83,7 @@ class KeychainMinder : NSWindowController, NSWindowDelegate {
             // check the new password
 
             if noMADUser.checkCurrentConsoleUserPassword(new) != "Valid" {
-                return "New password does not match your current local user password."
+                // return "New password does not match your current local user password."
             }
 
             // check the old password
@@ -112,7 +112,7 @@ class KeychainMinder : NSWindowController, NSWindowDelegate {
             // check the new password
 
             if noMADUser.checkCurrentConsoleUserPassword(new) != "Valid" {
-                return "New password does not match your current local user password."
+                //   return "New password does not match your current local user password."
             }
 
             // check the old password
@@ -145,6 +145,8 @@ class KeychainMinder : NSWindowController, NSWindowDelegate {
 
         if message != "" {
             showAlert(message: message)
+        } else {
+            self.window?.close()
         }
     }
 
@@ -163,6 +165,8 @@ class KeychainMinder : NSWindowController, NSWindowDelegate {
         stopOperations()
         if message != "" {
             showAlert(message: message)
+        } else {
+            self.window?.close()
         }
     }
 }
