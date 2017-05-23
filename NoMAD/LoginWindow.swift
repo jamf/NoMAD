@@ -281,7 +281,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
                 myLogger.logit(LogLevel.debug, message:"Lets try to sync the passwords, prompting user.")
                 let alertController = NSAlert()
                 // TODO: replace with localized text
-                alertController.messageText = (defaults.string(forKey: Preferences.messageLocalSync) ?? "NetworkLocalMismatch".translate)
+                
+                alertController.messageText = (defaults.string(forKey: Preferences.messageLocalSync)?.replacingOccurrences(of: "\\n", with: "\n") ?? "NetworkLocalMismatch".translate)
                 alertController.addButton(withTitle: "Sync")
                 alertController.addButton(withTitle: "Cancel")
                 //alertController.addButton(withTitle: "Sync")

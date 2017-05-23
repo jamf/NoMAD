@@ -241,11 +241,17 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         // find out if a Self Service Solution exists - hide the menu item if it's not there
         myLogger.logit(.notice, message:"Looking for Self Service applications")
+        
+        if !defaults.bool(forKey: Preferences.hideGetSoftware) {
         if let discoveredService = SelfServiceManager().discoverSelfService() {
             selfService = discoveredService
             if let menuTitle = defaults.string(forKey: Preferences.menuGetSoftware) {
                 NoMADMenuGetSoftware.title = menuTitle
             }
+        } else {
+            NoMADMenuGetSoftware.isHidden = true
+            myLogger.logit(.info, message:"Not using Self Service.")
+        }
         } else {
             NoMADMenuGetSoftware.isHidden = true
             myLogger.logit(.info, message:"Not using Self Service.")

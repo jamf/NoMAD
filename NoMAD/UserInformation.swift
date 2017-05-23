@@ -136,6 +136,8 @@ class UserInformation {
         }
 
         // 3. if connected and with tickets, get password aging information
+        
+        
         var passwordSetDate: String?
         var computedExpireDateRaw: String?
         var userPasswordUACFlag: String = ""
@@ -165,6 +167,13 @@ class UserInformation {
                 myLogger.logit(.base, message: "Unable to find user.")
                 canary = false
             }
+            
+            // check if we are overriding the password expiration date
+            
+            if defaults.integer(forKey: Preferences.passwordExpirationDays) != nil {
+                passwordSetDate = nil
+            }
+            
             if canary {
                 if (passwordSetDate != nil) {
                     userPasswordSetDate = NSDate(timeIntervalSince1970: (Double(passwordSetDate!)!)/10000000-11644473600)
@@ -208,11 +217,17 @@ class UserInformation {
                     // need to go old skool
                     var passwordExpirationLength: String
                     let attribute = "maxPwdAge"
+                    
+                    if defaults.integer(forKey: Preferences.passwordExpirationDays) != nil {
+                        passwordExpirationLength = String(describing: defaults.integer(forKey: Preferences.passwordExpirationDays))
+                    } else {
+
                     if let ldifResult = try? myLDAPServers.getLDAPInformation([attribute], baseSearch: true) {
                         passwordExpirationLength = myLDAPServers.getAttributeForSingleRecordFromCleanedLDIF(attribute, ldif: ldifResult)
                     } else {
                         passwordExpirationLength = ""
                     }
+                }
 
                     if ( passwordExpirationLength.characters.count > 15 ) {
                         passwordAging = false
