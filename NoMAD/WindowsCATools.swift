@@ -110,6 +110,11 @@ class WindowsCATools {
 
                         let myCertRef = SecCertificateCreateWithData(nil, data! as CFData)
 
+                        if myCertRef == nil {
+                            myLogger.logit(.base, message: "Error getting certificate.")
+                            return
+                        }
+
                         let dictionary: [NSString: AnyObject] = [
                             kSecClass: kSecClassCertificate,
                             kSecReturnRef : kCFBooleanTrue,

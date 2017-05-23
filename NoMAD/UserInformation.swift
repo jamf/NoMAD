@@ -258,7 +258,7 @@ class UserInformation {
 
                     myLogger.logit(.base, message: "Password was changed underneath us.")
                         
-                    if (defaults.string(forKey: Preferences.uPCAlertAction) != "" ) {
+                    if (defaults.string(forKey: Preferences.uPCAlertAction) != nil ) {
                         myLogger.logit(.base, message: "Firing UPC Alert Action")
                         cliTask(defaults.string(forKey: Preferences.uPCAlertAction)! + " &")
                     }

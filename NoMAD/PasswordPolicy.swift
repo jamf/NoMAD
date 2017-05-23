@@ -40,21 +40,24 @@ class PasswordPolicy {
     init(policy: [AnyHashable: Any]? ) {
 
         for item in policy! {
+
+            print(item)
+
             switch item.key as! String {
             case "minLength" :
-                policyObject.minLength = item.value as! Int
+                policyObject.minLength = Int(item.value as! String)!
             case "minUpperCase" :
-                policyObject.minUpperCase = item.value as! Int
+                policyObject.minUpperCase = Int(item.value as! String)!
             case "minLowerCase" :
-                policyObject.minLowerCase = item.value as! Int
+                policyObject.minLowerCase = Int(item.value as! String)!
             case "minNumber" :
-                policyObject.minNumber = item.value as! Int
+                policyObject.minNumber = Int(item.value as! String)!
             case "minSymbol" :
-                policyObject.minSymbol = item.value as! Int
+                policyObject.minSymbol = Int(item.value as! String)!
             case "minMatches" :
-                policyObject.minMatches = item.value as! Int
+                policyObject.minMatches = Int(item.value as! String)!
             case "excludeUsername" :
-                policyObject.excludeUsername = item.value as! Bool
+                policyObject.excludeUsername = Bool(item.value as! String)!
             default:
                 myLogger.logit(.debug, message: "Unable to set password policy: \(item.key)")
             }

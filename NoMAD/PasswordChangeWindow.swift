@@ -29,8 +29,9 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
     @IBOutlet var pop: NSPopover!
     
     @IBOutlet weak var popScroll: NSScrollView!
-    @IBOutlet weak var popText: NSTextView!
+    //@IBOutlet weak var popText: NSTextView!
 
+    @IBOutlet weak var popText: NSTextField!
     // password policy
 
     @IBOutlet weak var secondaryAlert: NSButton!
@@ -254,7 +255,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
     // make popover
     
     func showPopover(object: NSView) {
-        popText.string = policy?.checkPassword(pass: newPassword.stringValue, username: defaults.string(forKey: Preferences.userShortName)!) ?? "All policies have been met."
+        popText.stringValue = policy?.checkPassword(pass: newPassword.stringValue, username: defaults.string(forKey: Preferences.userShortName)!) ?? "All policies have been met."
         pop.show(relativeTo: object.visibleRect, of: object, preferredEdge: .minY)
     }
     
@@ -274,10 +275,10 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
         case newPassword :
             let result = policy?.checkPassword(pass: newPassword.stringValue, username: defaults.string(forKey: Preferences.userShortName)!)
             if result == "" {
-                popText.string = "All required policies met."
+                popText.stringValue = "All required policies met."
                 policyAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusAvailable)
             } else {
-                popText.string = result
+                popText.stringValue = result!
                 policyAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusUnavailable)
             }
             if newPasswordAgain.stringValue == newPassword.stringValue && newPassword.stringValue != "" {
@@ -288,10 +289,10 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
         case newPasswordAgain :
             let result = policy?.checkPassword(pass: newPassword.stringValue, username: defaults.string(forKey: Preferences.userShortName)!)
             if result == "" {
-                popText.string = "All required policies met."
+                popText.stringValue = "All required policies met."
                 policyAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusAvailable)
             } else {
-                popText.string = result
+                popText.stringValue = result!
                 policyAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusUnavailable)
             }
             if newPasswordAgain.stringValue == newPassword.stringValue && newPassword.stringValue != "" {
