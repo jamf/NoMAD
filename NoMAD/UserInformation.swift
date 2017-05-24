@@ -148,6 +148,8 @@ class UserInformation {
 
         if connected && myLDAPServers.tickets.state {
 
+            if !defaults.bool(forKey: Preferences.lDAPOnly) {
+
             let attributes = ["pwdLastSet", "msDS-UserPasswordExpiryTimeComputed", "userAccountControl", "homeDirectory", "displayName", "memberOf", "mail", "userPrincipalName"] // passwordSetDate, computedExpireDateRaw, userPasswordUACFlag, userHomeTemp, userDisplayName, groupTemp
             // "maxPwdAge" // passwordExpirationLength
 
@@ -248,6 +250,29 @@ class UserInformation {
                 }
 
             }
+            } else {
+
+                let attributes = [ "homeDirectory", "displayName", "memberOf", "mail", "uid"] // passwordSetDate, computedExpireDateRaw, userPasswordUACFlag, userHomeTemp, userDisplayName, groupTemp
+                // "maxPwdAge" // passwordExpirationLength
+
+                let searchTerm = "sAMAccountName=" + userPrincipalShort
+
+                if let ldifResult = try? myLDAPServers.getLDAPInformation(attributes, searchTerm: searchTerm) {
+                    let ldapResult = myLDAPServers.getAttributesForSingleRecordFromCleanedLDIF(attributes, ldif: ldifResult)
+                    userHomeTemp = ldapResult["homeDirectory"] ?? ""
+                    userDisplayName = ldapResult["displayName"] ?? ""
+                    groupsTemp = ldapResult["memberOf"]
+                    userEmail = ldapResult["mail"] ?? ""
+                    UPN = ldapResult["uid"] ?? ""
+                } else {
+                    myLogger.logit(.base, message: "Unable to find user.")
+                    canary = false
+                }
+
+                passwordAging = false
+
+            }
+
             // Check if the password was changed without NoMAD knowing.
             myLogger.logit(LogLevel.debug, message: "Password set: " + String(describing: UserPasswordSetDates[userPrincipal]))
             if (UserPasswordSetDates[userPrincipal] != nil) && ( (UserPasswordSetDates[userPrincipal] as? String) != "just set" ) {
