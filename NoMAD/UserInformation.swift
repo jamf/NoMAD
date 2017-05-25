@@ -269,6 +269,8 @@ class UserInformation {
                     canary = false
                 }
 
+
+
                 // groupOfNames would go here
 
                 passwordAging = false
@@ -354,7 +356,9 @@ class UserInformation {
                 let groupsArray = groupsTemp!.components(separatedBy: ";")
                 for group in groupsArray {
                     let a = group.components(separatedBy: ",")
-                    let b = a[0].replacingOccurrences(of: "CN=", with: "") as String
+                    var b = a[0].replacingOccurrences(of: "CN=", with: "") as String
+                    b = b.replacingOccurrences(of: "cn=", with: "") as String
+
                     if b != "" {
                         groups.append(b)
                     }
