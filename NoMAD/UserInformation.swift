@@ -255,7 +255,7 @@ class UserInformation {
                 let attributes = [ "homeDirectory", "displayName", "memberOf", "mail", "uid"] // passwordSetDate, computedExpireDateRaw, userPasswordUACFlag, userHomeTemp, userDisplayName, groupTemp
                 // "maxPwdAge" // passwordExpirationLength
 
-                let searchTerm = "sAMAccountName=" + userPrincipalShort
+                let searchTerm = "uid=" + userPrincipalShort
 
                 if let ldifResult = try? myLDAPServers.getLDAPInformation(attributes, searchTerm: searchTerm) {
                     let ldapResult = myLDAPServers.getAttributesForSingleRecordFromCleanedLDIF(attributes, ldif: ldifResult)
@@ -268,6 +268,8 @@ class UserInformation {
                     myLogger.logit(.base, message: "Unable to find user.")
                     canary = false
                 }
+
+                // groupOfNames would go here
 
                 passwordAging = false
 
