@@ -1179,16 +1179,18 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
                             if defaults.string(forKey: Preferences.passwordExpireCustomAlert) != nil {
 
+                                let len = defaults.string(forKey: Preferences.passwordExpireCustomAlert)?.characters.count
+
                                 if Int(daysToGo) < defaults.integer(forKey: Preferences.passwordExpireCustomAlertTime) {
                                     let myMutableString = NSMutableAttributedString(string: defaults.string(forKey: Preferences.passwordExpireCustomAlert)!)
-                                    myMutableString.addAttribute(NSForegroundColorAttributeName, value: NSColor.red, range: NSRange(location: 0, length: 2))
+                                    myMutableString.addAttribute(NSForegroundColorAttributeName, value: NSColor.red, range: NSRange(location: 0, length: len))
 
                                     self.statusItem.attributedTitle = myMutableString
                                     self.statusItem.attributedTitle = myMutableString
 
                                 } else if Int(daysToGo) < defaults.integer(forKey: Preferences.passwordExpireCustomWarnTime) {
                                     let myMutableString = NSMutableAttributedString(string: defaults.string(forKey: Preferences.passwordExpireCustomAlert)!)
-                                    myMutableString.addAttribute(NSForegroundColorAttributeName, value: NSColor.yellow, range: NSRange(location: 0, length: 2))
+                                    myMutableString.addAttribute(NSForegroundColorAttributeName, value: NSColor.yellow, range: NSRange(location: 0, length: len))
 
                                     self.statusItem.attributedTitle = myMutableString
                                     self.statusItem.attributedTitle = myMutableString
