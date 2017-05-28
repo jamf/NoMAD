@@ -115,6 +115,12 @@ enum Preferences {
 
     // passwordExpireAlertTime - r/w - date - when to start complaining about a password that is about to expire. Defaults to 1296000 secs or 15 days.
 
+    // passwordExpireCustomAlert - r/w - string - Custom alert to show in the menu bar instead of days to go.
+
+    // passwordExpireCustomWarnTime - r/w - Int - Threshold days to show custom password expiration warning in yellow.
+
+    // passwordExpireCustomAlertTime - r/w - Int - Threshold days to show custom password expiration warning in red.
+
     // passwordChangeOptions - r/w - string - similar to getHelp, this sets options for the passwordChangeType to use
     // passwordChangeType - r/w - string - the method to use when the Change Password menu item is selected
 
@@ -177,6 +183,7 @@ enum Preferences {
     static let changePasswordOptions = "ChangePasswordOptions"
     static let caribouTime = "CaribouTime"
     static let configureChrome = "ConfigureChrome"
+    static let configureChromeDomain = "ConfigureChromeDomain"
     static let displayName = "DisplayName"
     static let dontMatchKerbPrefs = "DontMatchKerbPrefs"
     static let exportableKey = "ExportableKey"
@@ -224,7 +231,9 @@ enum Preferences {
     static let messagePasswordChangePolicy = "MessagePasswordChangePolicy"
     static let passwordExpirationDays = "PasswordExpirationDays"
     static let passwordExpireAlertTime = "PasswordExpireAlertTime"
-    static let passwordExpireHideMenu = "PasswordExpireHideMenu"
+    static let passwordExpireCustomAlert = "PasswordExpireCustomAlert"
+    static let passwordExpireCustomWarnTime = "PasswordExpireCustomWarnTime"
+    static let passwordExpireCustomAlertTime = "PasswordExpireCustomAlertTime"
     static let passwordPolicy = "PasswordPolicy"
     static let persistExpiration = "PersistExpiration"
 

@@ -1028,7 +1028,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         // create new instance of defaults for com.google.Chrome
 
         let chromeDefaults = UserDefaults.init(suiteName: "com.google.Chrome")
-        let chromeDomain = "*" + defaults.string(forKey: Preferences.aDDomain)!
+        var chromeDomain = defaults.string(forKey: Preferences.configureChromeDomain) ?? defaults.string(forKey: Preferences.aDDomain)!
+
+        // add the wildcard
+
+        chromeDomain = "*" + chromeDomain
+
         var change = false
 
         // find the keys and add the domain
@@ -1171,6 +1176,29 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                             self.NoMADMenuTicketLife.title = dateFormatter.string(from: self.userInformation.myLDAPServers.tickets.expire as Date) + " " + self.userInformation.myLDAPServers.currentServer + " NoMAD Version: " + String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!) + " " +  String(describing: Bundle.main.infoDictionary!["CFBundleVersion"]!)
 
                             let daysToGo = Int(abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow)/86400)
+
+                            if defaults.string(forKey: Preferences.passwordExpireCustomAlert) != nil {
+
+                                if Int(daysToGo) < defaults.integer(forKey: Preferences.passwordExpireCustomAlertTime) {
+                                    let myMutableString = NSMutableAttributedString(string: defaults.string(forKey: Preferences.passwordExpireCustomAlert)!)
+                                    myMutableString.addAttribute(NSForegroundColorAttributeName, value: NSColor.red, range: NSRange(location: 0, length: 2))
+
+                                    self.statusItem.attributedTitle = myMutableString
+                                    self.statusItem.attributedTitle = myMutableString
+
+                                } else if Int(daysToGo) < defaults.integer(forKey: Preferences.passwordExpireCustomWarnTime) {
+                                    let myMutableString = NSMutableAttributedString(string: defaults.string(forKey: Preferences.passwordExpireCustomAlert)!)
+                                    myMutableString.addAttribute(NSForegroundColorAttributeName, value: NSColor.yellow, range: NSRange(location: 0, length: 2))
+
+                                    self.statusItem.attributedTitle = myMutableString
+                                    self.statusItem.attributedTitle = myMutableString
+
+
+                                }
+                                    self.NoMADMenuPasswordExpires.title = String(format: "NoMADMenuController-PasswordExpiresInDays".translate, String(daysToGo))
+
+                            } else {
+
                             // we do this twice b/c doing it only once seems to make it less than full width
                             if Int(daysToGo) > 4 {
                                 self.statusItem.title = (String(daysToGo) + "d".translate )
@@ -1183,6 +1211,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                                 self.statusItem.attributedTitle = myMutableString
                                 self.statusItem.attributedTitle = myMutableString
                                 self.NoMADMenuPasswordExpires.title = String(format: "NoMADMenuController-PasswordExpiresInDays".translate, String(daysToGo))
+                            }
                             }
                         } else {
 

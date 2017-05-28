@@ -227,7 +227,6 @@ myLogger.logit(.debug, message: "Certificate doesn't match current user principa
                     }
                 }
             }
-            
             }
         myLogger.logit(.debug, message: "Found " + String(matchingCerts.count) + " certificates.")
         myLogger.logit(.debug, message: "Found certificates: " + String(describing: matchingCerts) )

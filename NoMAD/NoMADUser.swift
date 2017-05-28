@@ -322,6 +322,13 @@ class NoMADUser {
         }
 
         do {
+            try preflightCurrentConsoleUserPassword(newPassword1)
+        } catch let unknownError as NSError {
+            myLogger.logit(LogLevel.base, message: "New password does not meet local complexity requirements. Error: " + unknownError.description)
+            return unknownError.localizedDescription
+        }
+
+        do {
             try currentConsoleUserRecord.changePassword(oldPassword, toPassword: newPassword1)
             return ""
         } catch let unknownError as NSError {
