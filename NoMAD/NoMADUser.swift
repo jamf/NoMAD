@@ -86,6 +86,12 @@ class NoMADUser {
                 myLogger.logit(LogLevel.debug, message: "Current Console User is an AD user.")
                 return originalNodeName.contains("/Active Directory")
             }
+        } else if let authAuthority = try? String(describing: currentConsoleUserRecord.values(forAttribute: kODAttributeTypeAuthenticationAuthority)) {
+            if authAuthority.contains("NetLogon") {
+                // network only AD account
+                myLogger.logit(.debug, message: "Network only AD account, so treating like an AD account.")
+                return true
+            }
         } else {
             myLogger.logit(LogLevel.debug, message: "Current Console User is not an AD user.")
         }
@@ -414,14 +420,13 @@ class NoMADUser {
         let session = ODSession.default()
         var records = [ODRecord]()
         do {
-            //let node = try ODNode.init(session: session, type: UInt32(kODNodeTypeAuthentication))
-            let node = try ODNode.init(session: session, type: UInt32(kODNodeTypeLocalNodes))
+            let node = try ODNode.init(session: session, type: UInt32(kODNodeTypeAuthentication))
+            //let node = try ODNode.init(session: session, type: UInt32(kODNodeTypeLocalNodes))
             let query = try ODQuery.init(node: node, forRecordTypes: kODRecordTypeUsers, attribute: kODAttributeTypeRecordName, matchType: UInt32(kODMatchEqualTo), queryValues: currentConsoleUserName, returnAttributes: kODAttributeTypeNativeOnly, maximumResults: 0)
             records = try query.resultsAllowingPartial(false) as! [ODRecord]
         } catch {
             myLogger.logit(LogLevel.base, message: "Unable to get local user account ODRecords")
         }
-
 
         // We may have gotten multiple ODRecords that match username,
         // So make sure it also matches the UID.
