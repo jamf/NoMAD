@@ -42,18 +42,10 @@
 		<key>NSAllowsArbitraryLoadsInWebContent</key>
 		<true/>
 		<key>NSExceptionDomains</key>
-		<dict>
-			<key>entca.ld.corp.local</key>
-			<dict>
-				<key>NSExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-				<key>NSExceptionRequiresForwardSecurity</key>
-				<true/>
-			</dict>
-		</dict>
+		<dict/>
 	</dict>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2016 Trusource Labs. All rights reserved.</string>
+	<string>Copyright © 2016 Orchard &amp; Grove. All rights reserved.</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
