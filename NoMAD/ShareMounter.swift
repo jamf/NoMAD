@@ -81,15 +81,10 @@ class ShareMounter: NSArrayController {
         
         let homeDict = sharePrefs?.dictionary(forKey: shareKeys.homeMount)
         
-        if homeDict == nil {
-            return
-        }
-        
-        if ((homeDict?["Mount"]) as! Bool) {
-
+        if homeDict != nil {
             // adding the home mount to the shares
             myLogger.logit(.debug, message: "Adding home share to automounts.")
-            var currentShare = share_info(groups: homeDict?[shareKeys.groups] as! [String], url: URL(string: "smb:" + (defaults.string(forKey: Preferences.userHome))!)!, name: "Home Sharepoint", options: homeDict?[shareKeys.options] as! [String], connectedOnly: true, mountStatus: mountStatus.toBeMounted, localMount: nil, autoMount: true, reqID: nil, attemptDate: nil, localMountPoints: nil)
+            var currentShare = share_info(groups: homeDict?[shareKeys.groups] as! [String], url: URL(string: "smb:" + (defaults.string(forKey: Preferences.userHome))!)!, name: "Home Sharepoint", options: homeDict?[shareKeys.options] as! [String], connectedOnly: true, mountStatus: mountStatus.toBeMounted, localMount: nil, autoMount: (homeDict?["Mount"]) as! Bool, reqID: nil, attemptDate: nil, localMountPoints: nil)
 
             if mountedShares.contains(currentShare.url) {
                 currentShare.mountStatus = .mounted
@@ -98,6 +93,8 @@ class ShareMounter: NSArrayController {
             if !knownShares.contains(URL(string: "smb:" + (defaults.string(forKey: Preferences.userHome))!)!) {
             self.all_shares.append(currentShare)
             }
+        } else {
+            myLogger.logit(.debug, message: "No Home mount dictionary.")
         }
 
         var mounts = (sharePrefs?.array(forKey: shareKeys.shares))! as! [NSDictionary]
@@ -385,6 +382,7 @@ class ShareMounter: NSArrayController {
                 // skip this share and move on to the next
                 continue
             }
+
             // ocassionaly we get a crash here on getting the retained value of the pointer, so let's wrap in a do/catch
 
             do {
