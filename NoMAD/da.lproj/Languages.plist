@@ -19,7 +19,7 @@
 	<key>NoMADMenuController-Connected</key>
 	<dict>
 		<key>value</key>
-		<string></string>
+		<string>Ikke logget ind</string>
 		<key>comment</key>
 		<string>Text in the menu bar to show that NoMAD can find the Domain</string>
 	</dict>
@@ -145,7 +145,7 @@
 	<key>NetworkLocalMismatch</key>
 	<dict>
 		<key>value</key>
-		<string>Din adgangskode til din Mac og netværks adgangskoden matcher ikke. Indtast adgangskode til netværket for at opdatere.</string>
+		<string>Din lokale adgangskode og netværks adgangskoden matcher ikke. Indtast din lokale adgangskode for at opdatere med netværks adgangskoden.</string>
 		<key>comment</key>
 		<string>error when network and local passwords do not match</string>
 	</dict>
@@ -201,70 +201,70 @@
 	<key>LoginWindow-OldPasswordLabel</key>
 	<dict>
 		<key>value</key>
-		<string>Old Password</string>
+		<string>Gammel adgangskode</string>
 		<key>comment</key>
 		<string>Label for old password</string>
 	</dict>
 	<key>LoginWindow-PasswordLabel</key>
 	<dict>
 		<key>value</key>
-		<string>Password</string>
+		<string>Adgangskode</string>
 		<key>comment</key>
 		<string>Label for password</string>
 	</dict>
 	<key>NoMADMenuController-SmartcardSignIn</key>
 	<dict>
 		<key>value</key>
-		<string>Smartcard Sign In</string>
+		<string>Smartcard Log ind</string>
 		<key>comment</key>
 		<string>PKINIT smartcard menu sign in</string>
 	</dict>
 	<key>NoMADMenuController-SignInWithSmartcard</key>
 	<dict>
 		<key>value</key>
-		<string>Sign in with a Smartcard.</string>
+		<string>Log ind med Smartcard.</string>
 		<key>comment</key>
 		<string>PKINIT smartcard menu sign in tool tip</string>
 	</dict>
 	<key>NoMADMenuController-NotLoggedIn</key>
 	<dict>
 		<key>value</key>
-		<string>Not logged in.</string>
+		<string>Ikke logget ind.</string>
 		<key>comment</key>
 		<string>User info for ticket life when not signed in</string>
 	</dict>
 	<key>NoMADMenuController-NotSignedIn</key>
 	<dict>
 		<key>value</key>
-		<string>Not Signed In</string>
+		<string>Ikke logget ind</string>
 		<key>comment</key>
 		<string>User info when not signed in</string>
 	</dict>
 	<key>NoMADMenuController-NoUser</key>
 	<dict>
 		<key>value</key>
-		<string>No User</string>
+		<string>Ingen Bruger</string>
 		<key>comment</key>
 		<string>User info when no user is available</string>
 	</dict>
 	<key>UserInformation-PasswordChanged</key>
 	<dict>
 		<key>value</key>
-		<string>Password Changed</string>
+		<string>Adgangskode Skifted</string>
 		<key>comment</key>
 		<string>Notification title when password changed</string>
 	</dict>
 	<key>UserInformation-PwdChangedSignInAgain</key>
 	<dict>
 		<key>value</key>
-		<string>Your password was changed, please re-sign into NoMAD to update your password.</string>
+		<string>Din adgangskode er blevet ændret, log ind igen for at opdatere din adgangskode.</string>
 		<key>comment</key>
 		<string>Notification text asking to sign in again</string>
 	</dict>
 	<key>UserInformation-Ignore</key>
 	<dict>
 		<key>value</key>
-		<string>Ignore</string>
+		<string>Ignorere</string>
 		<key>comment</key>
 		<string>Password change notification ignore button</string>
 	</dict>
