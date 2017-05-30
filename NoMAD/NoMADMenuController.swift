@@ -701,7 +701,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 self.NoMADMenuGetCertificate.isEnabled = false
             }
             if (self.PKINITMenuItem != nil ) {
-                self.PKINITMenuItem.isEnabled = false
+                self.PKINITMenuItem.isEnabled = true
             }
         }
         else {
