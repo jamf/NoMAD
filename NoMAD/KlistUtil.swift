@@ -35,6 +35,7 @@ class KlistUtil {
     var realm = ""
 
     init() {
+        dateFormatter.locale = Locale(identifier: "en_US")
         dateFormatter.dateFormat = "yyyyMMddHHmmss"
         realm = defaults.string(forKey: "KerberosRealm") ?? ""
     }
@@ -44,7 +45,8 @@ class KlistUtil {
         realm = defaults.string(forKey: "KerberosRealm") ?? ""
         myLogger.logit(.debug, message:"Looking for tickets using realm: " + realm )
         dateFormatter.dateFormat = "yyyyMMddHHmmss"
-        let rawJSON = cliTask("/usr/bin/klist --json")
+        var rawJSON = cliTask("/usr/bin/klist --json")
+        rawJSON = rawJSON.replacingOccurrences(of: "\\ ", with: " ")
         myLogger.logit(.debug, message: "Raw ticket cache: " + String(rawJSON))
         rawTicket = rawJSON.data(using: String.Encoding.utf8)!
         if returnAllTickets().contains("cache") {
@@ -63,7 +65,10 @@ class KlistUtil {
 
     func getCacheListJSON() {
         dateFormatter.dateFormat = "yyyyMMddHHmmss"
-        let rawJSON = cliTask("/usr/bin/klist -l --json")
+        var rawJSON = cliTask("/usr/bin/klist -l --json")
+
+        rawJSON = rawJSON.replacingOccurrences(of: "\\ ", with: " ")
+
         let rawCache = rawJSON.data(using: String.Encoding.utf8)!
         if returnAllTickets().contains("cache") {
             myLogger.logit(.base, message:"Tickets found.")
@@ -91,7 +96,7 @@ class KlistUtil {
             allTickets.removeAll()
 
             do {
-                let jsonDict = try JSONSerialization.jsonObject(with: rawTicket, options: .allowFragments) as? [String: AnyObject]
+                let jsonDict = try JSONSerialization.jsonObject(with: rawTicket, options: .mutableLeaves) as? [String: AnyObject]
 
                 // ye haw lets downcast and iterate!
 
@@ -106,6 +111,7 @@ class KlistUtil {
                         myLogger.logit(.debug, message: "Looking at ticket: " + String(describing: ticket))
 
                         if let tick = ticket["Principal"] as? String {
+                            print(ticket)
                             let issue = dateFormatter.date(from: (ticket["Issued"] as? String)!)
                             let expire = dateFormatter.date(from: (ticket["Expires"] as? String)!)
                             let myTicket = Ticket(Issued: issue!, Expires: expire!, Principal: tick )
@@ -119,6 +125,10 @@ class KlistUtil {
                 myLogger.logit(.debug, message: "No tickets found")
                 state = false        }
             getExpiration()
+
+            // write out if we have tickets
+
+            defaults.set(state, forKey: Preferences.signedIn)
         }
 
         func getPrincipal() -> String {

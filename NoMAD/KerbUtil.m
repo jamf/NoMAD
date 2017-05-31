@@ -38,6 +38,8 @@ extern OSStatus SecKeychainChangePassword(SecKeychainRef keychainRef, UInt32 old
     gss_cred_id_t cred = NULL;
     CFErrorRef error = NULL;
 
+    // preflight for spaces in the userPrincipal
+
     gname = GSSCreateName((__bridge CFTypeRef _Nonnull)(userPrincipal), GSS_C_NT_USER_NAME, NULL);
     if (gname == NULL)
         return @"error: creating GSS name";

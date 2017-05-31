@@ -36,6 +36,8 @@ class UserInformation {
     var userEmail: String
     var UPN: String
 
+    // Password last set info
+
     var lastSetDate = NSDate()
 
     var userCertDate = NSDate()
@@ -169,13 +171,25 @@ class UserInformation {
                 }
                 if ( computedExpireDateRaw != nil) {
                     // Windows Server 2008 and Newer
-                    if ( Int(computedExpireDateRaw!) == 9223372036854775807) {
+                    if ( Int(computedExpireDateRaw!) == 9223372036854775807) || defaults.bool(forKey: Preferences.hideExpiration) {
                         // Password doesn't expire
                         passwordAging = false
                         defaults.set(false, forKey: Preferences.userAging)
 
                         // Set expiration to set date
                         userPasswordExpireDate = NSDate()
+                    } else if (Int(computedExpireDateRaw!) == 0) {
+                        // password needs to be reset
+                        passwordAging = true
+                        defaults.set(true, forKey: Preferences.userAging)
+
+                        // TODO: Change all Double() to NumberFormatter().number(from: myString)?.doubleValue
+                        //       when we switch to Swift 3
+                        let computedExpireDate = NSDate()
+
+                        // Set expiration to the computed date.
+                        userPasswordExpireDate = computedExpireDate
+
                     } else {
                         // Password expires
 
@@ -220,31 +234,67 @@ class UserInformation {
 
             }
             // Check if the password was changed without NoMAD knowing.
-            myLogger.logit(LogLevel.debug, message: String(describing: UserPasswordSetDates[userPrincipal]))
+            myLogger.logit(LogLevel.debug, message: "Password set: " + String(describing: UserPasswordSetDates[userPrincipal]))
             if (UserPasswordSetDates[userPrincipal] != nil) && ( (UserPasswordSetDates[userPrincipal] as? String) != "just set" ) {
                 // user has been previously set so we can check it
 
-                if ((UserPasswordSetDates[userPrincipal] as? NSDate ) != userPasswordSetDate) {
+                if let passLastChangeDate = (UserPasswordSetDates[userPrincipal] as? Date ) {
+                    if ((userPasswordSetDate.timeIntervalSince(passLastChangeDate as Date)) > 1 * 60 ){
+
                     myLogger.logit(.base, message: "Password was changed underneath us.")
-
-                    // TODO: Do something if we get here
-
-                    //let alertController = NSAlert()
-                    //alertController.messageText = "Your Password Changed"
-                    //alertController.runModal()
 
                     // record the new password set date
 
                     UserPasswordSetDates[userPrincipal] = userPasswordSetDate
                     defaults.set(UserPasswordSetDates, forKey: Preferences.userPasswordSetDates)
+                    
+                    // set a flag it we should alert the user
+                    if (defaults.bool(forKey: Preferences.uPCAlert ) == true) {
 
+                        // fire the notification
+
+                        myLogger.logit(.base, message: "Alerting user to UPC.")
+
+                        let notification = NSUserNotification()
+                        notification.title = "UserInformation-PasswordChanged".translate
+                        notification.informativeText = "UserInformation-PwdChangedSignInAgain".translate
+                        //notification.deliveryDate = date
+                        notification.hasActionButton = true
+                        notification.actionButtonTitle = "SignIn".translate
+                        notification.otherButtonTitle = "UserInformation-Ignore".translate
+                        notification.soundName = NSUserNotificationDefaultSoundName
+                        NSUserNotificationCenter.default.deliver(notification)
+
+                        //NotificationQueue.default.enqueue(updateNotification, postingStyle: .now)
+                    }
                 }
             } else {
                 UserPasswordSetDates[userPrincipal] = userPasswordSetDate
                 defaults.set(UserPasswordSetDates, forKey: Preferences.userPasswordSetDates)
             }
+            } else {
+                // write out the password dates
 
+                UserPasswordSetDates[userPrincipal] = userPasswordSetDate
+                defaults.set(UserPasswordSetDates, forKey: Preferences.userPasswordSetDates)
+            }
+        } else if defaults.bool(forKey: Preferences.persistExpiration) {
 
+            // we can't connect, so just use the last stashed information
+            // first we check to make sure someone has logged in before
+
+            if  let userPrincipal = defaults.string(forKey: Preferences.userPrincipal) {
+
+                if userPrincipal != "" {
+                self.userPrincipal = userPrincipal
+            self.passwordAging = defaults.bool(forKey: Preferences.userAging)
+            self.userPasswordExpireDate = defaults.object(forKey: Preferences.lastPasswordExpireDate) as! NSDate
+                self.realm = defaults.string(forKey: Preferences.kerberosRealm)!
+                self.userDisplayName = defaults.string(forKey: Preferences.displayName)!
+                self.userShortName = defaults.string(forKey: Preferences.lastUser)!
+                self.userPrincipalShort = defaults.string(forKey: Preferences.lastUser)!
+                }
+            }
         }
 
         // 4. if connected and with tickets, get all of user information
@@ -271,6 +321,8 @@ class UserInformation {
                 getCertDate()
             }
 
+            userHome = userHome.replacingOccurrences(of: " ", with: "%20")
+
             defaults.set(userHome, forKey: Preferences.userHome)
             defaults.set(userDisplayName, forKey: Preferences.displayName)
             defaults.set(userPrincipal, forKey: Preferences.userPrincipal)
@@ -279,231 +331,4 @@ class UserInformation {
             defaults.set(groups, forKey: Preferences.groups)
         }
     }
-
-    /*
-     func getUserInfo() {
-
-     // 1. check if AD can be reached
-
-     var canary = true
-     checkNetwork()
-
-     //myLDAPServers.tickets.getDetails()
-
-     if myLDAPServers.currentState {
-     status = "NoMADMenuController-Connected"
-     connected = true
-     } else {
-     status = "NoMADMenuController-NotConnected"
-     connected = false
-     myLogger.logit(.base, message: "Not connected to the network")
-     }
-
-     // 2. check for tickets
-
-     if myLDAPServers.tickets.state {
-     userPrincipal = myLDAPServers.tickets.principal
-     realm = defaults.stringForKey("KerberosRealm")!
-     if userPrincipal.containsString(realm) {
-     userPrincipalShort = userPrincipal.stringByReplacingOccurrencesOfString("@" + realm, withString: "")
-     status = "Logged In"
-     myLogger.logit(.base, message: "Logged in.")
-     } else {
-     myLogger.logit(.base, message: "No ticket for realm.")
-     }
-     } else {
-     myLogger.logit(.base, message: "No tickets")
-     }
-
-     // 3. if connected and with tickets, get password aging information
-
-     if connected && myLDAPServers.tickets.state {
-
-     var passwordSetDate = ""
-     let attributes = ["pwdLastSet", "msDS-UserPasswordExpiryTimeComputed", "userAccountControl", "homeDirectory", "displayName", "memberOf"]
-
-     let attribute = "pwdLastSet"
-     let searchTerm = "sAMAccountName=" + userPrincipalShort
-
-     guard let ldifResult = try? myLDAPServers.getLDAPInformation([attribute], searchTerm: searchTerm) else {
-     passwordSetDate = ""
-     myLogger.logit(.base, message: "We shouldn't have gotten here... tell Joel")
-     canary = false
-     }
-     passwordSetDate = myLDAPServers.getAttributeForSingleRecordFromCleanedLDIF(attribute, ldif: ldifResult)
-
-     if canary {
-     if (passwordSetDate != "") {
-					userPasswordSetDate = NSDate(timeIntervalSince1970: (Double(Int(passwordSetDate)!))/10000000-11644473600)
-     }
-
-     // Now get default password expiration time - this may not be set for environments with no password cycling requirements
-
-     myLogger.logit(.info, message: "Getting password aging info")
-
-     // First try msDS-UserPasswordExpiryTimeComputed
-     var computedExpireDateRaw: String
-     let attribute = "msDS-UserPasswordExpiryTimeComputed"
-     let searchTerm = "sAMAccountName=" + userPrincipalShort
-     if let ldifResult = try? myLDAPServers.getLDAPInformation([attribute], searchTerm: searchTerm) {
-					computedExpireDateRaw = myLDAPServers.getAttributeForSingleRecordFromCleanedLDIF(attribute, ldif: ldifResult)
-     } else {
-					computedExpireDateRaw = ""
-     }
-
-
-     if ( Int(computedExpireDateRaw) == 9223372036854775807 ) {
-
-     // password doesn't expire
-
-     passwordAging = false
-     defaults.setObject(false, forKey: Preferences.userAging)
-
-     // set expiration to set date
-
-     userPasswordExpireDate = NSDate()
-
-     } else if ( Int(computedExpireDateRaw) != nil ) {
-
-     // password expires
-
-     passwordAging = true
-     defaults.setObject(true, forKey: Preferences.userAging)
-     let computedExpireDate = NSDate(timeIntervalSince1970: (Double(Int(computedExpireDateRaw)!))/10000000-11644473600)
-     userPasswordExpireDate = computedExpireDate
-
-     } else {
-
-     // need to go old skool
-					var passwordExpirationLength: String
-					let attribute = "maxPwdAge"
-
-					if let ldifResult = try? myLDAPServers.getLDAPInformation([attribute], baseSearch: true) {
-     passwordExpirationLength = myLDAPServers.getAttributeForSingleRecordFromCleanedLDIF(attribute, ldif: ldifResult)
-					} else {
-     passwordExpirationLength = ""
-					}
-     //let passwordExpirationLength = try! myLDAPServers.getLDAPInformation("maxPwdAge", baseSearch: true )
-
-     if ( passwordExpirationLength.characters.count > 15 ) {
-     //serverPasswordExpirationDefault = Double(0)
-     passwordAging = false
-     } else if ( passwordExpirationLength != "" ){
-
-     // now check the users uAC to see if they are exempt
-     var userPasswordUACFlag: String
-     let attribute = "userAccountControl"
-     let searchTerm = "sAMAccountName=" + userPrincipalShort
-
-     if let ldifResult = try? myLDAPServers.getLDAPInformation([attribute], searchTerm: searchTerm) {
-     userPasswordUACFlag = myLDAPServers.getAttributeForSingleRecordFromCleanedLDIF(attribute, ldif: ldifResult)
-     } else {
-     userPasswordUACFlag = ""
-     }
-
-     if ~~( Int(userPasswordUACFlag)! & 0x10000 ) {
-     passwordAging = false
-     defaults.setObject(false, forKey: Preferences.userAging)
-     } else {
-     serverPasswordExpirationDefault = Double(abs(Int(passwordExpirationLength)!)/10000000)
-     passwordAging = true
-     defaults.setObject(true, forKey: Preferences.userAging)
-     }
-     } else {
-     serverPasswordExpirationDefault = Double(0)
-     passwordAging = false
-     }
-     userPasswordExpireDate = userPasswordSetDate.dateByAddingTimeInterval(serverPasswordExpirationDefault)
-     }
-     }
-
-     // now to see if the password has changed without NoMAD knowing
-
-     if (UserPasswordSetDates[userPrincipal] != nil) && (String(UserPasswordSetDates[userPrincipal]) != "just set" ) {
-
-     // user has been previously set so we can check it
-
-     if ((UserPasswordSetDates[userPrincipal] as? NSDate )! != userPasswordSetDate) {
-					myLogger.logit(.base, message: "Password was changed underneath us.")
-
-					// TODO: Do something if we get here
-
-     let alertController = NSAlert()
-     alertController.messageText = "Your Password Changed"
-     alertController.runModal()
-
-					// record the new password set date
-
-					UserPasswordSetDates[userPrincipal] = userPasswordSetDate
-					defaults.setObject(UserPasswordSetDates, forKey: "UserPasswordSetDates")
-
-     }
-     } else {
-     UserPasswordSetDates[userPrincipal] = userPasswordSetDate
-     defaults.setObject(UserPasswordSetDates, forKey: "UserPasswordSetDates")
-     }
-     }
-
-     // 4. if connected and with tickets, get all of user information
-
-     if connected && myLDAPServers.tickets.state && canary {
-     let userHomeTemp = try! myLDAPServers.getLDAPInformation("homeDirectory", searchTerm: "sAMAccountName=" + userPrincipalShort)
-     userHome = userHomeTemp.stringByReplacingOccurrencesOfString("\\", withString: "/")
-     userDisplayName = try! myLDAPServers.getLDAPInformation("displayName", searchTerm: "sAMAccountName=" + userPrincipalShort)
-
-     groups.removeAll()
-
-     let groupsTemp = try! myLDAPServers.getLDAPInformation("memberOf", searchTerm: "sAMAccountName=" + userPrincipalShort ).componentsSeparatedByString(", ")
-     for group in groupsTemp {
-     let a = group.componentsSeparatedByString(",")
-     let b = a[0].stringByReplacingOccurrencesOfString("CN=", withString: "") as String
-     if b != "" {
-     groups.append(b)
-     }
-     }
-
-     myLogger.logit(.info, message: "You are a member of: " + groups.joinWithSeparator(", ") )
-
-     // look at local certs if an x509 CA has been set
-
-     if (defaults.stringForKey("x509CA") ?? "" != "") {
-
-     let myCertExpire = myKeychainUtil.findCertExpiration(userDisplayName, defaultNamingContext: myLDAPServers.defaultNamingContext )
-
-     if myCertExpire != 0 {
-     myLogger.logit(.info, message: "Last certificate will expire on: " + String(myCertExpire) )
-     }
-
-     // Act on Cert expiration
-
-     if myCertExpire.timeIntervalSinceNow < 2592000 && myCertExpire.timeIntervalSinceNow > 0 {
-     myLogger.logit(.base, message: "Your certificate will expire in less than 30 days.")
-
-     // TODO: Trigger an action
-
-     }
-
-     if myCertExpire.timeIntervalSinceNow < 0 && myCertExpire != NSDate.distantPast() {
-     myLogger.logit(.base, message: "Your certificate has already expired.")
-     }
-
-     defaults.setObject(myCertExpire, forKey: Preferences.lastCertificateExpiration)
-
-     }
-
-
-     // set defaults for these
-
-     defaults.setObject(userHome, forKey: "UserHome")
-     defaults.setObject(userDisplayName, forKey: "displayName")
-     defaults.setObject(userPrincipal, forKey: "userPrincipal")
-     defaults.setObject(userPrincipalShort, forKey: Preferences.lastUser)
-     defaults.setObject(userPasswordExpireDate, forKey: "LastPasswordExpireDate")
-     defaults.setObject(groups, forKey: "Groups")
-     }
-     
-     myLogger.logit(.base, message: "User information update done.")
-     }
-     */
-    
 }

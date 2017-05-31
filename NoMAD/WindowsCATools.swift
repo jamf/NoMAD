@@ -291,14 +291,7 @@ class WindowsCATools {
         return resultString
     }
 
-    
-    // TODO: remove the use of certtool and use CommonCrypto instead
-    
-    // TODO: change the private key label for keys created this way
-    
-    // TODO: inspect the existing identities for ones matching our AD name, then alert on expiration
-    
-    // http://opensource.apple.com/source/Security/Security-57337.40.85/SecurityTool/identity_find.c
-
-    // DONE
+    func build8021x() {
+        
+    }
 }

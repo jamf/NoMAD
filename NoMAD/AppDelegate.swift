@@ -16,12 +16,13 @@ let updateNotification = Notification(name: Notification.Name(rawValue: "updateN
 
 @NSApplicationMain
 
-class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate {
 
     var refreshTimer: Timer?
     var refreshActivity: NSBackgroundActivityScheduler?
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        
         myLogger.logit(.base, message:"---NoMAD Initialized---")
         let version = String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!)
         let build = String(describing: Bundle.main.infoDictionary!["CFBundleVersion"]!)
@@ -32,6 +33,21 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         let changed: SCDynamicStoreCallBack = { dynamicStore, _, _ in
             myLogger.logit(.base, message: "State change, checking things.")
             NotificationQueue.default.enqueue(updateNotification, postingStyle: .now)
+
+            if #available(OSX 10.12, *) {
+                Timer.scheduledTimer(withTimeInterval: 5, repeats: false, block: {_ in
+                    myLogger.logit(.base, message: "State change, checking things again.")
+                    NotificationQueue.default.enqueue(updateNotification, postingStyle: .now)
+                })
+            } else {
+                // wait a few seconds
+                let now = Date()
+                while abs(now.timeIntervalSinceNow) < 5 {
+                    RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
+                }
+                myLogger.logit(.base, message: "State change, checking things again.")
+                NotificationQueue.default.enqueue(updateNotification, postingStyle: .now)
+            }
 
             if (defaults.string(forKey: Preferences.stateChangeAction) != "" ) {
                 myLogger.logit(.base, message: "Firing State Change Action")

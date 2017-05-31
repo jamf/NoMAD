@@ -32,6 +32,12 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 
     var lastNetwork = ""
 
+    let myDNSQueue = DispatchQueue(label: "com.trusourcelabs.NoMAD.background_dns_queue", attributes: [])
+
+    var URIPrefix = "ldap://"
+    var port = "389"
+    var maxSSF = ""
+
     let tickets = KlistUtil()
 
     var current: Int {
@@ -51,6 +57,13 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         current = 0
 
         self.resolver = DNSResolver.init()
+
+        if defaults.bool(forKey: Preferences.lDAPoverSSL) {
+            URIPrefix = "ldaps://"
+            port = "636"
+            maxSSF = "-O maxssf=0 "
+        }
+
         //myLogger.logit(.notice, message:"Looking up tickets.")
         //tickets.getDetails()
     }
@@ -247,8 +260,12 @@ class LDAPServers : NSObject, DNSResolverDelegate {
             arguments.append("-s")
             arguments.append("base")
         }
+        if maxSSF != "" {
+            arguments.append("-O")
+            arguments.append("maxssf=0")
+        }
         arguments.append("-H")
-        arguments.append("ldap://" + self.currentServer)
+        arguments.append(URIPrefix + self.currentServer)
         arguments.append("-b")
         arguments.append(self.defaultNamingContext)
         if ( searchTerm != "") {
@@ -274,7 +291,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     }
 
     func returnFullRecord(_ searchTerm: String) -> String {
-        let myResult = cliTaskNoTerm("/usr/bin/ldapsearch -N -Q -LLL -H ldap://" + self.currentServer + " -b " + self.defaultNamingContext + " " + searchTerm )
+        let myResult = cliTaskNoTerm("/usr/bin/ldapsearch -N -Q -LLL " + maxSSF + "-H " + URIPrefix + self.currentServer + " -b " + self.defaultNamingContext + " " + searchTerm )
         return myResult
     }
 
@@ -316,12 +333,22 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         }
 
         guard let ldapPing: ADLDAPPing = ADLDAPPing(ldapPingBase64String: ldapPingBase64) else {
-            myLogger.logit(LogLevel.debug, message:"Resetting default naming context to: " + tempDefaultNamingContext)
+             myLogger.logit(LogLevel.debug, message:"Resetting default naming context to: " + tempDefaultNamingContext)
             defaultNamingContext = tempDefaultNamingContext
             return
         }
 
-        site = ldapPing.clientSite ?? ""
+        // calculate the site
+
+        if defaults.bool(forKey: Preferences.siteIgnore) {
+            site = ""
+            myLogger.logit(LogLevel.debug, message:"Sites being ignored due to preferences.")
+        } else if defaults.string(forKey: Preferences.siteForce) != "" && defaults.string(forKey: Preferences.siteForce) != nil {
+            site = defaults.string(forKey: Preferences.siteForce)!
+            myLogger.logit(LogLevel.debug, message:"Site being forced to site set in preferences.")
+        } else {
+            site = ldapPing.clientSite ?? ""
+        }
 
 
         if (ldapPing.flags.contains(.DS_CLOSEST_FLAG)) {
@@ -515,7 +542,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 
     fileprivate func testSocket( _ host: String ) -> Bool {
 
-        let mySocketResult = cliTask("/usr/bin/nc -G 5 -z " + host + " 389")
+        let mySocketResult = cliTask("/usr/bin/nc -G 5 -z " + host + " " + port)
         if mySocketResult.contains("succeeded!") {
             return true
         } else {
@@ -528,11 +555,11 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 
     fileprivate func testLDAP ( _ host: String ) -> Bool {
 
-        if defaults.integer(forKey: Preferences.verbose) >= 1 {
+        if defaults.bool(forKey: Preferences.verbose) {
             myLogger.logit(.info, message:"Testing " + host + ".")
         }
         let attribute = "defaultNamingContext"
-        let myLDAPResult = cliTask("/usr/bin/ldapsearch -N -LLL -Q -l 3 -s base -H ldap://" + host + " " + attribute)
+        let myLDAPResult = cliTask("/usr/bin/ldapsearch -N -LLL -Q " + maxSSF + "-l 3 -s base -H " + URIPrefix + host + " " + attribute)
         if myLDAPResult != "" && !myLDAPResult.contains("GSSAPI Error") && !myLDAPResult.contains("Can't contact") {
             let ldifResult = cleanLDIF(myLDAPResult)
             if ( ldifResult.count > 0 ) {
@@ -547,11 +574,15 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 
     fileprivate func checkConnectivity( _ domain: String ) -> Bool {
 
+        self.resolver = DNSResolver.init()
+
         self.resolver.queryType = "SRV"
         self.resolver.queryValue = "_ldap._tcp." + domain
         if (site != "") {
             self.resolver.queryValue = "_ldap._tcp." + site + "._sites." + domain
         }
+
+        myLogger.logit(.debug, message: "Starting DNS query for LDAP SRV..")
 
         self.resolver.startQuery()
 
@@ -579,6 +610,8 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         }
         var results = [String]()
 
+        myLogger.logit(.debug, message: "Starting DNS query for SRV records.")
+
         self.resolver.startQuery()
 
         while ( !self.resolver.finished ) {
@@ -603,17 +636,32 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     // Uses DNSResolver
 
     func getHosts(_ domain: String ) {
+
         self.resolver.queryType = "SRV"
 
         self.resolver.queryValue = "_ldap._tcp." + domain
-        if (site != "") {
-            self.resolver.queryValue = "_ldap._tcp." + site + "._sites." + domain
+        if (self.site != "") {
+            self.resolver.queryValue = "_ldap._tcp." + self.site + "._sites." + domain
         }
+
+        // check for a query already running
+
+        myLogger.logit(.debug, message: "Starting DNS query for SRV records.")
+
         self.resolver.startQuery()
 
         while ( !self.resolver.finished ) {
             RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
+            myLogger.logit(.debug, message: "Waiting for DNS query to return.")
         }
+
+//        if !self.resolver.finished {
+//            myLogger.logit(.debug, message: "DNS query timed out.")
+//            self.resolver.stopQuery()
+//            self.currentState = false
+//            self.hosts.removeAll()
+//            return
+//        }
 
         if (self.resolver.error == nil) {
             myLogger.logit(.debug, message: "Did Receive Query Result: " + self.resolver.queryResults.description)
@@ -631,7 +679,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 
             // now to sort them
 
-            hosts = newHosts.sorted { (x, y) -> Bool in
+            self.hosts = newHosts.sorted { (x, y) -> Bool in
                 return ( x.priority <= y.priority )
             }
             self.currentState = true
@@ -639,7 +687,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         } else {
             myLogger.logit(.debug, message: "Query Error: " + self.resolver.error.localizedDescription)
             self.currentState = false
-            hosts.removeAll()
+            self.hosts.removeAll()
         }
     }
 
@@ -656,13 +704,13 @@ class LDAPServers : NSObject, DNSResolverDelegate {
                     // socket test first - this could be falsely negative
                     // also note that this needs to return stderr
                     
-                    let mySocketResult = cliTask("/usr/bin/nc -G 5 -z " + hosts[i].host + " 389")
+                    let mySocketResult = cliTask("/usr/bin/nc -G 5 -z " + hosts[i].host + " " + port)
                     
                     if mySocketResult.contains("succeeded!") {
                         
                         // if socket test works, then attempt ldapsearch to get default naming context
                         let attribute = "defaultNamingContext"
-                        let myLDAPResult = cliTaskNoTerm("/usr/bin/ldapsearch -N -LLL -Q -l 3 -s base -H ldap://" + hosts[i].host + " " + attribute)
+                        let myLDAPResult = cliTaskNoTerm("/usr/bin/ldapsearch -N -LLL -Q " + maxSSF + "-l 3 -s base -H " + URIPrefix + hosts[i].host + " " + attribute)
                         if myLDAPResult != "" && !myLDAPResult.contains("GSSAPI Error") && !myLDAPResult.contains("Can't contact") {
                             let ldifResult = cleanLDIF(myLDAPResult)
                             if ( ldifResult.count > 0 ) {
