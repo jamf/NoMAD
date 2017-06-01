@@ -138,7 +138,7 @@ class KeychainUtil {
         
         let identitySearchDict: [String:AnyObject] = [
             kSecClass as String: kSecClassIdentity,
-            kSecAttrKeyClass as String: kSecAttrKeyClassPrivate as String as String as AnyObject,
+            kSecAttrKeyClass as String: kSecAttrKeyClassPrivate as AnyObject,
 
             // this matches e-mail address
             //kSecMatchEmailAddressIfPresent as String : identifier as CFString,

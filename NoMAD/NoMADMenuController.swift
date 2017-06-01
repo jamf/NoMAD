@@ -543,7 +543,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 lastExpire = lastExpireTemp as? Date
             }
 
-
             if (lastExpire?.timeIntervalSinceNow)! > 2592000 {
                 if alerts {
                     let alertController = NSAlert()
