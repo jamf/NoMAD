@@ -254,7 +254,11 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         let command = "/usr/bin/ldapsearch"
         var arguments: [String] = [String]()
         arguments.append("-N")
+        if defaults.bool(forKey: Preferences.lDAPAnonymous) {
+            arguments.append("-x")
+        } else {
         arguments.append("-Q")
+        }
         arguments.append("-LLL")
         arguments.append("-o")
         arguments.append("nettimeout=1")
@@ -572,7 +576,13 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 
         swapPrincipals(false)
 
-        let myLDAPResult = cliTask("/usr/bin/ldapsearch -N -LLL -Q " + maxSSF + "-l 3 -s base -H " + URIPrefix + host + " " + attribute)
+        var myLDAPResult = ""
+
+        if defaults.bool(forKey: Preferences.lDAPAnonymous) {
+            myLDAPResult = cliTask("/usr/bin/ldapsearch -N -LLL -x " + maxSSF + "-l 3 -s base -H " + URIPrefix + host + " " + attribute)
+        } else {
+        myLDAPResult = cliTask("/usr/bin/ldapsearch -N -LLL -Q " + maxSSF + "-l 3 -s base -H " + URIPrefix + host + " " + attribute)
+        }
 
         swapPrincipals(true)
 
@@ -729,7 +739,13 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 
                         swapPrincipals(false)
 
-                        let myLDAPResult = cliTaskNoTerm("/usr/bin/ldapsearch -N -LLL -Q " + maxSSF + "-l 3 -s base -H " + URIPrefix + hosts[i].host + " " + attribute)
+                        var myLDAPResult = ""
+
+                        if defaults.bool(forKey: Preferences.lDAPAnonymous) {
+                            myLDAPResult = cliTask("/usr/bin/ldapsearch -N -LLL -x " + maxSSF + "-l 3 -s base -H " + URIPrefix + host + " " + attribute)
+                        } else {
+                            myLDAPResult = cliTask("/usr/bin/ldapsearch -N -LLL -Q " + maxSSF + "-l 3 -s base -H " + URIPrefix + host + " " + attribute)
+                        }
 
                         swapPrincipals(true)
 

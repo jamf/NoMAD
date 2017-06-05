@@ -194,6 +194,7 @@ enum Preferences {
     static let lastCertificateExpiration = "LastCertificateExpiration"
     static let loginComamnd = "LoginComamnd"
     static let loginItem = "LoginItem"
+    static let lDAPAnonymous = "LDAPAnonymous"
     static let lDAPServerList = "LDAPServerList"
     static let lDAPoverSSL = "LDAPOverSSL"
     static let localPasswordSync = "LocalPasswordSync"
