@@ -742,9 +742,9 @@ class LDAPServers : NSObject, DNSResolverDelegate {
                         var myLDAPResult = ""
 
                         if defaults.bool(forKey: Preferences.lDAPAnonymous) {
-                            myLDAPResult = cliTask("/usr/bin/ldapsearch -N -LLL -x " + maxSSF + "-l 3 -s base -H " + URIPrefix + host + " " + attribute)
+                            myLDAPResult = cliTask("/usr/bin/ldapsearch -N -LLL -x " + maxSSF + "-l 3 -s base -H " + URIPrefix + hosts[i].host + " " + port + " " + attribute)
                         } else {
-                            myLDAPResult = cliTask("/usr/bin/ldapsearch -N -LLL -Q " + maxSSF + "-l 3 -s base -H " + URIPrefix + host + " " + attribute)
+                            myLDAPResult = cliTask("/usr/bin/ldapsearch -N -LLL -Q " + maxSSF + "-l 3 -s base -H " + URIPrefix + hosts[i].host + " " + port + " " + attribute)
                         }
 
                         swapPrincipals(true)
