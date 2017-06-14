@@ -199,6 +199,7 @@ enum Preferences {
     static let hideRenew = "HideRenew"
     static let hidePrefs = "HidePrefs"
     static let hideQuit = "HideQuit"
+    static let hideSignOut = "HideSignOut"
     static let iconOff = "IconOff"
     static let iconOffDark = "IconOffDark"
     static let iconOn = "IconOn"

@@ -226,7 +226,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             PKINITMenuItem.title = "NoMADMenuController-SmartcardSignIn".translate
             PKINITMenuItem.toolTip = "NoMADMenuController-SignInWithSmartcard".translate
             PKINITMenuItem.action = #selector(smartcardSignIn)
-            PKINITMenuItem.target = self.NoMADMenuLogOut.target
+            PKINITMenuItem.target = self
             PKINITMenuItem.isEnabled = true
 
             // add the menu
@@ -238,6 +238,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         // set up some default menu items
 
         NoMADMenuPasswordExpires.title = defaults.string(forKey: Preferences.menuPasswordExpires) ?? ""
+
+        // hide Sign out if asked
+
+        if defaults.bool(forKey: Preferences.hideSignOut) {
+            NoMADMenuLogOut.isHidden = true
+        }
 
         // find out if a Self Service Solution exists - hide the menu item if it's not there
         myLogger.logit(.notice, message:"Looking for Self Service applications")
@@ -672,7 +678,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.NoMADMenuLogIn.isHidden = false
             self.NoMADMenuLogIn.isEnabled = false
             self.NoMADMenuLogIn.title = "SignIn".translate
-            self.NoMADMenuLogOut.isEnabled = false
+            if (self.NoMADMenuLogOut != nil) {
+                self.NoMADMenuLogOut.isEnabled = false
+            }
             if (self.NoMADMenuChangePassword != nil) {
                 self.NoMADMenuChangePassword.isEnabled = false
             }
@@ -692,7 +700,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.NoMADMenuLogIn.title = "SignIn".translate
             self.NoMADMenuLogIn.action = #selector(self.NoMADMenuClickLogIn)
             self.NoMADMenuLogIn.isHidden = false
-            self.NoMADMenuLogOut.isEnabled = false
+            if (self.NoMADMenuLogOut != nil) {
+                self.NoMADMenuLogOut.isEnabled = false
+            }
             if (self.NoMADMenuChangePassword != nil) {
                 self.NoMADMenuChangePassword.isEnabled = false
             }
@@ -712,7 +722,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
             self.NoMADMenuLogIn.title = defaults.string(forKey: Preferences.menuRenewTickets) ?? "NoMADMenuController-RenewTickets".translate
             self.NoMADMenuLogIn.action = #selector(self.renewTickets)
-            self.NoMADMenuLogOut.isEnabled = true
+            if (self.NoMADMenuLogOut != nil) {
+                self.NoMADMenuLogOut.isEnabled = true
+            }
             if (self.NoMADMenuChangePassword != nil) {
                 self.NoMADMenuChangePassword.isEnabled = true
             }
@@ -1281,7 +1293,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         if ( self.userInformation.userHome != "" && self.NoMADMenu.items.contains(self.NoMADMenuHome) == false ) {
                             self.NoMADMenuHome.title = defaults.string(forKey: Preferences.menuHomeDirectory) ?? "HomeSharepoint".translate
                             self.NoMADMenuHome.action = #selector(self.homeClicked)
-                            self.NoMADMenuHome.target = self.NoMADMenuLogOut.target
+                            self.NoMADMenuHome.target = self
                             self.NoMADMenuHome.isEnabled = true
                             // should key this off of the position of the Preferences menu
                             let prefIndex = self.NoMADMenu.index(of: self.NoMADMenuPreferences)
@@ -1289,7 +1301,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         } else if self.userInformation.userHome != "" && self.NoMADMenu.items.contains(self.NoMADMenuHome) {
                             self.NoMADMenuHome.title = defaults.string(forKey: Preferences.menuHomeDirectory) ?? "HomeSharepoint".translate
                             self.NoMADMenuHome.action = #selector(self.homeClicked)
-                            self.NoMADMenuHome.target = self.NoMADMenuLogOut.target
+                            self.NoMADMenuHome.target = self
                             self.NoMADMenuHome.isEnabled = true
                         } else if self.NoMADMenu.items.contains(self.NoMADMenuHome) {
                             self.NoMADMenu.removeItem(self.NoMADMenuHome)
