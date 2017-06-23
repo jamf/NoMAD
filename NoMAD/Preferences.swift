@@ -222,6 +222,7 @@ enum Preferences {
     static let lastPasswordExpireDate = "LastPasswordExpireDate"
     static let menuChangePassword = "MenuChangePassword"
     static let menuHomeDirectory = "MenuHomeDirectory"
+    static let menuGetCertificate = "MenuGetCertificate"
     static let menuGetHelp = "MenuGetHelp"
     static let menuGetSoftware = "MenuGetSoftware"
     static let menuPasswordExpires = "MenuPasswordExpires"

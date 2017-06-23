@@ -1360,6 +1360,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     let lockIndex = self.NoMADMenu.index(of: self.NoMADMenuLockScreen)
                     self.NoMADMenu.insertItem(self.NoMADMenuGetCertificate, at: (lockIndex + 1 ))
                     self.NoMADMenu.insertItem(self.NoMADMenuGetCertificateDate, at: (lockIndex + 2 ))
+                    self.NoMADMenuGetCertificate.title = defaults.string(forKey: Preferences.menuGetCertificate) ?? "Get Certificate"
                 }
                 
                 // login if we need to
