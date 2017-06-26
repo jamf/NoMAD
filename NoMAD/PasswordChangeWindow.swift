@@ -198,7 +198,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
     @IBAction func HelpButtonClicked(_ sender: Any) {
 
         let alertController = NSAlert()
-        alertController.messageText = defaults.string(forKey: Preferences.messagePasswordChangePolicy)!
+        alertController.messageText = defaults.string(forKey: Preferences.messagePasswordChangePolicy)!.replacingOccurrences(of: "***", with: "\n")
         alertController.beginSheetModal(for: self.window!, completionHandler: nil)
     }
 

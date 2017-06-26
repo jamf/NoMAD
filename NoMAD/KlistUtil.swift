@@ -116,7 +116,7 @@ class KlistUtil {
 
                         if let tick = ticket["Principal"] as? String {
                             print(ticket)
-                            let issue = dateFormatter.date(from: (ticket["Issued"] as? String)!)
+                            let issue = dateFormatter.date(from: (ticket["Issued"] as? String)!.replacingOccurrences(of: " ", with: "0"))
                             let expire = dateFormatter.date(from: (ticket["Expires"] as? String)!.replacingOccurrences(of: " ", with: "0"))
                             let myTicket = Ticket(Issued: issue!, Expires: expire!, Principal: tick )
                             myLogger.logit(.debug, message: "Appending ticket: " + String(describing: myTicket))
