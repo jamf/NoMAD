@@ -13,7 +13,6 @@
 		1A26AFF51D3BE620000776A4 /* WindowsCATools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A26AFF41D3BE620000776A4 /* WindowsCATools.swift */; };
 		1A26AFF71D46E4BF000776A4 /* GetHelp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A26AFF61D46E4BF000776A4 /* GetHelp.swift */; };
 		1A2728F91DD19B1400616778 /* PasswordChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2728F81DD19B1400616778 /* PasswordChange.swift */; };
-		1A2CFB651EF0EAA400F1D74C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A2CFB671EF0EAA400F1D74C /* Localizable.strings */; };
 		1A58C88C1DD9264D002C0769 /* CSRGen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A58C88B1DD9264D002C0769 /* CSRGen.swift */; };
 		1A88E8881EAF717600AC2E67 /* KeychainMinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A88E8871EAF717600AC2E67 /* KeychainMinder.swift */; };
 		1A88E88A1EAF718400AC2E67 /* KeychainMinder.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A88E8891EAF718400AC2E67 /* KeychainMinder.xib */; };
@@ -84,7 +83,6 @@
 		1A2CFB601EF0EAA200F1D74C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/MainMenu.strings; sourceTree = "<group>"; };
 		1A2CFB611EF0EAA300F1D74C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/PreferencesWindow.strings; sourceTree = "<group>"; };
 		1A2CFB621EF0EAA300F1D74C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/PasswordChangeWindow.strings; sourceTree = "<group>"; };
-		1A2CFB661EF0EAA400F1D74C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 		1A2CFB681EF0EAA400F1D74C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/LoginWindow.strings; sourceTree = "<group>"; };
 		1A58C88B1DD9264D002C0769 /* CSRGen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CSRGen.swift; sourceTree = "<group>"; };
 		1A88E8871EAF717600AC2E67 /* KeychainMinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainMinder.swift; sourceTree = "<group>"; };
@@ -294,7 +292,6 @@
 		1AFBDC6E1DEE4DC400C19AE1 /* CoreBits */ = {
 			isa = PBXGroup;
 			children = (
-				1A2CFB671EF0EAA400F1D74C /* Localizable.strings */,
 				841453781E3C01220085890B /* InfoPlist.strings */,
 				84CC67DE1D30A18A00115C76 /* AppDelegate.swift */,
 				84CC67E01D30A18A00115C76 /* Assets.xcassets */,
@@ -465,7 +462,6 @@
 			files = (
 				84CC67E11D30A18A00115C76 /* Assets.xcassets in Resources */,
 				1AFBDC671DE675C000C19AE1 /* DefaultPreferences.plist in Resources */,
-				1A2CFB651EF0EAA400F1D74C /* Localizable.strings in Resources */,
 				1AE1DFC11DA6B1E100456E3E /* Languages.plist in Resources */,
 				346CD2711DA205B500255F66 /* MainMenu.xib in Resources */,
 				84BB02891EA5718E00AE801D /* (null) in Resources */,
@@ -554,14 +550,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		1A2CFB671EF0EAA400F1D74C /* Localizable.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				1A2CFB661EF0EAA400F1D74C /* es */,
-			);
-			name = Localizable.strings;
-			sourceTree = "<group>";
-		};
 		1AE1DFC31DA6B1E100456E3E /* Languages.plist */ = {
 			isa = PBXVariantGroup;
 			children = (

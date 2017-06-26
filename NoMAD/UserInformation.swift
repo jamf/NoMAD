@@ -172,7 +172,7 @@ class UserInformation {
             
             // check if we are overriding the password expiration date
             
-            if defaults.integer(forKey: Preferences.passwordExpirationDays) != nil {
+            if ( defaults.object(forKey: Preferences.passwordExpirationDays) ?? nil ) != nil {
                 passwordSetDate = nil
             }
             
@@ -267,9 +267,8 @@ class UserInformation {
                 } else {
                     myLogger.logit(.base, message: "Unable to find user.")
                     canary = false
+                    
                 }
-
-
 
                 // groupOfNames would go here
 

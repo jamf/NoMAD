@@ -77,7 +77,7 @@ class WindowsCATools {
 
         genKeys()
         let myPubKeyData = getPublicKeyasData()
-        let myCSRGen = CertificateSigningRequest(commonName: "NoMAD", organizationName: "Trusource Labs", organizationUnitName: "WorldHQ", countryName: "US", cryptoAlgorithm: CryptoAlgorithm.sha1)
+        let myCSRGen = CertificateSigningRequest(commonName: "NoMAD", organizationName: "Orchard & Grove", organizationUnitName: "WorldHQ", countryName: "US", cryptoAlgorithm: CryptoAlgorithm.sha1)
         print(myPubKeyData)
 
         let myCSR = myCSRGen.build(myPubKeyData, privateKey: privKey!)
