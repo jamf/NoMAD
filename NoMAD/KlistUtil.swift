@@ -120,7 +120,7 @@ class KlistUtil {
                             let expire = dateFormatter.date(from: (ticket["Expires"] as? String)!.replacingOccurrences(of: " ", with: "0"))
                             let myTicket = Ticket(Issued: issue!, Expires: expire!, Principal: tick )
                             myLogger.logit(.debug, message: "Appending ticket: " + String(describing: myTicket))
-                            allTickets.append(myTicket)
+                            allTickets.append(myTicket) 
                             state = true
                         }
                     }
