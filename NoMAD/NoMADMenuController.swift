@@ -104,6 +104,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     var selfService: SelfServiceType?
 
     let statusItem = NSStatusBar.system().statusItem(withLength: NSVariableStatusItemLength)
+    
+    let PKINITMenuItem = NSMenuItem()
+    
+    let myKeychainutil = KeychainUtil()
 
     var signInOffered = false
 
@@ -111,6 +115,20 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     override func awakeFromNib() {
 
         myLogger.logit(.base, message:"---Starting NoMAD---")
+        
+        // check for locked keychains
+        
+        if myKeychainutil.checkLockedKeychain() && defaults.bool(forKey: Preferences.lockedKeychainCheck) {
+            // notify on the keychain
+            myLogger.logit(.base, message: "Keychain is locked, showing notification.")
+            keychainMinder.window?.forceToFrontAndFocus(nil)
+        }
+        
+        while myKeychainutil.checkLockedKeychain() && defaults.bool(forKey: Preferences.lockedKeychainCheck) {
+            // pause until Keychain is fixed
+            myLogger.logit(.base, message: "Waiting for keychain to unlock.")
+            RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
+        }
 
         // AppleEvents
 
@@ -206,11 +224,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             // we have PKINITer so build the menu
             // TODO: translate these items
 
-            let PKINITMenuItem = NSMenuItem()
             PKINITMenuItem.title = "NoMADMenuController-SmartcardSignIn".translate
             PKINITMenuItem.toolTip = "NoMADMenuController-SignInWithSmartcard".translate
             PKINITMenuItem.action = #selector(smartcardSignIn)
-            PKINITMenuItem.target = self.NoMADMenuLogOut.target
+            PKINITMenuItem.target = self
             PKINITMenuItem.isEnabled = true
 
             // add the menu
@@ -223,13 +240,25 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         NoMADMenuPasswordExpires.title = defaults.string(forKey: Preferences.menuPasswordExpires) ?? ""
 
+        // hide Sign out if asked
+
+        if defaults.bool(forKey: Preferences.hideSignOut) {
+            NoMADMenuLogOut.isHidden = true
+        }
+
         // find out if a Self Service Solution exists - hide the menu item if it's not there
         myLogger.logit(.notice, message:"Looking for Self Service applications")
+        
+        if !defaults.bool(forKey: Preferences.hideGetSoftware) {
         if let discoveredService = SelfServiceManager().discoverSelfService() {
             selfService = discoveredService
             if let menuTitle = defaults.string(forKey: Preferences.menuGetSoftware) {
                 NoMADMenuGetSoftware.title = menuTitle
             }
+        } else {
+            NoMADMenuGetSoftware.isHidden = true
+            myLogger.logit(.info, message:"Not using Self Service.")
+        }
         } else {
             NoMADMenuGetSoftware.isHidden = true
             myLogger.logit(.info, message:"Not using Self Service.")
@@ -274,7 +303,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         // set up menu titles w/translation
         NoMADMenuLockScreen.title = "Lock Screen".translate
-        NoMADMenuChangePassword.title = "NoMADMenuController-ChangePassword".translate
+        NoMADMenuChangePassword.title = defaults.string(forKey: Preferences.menuChangePassword) ?? "NoMADMenuController-ChangePassword".translate
 
         if defaults.bool(forKey: Preferences.hideLockScreen) {
             NoMADMenuLockScreen.isHidden = true
@@ -514,7 +543,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 lastExpire = lastExpireTemp as? Date
             }
 
-
             if (lastExpire?.timeIntervalSinceNow)! > 2592000 {
                 if alerts {
                     let alertController = NSAlert()
@@ -644,12 +672,18 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.NoMADMenuLogIn.isHidden = false
             self.NoMADMenuLogIn.isEnabled = false
             self.NoMADMenuLogIn.title = "SignIn".translate
-            self.NoMADMenuLogOut.isEnabled = false
+            if (self.NoMADMenuLogOut != nil) {
+                self.NoMADMenuLogOut.isEnabled = false
+            }
             if (self.NoMADMenuChangePassword != nil) {
                 self.NoMADMenuChangePassword.isEnabled = false
             }
             if (self.NoMADMenuGetCertificate != nil)  {
                 self.NoMADMenuGetCertificate.isEnabled = false
+            }
+            
+            if (self.PKINITMenuItem != nil ) {
+                self.PKINITMenuItem.isEnabled = false
             }
 
             // twiddles what needs to be twiddled for connected but not logged in
@@ -660,12 +694,17 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.NoMADMenuLogIn.title = "SignIn".translate
             self.NoMADMenuLogIn.action = #selector(self.NoMADMenuClickLogIn)
             self.NoMADMenuLogIn.isHidden = false
-            self.NoMADMenuLogOut.isEnabled = false
+            if (self.NoMADMenuLogOut != nil) {
+                self.NoMADMenuLogOut.isEnabled = false
+            }
             if (self.NoMADMenuChangePassword != nil) {
                 self.NoMADMenuChangePassword.isEnabled = false
             }
             if (self.NoMADMenuGetCertificate != nil)  {
                 self.NoMADMenuGetCertificate.isEnabled = false
+            }
+            if (self.PKINITMenuItem != nil ) {
+                self.PKINITMenuItem.isEnabled = true
             }
         }
         else {
@@ -677,12 +716,17 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
             self.NoMADMenuLogIn.title = defaults.string(forKey: Preferences.menuRenewTickets) ?? "NoMADMenuController-RenewTickets".translate
             self.NoMADMenuLogIn.action = #selector(self.renewTickets)
-            self.NoMADMenuLogOut.isEnabled = true
+            if (self.NoMADMenuLogOut != nil) {
+                self.NoMADMenuLogOut.isEnabled = true
+            }
             if (self.NoMADMenuChangePassword != nil) {
                 self.NoMADMenuChangePassword.isEnabled = true
             }
             if (self.NoMADMenuGetCertificate != nil)  {
                 self.NoMADMenuGetCertificate.isEnabled = true
+            }
+            if (self.PKINITMenuItem != nil ) {
+                self.PKINITMenuItem.isEnabled = true
             }
         }
 
@@ -699,13 +743,15 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     }
 
     // display a user notifcation
-    func showNotification(_ title: String, text: String, date: Date) -> Void {
+    func showNotification(_ title: String, text: String, date: Date, action: String) -> Void {
         let notification = NSUserNotification()
         notification.title = title
         notification.informativeText = text
         //notification.deliveryDate = date
-        notification.hasActionButton = true
-        notification.actionButtonTitle = "NoMADMenuController-ChangePassword".translate
+        if action != "" {
+            notification.hasActionButton = true
+            notification.actionButtonTitle = action.translate
+        }
         notification.soundName = NSUserNotificationDefaultSoundName
         NSUserNotificationCenter.default.deliver(notification)
     }
@@ -731,6 +777,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             // kill the tickets and show the loginwindow
             cliTask("/usr/bin/kdestroy -p " + defaults.string(forKey: Preferences.userPrincipal)!)
             loginWindow.window!.forceToFrontAndFocus(nil)
+            
         } else if notification.actionButtonTitle == "Ignore" {
             return
         }
@@ -785,8 +832,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         // only autologin if 1) we're set to use the keychain, 2) we have don't already have a Kerb ticket and 3) we can contact the LDAP servers
 
         if defaults.bool(forKey: Preferences.useKeychain) && (defaults.string(forKey: Preferences.lastUser) != "" ) && !userInformation.myLDAPServers.tickets.state && userInformation.myLDAPServers.currentState {
-
-            let myKeychainutil = KeychainUtil()
 
             myLogger.logit(.info, message: "Attempting to auto-login")
 
@@ -1003,7 +1048,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         // create new instance of defaults for com.google.Chrome
 
         let chromeDefaults = UserDefaults.init(suiteName: "com.google.Chrome")
-        let chromeDomain = "*" + defaults.string(forKey: Preferences.aDDomain)!
+        var chromeDomain = defaults.string(forKey: Preferences.configureChromeDomain) ?? defaults.string(forKey: Preferences.aDDomain)!
+
+        // add the wildcard
+
+        chromeDomain = "*" + chromeDomain
+
         var change = false
 
         // find the keys and add the domain
@@ -1146,6 +1196,31 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                             self.NoMADMenuTicketLife.title = dateFormatter.string(from: self.userInformation.myLDAPServers.tickets.expire as Date) + " " + self.userInformation.myLDAPServers.currentServer + " NoMAD Version: " + String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!) + " " +  String(describing: Bundle.main.infoDictionary!["CFBundleVersion"]!)
 
                             let daysToGo = Int(abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow)/86400)
+
+                            if defaults.string(forKey: Preferences.passwordExpireCustomAlert) != nil {
+
+                                let len = defaults.string(forKey: Preferences.passwordExpireCustomAlert)?.characters.count
+
+                                if Int(daysToGo) < defaults.integer(forKey: Preferences.passwordExpireCustomAlertTime) {
+                                    let myMutableString = NSMutableAttributedString(string: defaults.string(forKey: Preferences.passwordExpireCustomAlert)!)
+                                    myMutableString.addAttribute(NSForegroundColorAttributeName, value: NSColor.red, range: NSRange(location: 0, length: len!))
+
+                                    self.statusItem.attributedTitle = myMutableString
+                                    self.statusItem.attributedTitle = myMutableString
+
+                                } else if Int(daysToGo) < defaults.integer(forKey: Preferences.passwordExpireCustomWarnTime) {
+                                    let myMutableString = NSMutableAttributedString(string: defaults.string(forKey: Preferences.passwordExpireCustomAlert)!)
+                                    myMutableString.addAttribute(NSForegroundColorAttributeName, value: NSColor.yellow, range: NSRange(location: 0, length: len!))
+
+                                    self.statusItem.attributedTitle = myMutableString
+                                    self.statusItem.attributedTitle = myMutableString
+
+
+                                }
+                                    self.NoMADMenuPasswordExpires.title = String(format: "NoMADMenuController-PasswordExpiresInDays".translate, String(daysToGo))
+
+                            } else {
+
                             // we do this twice b/c doing it only once seems to make it less than full width
                             if Int(daysToGo) > 4 {
                                 self.statusItem.title = (String(daysToGo) + "d".translate )
@@ -1158,6 +1233,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                                 self.statusItem.attributedTitle = myMutableString
                                 self.statusItem.attributedTitle = myMutableString
                                 self.NoMADMenuPasswordExpires.title = String(format: "NoMADMenuController-PasswordExpiresInDays".translate, String(daysToGo))
+                            }
                             }
                         } else {
 
@@ -1226,7 +1302,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         if ( self.userInformation.userHome != "" && self.NoMADMenu.items.contains(self.NoMADMenuHome) == false ) {
                             self.NoMADMenuHome.title = defaults.string(forKey: Preferences.menuHomeDirectory) ?? "HomeSharepoint".translate
                             self.NoMADMenuHome.action = #selector(self.homeClicked)
-                            self.NoMADMenuHome.target = self.NoMADMenuLogOut.target
+                            self.NoMADMenuHome.target = self
                             self.NoMADMenuHome.isEnabled = true
                             // should key this off of the position of the Preferences menu
                             let prefIndex = self.NoMADMenu.index(of: self.NoMADMenuPreferences)
@@ -1234,7 +1310,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         } else if self.userInformation.userHome != "" && self.NoMADMenu.items.contains(self.NoMADMenuHome) {
                             self.NoMADMenuHome.title = defaults.string(forKey: Preferences.menuHomeDirectory) ?? "HomeSharepoint".translate
                             self.NoMADMenuHome.action = #selector(self.homeClicked)
-                            self.NoMADMenuHome.target = self.NoMADMenuLogOut.target
+                            self.NoMADMenuHome.target = self
                             self.NoMADMenuHome.isEnabled = true
                         } else if self.NoMADMenu.items.contains(self.NoMADMenuHome) {
                             self.NoMADMenu.removeItem(self.NoMADMenuHome)
@@ -1314,15 +1390,15 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     if ( abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) < Double(defaults.integer(forKey: Preferences.lastPasswordWarning)) ) {
                         if ( abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) > Double(345600) ) {
                             // expire is between default and four days so notify once a day
-                            self.showNotification("PasswordAboutToExpire".translate, text: "PasswordExpiresOn".translate + dateFormatter.string(from: self.userInformation.userPasswordExpireDate as Date), date: Date())
+                            self.showNotification("PasswordAboutToExpire".translate, text: "PasswordExpiresOn".translate + dateFormatter.string(from: self.userInformation.userPasswordExpireDate as Date), date: Date(), action: "NoMADMenuController-ChangePassword")
                             defaults.set((abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) - 86400 ), forKey: Preferences.lastPasswordWarning)
                         } else if ( abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) > Double(86400) ) {
                             // expire is between 4 days and 1 day so notifiy every 12 hours
-                            self.showNotification("PasswordAboutToExpire".translate, text: "PasswordExpiresOn".translate + dateFormatter.string(from: self.userInformation.userPasswordExpireDate as Date), date: Date())
+                            self.showNotification("PasswordAboutToExpire".translate, text: "PasswordExpiresOn".translate + dateFormatter.string(from: self.userInformation.userPasswordExpireDate as Date), date: Date(), action: "NoMADMenuController-ChangePassword")
                             defaults.set( (abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) - 23200 ), forKey: Preferences.lastPasswordWarning)
                         } else {
                             // expire is less than 1 day so notifiy every hour
-                            self.showNotification("PasswordAboutToExpire".translate, text: "PasswordExpiresOn".translate + dateFormatter.string(from: self.userInformation.userPasswordExpireDate as Date), date: Date())
+                            self.showNotification("PasswordAboutToExpire".translate, text: "PasswordExpiresOn".translate + dateFormatter.string(from: self.userInformation.userPasswordExpireDate as Date), date: Date(), action: "NoMADMenuController-ChangePassword")
                             defaults.set((abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow) - 3600 ), forKey: Preferences.lastPasswordWarning)
                         }
                     }
@@ -1343,6 +1419,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     let lockIndex = self.NoMADMenu.index(of: self.NoMADMenuLockScreen)
                     self.NoMADMenu.insertItem(self.NoMADMenuGetCertificate, at: (lockIndex + 1 ))
                     self.NoMADMenu.insertItem(self.NoMADMenuGetCertificateDate, at: (lockIndex + 2 ))
+                    self.NoMADMenuGetCertificate.title = defaults.string(forKey: Preferences.menuGetCertificate) ?? "Get Certificate"
                 }
                 
                 // login if we need to
@@ -1362,6 +1439,14 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
                 self.updateRunning = false
             })
+            
+            // check for locked keychains
+            
+            if myKeychainutil.checkLockedKeychain() && defaults.bool(forKey: Preferences.lockedKeychainCheck) {
+                // notify on the keychain
+                myLogger.logit(.base, message: "Keychain is locked, showing notification.")
+                keychainMinder.window?.forceToFrontAndFocus(nil)
+            }
 
             // mark the time and clear the update scheduled flag
             

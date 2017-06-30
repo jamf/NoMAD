@@ -58,28 +58,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NoMAD/NoMADMenuController.swift"
-            timestampString = "510020309.01881"
+            timestampString = "517192674.028293"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "441"
-            endingLineNumber = "441"
-            landmarkName = "NoMADMenuClickGetCertificate(_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "NoMAD/LoginWindow.swift"
-            timestampString = "499803535.822901"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "270"
-            endingLineNumber = "270"
-            landmarkName = "LogInClick(_:)"
+            startingLineNumber = "464"
+            endingLineNumber = "464"
+            landmarkName = "lockScreenImmediate()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

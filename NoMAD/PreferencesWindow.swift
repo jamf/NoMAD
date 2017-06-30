@@ -118,7 +118,12 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
         // create new instance of defaults for com.google.Chrome
 
         let chromeDefaults = UserDefaults.init(suiteName: "com.google.Chrome")
-        let chromeDomain = "*" + defaults.string(forKey: Preferences.aDDomain)!
+        var chromeDomain = defaults.string(forKey: Preferences.configureChromeDomain) ?? defaults.string(forKey: Preferences.aDDomain)!
+
+        // add the wildcard
+
+        chromeDomain = "*" + chromeDomain
+
         var change = false
 
         // find the keys and add the domain

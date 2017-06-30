@@ -29,6 +29,17 @@ class SelfServiceManager {
     /// - Returns: A value from `SelfServiceType` enum or nil.
     func discoverSelfService() -> SelfServiceType? {
 
+        // first check if a preference has been set:
+
+        if defaults.string(forKey: Preferences.selfServicePath) != "" {
+            myLogger.logit(.info, message:"Using custom self-service path")
+            return .custom
+        } else if defaults.string(forKey: Preferences.selfServicePath) == "None" {
+            return nil
+        }
+
+        // now look for any others
+        
         let selfServiceFileManager = FileManager.default
 
         if selfServiceFileManager.fileExists(atPath: "/Applications/Self Service.app") {
@@ -42,10 +53,6 @@ class SelfServiceManager {
         if selfServiceFileManager.fileExists(atPath: "/Applications/Managed Software Center.app") {
             myLogger.logit(.info, message:"Using Munki for Self Service")
             return .munki
-        }
-        if defaults.string(forKey: Preferences.selfServicePath) != "" {
-            myLogger.logit(.info, message:"Using custom self-service path")
-            return .custom
         }
         return nil
        }

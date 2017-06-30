@@ -86,6 +86,12 @@ class NoMADUser {
                 myLogger.logit(LogLevel.debug, message: "Current Console User is an AD user.")
                 return originalNodeName.contains("/Active Directory")
             }
+        } else if let authAuthority = try? String(describing: currentConsoleUserRecord.values(forAttribute: kODAttributeTypeAuthenticationAuthority)) {
+            if authAuthority.contains("NetLogon") {
+                // network only AD account
+                myLogger.logit(.debug, message: "Network only AD account, so treating like an AD account.")
+                return true
+            }
         } else {
             myLogger.logit(LogLevel.debug, message: "Current Console User is not an AD user.")
         }
@@ -322,6 +328,13 @@ class NoMADUser {
         }
 
         do {
+            try preflightCurrentConsoleUserPassword(newPassword1)
+        } catch let unknownError as NSError {
+            myLogger.logit(LogLevel.base, message: "New password does not meet local complexity requirements. Error: " + unknownError.description)
+            return unknownError.localizedDescription
+        }
+
+        do {
             try currentConsoleUserRecord.changePassword(oldPassword, toPassword: newPassword1)
             return ""
         } catch let unknownError as NSError {
@@ -378,6 +391,18 @@ class NoMADUser {
         return status
     }
 
+    // resets local keychain
+
+    func resetLocalKeychain(_  newPassword: String) throws {
+        let kerbUtil = KerbUtil()
+
+        let myError = kerbUtil.resetKeychain(newPassword)
+
+        if myError != noErr {
+            throw NoMADUserError.invalidResult("Unable to reset local keychain.")
+        }
+    }
+
 
 
     // MARK: Class Functions
@@ -387,14 +412,13 @@ class NoMADUser {
         let session = ODSession.default()
         var records = [ODRecord]()
         do {
-            //let node = try ODNode.init(session: session, type: UInt32(kODNodeTypeAuthentication))
-            let node = try ODNode.init(session: session, type: UInt32(kODNodeTypeLocalNodes))
+            let node = try ODNode.init(session: session, type: UInt32(kODNodeTypeAuthentication))
+            //let node = try ODNode.init(session: session, type: UInt32(kODNodeTypeLocalNodes))
             let query = try ODQuery.init(node: node, forRecordTypes: kODRecordTypeUsers, attribute: kODAttributeTypeRecordName, matchType: UInt32(kODMatchEqualTo), queryValues: currentConsoleUserName, returnAttributes: kODAttributeTypeNativeOnly, maximumResults: 0)
             records = try query.resultsAllowingPartial(false) as! [ODRecord]
         } catch {
             myLogger.logit(LogLevel.base, message: "Unable to get local user account ODRecords")
         }
-
 
         // We may have gotten multiple ODRecords that match username,
         // So make sure it also matches the UID.

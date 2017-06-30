@@ -74,6 +74,8 @@ enum Preferences {
 
     // loginItem - r/w - bool - if set to true will create a new Launch Agent for NoMAD. This will set itself back to false after being used
 
+    // lDAPSchema - r/w - String - determines what LDAP attributes to use if not using AD
+
     // lDAPServerList - r/w - string - specifies a specfic or set of specific LDAP servers to be used instead of having NoMAD do the normal DNS and site lookups for the best AD Domain Controller
 
     // localPasswordSync - r/w - bool - determines if NoMAD will keep the network password in sync with the local user account password on the Mac
@@ -85,8 +87,16 @@ enum Preferences {
     // lastPasswordWarning - r/o - date - the date of the last time the user was warned that their password is about to expire. Used to keep track of how often to warn the user about their impending expiration.
 
     // lastPasswordExpireDate - r/o - date - an array of users and the date their password will expire. Used to keep track of passwords being changed outside of NoMAD.
+    
+    // LocalPasswordSyncDontSyncLocalUsers - r/w - array - and array of AD user names that shouldn't have their password synced locally.
+    
+    // LocalPasswordSyncDontSyncNetworkUsers - r/w - array - and array of AD user names that shouldn't have their password synced locally.
+
+    // LockedKeychainCheck - r/w - bool - check if the deafult keychain is locked
 
     // lDAPoverSSL - r/w - bool - flag to use LDAPS instead of LDAP
+
+    // menuChangePassword - r/w - string - title of the Change Password menu
 
     // menuHomeDirectory - r/w - string - title of the Home Directory menu
 
@@ -107,6 +117,12 @@ enum Preferences {
     // messagePasswordChangePolicy - r/w - string - message to show the help button in the password change window
 
     // passwordExpireAlertTime - r/w - date - when to start complaining about a password that is about to expire. Defaults to 1296000 secs or 15 days.
+
+    // passwordExpireCustomAlert - r/w - string - Custom alert to show in the menu bar instead of days to go.
+
+    // passwordExpireCustomWarnTime - r/w - Int - Threshold days to show custom password expiration warning in yellow.
+
+    // passwordExpireCustomAlertTime - r/w - Int - Threshold days to show custom password expiration warning in red.
 
     // passwordChangeOptions - r/w - string - similar to getHelp, this sets options for the passwordChangeType to use
     // passwordChangeType - r/w - string - the method to use when the Change Password menu item is selected
@@ -140,6 +156,8 @@ enum Preferences {
     // titleSignIn - r/w - string - Title of the Sign In window
 
     // uPCAlert - r/w - bool - determines if we alert the user that the password was changed outside of NoMAD
+    
+    // uPCAlertAction - r/w - string - the shell script, or other binary, to be triggered on uPCAlert
 
     // userPrincipal - r/o - string - the Kerberos principal for the currently signed in user
 
@@ -170,6 +188,7 @@ enum Preferences {
     static let changePasswordOptions = "ChangePasswordOptions"
     static let caribouTime = "CaribouTime"
     static let configureChrome = "ConfigureChrome"
+    static let configureChromeDomain = "ConfigureChromeDomain"
     static let displayName = "DisplayName"
     static let dontMatchKerbPrefs = "DontMatchKerbPrefs"
     static let exportableKey = "ExportableKey"
@@ -180,10 +199,12 @@ enum Preferences {
     static let hideExpiration = "HideExpiration"
     static let hideExpirationMessage = "HideExpirationMessage"
     static let hideHelp = "HideHelp"
+    static let hideGetSoftware = "HideGetSoftware"
     static let hideLockScreen = "HideLockScreen"
     static let hideRenew = "HideRenew"
     static let hidePrefs = "HidePrefs"
     static let hideQuit = "HideQuit"
+    static let hideSignOut = "HideSignOut"
     static let iconOff = "IconOff"
     static let iconOffDark = "IconOffDark"
     static let iconOn = "IconOn"
@@ -197,12 +218,18 @@ enum Preferences {
     static let lDAPAnonymous = "LDAPAnonymous"
     static let lDAPServerList = "LDAPServerList"
     static let lDAPoverSSL = "LDAPOverSSL"
+    static let lDAPOnly = "LDAPOnly"
     static let localPasswordSync = "LocalPasswordSync"
+    static let localPasswordSyncDontSyncLocalUsers = "LocalPasswordSyncDontSyncLocalUsers"
+    static let localPasswordSyncDontSyncNetworkUsers = "LocalPasswordSyncDontSyncNetworkUsers"
     static let localPasswordSyncOnMatchOnly = "LocalPasswordSyncOnMatchOnly"
+    static let lockedKeychainCheck = "LockedKeychainCheck"
     static let lastUser = "LastUser"
     static let lastPasswordWarning = "LastPasswordWarning"
     static let lastPasswordExpireDate = "LastPasswordExpireDate"
+    static let menuChangePassword = "MenuChangePassword"
     static let menuHomeDirectory = "MenuHomeDirectory"
+    static let menuGetCertificate = "MenuGetCertificate"
     static let menuGetHelp = "MenuGetHelp"
     static let menuGetSoftware = "MenuGetSoftware"
     static let menuPasswordExpires = "MenuPasswordExpires"
@@ -211,7 +238,11 @@ enum Preferences {
     static let messageLocalSync = "MessageLocalSync"
     static let messageNotConnected = "MessageNotConnected"
     static let messagePasswordChangePolicy = "MessagePasswordChangePolicy"
+    static let passwordExpirationDays = "PasswordExpirationDays"
     static let passwordExpireAlertTime = "PasswordExpireAlertTime"
+    static let passwordExpireCustomAlert = "PasswordExpireCustomAlert"
+    static let passwordExpireCustomWarnTime = "PasswordExpireCustomWarnTime"
+    static let passwordExpireCustomAlertTime = "PasswordExpireCustomAlertTime"
     static let passwordPolicy = "PasswordPolicy"
     static let persistExpiration = "PersistExpiration"
 
@@ -225,12 +256,14 @@ enum Preferences {
     static let signInCommand = "SignInCommand"
     static let signInWindowOnLaunch = "SignInWindowOnLaunch"
     static let signedIn = "SignedIn"
+    static let signOutCommand = "SignOutCommand"
     static let siteIgnore = "SiteIgnore"
     static let siteForce = "SiteForce"
     static let stateChangeAction = "StateChangeAction"
     static let template = "Template"
     static let titleSignIn = "TitleSignIn"
     static let uPCAlert = "UPCAlert"
+    static let uPCAlertAction = "UPCAlertAction"
     static let userPrincipal = "UserPrincipal"
     static let userHome = "UserHome"
     static let userPasswordExpireDate = "UserPasswordExpireDate"
