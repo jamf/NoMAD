@@ -429,7 +429,14 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             //loginWindow.window!.forceToFrontAndFocus(nil)
         }
 
-        cliTask("/usr/bin/kdestroy -p " + defaults.string(forKey: Preferences.userPrincipal)!)
+        cliTask("/usr/bin/kdestroy")
+
+        // fire off the SignOutCommand script if there is one
+
+        if defaults.string(forKey: Preferences.signOutCommand) != "" {
+            let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)
+            myLogger.logit(LogLevel.base, message: myResult)
+        }
         userInformation.connected = false
         lastStatusCheck = Date().addingTimeInterval(-5000)
         updateUserInfo()
@@ -775,7 +782,15 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         } else if notification.actionButtonTitle == "SignIn".translate {
             myLogger.logit(.base, message: "Initiating unannounced password change recovery.")
             // kill the tickets and show the loginwindow
-            cliTask("/usr/bin/kdestroy -p " + defaults.string(forKey: Preferences.userPrincipal)!)
+            cliTask("/usr/bin/kdestroy")
+
+            // fire off the SignOutCommand script if there is one
+
+           if let command = defaults.string(forKey: Preferences.signOutCommand) {
+                let myResult = cliTask(command)
+                myLogger.logit(LogLevel.base, message: myResult)
+            }
+            
             loginWindow.window!.forceToFrontAndFocus(nil)
             
         } else if notification.actionButtonTitle == "Ignore" {

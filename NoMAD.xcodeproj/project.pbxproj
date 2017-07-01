@@ -21,7 +21,10 @@
 		1AA2B64A1E4FBDD60088DF03 /* PKINITER.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AA2B6491E4FBDD60088DF03 /* PKINITER.swift */; };
 		1ADCEC621D75476D005D33F5 /* ShareMounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ADCEC611D75476D005D33F5 /* ShareMounter.swift */; };
 		1AE1DFC11DA6B1E100456E3E /* Languages.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1AE1DFC31DA6B1E100456E3E /* Languages.plist */; };
-		1AE7E9EE1E9E6ED600809DDC /* Printers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AE7E9ED1E9E6ED600809DDC /* Printers.swift */; };
+		1AF30E6C1EB7DF3200542ABB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1AF30E6B1EB7DF3200542ABB /* InfoPlist.strings */; };
+		1AF30E6E1EB7DF6600542ABB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1AF30E6D1EB7DF6600542ABB /* InfoPlist.strings */; };
+		1AF30E701EB7DF8600542ABB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1AF30E6F1EB7DF8600542ABB /* InfoPlist.strings */; };
+		1AF30E721EB7DFBD00542ABB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1AF30E711EB7DFBD00542ABB /* InfoPlist.strings */; };
 		1AFBDC651DE675B000C19AE1 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AFBDC641DE675B000C19AE1 /* Preferences.swift */; };
 		1AFBDC671DE675C000C19AE1 /* DefaultPreferences.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1AFBDC661DE675C000C19AE1 /* DefaultPreferences.plist */; };
 		1AFBDC701DEE4F4800C19AE1 /* SelfServiceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AFBDC6F1DEE4F4800C19AE1 /* SelfServiceManager.swift */; };
@@ -81,6 +84,10 @@
 		1A26AFF61D46E4BF000776A4 /* GetHelp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetHelp.swift; sourceTree = "<group>"; };
 		1A2728F81DD19B1400616778 /* PasswordChange.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordChange.swift; sourceTree = "<group>"; };
 		1A309D421E8E0FC600CEDC45 /* com.trusourcelabs.NoMAD.shares.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = com.trusourcelabs.NoMAD.shares.plist; sourceTree = "<group>"; };
+		1A2CFB601EF0EAA200F1D74C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		1A2CFB611EF0EAA300F1D74C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/PreferencesWindow.strings; sourceTree = "<group>"; };
+		1A2CFB621EF0EAA300F1D74C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/PasswordChangeWindow.strings; sourceTree = "<group>"; };
+		1A2CFB681EF0EAA400F1D74C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/LoginWindow.strings; sourceTree = "<group>"; };
 		1A58C88B1DD9264D002C0769 /* CSRGen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CSRGen.swift; sourceTree = "<group>"; };
 		1A88E8871EAF717600AC2E67 /* KeychainMinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainMinder.swift; sourceTree = "<group>"; };
 		1A88E8891EAF718400AC2E67 /* KeychainMinder.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = KeychainMinder.xib; sourceTree = "<group>"; };
@@ -112,6 +119,14 @@
 		1AE1DFC21DA6B1E100456E3E /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Base; path = Base.lproj/Languages.plist; sourceTree = "<group>"; };
 		1AE1DFC51DA6B52300456E3E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = en; path = en.lproj/Languages.plist; sourceTree = "<group>"; };
 		1AE7E9ED1E9E6ED600809DDC /* Printers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Printers.swift; sourceTree = "<group>"; };
+		1AF30E5F1EB7DEF800542ABB /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/PasswordChangeWindow.strings; sourceTree = "<group>"; };
+		1AF30E611EB7DEFC00542ABB /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		1AF30E631EB7DF0100542ABB /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/LoginWindow.strings; sourceTree = "<group>"; };
+		1AF30E651EB7DF0700542ABB /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/PreferencesWindow.strings; sourceTree = "<group>"; };
+		1AF30E6B1EB7DF3200542ABB /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
+		1AF30E6D1EB7DF6600542ABB /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
+		1AF30E6F1EB7DF8600542ABB /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
+		1AF30E711EB7DFBD00542ABB /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
 		1AFBDC641DE675B000C19AE1 /* Preferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
 		1AFBDC661DE675C000C19AE1 /* DefaultPreferences.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DefaultPreferences.plist; sourceTree = "<group>"; };
 		1AFBDC6F1DEE4F4800C19AE1 /* SelfServiceManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelfServiceManager.swift; sourceTree = "<group>"; };
@@ -468,6 +483,8 @@
 				346CD2711DA205B500255F66 /* MainMenu.xib in Resources */,
 				1A309D431E8E0FC600CEDC45 /* com.trusourcelabs.NoMAD.shares.plist in Resources */,
 				1AA2B63B1E4DEE430088DF03 /* Localizable.strings in Resources */,
+				84BB02891EA5718E00AE801D /* (null) in Resources */,
+				1A88E88A1EAF718400AC2E67 /* KeychainMinder.xib in Resources */,
 				841453881E3C2D940085890B /* PreferencesWindow.xib in Resources */,
 				8414538D1E3C2DA10085890B /* LoginWindow.xib in Resources */,
 				841453761E3C01220085890B /* InfoPlist.strings in Resources */,
@@ -522,6 +539,7 @@
 				1AA2B64A1E4FBDD60088DF03 /* PKINITER.swift in Sources */,
 				1A58C88C1DD9264D002C0769 /* CSRGen.swift in Sources */,
 				1AE7E9EE1E9E6ED600809DDC /* Printers.swift in Sources */,
+				1A88E8881EAF717600AC2E67 /* KeychainMinder.swift in Sources */,
 				1A24EF481D7F01B3006A1866 /* Logger.swift in Sources */,
 				1A08F1F31D36DA0900FA68C4 /* NoMADApplication.swift in Sources */,
 				84EB75FE1ECE07BD00716B48 /* PasswordPolicy.swift in Sources */,

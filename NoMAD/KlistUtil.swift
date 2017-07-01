@@ -77,17 +77,13 @@ class KlistUtil {
             if returnAllTickets().contains("@" + defaults.string(forKey: "KerberosRealm")!) {
                 myLogger.logit(.base, message:"Ticket found for domain: " + defaults.string(forKey: "KerberosRealm")!)
                 state = true
-                defaults.set(state, forKey: Preferences.signedIn)
-
             } else {
                 myLogger.logit(.base, message:"No ticket found for domain: " + defaults.string(forKey: "KerberosRealm")!)
                 state = false
-                defaults.set(state, forKey: Preferences.signedIn)
             }
         } else {
             myLogger.logit(.base, message:"No tickets found.")
             state = false
-            defaults.set(state, forKey: Preferences.signedIn)
         }
     }
 
@@ -128,30 +124,30 @@ class KlistUtil {
 
                     if (jsonDict?["principal"] as! String).contains("@" + defaults.string(forKey: "KerberosRealm")!) {
 
-                    // ye haw lets downcast and iterate!
+                        // ye haw lets downcast and iterate!
 
-                    cache = jsonDict?["cache"] as! String
-                    principal = jsonDict?["principal"] as! String
-                    short = principal.replacingOccurrences(of: "@" + defaults.string(forKey: "KerberosRealm")!, with: "").trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
-                    state = false
+                        cache = jsonDict?["cache"] as! String
+                        principal = jsonDict?["principal"] as! String
+                        short = principal.replacingOccurrences(of: "@" + defaults.string(forKey: "KerberosRealm")!, with: "").trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+                        state = false
 
-                    if let tickets = jsonDict?["tickets"] as? [[String: AnyObject]] {
-                        for ticket in tickets {
-                            myLogger.logit(.debug, message: "Looking at ticket: " + String(describing: ticket))
+                        if let tickets = jsonDict?["tickets"] as? [[String: AnyObject]] {
+                            for ticket in tickets {
+                                myLogger.logit(.debug, message: "Looking at ticket: " + String(describing: ticket))
 
-                            if let tick = ticket["Principal"] as? String {
-                                print(ticket)
-                                let issue = dateFormatter.date(from: (ticket["Issued"] as? String)!)
-                                let expire = dateFormatter.date(from: (ticket["Expires"] as? String)!)
-                                let myTicket = Ticket(Issued: issue!, Expires: expire!, Principal: tick )
-                                myLogger.logit(.debug, message: "Appending ticket: " + String(describing: myTicket))
-                                allTickets.append(myTicket)
-                                state = true
+                                if let tick = ticket["Principal"] as? String {
+                                    print(ticket)
+                                    let issue = dateFormatter.date(from: (ticket["Issued"] as? String)!)
+                                    let expire = dateFormatter.date(from: (ticket["Expires"] as? String)!)
+                                    let myTicket = Ticket(Issued: issue!, Expires: expire!, Principal: tick )
+                                    myLogger.logit(.debug, message: "Appending ticket: " + String(describing: myTicket))
+                                    allTickets.append(myTicket)
+                                    state = true
+                                }
                             }
                         }
                     }
                 }
-            }
             }
             getExpiration()
 

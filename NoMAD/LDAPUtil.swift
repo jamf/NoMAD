@@ -254,7 +254,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         let command = "/usr/bin/ldapsearch"
         var arguments: [String] = [String]()
         arguments.append("-N")
-        if defaults.bool(forKey: Preferences.lDAPAnonymous) {
+        if defaults.bool(forKey: Preferences.ldapAnonymous) {
             arguments.append("-x")
         } else {
         arguments.append("-Q")
@@ -578,7 +578,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 
         var myLDAPResult = ""
 
-        if defaults.bool(forKey: Preferences.lDAPAnonymous) {
+        if defaults.bool(forKey: Preferences.ldapAnonymous) {
             myLDAPResult = cliTask("/usr/bin/ldapsearch -N -LLL -x " + maxSSF + "-l 3 -s base -H " + URIPrefix + host + " " + attribute)
         } else {
         myLDAPResult = cliTask("/usr/bin/ldapsearch -N -LLL -Q " + maxSSF + "-l 3 -s base -H " + URIPrefix + host + " " + attribute)
@@ -741,7 +741,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 
                         var myLDAPResult = ""
 
-                        if defaults.bool(forKey: Preferences.lDAPAnonymous) {
+                        if defaults.bool(forKey: Preferences.ldapAnonymous) {
                             myLDAPResult = cliTask("/usr/bin/ldapsearch -N -LLL -x " + maxSSF + "-l 3 -s base -H " + URIPrefix + hosts[i].host + " " + port + " " + attribute)
                         } else {
                             myLDAPResult = cliTask("/usr/bin/ldapsearch -N -LLL -Q " + maxSSF + "-l 3 -s base -H " + URIPrefix + hosts[i].host + " " + port + " " + attribute)
