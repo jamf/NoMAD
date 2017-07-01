@@ -481,96 +481,96 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
     func getCert(_ alerts: Bool) {
 
-        var myResponse: Int?
-
-        // TODO: check to see if the SSL Certs are trusted, otherwise we'll fail
-
-        // pre-flight to ensure valid URL and template
-
-        var certCATest = defaults.string(forKey: Preferences.x509CA) ?? ""
-        let certTemplateTest = defaults.string(forKey: Preferences.template) ?? ""
-
-        if ( certCATest != "" && certTemplateTest != "" ) {
-
-            let lastExpireTemp = defaults.object(forKey: Preferences.lastCertificateExpiration) ?? ""
-            var lastExpire: Date?
-
-            if (String(describing: lastExpireTemp)) == "" {
-                lastExpire = Date.distantPast as Date
-            } else {
-                lastExpire = lastExpireTemp as? Date
-            }
-
-
-            if (lastExpire?.timeIntervalSinceNow)! > 2592000 {
-                if alerts {
-                    let alertController = NSAlert()
-                    alertController.messageText = "ValidCertificate".translate
-                    alertController.addButton(withTitle: "Cancel".translate)
-                    alertController.addButton(withTitle: "RequestAnyway".translate)
-
-                    myResponse = alertController.runModal()
-
-                    if myResponse == 1000 {
-                        return
-                    }
-                } else {
-                    return
-                }
-            }
-
-            // start the animation
-
-            //startMenuAnimationTimer()
-
-            // check for http://
-
-            if !certCATest.contains("http://") || !certCATest.contains("https://") {
-                certCATest = "https://" + certCATest
-            }
-
-            // preflight that there aren't SSL issues
-            var caTestWait = true
-            var caSSLTest = true
-            myWorkQueue.async(execute: {
-                self.testSite(caURL: certCATest, completionHandler: { (data, response, error) in
-
-                    if (error != nil) {
-                        caSSLTest = false
-                    }
-                    caTestWait = false
-                }
-                )})
-
-            while caTestWait {
-                RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
-                myLogger.logit(.debug, message: "Waiting for CA test to complete.")
-            }
-
-            if !caSSLTest {
-                let certAlertController = NSAlert()
-                certAlertController.messageText = "CertConnectionError".translate
-                if alerts {
-                    certAlertController.runModal()
-                } else {
-                    myLogger.logit(.base, message: "Automatic cert error: " + "CertConnectionError".translate)
-                }
-            } else {
-
-                let certCARequest = WindowsCATools(serverURL: certCATest, template: certTemplateTest)
-                certCARequest.certEnrollment()
-            }
-
-        } else {
-            let certAlertController = NSAlert()
-            certAlertController.messageText = "CAConfigError".translate
-            if alerts {
-                certAlertController.runModal()
-            } else {
-                myLogger.logit(.base, message: "Automatic cert error: " + "CAConfigError".translate)
-            }
-
-        }
+//        var myResponse: Int?
+//
+//        // TODO: check to see if the SSL Certs are trusted, otherwise we'll fail
+//
+//        // pre-flight to ensure valid URL and template
+//
+//        var certCATest = defaults.string(forKey: Preferences.x509CA) ?? ""
+//        let certTemplateTest = defaults.string(forKey: Preferences.template) ?? ""
+//
+//        if ( certCATest != "" && certTemplateTest != "" ) {
+//
+//            let lastExpireTemp = defaults.object(forKey: Preferences.lastCertificateExpiration) ?? ""
+//            var lastExpire: Date?
+//
+//            if (String(describing: lastExpireTemp)) == "" {
+//                lastExpire = Date.distantPast as Date
+//            } else {
+//                lastExpire = lastExpireTemp as? Date
+//            }
+//
+//
+//            if (lastExpire?.timeIntervalSinceNow)! > 2592000 {
+//                if alerts {
+//                    let alertController = NSAlert()
+//                    alertController.messageText = "ValidCertificate".translate
+//                    alertController.addButton(withTitle: "Cancel".translate)
+//                    alertController.addButton(withTitle: "RequestAnyway".translate)
+//
+//                    myResponse = alertController.runModal()
+//
+//                    if myResponse == 1000 {
+//                        return
+//                    }
+//                } else {
+//                    return
+//                }
+//            }
+//
+//            // start the animation
+//
+//            //startMenuAnimationTimer()
+//
+//            // check for http://
+//
+//            if !certCATest.contains("http://") || !certCATest.contains("https://") {
+//                certCATest = "https://" + certCATest
+//            }
+//
+//            // preflight that there aren't SSL issues
+//            var caTestWait = true
+//            var caSSLTest = true
+//            myWorkQueue.async(execute: {
+//                self.testSite(caURL: certCATest, completionHandler: { (data, response, error) in
+//
+//                    if (error != nil) {
+//                        caSSLTest = false
+//                    }
+//                    caTestWait = false
+//                }
+//                )})
+//
+//            while caTestWait {
+//                RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
+//                myLogger.logit(.debug, message: "Waiting for CA test to complete.")
+//            }
+//
+//            if !caSSLTest {
+//                let certAlertController = NSAlert()
+//                certAlertController.messageText = "CertConnectionError".translate
+//                if alerts {
+//                    certAlertController.runModal()
+//                } else {
+//                    myLogger.logit(.base, message: "Automatic cert error: " + "CertConnectionError".translate)
+//                }
+//            } else {
+//
+//                //let certCARequest = WindowsCATools(serverURL: certCATest, template: certTemplateTest)
+//                //certCARequest.certEnrollment()
+//            }
+//
+//        } else {
+//            let certAlertController = NSAlert()
+//            certAlertController.messageText = "CAConfigError".translate
+//            if alerts {
+//                certAlertController.runModal()
+//            } else {
+//                myLogger.logit(.base, message: "Automatic cert error: " + "CAConfigError".translate)
+//            }
+//
+//        }
     }
 
     // connect to the Home share if it's available
@@ -748,13 +748,13 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     }
 
     func testSite(caURL: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
-
-        let request = NSMutableURLRequest(url: URL(string: caURL)!)
-
-        request.httpMethod = "GET"
-
-        let session = URLSession.shared
-        session.dataTask(with: request as URLRequest, completionHandler: completionHandler).resume()
+//
+//        let request = NSMutableURLRequest(url: URL(string: caURL)!)
+//
+//        request.httpMethod = "GET"
+//
+//        let session = URLSession.shared
+//        session.dataTask(with: request as URLRequest, completionHandler: completionHandler).resume()
     }
 
     // function to see if we should autologin and then proceede accordingly
