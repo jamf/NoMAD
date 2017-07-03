@@ -97,8 +97,7 @@ class ShareMounter: NSArrayController {
             myLogger.logit(.debug, message: "No Home mount dictionary.")
         }
 
-        var mounts = (sharePrefs?.array(forKey: shareKeys.shares))! as! [NSDictionary]
-
+        if let mountsRaw = (sharePrefs?.array(forKey: shareKeys.shares)) {
         //let userMounts = (sharePrefs?.array(forKey: shareKeys.userShares))! as! [NSDictionary]
 
         // need to mark the shares as user or system
@@ -106,7 +105,9 @@ class ShareMounter: NSArrayController {
         //if userMounts.count != 0 {
         //   mounts.append(contentsOf: userMounts)
         //}
-
+            
+        let mounts = mountsRaw as! [NSDictionary]
+        
         for mount in mounts {
 
             // check for variable substitution
@@ -129,6 +130,7 @@ class ShareMounter: NSArrayController {
 
         }
         refreshMounts()
+    }
     }
 
     // refresh what's been mounted
@@ -388,7 +390,7 @@ class ShareMounter: NSArrayController {
             do {
                 switch myType! {
                 case "smbfs"    :
-                    myLogger.logit(.debug, message: "Volume: " + share.path + " is an SMB network volume.")
+                    myLogger.logit(.debug, message: "Volume: " + share.path + " is a SMB network volume.")
                     let shareURL = getURL(share: share)
                     mountedShares.append(shareURL)
                     mountedSharePaths[shareURL] = share.path
@@ -398,7 +400,7 @@ class ShareMounter: NSArrayController {
                     mountedShares.append(shareURL)
                     mountedSharePaths[shareURL] = share.path
                 case "nfsfs"    :
-                    myLogger.logit(.debug, message: "Volume: " + share.path + " is an NFS network volume.")
+                    myLogger.logit(.debug, message: "Volume: " + share.path + " is a NFS network volume.")
                     let shareURL = getURL(share: share)
                     mountedShares.append(shareURL)
                     mountedSharePaths[shareURL] = share.path
