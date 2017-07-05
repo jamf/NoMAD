@@ -36,6 +36,21 @@ class KeychainMinder : NSWindowController, NSWindowDelegate {
 
     override func windowDidLoad() {
         clearWindow()
+        
+        // pull in any customizations
+        
+        // window name
+        
+        self.window?.title = defaults.string(forKey: Preferences.keychainMinderWindowTitle) ?? "Keychain Locked"
+        
+        // window text
+        
+        if let customText = defaults.string(forKey: Preferences.keychainMinderWindowMessage) {
+            messageText.stringValue = customText
+        }
+        
+        // show create new button
+        
     }
 
 
