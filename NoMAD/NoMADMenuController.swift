@@ -1095,7 +1095,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         myLogger.logit(.base, message:"Updating User Info")
         updateRunning = true
 
-        startMenuAnimationTimer()
+        //startMenuAnimationTimer()
 
         // make sure the domain we're using is the domain we should be using
 
@@ -1427,6 +1427,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 updateScheduled = true
             }
         }
-        stopMenuAnimationTimer()
+        //stopMenuAnimationTimer()
     }
 }
