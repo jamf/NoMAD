@@ -171,7 +171,7 @@ class UserInformation {
                 }
                 if ( computedExpireDateRaw != nil) {
                     // Windows Server 2008 and Newer
-                    if ( Int(computedExpireDateRaw!) == 9223372036854775807) {
+                    if ( Int(computedExpireDateRaw!) == 9223372036854775807) || defaults.bool(forKey: Preferences.hideExpiration) {
                         // Password doesn't expire
                         passwordAging = false
                         defaults.set(false, forKey: Preferences.userAging)
@@ -256,12 +256,12 @@ class UserInformation {
                         myLogger.logit(.base, message: "Alerting user to UPC.")
 
                         let notification = NSUserNotification()
-                        notification.title = "Password Changed"
-                        notification.informativeText = "Your password was changed, please re-sign into NoMAD to update your password."
+                        notification.title = "UserInformation-PasswordChanged".translate
+                        notification.informativeText = "UserInformation-PwdChangedSignInAgain".translate
                         //notification.deliveryDate = date
                         notification.hasActionButton = true
-                        notification.actionButtonTitle = "NoMADMenuController-LogIn".translate
-                        notification.otherButtonTitle = "Ignore"
+                        notification.actionButtonTitle = "SignIn".translate
+                        notification.otherButtonTitle = "UserInformation-Ignore".translate
                         notification.soundName = NSUserNotificationDefaultSoundName
                         NSUserNotificationCenter.default.deliver(notification)
 
@@ -277,6 +277,23 @@ class UserInformation {
 
                 UserPasswordSetDates[userPrincipal] = userPasswordSetDate
                 defaults.set(UserPasswordSetDates, forKey: Preferences.userPasswordSetDates)
+            }
+        } else if defaults.bool(forKey: Preferences.persistExpiration) {
+
+            // we can't connect, so just use the last stashed information
+            // first we check to make sure someone has logged in before
+
+            if  let userPrincipal = defaults.string(forKey: Preferences.userPrincipal) {
+
+                if userPrincipal != "" {
+                self.userPrincipal = userPrincipal
+            self.passwordAging = defaults.bool(forKey: Preferences.userAging)
+            self.userPasswordExpireDate = defaults.object(forKey: Preferences.lastPasswordExpireDate) as! NSDate
+                self.realm = defaults.string(forKey: Preferences.kerberosRealm)!
+                self.userDisplayName = defaults.string(forKey: Preferences.displayName)!
+                self.userShortName = defaults.string(forKey: Preferences.lastUser)!
+                self.userPrincipalShort = defaults.string(forKey: Preferences.lastUser)!
+                }
             }
         }
 
@@ -303,6 +320,8 @@ class UserInformation {
             if (defaults.string(forKey: Preferences.x509CA) ?? "" != "") {
                 getCertDate()
             }
+
+            userHome = userHome.replacingOccurrences(of: " ", with: "%20")
 
             defaults.set(userHome, forKey: Preferences.userHome)
             defaults.set(userDisplayName, forKey: Preferences.displayName)

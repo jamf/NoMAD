@@ -1,6 +1,6 @@
 ***Main Web Site***
 
-This gitlab page is used primarily for code storage and issue tracking. For the most up to date information on NoMAD, and installer donwloads, please see [nomad.menu](http://www.nomad.menu)
+This gitlab page is used primarily for code storage and issue tracking. For the most up to ddate information on NoMAD, and installer donwloads, please see [nomad.menu](http://www.nomad.menu)
 
 ***NoMAD***
 

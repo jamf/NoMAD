@@ -42,8 +42,14 @@ enum Preferences {
     // getHelp Options - r/w - string - options for configuring the actions of the selected getHelpType
 
     // groups - r/o - string - a list of AD groups that the currently signed in user is a member of
+
+    // hideExpiration - r/w - bool - determines if NoMAD shows expiration dates to users or not
+
+    // hideExpirationMessage - r/w - string - message to show in the menu bar for when your passowrd doesn't expire
     
     // hideHelp - r/w - bool - determines if the Get Help menu item should be shown
+
+    // hideLockScreen - r/w - bool - determines if the Lock Screen menu item should be shown
 
     // hidePrefs - r/w - bool - determines if the Preferences menu item should be shown
 
@@ -68,6 +74,8 @@ enum Preferences {
     // lDAPServerList - r/w - string - specifies a specfic or set of specific LDAP servers to be used instead of having NoMAD do the normal DNS and site lookups for the best AD Domain Controller
 
     // localPasswordSync - r/w - bool - determines if NoMAD will keep the network password in sync with the local user account password on the Mac
+
+    // localPasswordSyncOnMatchOnly - r/w - bool - only do the local password sync if the ad short name matches the local user name
 
     // lastUser - r/o - string - used to stash the short name of the last signed in user. Used for autologin and other functions requiring persistance between sessions.
 
@@ -100,6 +108,10 @@ enum Preferences {
     // passwordChangeOptions - r/w - string - similar to getHelp, this sets options for the passwordChangeType to use
     // passwordChangeType - r/w - string - the method to use when the Change Password menu item is selected
 
+    // passwordPolicy - r/w - dictionary - password policy object to evaluate password complexity
+
+    // persistExpiratin - r/w - bool - determines if the expiration date should be shown regardless of connectivity
+
     // renewTickets - r/w - bool - determines if NoMAD should auto-renew tickets
 
     // showHome - r/w - bool - determines if the user's network home share should be displayed as a menu item
@@ -108,7 +120,15 @@ enum Preferences {
 
     // selfServicePath - r/w - string - path to a self service application for "Get Software"
 
+    // signedIn - r/o - bool - flag to show if a user is currently signed in
+
     // signInCommand - r/w - string - the shell script, or other binary, to be triggered whenever a succesful sign in occurs
+
+    // signInWindowOnLaunch - r/w - bool - will show a sign in window on launch if there are no tickets
+
+    // siteIgnore - r/w - bool - determines if NoMAD ignores the site that comes back from AD. Generally this will mean NoMAD will use the globally advertised DCs instead of a particular site's.
+
+    // siteForce - r/w - bool - forces NoMAD to use a particular site
 
     // stateChangeAction - r/w - string - the shell script, or other binary, to be triggered whenever the network changes
 
@@ -152,7 +172,10 @@ enum Preferences {
     static let getHelpType = "GetHelpType"
     static let getHelpOptions = "GetHelpOptions"
     static let groups = "Groups"
+    static let hideExpiration = "HideExpiration"
+    static let hideExpirationMessage = "HideExpirationMessage"
     static let hideHelp = "HideHelp"
+    static let hideLockScreen = "HideLockScreen"
     static let hideRenew = "HideRenew"
     static let hidePrefs = "HidePrefs"
     static let hideQuit = "HideQuit"
@@ -167,6 +190,7 @@ enum Preferences {
     static let lDAPServerList = "LDAPServerList"
     static let lDAPoverSSL = "LDAPOverSSL"
     static let localPasswordSync = "LocalPasswordSync"
+    static let localPasswordSyncOnMatchOnly = "LocalPasswordSyncOnMatchOnly"
     static let lastUser = "LastUser"
     static let lastPasswordWarning = "LastPasswordWarning"
     static let lastPasswordExpireDate = "LastPasswordExpireDate"
@@ -180,8 +204,8 @@ enum Preferences {
     static let messageNotConnected = "MessageNotConnected"
     static let messagePasswordChangePolicy = "MessagePasswordChangePolicy"
     static let passwordExpireAlertTime = "PasswordExpireAlertTime"
-
-    // static let passwordChangeOptions = "PasswordChangeOptions"
+    static let passwordPolicy = "PasswordPolicy"
+    static let persistExpiration = "PersistExpiration"
 
     /// Should NoMAD automatically attempt to renew Kerberos tickets on behalf of the user.
     static let renewTickets = "RenewTickets"
@@ -191,6 +215,10 @@ enum Preferences {
     static let secondsToRenew = "SecondsToRenew"
     static let selfServicePath = "SelfServicePath"
     static let signInCommand = "SignInCommand"
+    static let signInWindowOnLaunch = "SignInWindowOnLaunch"
+    static let signedIn = "SignedIn"
+    static let siteIgnore = "SiteIgnore"
+    static let siteForce = "SiteForce"
     static let stateChangeAction = "StateChangeAction"
     static let template = "Template"
     static let titleSignIn = "TitleSignIn"
