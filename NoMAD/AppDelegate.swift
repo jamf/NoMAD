@@ -28,7 +28,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let build = String(describing: Bundle.main.infoDictionary!["CFBundleVersion"]!)
         myLogger.logit(.base, message:"NoMAD version: " + version)
         myLogger.logit(.base, message:"NoMAD build: " + build)
-        myLogger.logit(.debug, message: "Current app preferences: \(defaults.dictionaryRepresentation())")
+        //myLogger.logit(.debug, message: "Current app preferences: \(defaults.dictionaryRepresentation())")
 
         let changed: SCDynamicStoreCallBack = { dynamicStore, _, _ in
             myLogger.logit(.base, message: "State change, checking things.")
