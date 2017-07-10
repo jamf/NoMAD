@@ -57,6 +57,11 @@ class KeychainMinder : NSWindowController, NSWindowDelegate {
     func windowWillClose(_ notification: Notification) {
         stopOperations()
         clearWindow()
+        
+        // update NoMAD
+        
+        NotificationCenter.default.post(updateNotification)
+
     }
 
     // functions

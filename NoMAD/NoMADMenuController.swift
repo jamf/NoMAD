@@ -118,17 +118,17 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         // check for locked keychains
         
-        if myKeychainutil.checkLockedKeychain() && defaults.bool(forKey: Preferences.lockedKeychainCheck) {
+        if self.myKeychainutil.checkLockedKeychain() && defaults.bool(forKey: Preferences.lockedKeychainCheck) {
             // notify on the keychain
             myLogger.logit(.base, message: "Keychain is locked, showing notification.")
             keychainMinder.window?.forceToFrontAndFocus(nil)
         }
         
-        while myKeychainutil.checkLockedKeychain() && defaults.bool(forKey: Preferences.lockedKeychainCheck) {
-            // pause until Keychain is fixed
-            myLogger.logit(.base, message: "Waiting for keychain to unlock.")
-            RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
-        }
+//        while myKeychainutil.checkLockedKeychain() && defaults.bool(forKey: Preferences.lockedKeychainCheck) {
+//            // pause until Keychain is fixed
+//            myLogger.logit(.base, message: "Waiting for keychain to unlock.")
+//            RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
+//        }
 
         // AppleEvents
 
@@ -189,7 +189,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         defaults.register(defaults: defaultPreferences as! [String : Any])
 
         // Register for update notifications.
-        NotificationCenter.default.addObserver(self, selector: #selector(doTheNeedfull), name: NSNotification.Name(rawValue: "updateNow"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(doTheNeedfull), name: NSNotification.Name(rawValue: "menu.nomad.NoMAD.updateNow"), object: nil)
 
         DistributedNotificationCenter.default.addObserver(self, selector: #selector(interfaceModeChanged), name: NSNotification.Name(rawValue: "AppleInterfaceThemeChangedNotification"), object: nil)
 

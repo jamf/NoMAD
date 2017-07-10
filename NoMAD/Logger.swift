@@ -59,7 +59,18 @@ class Logger {
     ///   - message: A `String` that describes the information to be logged
     func logit(_ level: LogLevel, message: String) {
         if (level.rawValue <= loglevel.rawValue) {
-            NSLog("level: \(level) - " + message)
+            
+            // sanitize the message
+            
+            var set = CharacterSet.alphanumerics
+            
+            set.formUnion(CharacterSet.whitespaces)
+            set.formUnion(CharacterSet.decimalDigits)
+            set.formUnion(CharacterSet.init(charactersIn: "-:.,$@[]"))
+            
+            // anything not in the set, percent encode for safety
+            
+            NSLog("level: \(level) - " + message.addingPercentEncoding(withAllowedCharacters: set)!)
         }
     }
 }
