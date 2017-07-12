@@ -17,16 +17,6 @@ public func setDefaults() {
 
     if let autoConfigure = defaults.string(forKey: Preferences.autoConfigure) {
         switch autoConfigure {
-        case "TSL":
-            defaults.set("trusourcelabs.com", forKey: Preferences.aDDomain)
-            defaults.set("TRUSOURCELABS.COM", forKey: Preferences.kerberosRealm)
-            defaults.set(true, forKey: Preferences.verbose)
-            defaults.set("", forKey: Preferences.userCommandHotKey1)
-            defaults.set("", forKey: Preferences.userCommandName1)
-            defaults.set("", forKey: Preferences.userCommandTask1)
-            defaults.set(7200, forKey: Preferences.secondsToRenew)
-            defaults.set(1, forKey: Preferences.renewTickets)
-            defaults.set("", forKey: Preferences.autoConfigure)
 
         case "JODA":
             defaults.set("jodapro.com", forKey: Preferences.aDDomain)

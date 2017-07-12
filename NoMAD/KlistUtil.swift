@@ -106,6 +106,13 @@ class KlistUtil {
 
                 cache = jsonDict?["cache"] as! String
                 principal = jsonDict?["principal"] as! String
+                
+                if principal.contains("$@") {
+                    myLogger.logit(.base, message: "Found kerberos ticket for machine account. Removing.")
+                    // kill it with fire
+                    cliTask("/usr/bin/kdestroy")
+                    getDetails()
+                }
 
                 short = principal.replacingOccurrences(of: "@" + defaults.string(forKey: "KerberosRealm")!, with: "").trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
                 state = false
@@ -115,7 +122,6 @@ class KlistUtil {
                         myLogger.logit(.debug, message: "Looking at ticket: " + String(describing: ticket))
 
                         if let tick = ticket["Principal"] as? String {
-                            print(ticket)
                             let issue = dateFormatter.date(from: (ticket["Issued"] as? String)!.replacingOccurrences(of: " ", with: "0"))
                             let expire = dateFormatter.date(from: (ticket["Expires"] as? String)!.replacingOccurrences(of: " ", with: "0"))
                             let myTicket = Ticket(Issued: issue!, Expires: expire!, Principal: tick )
