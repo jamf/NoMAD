@@ -921,10 +921,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         } else {
             myLogger.logit(.base, message: "Auto-login not attempted.")
         }
-        
-        // sometimes we need to do this twice
-        
-         Timer.scheduledTimer(timeInterval: 15, target: self, selector: #selector(updateUserInfo), userInfo: nil, repeats: false)
     }
 
     // change the menu item if it's dark
