@@ -842,7 +842,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         session.dataTask(with: request as URLRequest, completionHandler: completionHandler).resume()
     }
 
-    // function to see if we should autologin and then proceede accordingly
+    // function to see if we should autologin and then proceed accordingly
     func autoLogin() {
         // only autologin if 1) we're set to use the keychain, 2) we have don't already have a Kerb ticket and 3) we can contact the LDAP servers
 
