@@ -70,7 +70,8 @@ class Logger {
             
             // anything not in the set, percent encode for safety
             
-            NSLog("level: \(level) - " + message.addingPercentEncoding(withAllowedCharacters: set)!)
+            guard let logMessage = message.addingPercentEncoding(withAllowedCharacters: set) else { return }
+            NSLog("level: \(level) - " + logMessage)
         }
     }
 }
