@@ -433,8 +433,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         // fire off the SignOutCommand script if there is one
 
-        if defaults.string(forKey: Preferences.signOutCommand) != "" {
-            let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)
+        if let command = defaults.string(forKey: Preferences.signOutCommand) {
+            let myResult = cliTask(command)
             myLogger.logit(LogLevel.base, message: myResult)
         }
         userInformation.connected = false
@@ -643,7 +643,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         myLogger.logit(.base, message:"User short name: " + getConsoleUser())
         myLogger.logit(.base, message:"User long name: " + NSUserName())
         myLogger.logit(.base, message:"User principal: " + userInformation.userPrincipal)
-        myLogger.logit(.base, message:"TGT expires: " + String(describing: userInformation.myLDAPServers.tickets.expire))
+        //myLogger.logit(.base, message:"TGT expires: " + String(describing: userInformation.myLDAPServers.tickets.expire))
         myLogger.logit(.base, message:"User password set date: " + String(describing: userInformation.userPasswordSetDate))
         myLogger.logit(.base, message:"User password expire date: " + String(describing: userInformation.userPasswordExpireDate))
         myLogger.logit(.base, message:"User home share: " + userInformation.userHome)
@@ -651,7 +651,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         myLogger.logit(.base, message:"---- User Record ----")
         logEntireUserRecord()
         myLogger.logit(.base, message:"---- Kerberos Tickets ----")
-        myLogger.logit(.base, message:(userInformation.myLDAPServers.tickets.returnAllTickets()))
+        //myLogger.logit(.base, message:(userInformation.myLDAPServers.tickets.returnTickets()))
 
     }
 
@@ -818,7 +818,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // simple function to renew tickets
     func renewTickets(){
         cliTask("/usr/bin/kinit -R")
-        userInformation.myLDAPServers.tickets.getDetails()
+        userInformation.myLDAPServers.tickets.klist()
         if defaults.bool(forKey: Preferences.verbose) == true {
             myLogger.logit(.base, message:"Renewing tickets.")
         }
@@ -1208,7 +1208,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
                             self.statusItem.toolTip = dateFormatter.string(from: self.userInformation.userPasswordExpireDate as Date)
 
-                            self.NoMADMenuTicketLife.title = dateFormatter.string(from: self.userInformation.myLDAPServers.tickets.expire as Date) + " " + self.userInformation.myLDAPServers.currentServer + " NoMAD Version: " + String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!) + " " +  String(describing: Bundle.main.infoDictionary!["CFBundleVersion"]!)
+                            self.NoMADMenuTicketLife.title = dateFormatter.string(from: self.userInformation.myLDAPServers.tickets.defaultExpires ?? Date.distantPast) + " " + self.userInformation.myLDAPServers.currentServer + " NoMAD Version: " + String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!) + " " +  String(describing: Bundle.main.infoDictionary!["CFBundleVersion"]!)
 
                             let daysToGo = Int(abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow)/86400)
 
@@ -1255,7 +1255,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                             // we do this twice b/c doing it only once seems to make it less than full width
                             self.statusItem.title = ""
                             self.statusItem.title = ""
-                            self.NoMADMenuTicketLife.title = dateFormatter.string(from: self.userInformation.myLDAPServers.tickets.expire as Date) + " " + self.userInformation.myLDAPServers.currentServer + " NoMAD Version: " + String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!) + " " +  String(describing: Bundle.main.infoDictionary!["CFBundleVersion"]!)
+                            self.NoMADMenuTicketLife.title = dateFormatter.string(from: self.userInformation.myLDAPServers.tickets.defaultExpires ?? Date.distantPast) + " " + self.userInformation.myLDAPServers.currentServer + " NoMAD Version: " + String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!) + " " +  String(describing: Bundle.main.infoDictionary!["CFBundleVersion"]!)
                             self.statusItem.toolTip = defaults.string(forKey: Preferences.hideExpirationMessage) ?? "PasswordDoesNotExpire".translate
                             self.NoMADMenuPasswordExpires.title = defaults.string(forKey: Preferences.hideExpirationMessage) ?? "PasswordDoesNotExpire".translate
                         }
@@ -1394,7 +1394,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
                 // check if we need to renew the ticket
 
-                if defaults.bool(forKey: Preferences.renewTickets) && self.userInformation.status == "Logged In" && ( abs(self.userInformation.myLDAPServers.tickets.expire.timeIntervalSinceNow) <= Double(defaults.integer(forKey: Preferences.secondsToRenew))) {
+                if defaults.bool(forKey: Preferences.renewTickets) && self.userInformation.status == "Logged In" && ( abs(self.userInformation.myLDAPServers.tickets.defaultExpires?.timeIntervalSinceNow ?? Date.distantPast.timeIntervalSinceNow) <= Double(defaults.integer(forKey: Preferences.secondsToRenew))) {
                     self.renewTickets()
                 }
 

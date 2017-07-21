@@ -143,7 +143,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         // on a network change we need to relook at things
         // if we have a static list of servers, use that
 
-        tickets.getDetails()
+        tickets.klist()
 
         if defaults.string(forKey: Preferences.lDAPServerList) != "" {
 
@@ -213,7 +213,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 
     func check() {
 
-        tickets.getDetails()
+        tickets.klist()
 
         if testSocket(self.currentServer) && testLDAP(self.currentServer) && tickets.state {
 
@@ -789,13 +789,13 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     }
 
     func swapPrincipals(_ backToDefault: Bool) {
-        if tickets.defaultPrincipal != tickets.principal {
-        if backToDefault {
-            cliTask("/usr/bin/kswitch -p " + tickets.defaultPrincipal)
-        } else {
-            cliTask("/usr/bin/kswitch -p " + tickets.principal)
-        }
-    }
+//        if tickets.defaultPrincipal != tickets.principal {
+//        if backToDefault {
+//            cliTask("/usr/bin/kswitch -p " + tickets.defaultPrincipal!)
+//        } else {
+//            cliTask("/usr/bin/kswitch -p " + tickets.principal)
+//        }
+//    }
     }
     
     // MARK: DNSResolver Delegate Methods

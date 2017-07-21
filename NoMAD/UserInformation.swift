@@ -122,7 +122,7 @@ class UserInformation {
         // 2. check for tickets
 
         if myLDAPServers.tickets.state {
-            userPrincipal = myLDAPServers.tickets.principal
+            userPrincipal = myLDAPServers.tickets.returnDefaultPrincipal()
             realm = defaults.string(forKey: Preferences.kerberosRealm)!
             if userPrincipal.contains(realm) {
                 userPrincipalShort = userPrincipal.replacingOccurrences(of: "@" + realm, with: "")
