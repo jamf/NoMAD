@@ -937,7 +937,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         for share in myShareMounter.all_shares {
             if share.name == sender.title {
                 if share.mountStatus != .mounted && share.mountStatus != .mounting {
-                myShareMounter.syncMountShare(share.url, options: share.options)
+                    myLogger.logit(.debug, message: "Mounting share: " + String(describing: share.url))
+                    myShareMounter.asyncMountShare(share.url, options: share.options, open: true)
+                    //cliTask("open " + share.url.absoluteString.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlPathAllowed)!)
                 } else if share.mountStatus == .mounted {
                     print(share.localMountPoints ?? "")
                     // open up the local shares

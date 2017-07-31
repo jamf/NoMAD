@@ -58,7 +58,7 @@ class Logger {
     ///   - level: A value from `LogLevel` enum
     ///   - message: A `String` that describes the information to be logged
     func logit(_ level: LogLevel, message: String) {
-        if (level.rawValue <= loglevel.rawValue) {
+        if (level.rawValue <= loglevel.rawValue) && !CommandLine.arguments.contains("-v") {
             
             // sanitize the message
             
@@ -72,6 +72,8 @@ class Logger {
             
             guard let logMessage = message.addingPercentEncoding(withAllowedCharacters: set) else { return }
             NSLog("level: \(level) - " + logMessage)
+        } else {
+            NSLog("level: \(level) - " + message)
         }
     }
 }
