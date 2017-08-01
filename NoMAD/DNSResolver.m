@@ -62,6 +62,7 @@
     if (self->_dnsService == NULL) {
         self.error = nil;
         self.finished = NO;
+        [_mutableQueryResponse removeAllObjects];
         [self startInternal];
     }
 }
