@@ -14,7 +14,7 @@ protocol LoginWindowDelegate {
 
 let resetNotificationKey = Notification(name: Notification.Name(rawValue: "resetPassword"), object: nil)
 
-class LoginWindow: NSWindowController, NSWindowDelegate {
+class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCenterDelegate {
     
     var delegate: LoginWindowDelegate?
     
@@ -34,6 +34,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
     //var noMADUser: NoMADUser? = nil
     
     var suppressPasswordChange = false
+    var alertTimer: Timer? = nil
     
     
     override var windowNibName: String! {
@@ -57,6 +58,16 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         setWindowToLogin()
         self.window?.center()
         
+        //if defaults.bool(forKey: Preferences.signInWindowAlert) {
+            myLogger.logit(.base, message: "Setting up timer to alert on Sign In window.")
+            var alertTime = 120
+        if defaults.integer(forKey:Preferences.signInWindowAlertTime) != 0 {
+            alertTime = defaults.integer(forKey:Preferences.signInWindowAlertTime)
+        }
+            alertTimer = Timer.init(timeInterval: TimeInterval(alertTime), target: self, selector: #selector(showAlert), userInfo: nil, repeats: true)
+            RunLoop.main.add(alertTimer!, forMode: .commonModes)
+        //}
+        
     }
     
     func windowWillClose(_ notification: Notification) {
@@ -66,6 +77,10 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
         setWindowToLogin()
         NotificationCenter.default.post(updateNotification)
         delegate?.updateUserInfo()
+        
+        // clean up the timer
+        
+        alertTimer?.invalidate()
     }
     
     
@@ -664,5 +679,42 @@ class LoginWindow: NSWindowController, NSWindowDelegate {
     fileprivate func sendResetMessage() -> Void {
         myLogger.logit(.base, message:"Need to reset user's password.")
         NotificationQueue.default.enqueue(resetNotificationKey, postingStyle: .now, coalesceMask: .onName, forModes: nil)
+    }
+    
+    @objc fileprivate func showAlert() {
+        
+        myLogger.logit(.debug, message: "Building Sign In window alert.")
+        let notification = NSUserNotification()
+        notification.title = "Sign In"
+        notification.informativeText = "Please sign in with your network account."
+        notification.hasActionButton = false
+        
+        notification.soundName = NSUserNotificationDefaultSoundName
+        NSUserNotificationCenter.default.deliver(notification)
+    }
+    
+    fileprivate func showNotification(_ title: String, text: String, date: Date, action: String) -> Void {
+        let notification = NSUserNotification()
+        notification.title = title
+        notification.informativeText = text
+        //notification.deliveryDate = date
+        if action != "" {
+            //notification.hasActionButton = true
+            //notification.actionButtonTitle = action
+        }
+        notification.soundName = NSUserNotificationDefaultSoundName
+        NSUserNotificationCenter.default.deliver(notification)
+    }
+    
+    // user notification center callbacks
+    
+    func userNotificationCenter(_ center: NSUserNotificationCenter, didDeliver notification: NSUserNotification) {
+        //implementation
+        return
+    }
+    
+    func userNotificationCenter(_ center: NSUserNotificationCenter, didActivate notification: NSUserNotification) {
+        self.window?.forceToFrontAndFocus(nil)
+        return
     }
 }

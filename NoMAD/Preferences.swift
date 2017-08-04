@@ -258,6 +258,8 @@ enum Preferences {
     static let secondsToRenew = "SecondsToRenew"
     static let selfServicePath = "SelfServicePath"
     static let signInCommand = "SignInCommand"
+    static let signInWindowAlert = "SignInWindowAlert"
+    static let signInWindowAlertTime = "SignInWindowAlertTime"
     static let signInWindowOnLaunch = "SignInWindowOnLaunch"
     static let signedIn = "SignedIn"
     static let signOutCommand = "SignOutCommand"
