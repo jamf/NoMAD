@@ -129,6 +129,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 //            myLogger.logit(.base, message: "Waiting for keychain to unlock.")
 //            RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
 //        }
+        
+        welcome.window?.forceToFrontAndFocus(nil)
 
         // AppleEvents
 

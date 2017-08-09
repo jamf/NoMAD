@@ -192,6 +192,7 @@ enum Preferences {
     static let displayName = "DisplayName"
     static let dontMatchKerbPrefs = "DontMatchKerbPrefs"
     static let exportableKey = "ExportableKey"
+    static let firstRunDone = "FirstRunDone"
     static let getCertAutomatically = "GetCertificateAutomatically"
     static let getHelpType = "GetHelpType"
     static let getHelpOptions = "GetHelpOptions"
