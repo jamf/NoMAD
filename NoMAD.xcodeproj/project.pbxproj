@@ -17,6 +17,7 @@
 		1A24EF481D7F01B3006A1866 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A24EF471D7F01B3006A1866 /* Logger.swift */; };
 		1A26AFF51D3BE620000776A4 /* WindowsCATools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A26AFF41D3BE620000776A4 /* WindowsCATools.swift */; };
 		1A26AFF71D46E4BF000776A4 /* GetHelp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A26AFF61D46E4BF000776A4 /* GetHelp.swift */; };
+		1A2727321F3F5E29005B7378 /* ShareMounterMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2727311F3F5E29005B7378 /* ShareMounterMenu.swift */; };
 		1A2728F91DD19B1400616778 /* PasswordChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2728F81DD19B1400616778 /* PasswordChange.swift */; };
 		1A309D431E8E0FC600CEDC45 /* com.trusourcelabs.NoMAD.shares.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1A309D421E8E0FC600CEDC45 /* com.trusourcelabs.NoMAD.shares.plist */; };
 		1A58C88C1DD9264D002C0769 /* CSRGen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A58C88B1DD9264D002C0769 /* CSRGen.swift */; };
@@ -94,6 +95,7 @@
 		1A24EF471D7F01B3006A1866 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		1A26AFF41D3BE620000776A4 /* WindowsCATools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = WindowsCATools.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		1A26AFF61D46E4BF000776A4 /* GetHelp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetHelp.swift; sourceTree = "<group>"; };
+		1A2727311F3F5E29005B7378 /* ShareMounterMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareMounterMenu.swift; sourceTree = "<group>"; };
 		1A2728F81DD19B1400616778 /* PasswordChange.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordChange.swift; sourceTree = "<group>"; };
 		1A2CFB601EF0EAA200F1D74C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/MainMenu.strings; sourceTree = "<group>"; };
 		1A2CFB611EF0EAA300F1D74C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/PreferencesWindow.strings; sourceTree = "<group>"; };
@@ -229,6 +231,7 @@
 				1A309D421E8E0FC600CEDC45 /* com.trusourcelabs.NoMAD.shares.plist */,
 				1ADCEC611D75476D005D33F5 /* ShareMounter.swift */,
 				1A22AEC01E200D600012220D /* ShareEditWindow.xib */,
+				1A2727311F3F5E29005B7378 /* ShareMounterMenu.swift */,
 			);
 			name = "Share Mount";
 			sourceTree = "<group>";
@@ -563,6 +566,7 @@
 				346CD27F1DA4776600255F66 /* Extensions.swift in Sources */,
 				84B54B7F1F3A09980025E397 /* Welcome.swift in Sources */,
 				1AA2B64A1E4FBDD60088DF03 /* PKINITER.swift in Sources */,
+				1A2727321F3F5E29005B7378 /* ShareMounterMenu.swift in Sources */,
 				1A58C88C1DD9264D002C0769 /* CSRGen.swift in Sources */,
 				1A88E8881EAF717600AC2E67 /* KeychainMinder.swift in Sources */,
 				1A24EF481D7F01B3006A1866 /* Logger.swift in Sources */,

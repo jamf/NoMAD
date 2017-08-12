@@ -89,7 +89,7 @@ class ShareMounter: NSArrayController {
             var currentShare = share_info(groups: homeDict?[shareKeys.groups] as! [String], url: URL(string: "smb:" + (defaults.string(forKey: Preferences.userHome))!)!, name: defaults.string(forKey: Preferences.menuHomeDirectory) ?? "HomeSharepoint".translate, options: homeDict?[shareKeys.options] as! [String], connectedOnly: true, mountStatus: mountStatus.toBeMounted, localMount: nil, autoMount: (homeDict?["Mount"]) as! Bool, reqID: nil, attemptDate: nil, localMountPoints: nil)
             
             if mountedShares.contains(currentShare.url) {
-                currentShare.mountStatus = .mounted
+                //currentShare.mountStatus = .mounted
             }
             
             if !knownShares.contains(URL(string: "smb:" + (defaults.string(forKey: Preferences.userHome))!)!) {

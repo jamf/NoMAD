@@ -41,8 +41,6 @@
 		<true/>
 		<key>NSAllowsArbitraryLoadsInWebContent</key>
 		<true/>
-		<key>NSExceptionDomains</key>
-		<dict/>
 	</dict>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2016 Orchard &amp; Grove. All rights reserved.</string>

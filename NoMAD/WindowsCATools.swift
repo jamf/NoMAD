@@ -112,7 +112,7 @@ class WindowsCATools {
 
                         if myCertRef == nil {
                             myLogger.logit(.base, message: "Error getting certificate.")
-                            return
+                            //return
                         }
 
                         let dictionary: [NSString: AnyObject] = [

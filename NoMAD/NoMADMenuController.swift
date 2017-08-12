@@ -139,6 +139,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         eventManager.setEventHandler(self, andSelector: #selector(handleAppleEvent), forEventClass: AEEventClass(kInternetEventClass), andEventID: AEEventID(kAEGetURL))
         
+        // set up shares
+        
+        shareMounterMenu.updateShares(connected: self.userInformation.connected)
+        
         // set up Icons - we need 2 sets of 2 for light and dark modes
         
         if defaults.string(forKey: Preferences.iconOn) != nil {
@@ -1183,6 +1187,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 self.userInformation.getUserInfo()
 
                 DispatchQueue.main.sync(execute: { () -> Void in
+                    
+                    // check shares
+                    
+                    shareMounterMenu.updateShares(connected: self.userInformation.connected)
 
                     // build the menu
 
@@ -1338,51 +1346,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     }
 
                     if self.userInformation.status == "Logged In" {
-
-                    // we put this in a serial queue to ensure we don't overthread
-
-                    self.shareMounterQueue.sync(execute: {
-                        self.myShareMounter.connectedState = self.userInformation.connected
-                        self.myShareMounter.userPrincipal = self.userInformation.userPrincipal
-                        self.myShareMounter.getMountedShares()
-                        self.myShareMounter.getMounts()
-                        self.myShareMounter.mountShares()
-                        })
-                    }
-                    // build the Shares Menu
-
-                    if self.myShareMounter.all_shares.count > 0 {
-                        // Menu Items and Menu
-
-                        self.myShareMenuItem.title = "FileServers".translate
-
-                        let myShareMenu = NSMenu()
-                        for share in self.myShareMounter.all_shares {
-                            myShareMenu.addItem(withTitle: share.name, action: nil, keyEquivalent: "")
-                            myShareMenu.item(withTitle: share.name)?.action = #selector(self.openShareFromMenu)
-                            myShareMenu.item(withTitle: share.name)?.target = self
-                            myShareMenu.item(withTitle: share.name)?.toolTip = String(describing: share.url)
-                            if share.mountStatus == .mounted {
-                                myShareMenu.item(withTitle: share.name)?.isEnabled = true
-                                myShareMenu.item(withTitle: share.name)?.state = 1
-                            } else if share.mountStatus == .mounting {
-                                myShareMenu.item(withTitle: share.name)?.isEnabled = false
-                                myShareMenu.item(withTitle: share.name)?.state = 2
-                            } else if share.mountStatus == .unmounted {
-                                myShareMenu.item(withTitle: share.name)?.isEnabled = true
-                                myShareMenu.item(withTitle: share.name)?.state = 0
-                            }
-                        }
-
-                        // Edit menu item to come later
                         
-                        //myShareMenu.addItem(NSMenuItem.separator())
-                        //myShareMenu.addItem(withTitle: "Edit...".translate, action: nil, keyEquivalent: "")
-
-                        // add the menu to the menu item
-                        self.myShareMenuItem.submenu = myShareMenu
-
+                        self.myShareMenuItem.title = "FileServers".translate
+                        self.myShareMenuItem.submenu = shareMounterMenu.buildMenu(connected: self.userInformation.connected)
+                        
                         // light it up
+                        
                         if !self.NoMADMenu.items.contains(self.myShareMenuItem) {
                             let lockIndex = self.NoMADMenu.index(of: self.NoMADMenuLockScreen)
                             self.NoMADMenu.insertItem(self.myShareMenuItem, at: (lockIndex + 1 ))
