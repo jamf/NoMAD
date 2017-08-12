@@ -86,14 +86,15 @@ class ShareMounter: NSArrayController {
         if homeDict != nil {
             // adding the home mount to the shares
             myLogger.logit(.debug, message: "Evaluating home share for automounts.")
-            var currentShare = share_info(groups: homeDict?[shareKeys.groups] as! [String], url: URL(string: "smb:" + (defaults.string(forKey: Preferences.userHome))!)!, name: "Home Sharepoint", options: homeDict?[shareKeys.options] as! [String], connectedOnly: true, mountStatus: mountStatus.toBeMounted, localMount: nil, autoMount: (homeDict?["Mount"]) as! Bool, reqID: nil, attemptDate: nil, localMountPoints: nil)
+            var currentShare = share_info(groups: homeDict?[shareKeys.groups] as! [String], url: URL(string: "smb:" + (defaults.string(forKey: Preferences.userHome))!)!, name: defaults.string(forKey: Preferences.menuHomeDirectory) ?? "HomeSharepoint".translate, options: homeDict?[shareKeys.options] as! [String], connectedOnly: true, mountStatus: mountStatus.toBeMounted, localMount: nil, autoMount: (homeDict?["Mount"]) as! Bool, reqID: nil, attemptDate: nil, localMountPoints: nil)
             
             if mountedShares.contains(currentShare.url) {
                 currentShare.mountStatus = .mounted
             }
             
             if !knownShares.contains(URL(string: "smb:" + (defaults.string(forKey: Preferences.userHome))!)!) {
-                //self.all_shares.append(currentShare)
+                self.all_shares.append(currentShare)
+                knownShares.append(URL(string: "smb:" + (defaults.string(forKey: Preferences.userHome))!)!)
             }
         } else {
             myLogger.logit(.debug, message: "No Home mount dictionary.")

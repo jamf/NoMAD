@@ -1360,7 +1360,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         for share in self.myShareMounter.all_shares {
                             myShareMenu.addItem(withTitle: share.name, action: nil, keyEquivalent: "")
                             myShareMenu.item(withTitle: share.name)?.action = #selector(self.openShareFromMenu)
-                            myShareMenu.item(withTitle: share.name)?.target = self.NoMADMenuLogOut.target
+                            myShareMenu.item(withTitle: share.name)?.target = self
                             myShareMenu.item(withTitle: share.name)?.toolTip = String(describing: share.url)
                             if share.mountStatus == .mounted {
                                 myShareMenu.item(withTitle: share.name)?.isEnabled = true
@@ -1374,8 +1374,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                             }
                         }
 
-                        myShareMenu.addItem(NSMenuItem.separator())
-                        myShareMenu.addItem(withTitle: "Edit...".translate, action: nil, keyEquivalent: "")
+                        // Edit menu item to come later
+                        
+                        //myShareMenu.addItem(NSMenuItem.separator())
+                        //myShareMenu.addItem(withTitle: "Edit...".translate, action: nil, keyEquivalent: "")
 
                         // add the menu to the menu item
                         self.myShareMenuItem.submenu = myShareMenu
