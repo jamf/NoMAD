@@ -130,7 +130,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 //            RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
 //        }
         
-        welcome.window?.forceToFrontAndFocus(nil)
+        if !defaults.bool(forKey: Preferences.dontShowWelcome) {
+            welcome.window?.forceToFrontAndFocus(nil)
+        }
 
         // AppleEvents
 

@@ -53,7 +53,7 @@ struct mounting_shares_info {
 }
 
 class ShareMounter: NSArrayController {
-    var sharePrefs: UserDefaults? = UserDefaults.init(suiteName: "com.trusourcelabs.NoMAD.shares")
+    var sharePrefs: UserDefaults? = UserDefaults.init(suiteName: "menu.nomad.shares")
     var all_shares = [share_info]()
     let ws = NSWorkspace.init()
     //var prefs: [String]

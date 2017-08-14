@@ -424,6 +424,12 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
             myLogger.logit(LogLevel.base, message: myResult)
         }
         
+        if defaults.bool(forKey: Preferences.keychainItemsDebug) {
+            myLogger.logit(.debug, message: "Updating Keychain via Debug flag")
+            let myKeychain = KeychainUtil.init()
+            myKeychain.manageKeychainPasswords(newPassword: Password.stringValue)
+        }
+        
         signInSpinner.isHidden = true
         signInSpinner.stopAnimation(nil)
         logInButton.isEnabled = true

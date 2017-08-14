@@ -234,10 +234,12 @@ myLogger.logit(.debug, message: "Certificate doesn't match current user principa
     }
 
     func manageKeychainPasswords(newPassword: String) {
-        // get the items to reset
+        // get the items to update
+        
+        myLogger.logit(.debug, message: "Attempting to update keychain items.")
 
         let myKeychainItems = defaults.array(forKey: Preferences.keychainItems)
-
+        
         // bail if there's nothing to update 
 
         if myKeychainItems?.count == 0 {
@@ -252,7 +254,11 @@ myLogger.logit(.debug, message: "Certificate doesn't match current user principa
             kSecAttrAccount as String: defaults.string(forKey: Preferences.userUPN) as AnyObject,
             kSecMatchLimit as String : kSecMatchLimitAll as AnyObject
         ]
-
+        
+        if defaults.bool(forKey: Preferences.keychainItemsDebug) {
+            print(itemSearch)
+        }
+        
         // set up the new password dictionary
 
         let attrToUpdate: [String:AnyObject] = [
@@ -260,12 +266,16 @@ myLogger.logit(.debug, message: "Certificate doesn't match current user principa
         ]
 
         for item in myKeychainItems! {
+            
+            if defaults.bool(forKey: Preferences.keychainItemsDebug) {
+                print(item)
+            }
 
             // add in the Service name
 
             itemSearch[kSecAttrService as String] = item as AnyObject
 
-    myErr = SecItemUpdate(itemSearch as CFDictionary, attrToUpdate as CFDictionary)
+            myErr = SecItemUpdate(itemSearch as CFDictionary, attrToUpdate as CFDictionary)
 
             if myErr == 0 {
                 myLogger.logit(.debug, message: "Updated password for service: \(item)")

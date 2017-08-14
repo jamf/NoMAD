@@ -684,6 +684,7 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
                 myLogger.logit(LogLevel.base, message: error.description)
                 return error.description
             } catch {
+                myLogger.logit(LogLevel.base, message: "Error updating keychain items")
                 return "Unknown error updating keychain item"
             }
         }
