@@ -136,6 +136,8 @@ class UserInformation {
         }
 
         // 3. if connected and with tickets, get password aging information
+        
+        
         var passwordSetDate: String?
         var computedExpireDateRaw: String?
         var userPasswordUACFlag: String = ""
@@ -145,6 +147,8 @@ class UserInformation {
         var groupsTemp: String?
 
         if connected && myLDAPServers.tickets.state {
+
+            if !defaults.bool(forKey: Preferences.lDAPOnly) {
 
             let attributes = ["pwdLastSet", "msDS-UserPasswordExpiryTimeComputed", "userAccountControl", "homeDirectory", "displayName", "memberOf", "mail", "userPrincipalName"] // passwordSetDate, computedExpireDateRaw, userPasswordUACFlag, userHomeTemp, userDisplayName, groupTemp
             // "maxPwdAge" // passwordExpirationLength
@@ -165,6 +169,13 @@ class UserInformation {
                 myLogger.logit(.base, message: "Unable to find user.")
                 canary = false
             }
+            
+            // check if we are overriding the password expiration date
+            
+            if ( defaults.object(forKey: Preferences.passwordExpirationDays) ?? nil ) != nil {
+                passwordSetDate = nil
+            }
+            
             if canary {
                 if (passwordSetDate != nil) {
                     userPasswordSetDate = NSDate(timeIntervalSince1970: (Double(passwordSetDate!)!)/10000000-11644473600)
@@ -208,11 +219,17 @@ class UserInformation {
                     // need to go old skool
                     var passwordExpirationLength: String
                     let attribute = "maxPwdAge"
+                    
+                    if defaults.integer(forKey: Preferences.passwordExpirationDays) != nil {
+                        passwordExpirationLength = String(describing: defaults.integer(forKey: Preferences.passwordExpirationDays))
+                    } else {
+
                     if let ldifResult = try? myLDAPServers.getLDAPInformation([attribute], baseSearch: true) {
                         passwordExpirationLength = myLDAPServers.getAttributeForSingleRecordFromCleanedLDIF(attribute, ldif: ldifResult)
                     } else {
                         passwordExpirationLength = ""
                     }
+                }
 
                     if ( passwordExpirationLength.characters.count > 15 ) {
                         passwordAging = false
@@ -233,6 +250,32 @@ class UserInformation {
                 }
 
             }
+            } else {
+
+                let attributes = [ "homeDirectory", "displayName", "memberOf", "mail", "uid"] // passwordSetDate, computedExpireDateRaw, userPasswordUACFlag, userHomeTemp, userDisplayName, groupTemp
+                // "maxPwdAge" // passwordExpirationLength
+
+                let searchTerm = "uid=" + userPrincipalShort
+
+                if let ldifResult = try? myLDAPServers.getLDAPInformation(attributes, searchTerm: searchTerm) {
+                    let ldapResult = myLDAPServers.getAttributesForSingleRecordFromCleanedLDIF(attributes, ldif: ldifResult)
+                    userHomeTemp = ldapResult["homeDirectory"] ?? ""
+                    userDisplayName = ldapResult["displayName"] ?? ""
+                    groupsTemp = ldapResult["memberOf"]
+                    userEmail = ldapResult["mail"] ?? ""
+                    UPN = ldapResult["uid"] ?? ""
+                } else {
+                    myLogger.logit(.base, message: "Unable to find user.")
+                    canary = false
+                    
+                }
+
+                // groupOfNames would go here
+
+                passwordAging = false
+
+            }
+
             // Check if the password was changed without NoMAD knowing.
             myLogger.logit(LogLevel.debug, message: "Password set: " + String(describing: UserPasswordSetDates[userPrincipal]))
             if (UserPasswordSetDates[userPrincipal] != nil) && ( (UserPasswordSetDates[userPrincipal] as? String) != "just set" ) {
@@ -242,6 +285,11 @@ class UserInformation {
                     if ((userPasswordSetDate.timeIntervalSince(passLastChangeDate as Date)) > 1 * 60 ){
 
                     myLogger.logit(.base, message: "Password was changed underneath us.")
+                        
+                    if (defaults.string(forKey: Preferences.uPCAlertAction) != nil ) {
+                        myLogger.logit(.base, message: "Firing UPC Alert Action")
+                        cliTask(defaults.string(forKey: Preferences.uPCAlertAction)! + " &")
+                    }
 
                     // record the new password set date
 
@@ -307,7 +355,9 @@ class UserInformation {
                 let groupsArray = groupsTemp!.components(separatedBy: ";")
                 for group in groupsArray {
                     let a = group.components(separatedBy: ",")
-                    let b = a[0].replacingOccurrences(of: "CN=", with: "") as String
+                    var b = a[0].replacingOccurrences(of: "CN=", with: "") as String
+                    b = b.replacingOccurrences(of: "cn=", with: "") as String
+
                     if b != "" {
                         groups.append(b)
                     }

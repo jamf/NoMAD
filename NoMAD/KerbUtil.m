@@ -28,6 +28,7 @@
 
 extern OSStatus SecKeychainChangePassword(SecKeychainRef keychainRef, UInt32 oldPasswordLength, const void* oldPassword, UInt32 newPasswordLength, const void* newPassword);
 
+extern OSStatus SecKeychainResetLogin(UInt32 passwordLength, const void* password, Boolean resetSearchList);
 
 - (NSString *)getKerbCredentials:(NSString *)password :(NSString *)userPrincipal {
 
@@ -161,6 +162,10 @@ extern OSStatus SecKeychainChangePassword(SecKeychainRef keychainRef, UInt32 old
         NSLog(@"Keychain change error.");
         return 0;
     }
+}
+
+- (OSStatus)resetKeychain:(NSString *)password {
+    return SecKeychainResetLogin((UInt32)password.length, [password UTF8String], YES);
 }
 
 @end

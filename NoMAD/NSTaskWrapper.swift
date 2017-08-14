@@ -1,9 +1,8 @@
 //
 //  NSTaskWrapper.swift
-//  NoAD
 //
 //  Created by Joel Rennich on 3/29/16.
-//  Copyright © 2016 Trusource Labs. All rights reserved.
+//  Copyright © 2017 Orchard & Grove Inc. All rights reserved.
 //
 
 // v. 1.4.1

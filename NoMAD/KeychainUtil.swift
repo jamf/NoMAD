@@ -51,6 +51,8 @@ class KeychainUtil {
 
         return myErr
     }
+    
+    // update the password
 
     func updatePassword(_ name: String, pass: String) -> Bool {
         if (try? findPassword(name)) != nil {
@@ -70,6 +72,33 @@ class KeychainUtil {
     func deletePassword() -> OSStatus {
         myErr = SecKeychainItemDelete(myKeychainItem!)
         return myErr
+    }
+    
+    // check to see if the deafult Keychain is locked
+    
+    func checkLockedKeychain() -> Bool {
+        
+        var myKeychain: SecKeychain?
+        var myKeychainStatus = SecKeychainStatus()
+        
+        // get the default keychain
+        
+        myErr = SecKeychainCopyDefault(&myKeychain)
+        
+        if myErr == OSStatus(errSecSuccess) {
+            
+            myErr = SecKeychainGetStatus(myKeychain, &myKeychainStatus)
+            
+            if Int(myKeychainStatus) == 2 {
+                myLogger.logit(.debug, message: "Keychain is locked")
+                return true
+            }
+            myLogger.logit(.debug, message: "Keychain is unlocked")
+            return false
+        } else {
+            myLogger.logit(.debug, message: "Error checking to see if the Keychain is locked, assuming it is.")
+            return true
+        }
     }
 
     // convience functions
@@ -109,7 +138,7 @@ class KeychainUtil {
         
         let identitySearchDict: [String:AnyObject] = [
             kSecClass as String: kSecClassIdentity,
-            kSecAttrKeyClass as String: kSecAttrKeyClassPrivate as String as String as AnyObject,
+            kSecAttrKeyClass as String: kSecAttrKeyClassPrivate as AnyObject,
 
             // this matches e-mail address
             //kSecMatchEmailAddressIfPresent as String : identifier as CFString,
@@ -198,7 +227,6 @@ myLogger.logit(.debug, message: "Certificate doesn't match current user principa
                     }
                 }
             }
-            
             }
         myLogger.logit(.debug, message: "Found " + String(matchingCerts.count) + " certificates.")
         myLogger.logit(.debug, message: "Found certificates: " + String(describing: matchingCerts) )
