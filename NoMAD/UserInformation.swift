@@ -35,6 +35,7 @@ class UserInformation {
 
     var userEmail: String
     var UPN: String
+    var dn: String
 
     // Password last set info
 
@@ -63,6 +64,7 @@ class UserInformation {
         userDisplayName = ""
         userEmail = ""
         UPN = ""
+        dn = ""
         if defaults.dictionary(forKey: Preferences.userPasswordSetDates) != nil {
             UserPasswordSetDates = defaults.dictionary(forKey: Preferences.userPasswordSetDates)! as [String : AnyObject]
         }
@@ -150,7 +152,7 @@ class UserInformation {
 
             if !defaults.bool(forKey: Preferences.lDAPOnly) {
 
-            let attributes = ["pwdLastSet", "msDS-UserPasswordExpiryTimeComputed", "userAccountControl", "homeDirectory", "displayName", "memberOf", "mail", "userPrincipalName"] // passwordSetDate, computedExpireDateRaw, userPasswordUACFlag, userHomeTemp, userDisplayName, groupTemp
+            let attributes = ["pwdLastSet", "msDS-UserPasswordExpiryTimeComputed", "userAccountControl", "homeDirectory", "displayName", "memberOf", "mail", "userPrincipalName", "dn"] // passwordSetDate, computedExpireDateRaw, userPasswordUACFlag, userHomeTemp, userDisplayName, groupTemp
             // "maxPwdAge" // passwordExpirationLength
 
             let searchTerm = "sAMAccountName=" + userPrincipalShort
@@ -165,6 +167,7 @@ class UserInformation {
                 groupsTemp = ldapResult["memberOf"]
                 userEmail = ldapResult["mail"] ?? ""
                 UPN = ldapResult["userPrincipalName"] ?? ""
+                dn = ldapResult["dn"] ?? ""
             } else {
                 myLogger.logit(.base, message: "Unable to find user.")
                 canary = false
@@ -175,6 +178,25 @@ class UserInformation {
             if ( defaults.object(forKey: Preferences.passwordExpirationDays) ?? nil ) != nil {
                 passwordSetDate = nil
             }
+                
+                // now to get recursive groups if asked
+                
+                if defaults.bool(forKey: "RecursiveGroupLookup") {
+                    let attributes = ["name"]
+                     let searchTerm = "(member:1.2.840.113556.1.4.1941:=" + dn.replacingOccurrences(of: "\\", with: "\\\\5c") + ")"
+                    if let ldifResult = try? myLDAPServers.getLDAPInformation(attributes, searchTerm: searchTerm) {
+                        print(ldifResult)
+                        
+                        groupsTemp = ""
+                        for item in ldifResult {
+                            for components in item {
+                                if components.key == "dn" {
+                                    groupsTemp?.append(components.value + ";")
+                                }
+                            }
+                        }
+                    }
+                }
             
             if canary {
                 if (passwordSetDate != nil) {

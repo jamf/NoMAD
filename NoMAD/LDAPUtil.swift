@@ -534,7 +534,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
      */
     // private function to clean the LDAP results if we're looking for multiple returns
 
-    fileprivate func cleanLDAPResultsMultiple(_ result: String, attribute: String) -> String {
+    func cleanLDAPResultsMultiple(_ result: String, attribute: String) -> String {
         let lines = result.components(separatedBy: "\n")
 
         var myResult = ""

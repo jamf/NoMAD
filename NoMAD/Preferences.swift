@@ -92,7 +92,7 @@ enum Preferences {
     
     // LocalPasswordSyncDontSyncNetworkUsers - r/w - array - and array of AD user names that shouldn't have their password synced locally.
 
-    // LockedKeychainCheck - r/w - bool - check if the deafult keychain is locked
+    // LockedKeychainCheck - r/w - bool - check if the default keychain is locked
 
     // lDAPoverSSL - r/w - bool - flag to use LDAPS instead of LDAP
 
