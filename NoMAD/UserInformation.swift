@@ -402,6 +402,7 @@ class UserInformation {
             defaults.set(userPasswordExpireDate, forKey: Preferences.lastPasswordExpireDate)
             defaults.set(groups, forKey: Preferences.groups)
             defaults.set(UPN, forKey: Preferences.userUPN)
+            defaults.set(userEmail, forKey: Preferences.userEmail)
         }
     }
 }
