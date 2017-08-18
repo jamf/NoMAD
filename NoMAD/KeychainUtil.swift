@@ -242,7 +242,7 @@ myLogger.logit(.debug, message: "Certificate doesn't match current user principa
         
         // bail if there's nothing to update 
 
-        if myKeychainItems?.count == 0 {
+        if myKeychainItems?.count == 0 || myKeychainItems == nil {
             myLogger.logit(.debug, message: "No keychain items to update.")
             return
         }
