@@ -181,7 +181,7 @@ class UserInformation {
                 
                 // now to get recursive groups if asked
                 
-                if defaults.bool(forKey: "RecursiveGroupLookup") {
+                if defaults.bool(forKey: Preferences.recursiveGroupLookup) {
                     let attributes = ["name"]
                      let searchTerm = "(member:1.2.840.113556.1.4.1941:=" + dn.replacingOccurrences(of: "\\", with: "\\\\5c") + ")"
                     if let ldifResult = try? myLDAPServers.getLDAPInformation(attributes, searchTerm: searchTerm) {
