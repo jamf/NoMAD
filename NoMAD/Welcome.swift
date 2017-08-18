@@ -17,6 +17,9 @@ class Welcome: NSWindowController, NSWindowDelegate {
     
     @IBOutlet weak var setUpAccounts: NSButton!
     
+    @IBOutlet weak var onIcon: NSImageView!
+    @IBOutlet weak var offIcon: NSImageView!
+    
     override var windowNibName: String? {
         return "Welcome"
     }
@@ -26,6 +29,14 @@ class Welcome: NSWindowController, NSWindowDelegate {
         let shortVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
         let version = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""
         versionField.stringValue = "Version: " + shortVersion + " Build: " + version
+        
+        if defaults.string(forKey: Preferences.iconOn) != nil {
+            onIcon.image = NSImage.init(contentsOfFile: defaults.string(forKey: Preferences.iconOn)!)!
+        }
+        
+        if defaults.string(forKey: Preferences.iconOff) != nil {
+            offIcon.image = NSImage.init(contentsOfFile: defaults.string(forKey: Preferences.iconOff)!)!
+        }
     }
     
     func windowWillClose(_ notification: Notification) {

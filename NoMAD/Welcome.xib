@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12121" systemVersion="16F2104" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12121" systemVersion="16F43c" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12121"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -7,6 +7,8 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="Welcome" customModule="NoMAD" customModuleProvider="target">
             <connections>
+                <outlet property="offIcon" destination="u5M-vV-lC8" id="nwT-Au-yDu"/>
+                <outlet property="onIcon" destination="rI3-Y6-znn" id="COb-bl-7S9"/>
                 <outlet property="versionField" destination="mzc-Ew-nLv" id="vUW-yI-FUJ"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="hP1-yU-9eb"/>
             </connections>
@@ -15,9 +17,9 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <window title="Welcome to NoMAD" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" animationBehavior="default" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
-            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES"/>
-            <rect key="contentRect" x="407" y="419" width="672" height="370"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
+            <windowPositionMask key="initialPositionMask" topStrut="YES"/>
+            <rect key="contentRect" x="1167" y="947" width="672" height="370"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="3008" height="1669"/>
             <value key="minSize" type="size" width="672" height="387"/>
             <value key="maxSize" type="size" width="672" height="387"/>
             <view key="contentView" wantsLayer="YES" id="EiT-Mj-1SZ">
