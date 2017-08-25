@@ -282,9 +282,9 @@ myLogger.logit(.debug, message: "Certificate doesn't match current user principa
             myErr = SecItemUpdate(itemSearch as CFDictionary, attrToUpdate as CFDictionary)
 
             if myErr == 0 {
-                myLogger.logit(.debug, message: "Updated password for service: \(item)")
+                myLogger.logit(.debug, message: "Updated password for service: \(item.key)")
             } else {
-                myLogger.logit(.debug, message: "Failed to update password for service: \(item)")
+                myLogger.logit(.debug, message: "Failed to update password for service: \(item.key)")
             }
         }
     }

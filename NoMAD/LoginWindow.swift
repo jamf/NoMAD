@@ -387,6 +387,14 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
                 if consoleUserIsAD {
                     myLogger.logit(LogLevel.info, message: "Console user is AD account.")
                 }
+                
+                
+                if defaults.bool(forKey: Preferences.keychainItemsDebug) {
+                    myLogger.logit(.debug, message: "Updating Keychain via Debug flag")
+                    let myKeychain = KeychainUtil.init()
+                    myKeychain.manageKeychainPasswords(newPassword: Password.stringValue)
+                }
+                
                 self.Password.stringValue = ""
                 signInSpinner.isHidden = true
                 signInSpinner.stopAnimation(nil)
@@ -422,12 +430,6 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
         if defaults.string(forKey: Preferences.signInCommand) != "" {
             let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)
             myLogger.logit(LogLevel.base, message: myResult)
-        }
-        
-        if defaults.bool(forKey: Preferences.keychainItemsDebug) {
-            myLogger.logit(.debug, message: "Updating Keychain via Debug flag")
-            let myKeychain = KeychainUtil.init()
-            myKeychain.manageKeychainPasswords(newPassword: Password.stringValue)
         }
         
         signInSpinner.isHidden = true
