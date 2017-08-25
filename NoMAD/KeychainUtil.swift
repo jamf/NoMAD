@@ -238,7 +238,7 @@ myLogger.logit(.debug, message: "Certificate doesn't match current user principa
         
         myLogger.logit(.debug, message: "Attempting to update keychain items.")
 
-        let myKeychainItems = defaults.array(forKey: Preferences.keychainItems)
+        let myKeychainItems = defaults.dictionary(forKey: Preferences.keychainItems)
         
         // bail if there's nothing to update 
 
@@ -251,13 +251,9 @@ myLogger.logit(.debug, message: "Certificate doesn't match current user principa
 
         var itemSearch: [String:AnyObject] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: defaults.string(forKey: Preferences.userUPN) as AnyObject,
+            //kSecAttrAccount as String: defaults.string(forKey: Preferences.userUPN) as AnyObject,
             kSecMatchLimit as String : kSecMatchLimitAll as AnyObject
         ]
-        
-        if defaults.bool(forKey: Preferences.keychainItemsDebug) {
-            print(itemSearch)
-        }
         
         // set up the new password dictionary
 
@@ -273,7 +269,15 @@ myLogger.logit(.debug, message: "Certificate doesn't match current user principa
 
             // add in the Service name
 
-            itemSearch[kSecAttrService as String] = item as AnyObject
+            itemSearch[kSecAttrService as String] = item.key as AnyObject
+        
+            // add in the swapped account name
+            
+            itemSearch[kSecAttrAccount as String] = (item.value as! String).variableSwap() as AnyObject
+            
+            if defaults.bool(forKey: Preferences.keychainItemsDebug) {
+                print(itemSearch)
+            }
 
             myErr = SecItemUpdate(itemSearch as CFDictionary, attrToUpdate as CFDictionary)
 
