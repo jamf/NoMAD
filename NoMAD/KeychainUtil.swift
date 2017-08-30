@@ -250,7 +250,7 @@ myLogger.logit(.debug, message: "Certificate doesn't match current user principa
         // set up the base search dictionary
 
         var itemSearch: [String:AnyObject] = [
-            kSecClass as String: kSecClassGenericPassword,
+            kSecClass as String: kSecClassGenericPassword as AnyObject,
             //kSecAttrAccount as String: defaults.string(forKey: Preferences.userUPN) as AnyObject,
             kSecMatchLimit as String : kSecMatchLimitAll as AnyObject
         ]
@@ -273,8 +273,12 @@ myLogger.logit(.debug, message: "Certificate doesn't match current user principa
         
             // add in the swapped account name
             
-            itemSearch[kSecAttrAccount as String] = (item.value as! String).variableSwap() as AnyObject
+            let account = (item.value as! String).variableSwap()
             
+            if account != "" {
+                itemSearch[kSecAttrAccount as String] = (item.value as! String).variableSwap() as AnyObject
+            }
+                
             if defaults.bool(forKey: Preferences.keychainItemsDebug) {
                 print(itemSearch)
             }
@@ -286,6 +290,8 @@ myLogger.logit(.debug, message: "Certificate doesn't match current user principa
             } else {
                 myLogger.logit(.debug, message: "Failed to update password for service: \(item.key)")
             }
+            
+            itemSearch[kSecClass as String ] = kSecClassInternetPassword
         }
     }
 }
