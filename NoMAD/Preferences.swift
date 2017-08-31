@@ -194,7 +194,7 @@ enum Preferences {
     static let dontShowWelcome = "DontShowWelcome"
     static let exportableKey = "ExportableKey"
     static let firstRunDone = "FirstRunDone"
-    static let getCertAutomatically = "GetCertificateAutomatically"
+    static let getCertAutomatically = "GetCertAutomatically"
     static let getHelpType = "GetHelpType"
     static let getHelpOptions = "GetHelpOptions"
     static let groups = "Groups"

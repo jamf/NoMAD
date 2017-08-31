@@ -1450,17 +1450,18 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     NoMADMenuGetCertificateDate.title = dateFormatter.string(from: expireDate)
                 } else {
                     NoMADMenuGetCertificateDate.title = "No Certs"
+                }
+            } else {
+                myLogger.logit(.debug, message: "No Certificate expiration saved.")
+                
+                //Checking if the cert should be automatically retrieved
+                
+                if defaults.bool(forKey: Preferences.getCertAutomatically) {
+                    myLogger.logit(.base, message: "Attempting to get certificate automatically.")
+                    self.getCert(false)
                     
-                    // automatically get a cert if asked
-                    // if 1. asked, 2. logged in, 3. on network
-                    // TODO: suppress alerts 
-                    
-                    if defaults.bool(forKey: Preferences.getCertAutomatically) {
-                        myLogger.logit(.base, message: "Attempting to get certificate automatically.")
-                        self.getCert(false)
-                        // set the date to now so we don't get a second cert
-                        defaults.set(Date(), forKey: Preferences.lastCertificateExpiration)
-                    }
+                    // set the date to now so we don't get a second cert
+                    defaults.set(Date(), forKey: Preferences.lastCertificateExpiration)
                 }
             }
         } else {
