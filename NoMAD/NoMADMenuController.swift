@@ -738,7 +738,23 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 self.NoMADMenuChangePassword.isEnabled = true
             }
             if (self.NoMADMenuGetCertificate != nil)  {
-                self.NoMADMenuGetCertificate.isEnabled = true
+                
+                // Getting list of Certificates
+                let keychainUtilInstance = KeychainUtil()
+                guard let certList = keychainUtilInstance.findAllUserCerts(self.userInformation.UPN, defaultNamingContext: self.userInformation.myLDAPServers.defaultNamingContext ) else {
+                    myLogger.logit(.base, message: "Could not retrive certificate list.")
+                    return false
+                }
+                
+                // Determining whether to hid the certificate button or not
+                if let certMaximum = defaults.object(forKey: Preferences.hideCertificateNumber) as? Int{
+                    if (certList.count >= certMaximum) {
+                        myLogger.logit(.debug, message: "Hiding the certificate menu")
+                        self.NoMADMenuGetCertificate.isEnabled = false
+                    }
+                } else {
+                        self.NoMADMenuGetCertificate.isEnabled = true
+                }
             }
             if (self.PKINITMenuItem != nil ) {
                 self.PKINITMenuItem.isEnabled = true
