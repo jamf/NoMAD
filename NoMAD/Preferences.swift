@@ -111,6 +111,8 @@ enum Preferences {
     // menuRenewTickets - r/w - string - title of the Rewnew Tickets menu
 
     // menuUserName - r/w - string - title of the User Name menu before anyone is logged in
+    
+    // menuWelcome - r/w - string - path to the custom splash screen rtfd file
 
     // messageLocalSync - r/w - string - text to display when the user is asked for their local password to allow the local accont password to be synced from the network account
 
@@ -245,6 +247,7 @@ enum Preferences {
     static let menuPasswordExpires = "MenuPasswordExpires"
     static let menuRenewTickets = "MenuRenewTickets"
     static let menuUserName = "MenuUserName"
+    static let menuWelcome = "MenuWelcome"
     static let messageLocalSync = "MessageLocalSync"
     static let messageNotConnected = "MessageNotConnected"
     static let messagePasswordChangePolicy = "MessagePasswordChangePolicy"
