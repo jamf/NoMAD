@@ -33,22 +33,31 @@ class Welcome: NSWindowController, NSWindowDelegate {
         do {
             myLogger.logit(.debug, message: "Attempting to load custom welcome splash screen.")
             var customSplashPath : URL
+            var customSplashDir : URL
             if defaults.object(forKey: Preferences.menuWelcome) != nil {
                 
                 // Loading the users custom view
-                var customSplashPref = "file://"
-                customSplashPref += defaults.object(forKey: Preferences.menuWelcome) as! String
+                let customSplashPref = "file://" + (defaults.object(forKey: Preferences.menuWelcome) as! String) + "/index.html"
+                customSplashDir = URL.init(fileURLWithPath: defaults.object(forKey: Preferences.menuWelcome) as! String, isDirectory: true)
                 myLogger.logit(.debug, message: "loading: " + customSplashPref)
-                customSplashPath = URL.init(string: customSplashPref)!
+                customSplashPath = URL.init(string: customSplashPref, relativeTo: customSplashDir)!
+                //customSplashPath = URL.init(string: customSplashPref)!
             } else {
                 
                 // Using the default view
                 customSplashPath = Bundle.main.url(forResource: "WelcomeSplash", withExtension: "html")!
+                customSplashDir = customSplashPath
             }
             
             // Displaying it out to the webview
-            let customSplashFile = try String(contentsOf: customSplashPath, encoding: String.Encoding.utf8)
-            displaySplash.loadHTMLString(customSplashFile, baseURL: customSplashPath)
+            if #available(OSX 10.11, *) {
+                myLogger.logit(.debug, message: "Using newer splash display method.")
+                displaySplash.loadFileURL(customSplashPath, allowingReadAccessTo: customSplashDir)
+            } else {
+                myLogger.logit(.debug, message: "Using Default display method due to older OSX version.")
+                let customSplashFile = try String(contentsOf: customSplashPath, encoding: String.Encoding.utf8)
+                displaySplash.loadHTMLString(customSplashFile, baseURL: customSplashPath)
+            }
             
         } catch {
             myLogger.logit(.debug, message: "Error reading contents of file")

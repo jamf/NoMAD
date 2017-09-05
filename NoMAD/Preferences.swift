@@ -112,7 +112,7 @@ enum Preferences {
 
     // menuUserName - r/w - string - title of the User Name menu before anyone is logged in
     
-    // menuWelcome - r/w - string - path to the custom splash screen html file, must be locally stored on the machine
+    // menuWelcome - r/w - string - path to the custom splash screen directory containing an index.html file and all the assets needed, must be locally stored on the machine
 
     // messageLocalSync - r/w - string - text to display when the user is asked for their local password to allow the local accont password to be synced from the network account
 
