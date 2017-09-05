@@ -3,7 +3,7 @@
 //  NoMAD
 //
 //  Created by Joel  on 8/29/16.
-//  Copyright © 2016 Trusource Labs. All rights reserved.
+//  Copyright © 2016 Orchard & Grove Inc. All rights reserved.
 //
 
 // mad props to Kyle Crawshaw

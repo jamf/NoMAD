@@ -3,7 +3,7 @@
 //  NoMAD
 //
 //  Created by Phillip Boushy on 4/26/16.
-//  Copyright © 2016 Trusource Labs. All rights reserved.
+//  Copyright © 2016 Orchard & Grove Inc. All rights reserved.
 //
 
 #ifndef SecurityPrivateAPI_h

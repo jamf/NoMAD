@@ -3,7 +3,7 @@
 //  NoMAD
 //
 //  Created by Joel Rennich on 7/14/16.
-//  Copyright © 2016 Trusource Labs. All rights reserved.
+//  Copyright © 2016 Orchard & Grove Inc. All rights reserved.
 //
 
 import Foundation

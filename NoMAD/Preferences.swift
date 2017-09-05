@@ -3,7 +3,7 @@
 //  NoMAD
 //
 //  Created by Tom Nook on 11/12/16.
-//  Copyright © 2016 Trusource Labs. All rights reserved.
+//  Copyright © 2016 Orchard & Grove Inc. All rights reserved.
 //
 
 
