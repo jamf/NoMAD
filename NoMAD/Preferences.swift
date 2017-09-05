@@ -47,6 +47,8 @@ enum Preferences {
 
     // hideExpirationMessage - r/w - string - message to show in the menu bar for when your passowrd doesn't expire
     
+    // hideCertificateNumber - number - hiding the "Get Certificate" option when this number of certificates is found
+    
     // hideHelp - r/w - bool - determines if the Get Help menu item should be shown
 
     // hideLockScreen - r/w - bool - determines if the Lock Screen menu item should be shown
@@ -200,6 +202,7 @@ enum Preferences {
     static let groups = "Groups"
     static let hideExpiration = "HideExpiration"
     static let hideExpirationMessage = "HideExpirationMessage"
+    static let hideCertificateNumber = "HideCertificateNumber"
     static let hideHelp = "HideHelp"
     static let hideGetSoftware = "HideGetSoftware"
     static let hideLockScreen = "HideLockScreen"

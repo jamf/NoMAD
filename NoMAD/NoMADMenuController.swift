@@ -738,7 +738,23 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 self.NoMADMenuChangePassword.isEnabled = true
             }
             if (self.NoMADMenuGetCertificate != nil)  {
-                self.NoMADMenuGetCertificate.isEnabled = true
+                
+                // Getting list of Certificates
+                let keychainUtilInstance = KeychainUtil()
+                guard let certList = keychainUtilInstance.findAllUserCerts(self.userInformation.UPN, defaultNamingContext: self.userInformation.myLDAPServers.defaultNamingContext ) else {
+                    myLogger.logit(.base, message: "Could not retrive certificate list.")
+                    return false
+                }
+                
+                // Determining whether to hid the certificate button or not
+                if let certMaximum = defaults.object(forKey: Preferences.hideCertificateNumber) as? Int{
+                    if (certList.count >= certMaximum) {
+                        myLogger.logit(.debug, message: "Hiding the certificate menu")
+                        self.NoMADMenuGetCertificate.isEnabled = false
+                    }
+                } else {
+                        self.NoMADMenuGetCertificate.isEnabled = true
+                }
             }
             if (self.PKINITMenuItem != nil ) {
                 self.PKINITMenuItem.isEnabled = true
@@ -1450,17 +1466,18 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     NoMADMenuGetCertificateDate.title = dateFormatter.string(from: expireDate)
                 } else {
                     NoMADMenuGetCertificateDate.title = "No Certs"
+                }
+            } else {
+                myLogger.logit(.debug, message: "No Certificate expiration saved.")
+                
+                //Checking if the cert should be automatically retrieved
+                
+                if defaults.bool(forKey: Preferences.getCertAutomatically) {
+                    myLogger.logit(.base, message: "Attempting to get certificate automatically.")
+                    self.getCert(false)
                     
-                    // automatically get a cert if asked
-                    // if 1. asked, 2. logged in, 3. on network
-                    // TODO: suppress alerts 
-                    
-                    if defaults.bool(forKey: Preferences.getCertAutomatically) {
-                        myLogger.logit(.base, message: "Attempting to get certificate automatically.")
-                        self.getCert(false)
-                        // set the date to now so we don't get a second cert
-                        defaults.set(Date(), forKey: Preferences.lastCertificateExpiration)
-                    }
+                    // set the date to now so we don't get a second cert
+                    defaults.set(Date(), forKey: Preferences.lastCertificateExpiration)
                 }
             }
         } else {
