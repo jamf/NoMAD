@@ -335,6 +335,7 @@ class KeychainUtil {
                 if myErr != 0 {
                     myLogger.logit(.base, message: "Error setting keychain ACL.")
                 }
+                
             } else {
                 myLogger.logit(.debug, message: "Keychain item \(item.key) : \(item.value) is available via ACLs.")
             }
@@ -347,7 +348,9 @@ class KeychainUtil {
                 myLogger.logit(.debug, message: "Failed to update password for service: \(item.key)")
             }
             
-            itemSearch[kSecClass as String ] = kSecClassInternetPassword
+            // For internet passwords - we'll have to loop through this all again
+            
+            //itemSearch[kSecClass as String ] = kSecClassInternetPassword
         }
     }
 }
