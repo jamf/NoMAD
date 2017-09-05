@@ -70,6 +70,8 @@
 		84EB760D1ED3B0D100716B48 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 84EB760F1ED3B0D100716B48 /* InfoPlist.strings */; };
 		84F93A2B1D3886FA00ED2070 /* AutoConfigure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F93A2A1D3886FA00ED2070 /* AutoConfigure.swift */; };
 		BF34324D1D52844300CE8F89 /* NoMADTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF34324C1D52844300CE8F89 /* NoMADTests.swift */; };
+		FC03F3F51F59F54E0054B5F7 /* WelcomeSplash.html in Resources */ = {isa = PBXBuildFile; fileRef = FC03F3F41F59F54E0054B5F7 /* WelcomeSplash.html */; };
+		FC03F3F91F5A019F0054B5F7 /* Assets in Resources */ = {isa = PBXBuildFile; fileRef = FC03F3F81F5A019F0054B5F7 /* Assets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -200,6 +202,8 @@
 		BF34324E1D52844300CE8F89 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DFD8CDFA1E507B6200BED42E /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/MainMenu.strings; sourceTree = "<group>"; };
 		DFD8CDFB1E507B6200BED42E /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = sv; path = sv.lproj/Languages.plist; sourceTree = "<group>"; };
+		FC03F3F41F59F54E0054B5F7 /* WelcomeSplash.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = WelcomeSplash.html; sourceTree = "<group>"; };
+		FC03F3F81F5A019F0054B5F7 /* Assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Assets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -259,6 +263,8 @@
 		1AFBDC691DEE4C3300C19AE1 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				FC03F3F81F5A019F0054B5F7 /* Assets */,
+				FC03F3F41F59F54E0054B5F7 /* WelcomeSplash.html */,
 				84B54B7C1F3A09980025E397 /* Welcome.xib */,
 				84B54B7D1F3A09980025E397 /* Welcome.swift */,
 				1A26AFF61D46E4BF000776A4 /* GetHelp.swift */,
@@ -510,7 +516,9 @@
 				1AE1DFC11DA6B1E100456E3E /* Languages.plist in Resources */,
 				346CD2711DA205B500255F66 /* MainMenu.xib in Resources */,
 				1A309D431E8E0FC600CEDC45 /* com.trusourcelabs.NoMAD.shares.plist in Resources */,
+				FC03F3F51F59F54E0054B5F7 /* WelcomeSplash.html in Resources */,
 				84BB02891EA5718E00AE801D /* (null) in Resources */,
+				FC03F3F91F5A019F0054B5F7 /* Assets in Resources */,
 				84B54B7E1F3A09980025E397 /* Welcome.xib in Resources */,
 				1A88E88A1EAF718400AC2E67 /* KeychainMinder.xib in Resources */,
 				841453881E3C2D940085890B /* PreferencesWindow.xib in Resources */,

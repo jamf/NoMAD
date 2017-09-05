@@ -130,6 +130,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 //            RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
 //        }
         
+        let defaultPreferences = NSDictionary(contentsOf: Bundle.main.url(forResource: "DefaultPreferences", withExtension: "plist")!)
+        defaults.register(defaults: defaultPreferences as! [String : Any])
+        
         if !defaults.bool(forKey: Preferences.dontShowWelcome) {
             welcome.window?.forceToFrontAndFocus(nil)
         }
@@ -192,9 +195,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 iconOffOff = NSImage(named: "NoMAD-Caribou-dark-off")!
             }
         }
-
-        let defaultPreferences = NSDictionary(contentsOf: Bundle.main.url(forResource: "DefaultPreferences", withExtension: "plist")!)
-        defaults.register(defaults: defaultPreferences as! [String : Any])
 
         // Register for update notifications.
         NotificationCenter.default.addObserver(self, selector: #selector(doTheNeedfull), name: NSNotification.Name(rawValue: "menu.nomad.NoMAD.updateNow"), object: nil)
