@@ -1369,22 +1369,28 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         self.myShareMenuItem.submenu = shareMounterMenu.buildMenu(connected: self.userInformation.connected)
                         
                         if shareMounterMenu.sharesAvilable() {
-                        
-                        // light it up
-                        
-                        if !self.NoMADMenu.items.contains(self.myShareMenuItem) {
-                            let lockIndex = self.NoMADMenu.index(of: self.NoMADMenuLockScreen)
-                            self.NoMADMenu.insertItem(self.myShareMenuItem, at: (lockIndex + 1 ))
+                            
+                            // light it up
+                            
+                            if !self.NoMADMenu.items.contains(self.myShareMenuItem) {
+                                let lockIndex = self.NoMADMenu.index(of: self.NoMADMenuLockScreen)
+                                self.NoMADMenu.insertItem(self.myShareMenuItem, at: (lockIndex + 1 ))
+                            }
+                        } else {
+                            // remove the menu if it exists
+                            
+                            if self.NoMADMenu.items.contains(self.myShareMenuItem) {
+                                self.NoMADMenu.removeItem(self.myShareMenuItem)
+                            }
                         }
-                    } else {
+                    }  else {
                         // remove the menu if it exists
                         
                         if self.NoMADMenu.items.contains(self.myShareMenuItem) {
                             self.NoMADMenu.removeItem(self.myShareMenuItem)
                         }
-                        }
                     }
-
+                    
                 })
 
                 // check if we need to renew the ticket

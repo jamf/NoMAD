@@ -79,6 +79,10 @@ class ShareMounter: NSArrayController {
         
         //knownShares = mountedShares
         
+        // clear all the known shares
+        
+        //all_shares.removeAll()
+        
         // check for home mount
         
         let homeDict = sharePrefs?.dictionary(forKey: shareKeys.homeMount)
