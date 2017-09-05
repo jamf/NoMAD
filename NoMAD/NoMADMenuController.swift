@@ -1368,6 +1368,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         self.myShareMenuItem.title = "FileServers".translate
                         self.myShareMenuItem.submenu = shareMounterMenu.buildMenu(connected: self.userInformation.connected)
                         
+                        if shareMounterMenu.sharesAvilable() {
+                        
                         // light it up
                         
                         if !self.NoMADMenu.items.contains(self.myShareMenuItem) {
@@ -1380,7 +1382,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         if self.NoMADMenu.items.contains(self.myShareMenuItem) {
                             self.NoMADMenu.removeItem(self.myShareMenuItem)
                         }
-                        
+                        }
                     }
 
                 })

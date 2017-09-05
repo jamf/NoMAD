@@ -91,4 +91,14 @@ class ShareMounterMenu: NSObject {
         }
     updateShares()
     }
+    
+    // utility functions
+    
+    func sharesAvilable() -> Bool {
+        if myShareMenu.items.count == 0 {
+            return false
+        } else {
+            return true
+        }
+    }
 }
