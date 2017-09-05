@@ -734,9 +734,14 @@ class LDAPServers : NSObject, DNSResolverDelegate {
                     
                     if mySocketResult.contains("succeeded!") {
                         
+                        var attribute = "defaultNamingContext"
+                        
                         // if socket test works, then attempt ldapsearch to get default naming context
-                        let attribute = "defaultNamingContext"
-
+                        
+                        if defaults.string(forKey: Preferences.lDAPType) == "OD" {
+                            attribute = "namingContexts"
+                        }
+                        
                         swapPrincipals(false)
 
                         var myLDAPResult = ""

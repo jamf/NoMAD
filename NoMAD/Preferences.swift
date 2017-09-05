@@ -231,6 +231,7 @@ enum Preferences {
     static let lDAPServerList = "LDAPServerList"
     static let lDAPoverSSL = "LDAPOverSSL"
     static let lDAPOnly = "LDAPOnly"
+    static let lDAPType = "LDAPType"
     static let localPasswordSync = "LocalPasswordSync"
     static let localPasswordSyncDontSyncLocalUsers = "LocalPasswordSyncDontSyncLocalUsers"
     static let localPasswordSyncDontSyncNetworkUsers = "LocalPasswordSyncDontSyncNetworkUsers"
