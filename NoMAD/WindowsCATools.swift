@@ -125,15 +125,15 @@ class WindowsCATools {
 
                         self.myImportError = SecItemAdd(dictionary as CFDictionary, &mySecRef)
 
-
-                        //print(mySecRef)
-
-                        // print(self.myImportError)
-
                         var myIdentityRef : SecIdentity? = nil
 
                         SecIdentityCreateWithCertificate(nil, myCertRef!, &myIdentityRef)
-
+                        
+                        if let networks = defaults.array(forKey: Preferences.wifiNetworks) {
+                            for network in networks as! [String] {
+                                SecIdentitySetPreferred(myIdentityRef, ("com.apple.network.eap.user.identity.wlan.ssid." + network) as CFString , nil)
+                            }
+                        }
                     }
 
                     if (error != nil) {

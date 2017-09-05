@@ -290,5 +290,6 @@ enum Preferences {
 
     /// Should verbose logging be used. This will significantly increase log spew.
     static let verbose = "Verbose"
+    static let wifiNetworks = "WifiNetworks"
     static let x509CA = "X509CA"
 }

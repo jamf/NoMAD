@@ -20,15 +20,8 @@
 	<string>1.1.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleURLName</key>
-			<string>nomad</string>
-		</dict>
-	</array>
 	<key>CFBundleVersion</key>
-	<string>DEVELOPMENT</string>
+	<string>735</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.utilities</string>
 	<key>LSMinimumSystemVersion</key>

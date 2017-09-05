@@ -16,6 +16,8 @@
 #import <DirectoryService/DirectoryService.h>
 #import <OpenDirectory/OpenDirectory.h>
 
+extern OSStatus SecKeychainItemSetAccessWithPassword(SecKeychainItemRef item, SecAccessRef access, UInt32 passLength, const void* password);
+
 @interface KerbUtil : NSObject
 @property (nonatomic, assign, readonly) BOOL						finished;   // observable
 

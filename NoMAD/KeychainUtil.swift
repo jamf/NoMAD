@@ -270,6 +270,15 @@ myLogger.logit(.debug, message: "Certificate doesn't match current user principa
             // add in the Service name
 
             itemSearch[kSecAttrService as String] = item.key as AnyObject
+            
+            var aclUpdate = false
+            var passLength: UInt32 = 0
+            var passPtr: UnsafeMutableRawPointer? = nil
+            var myKeychainItem: SecKeychainItem?
+            var itemAccess: SecAccess? = nil
+            var secApp: SecTrustedApplication? = nil
+            var myACLs : CFArray? = nil
+
         
             // add in the swapped account name
             
@@ -281,6 +290,44 @@ myLogger.logit(.debug, message: "Certificate doesn't match current user principa
                 
             if defaults.bool(forKey: Preferences.keychainItemsDebug) {
                 print(itemSearch)
+            }
+            
+            // now to loop through and find out if the item is available
+            
+            myErr = SecKeychainFindGenericPassword(nil, UInt32(item.key.characters.count), item.key, UInt32(account.characters.count), account, &passLength, &passPtr, &myKeychainItem)
+            
+            if myErr != 0 {
+                myLogger.logit(.debug, message: "Adjusting ACL of keychain item \(item.key) : \(item.value).")
+                aclUpdate = true
+                myErr = SecKeychainItemCopyAccess(myKeychainItem!, &itemAccess)
+                myErr = SecTrustedApplicationCreateFromPath( nil, &secApp)
+                myACLs = SecAccessCopyMatchingACLList(itemAccess!, kSecACLAuthorizationDecrypt)
+                var appList: CFArray? = nil
+                var desc: CFString? = nil
+                var newacl: AnyObject? = nil
+                var prompt = SecKeychainPromptSelector()
+                
+                for acl in myACLs as! Array<SecACL> {
+                    SecACLCopyContents(acl, &appList, &desc, &prompt)
+                    newacl = acl
+                    
+                    if appList != nil {
+                        var newAppList = appList.unsafelyUnwrapped as! Array<SecTrustedApplication>
+                        
+                        newAppList.append(secApp!)
+                        
+                        // adding NoMAD to the ACL app list
+                        myErr = SecACLSetContents(acl, newAppList as CFArray, "No Prompt" as CFString, SecKeychainPromptSelector.invalidAct)
+                    }
+                }
+                
+                myErr = SecKeychainItemSetAccessWithPassword(myKeychainItem, itemAccess!, UInt32(newPassword.characters.count), newPassword)
+                
+                if myErr != 0 {
+                    myLogger.logit(.base, message: "Error setting keychain ACL.")
+                }
+            } else {
+                myLogger.logit(.debug, message: "Keychain item \(item.key) : \(item.value) is available via ACLs.")
             }
 
             myErr = SecItemUpdate(itemSearch as CFDictionary, attrToUpdate as CFDictionary)
