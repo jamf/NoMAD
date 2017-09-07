@@ -305,6 +305,13 @@ class KeychainUtil {
             
             myErr = SecKeychainFindGenericPassword(nil, UInt32(item.key.characters.count), item.key, UInt32(account.characters.count), account, &passLength, &passPtr, &myKeychainItem)
             
+            // if no item, don't attempt to change
+            
+            if myKeychainItem == nil {
+                myLogger.logit(.debug, message: "Keychain item does not currently exist.")
+                continue
+            }
+            
             if myErr != 0 {
                 myLogger.logit(.debug, message: "Adjusting ACL of keychain item \(item.key) : \(item.value).")
                 aclUpdate = true
@@ -329,6 +336,8 @@ class KeychainUtil {
                         myErr = SecACLSetContents(acl, newAppList as CFArray, "No Prompt" as CFString, SecKeychainPromptSelector.invalidAct)
                     }
                 }
+                
+                // Hi Rick, how's things?
                 
                 myErr = SecKeychainItemSetAccessWithPassword(myKeychainItem, itemAccess!, UInt32(newPassword.characters.count), newPassword)
                 

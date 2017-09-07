@@ -572,7 +572,13 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         if defaults.bool(forKey: Preferences.verbose) {
             myLogger.logit(.info, message:"Testing " + host + ".")
         }
-        let attribute = "defaultNamingContext"
+        var attribute = "defaultNamingContext"
+                
+        // if socket test works, then attempt ldapsearch to get default naming context
+        
+        if defaults.string(forKey: Preferences.lDAPType) == "OD" {
+            attribute = "namingContexts"
+        }
 
         swapPrincipals(false)
 
