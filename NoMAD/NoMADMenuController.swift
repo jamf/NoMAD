@@ -133,7 +133,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         let defaultPreferences = NSDictionary(contentsOf: Bundle.main.url(forResource: "DefaultPreferences", withExtension: "plist")!)
         defaults.register(defaults: defaultPreferences as! [String : Any])
         
-        if !defaults.bool(forKey: Preferences.dontShowWelcome) {
+        if !defaults.bool(forKey: Preferences.dontShowWelcome) && ProcessInfo().operatingSystemVersion.minorVersion > 10 {
             welcome.window?.forceToFrontAndFocus(nil)
         }
 
@@ -313,7 +313,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         NoMADMenuLockScreen.title = "Lock Screen".translate
         NoMADMenuChangePassword.title = defaults.string(forKey: Preferences.menuChangePassword) ?? "NoMADMenuController-ChangePassword".translate
 
-        if defaults.bool(forKey: Preferences.hideLockScreen) {
+        if defaults.bool(forKey: Preferences.hideLockScreen) || ProcessInfo().operatingSystemVersion.minorVersion > 12 {
             NoMADMenuLockScreen.isHidden = true
         }
 

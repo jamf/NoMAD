@@ -53,9 +53,12 @@ class ShareMounterMenu: NSObject {
                     myItem.state = 1
                 } else if share.mountStatus == .mounting {
                     myItem.isEnabled = false
-                    myItem.state = 2
+                    myItem.state = 0
                 } else if share.mountStatus == .unmounted {
                     myItem.isEnabled = true
+                    myItem.state = 0
+                } else if share.mountStatus == .errorOnMount {
+                    myItem.isEnabled = false
                     myItem.state = 0
                 }
 
