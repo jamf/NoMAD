@@ -1440,15 +1440,20 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 
                 // login if we need to
                 if reachCheck { self.autoLogin() }
-
+                
                 // if we're set to show the sign in window on launch, show it, if we don't already have tickets
-
+                
                 if defaults.bool(forKey: Preferences.signInWindowOnLaunch) && self.userInformation.connected && !self.userInformation.myLDAPServers.tickets.state && !self.signInOffered {
-
-                    // move this back to the foreground
-                    DispatchQueue.main.async {
-                        self.NoMADMenuClickLogIn(NSMenuItem())
-                        self.signInOffered = true
+                    
+                    // check to ensure we're not a member of an exclusion group
+                    
+                    if !((defaults.array(forKey: Preferences.signInWindowOnLaunchExclusions)?.contains(where: { ($0 as! String)  == NSUserName() } )) ?? false ) {
+                        
+                        // move this back to the foreground
+                        DispatchQueue.main.async {
+                            self.NoMADMenuClickLogIn(NSMenuItem())
+                            self.signInOffered = true
+                        }
                     }
                 }
 

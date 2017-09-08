@@ -273,6 +273,7 @@ enum Preferences {
     static let signInWindowAlert = "SignInWindowAlert"
     static let signInWindowAlertTime = "SignInWindowAlertTime"
     static let signInWindowOnLaunch = "SignInWindowOnLaunch"
+    static let signInWindowOnLaunchExclusions = "SignInWindowOnLaunchExlusions"
     static let signedIn = "SignedIn"
     static let signOutCommand = "SignOutCommand"
     static let siteIgnore = "SiteIgnore"
