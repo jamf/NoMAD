@@ -104,6 +104,14 @@
 		1A2CFB621EF0EAA300F1D74C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/PasswordChangeWindow.strings; sourceTree = "<group>"; };
 		1A2CFB681EF0EAA400F1D74C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/LoginWindow.strings; sourceTree = "<group>"; };
 		1A309D421E8E0FC600CEDC45 /* com.trusourcelabs.NoMAD.shares.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = com.trusourcelabs.NoMAD.shares.plist; sourceTree = "<group>"; };
+		1A55D3511F68C8DA0077D99D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/LoginWindow.strings; sourceTree = "<group>"; };
+		1A55D3521F68C8DA0077D99D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		1A55D3531F68C8DA0077D99D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PasswordChangeWindow.strings; sourceTree = "<group>"; };
+		1A55D3541F68C8DA0077D99D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindow.strings; sourceTree = "<group>"; };
+		1A55D3551F68C92E0077D99D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		1A55D3561F68C92F0077D99D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
+		1A55D3571F68C92F0077D99D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		1A55D3581F68C9FA0077D99D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = ru; path = ru.lproj/Languages.plist; sourceTree = "<group>"; };
 		1A58C88B1DD9264D002C0769 /* CSRGen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CSRGen.swift; sourceTree = "<group>"; };
 		1A88E8871EAF717600AC2E67 /* KeychainMinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainMinder.swift; sourceTree = "<group>"; };
 		1A88E8891EAF718400AC2E67 /* KeychainMinder.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = KeychainMinder.xib; sourceTree = "<group>"; };
@@ -492,6 +500,7 @@
 				pl,
 				nl,
 				es,
+				ru,
 			);
 			mainGroup = 84CC67D21D30A18A00115C76;
 			productRefGroup = 84CC67DC1D30A18A00115C76 /* Products */;
@@ -611,6 +620,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				1A1BA5B21F1D08B000E506D0 /* nl */,
+				1A55D3561F68C92F0077D99D /* ru */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -627,6 +637,7 @@
 				84BB027E1EA4439D00AE801D /* pl */,
 				1A88E8911EAF83EC00AC2E67 /* nl */,
 				84EB76041ED36C2E00716B48 /* es */,
+				1A55D3581F68C9FA0077D99D /* ru */,
 			);
 			name = Languages.plist;
 			sourceTree = "<group>";
@@ -642,6 +653,7 @@
 				1A88E88D1EAF83EB00AC2E67 /* nl */,
 				1AF30E611EB7DEFC00542ABB /* pl */,
 				1A2CFB601EF0EAA200F1D74C /* es */,
+				1A55D3521F68C8DA0077D99D /* ru */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
@@ -657,6 +669,7 @@
 				84BB027D1EA4439D00AE801D /* pl */,
 				1A88E8901EAF83EC00AC2E67 /* nl */,
 				84EB76031ED36C2E00716B48 /* es */,
+				1A55D3551F68C92E0077D99D /* ru */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -672,6 +685,7 @@
 				1A88E88E1EAF83EB00AC2E67 /* nl */,
 				1AF30E5F1EB7DEF800542ABB /* pl */,
 				1A2CFB621EF0EAA300F1D74C /* es */,
+				1A55D3531F68C8DA0077D99D /* ru */,
 			);
 			name = PasswordChangeWindow.xib;
 			sourceTree = "<group>";
@@ -687,6 +701,7 @@
 				1A88E88F1EAF83EB00AC2E67 /* nl */,
 				1AF30E651EB7DF0700542ABB /* pl */,
 				1A2CFB611EF0EAA300F1D74C /* es */,
+				1A55D3541F68C8DA0077D99D /* ru */,
 			);
 			name = PreferencesWindow.xib;
 			sourceTree = "<group>";
@@ -702,6 +717,7 @@
 				1A88E88C1EAF83EB00AC2E67 /* nl */,
 				1AF30E631EB7DF0100542ABB /* pl */,
 				1A2CFB681EF0EAA400F1D74C /* es */,
+				1A55D3511F68C8DA0077D99D /* ru */,
 			);
 			name = LoginWindow.xib;
 			sourceTree = "<group>";
@@ -711,6 +727,7 @@
 			children = (
 				84EB760E1ED3B0D100716B48 /* es */,
 				1A1BA5B41F1D08B100E506D0 /* nl */,
+				1A55D3571F68C92F0077D99D /* ru */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";

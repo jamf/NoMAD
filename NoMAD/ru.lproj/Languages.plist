@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <key>Lock Screen</key>
+        <dict>
+            <key>value</key>
+            <string>Заблокировать экран</string>
+            <key>comment</key>
+            <string>Пункт меню для блокировки экрана</string>
+        </dict>
+        <key>SignIn</key>
+        <dict>
+            <key>value</key>
+            <string>Войти</string>
+            <key>comment</key>
+            <string>Пункт меню для аутетнификации</string>
+        </dict>
+        <key>NoMADMenuController-Connected</key>
+        <dict>
+            <key>value</key>
+            <string></string>
+            <key>comment</key>
+            <string>Статус в Строке меню Apple - NoMAD может найти домен</string>
+        </dict>
+        <key>NoMADMenuController-NotConnected</key>
+        <dict>
+            <key>value</key>
+            <string>Домен не найден</string>
+            <key>comment</key>
+            <string>Статус в Строке меню Apple - NoMAD не может найти домен</string>
+        </dict>
+        <key>NoMADMenuController-ChangePassword</key>
+        <dict>
+            <key>value</key>
+            <string>Сменить пароль</string>
+            <key>comment</key>
+            <string>Пункт меню для смены пароля</string>
+        </dict>
+        <key>UserName</key>
+        <dict>
+            <key>value</key>
+            <string>Имя пользователя</string>
+            <key>comment</key>
+            <string>Полное имя пользователя</string>
+        </dict>
+        <key>NoMADMenuController-GetSoftware</key>
+        <dict>
+            <key>comment</key>
+            <string>Пункт меню для запуска портала приложений.</string>
+            <key>value</key>
+            <string>Загрузить ПО</string>
+        </dict>
+        <key>NoMADMenuController-GetHelp</key>
+        <dict>
+            <key>value</key>
+            <string>Поддержка</string>
+            <key>comment</key>
+            <string>Пункт меню для опций поддержки.</string>
+        </dict>
+        <key>NoMADMenuController-Preferences</key>
+        <dict>
+            <key>value</key>
+            <string>Настройки</string>
+            <key>comment</key>
+            <string>Пункт меню для открытия окна настроек.</string>
+        </dict>
+        <key>NoMADMenuController-Quit</key>
+        <dict>
+            <key>value</key>
+            <string>Выход</string>
+            <key>comment</key>
+            <string>Пункт меню для выхода из NoMAD.</string>
+        </dict>
+        <key>NoMADMenuController-RenewTickets</key>
+        <dict>
+            <key>comment</key>
+            <string>Пункт меню для обновления тикетов Kerberos</string>
+            <key>value</key>
+            <string>Обновить тикеты</string>
+        </dict>
+        <key>NoMADMenuController-PasswordExpiresInDays</key>
+        <dict>
+            <key>comment</key>
+            <string>Длинный текст о количестве дней, оставшихся до смены пароля</string>
+            <key>value</key>
+            <string>Количество дней до смены пароля: %@</string>
+        </dict>
+        <key>PasswordDoesNotExpire</key>
+        <dict>
+            <key>value</key>
+            <string>Срок действия пароля не ограничен</string>
+            <key>comment</key>
+            <string>Пункт меню о неограниченном сроке действия пароля</string>
+        </dict>
+        <key>PasswordChangeSuccessful</key>
+        <dict>
+            <key>value</key>
+            <string>Пароль успешно изменен. Внимание: информация о сроке действия пароля обновится в течение часа.</string>
+            <key>comment</key>
+            <string>сообщение для пользователя об успешной смене пароля</string>
+        </dict>
+        <key>InvalidPassword</key>
+        <dict>
+            <key>value</key>
+            <string>Пароль не подходит. Попробуйте еще раз.</string>
+            <key>comment</key>
+            <string>ошибка о неверном пароле</string>
+        </dict>
+        <key>InvalidUsername</key>
+        <dict>
+            <key>value</key>
+            <string>Имя указано неверно. Попробуйте еще раз.</string>
+            <key>comment</key>
+            <string>ошибка о неверном имени пользователя</string>
+        </dict>
+        <key>PasswordExpire</key>
+        <dict>
+            <key>value</key>
+            <string>Срок действия вашего пароля истек. Пожалуйста, укажите новый пароль.</string>
+            <key>comment</key>
+            <string>ошибка об истекшем сроке действия пароля</string>
+        </dict>
+        <key>PasswordAboutToExpire</key>
+        <dict>
+            <key>value</key>
+            <string>Срок действия пароля подходит к концу!</string>
+            <key>comment</key>
+            <string>сообщение о скором окончании срока дейтсвия пароля</string>
+        </dict>
+        <key>PasswordExpiresOn</key>
+        <dict>
+            <key>value</key>
+            <string>Срок действия вашего сетевого пароля истекает </string>
+            <key>comment</key>
+            <string>Срок действия вашего сетевого пароля истекает &lt;date&gt;</string>
+        </dict>
+        <key>PasswordMismatch</key>
+        <dict>
+            <key>value</key>
+            <string>Пароли не совпадают.</string>
+            <key>comment</key>
+            <string>ошибка о несовпадении паролей</string>
+        </dict>
+        <key>NetworkLocalMismatch</key>
+        <dict>
+            <key>value</key>
+            <string>Ваши сетевой и локальный пароли не совпадают. Пожалуйста, введите пароль от входа в компьютер.</string>
+            <key>comment</key>
+            <string>ошибка о несовпадении сетевого и локального паролей</string>
+        </dict>
+        <key>ValidCertificate</key>
+        <dict>
+            <key>value</key>
+            <string>Вы уже используете действительный сертификат</string>
+            <key>comment</key>
+            <string>пользователь уже использует действительный сертификат</string>
+        </dict>
+        <key>Cancel</key>
+        <dict>
+            <key>value</key>
+            <string>Отмена</string>
+            <key>comment</key>
+            <string>кнопка для отмены действий</string>
+        </dict>
+        <key>RequestAnyway</key>
+        <dict>
+            <key>value</key>
+            <string>Запросить в любом случае</string>
+            <key>comment</key>
+            <string>кнопка для запроса в любом случае</string>
+        </dict>
+        <key>CertConnectionError</key>
+        <dict>
+            <key>value</key>
+            <string>Проблема с подключением. Убедитесь, что сертификаты в списке доверенных и URL для X509 CA указан верно.</string>
+            <key>comment</key>
+            <string>сообщение о недоступности доверенного центра сертификации</string>
+        </dict>
+        <key>CAConfigError</key>
+        <dict>
+            <key>value</key>
+            <string>Проверьте, что настройки доверенного центра сертификации указаны верно.</string>
+            <key>comment</key>
+            <string>ошибка о недоступности доверенного центра сертификации</string>
+        </dict>
+        <key>d</key>
+        <dict>
+            <key>value</key>
+            <string>д.</string>
+            <key>comment</key>
+            <string>short form of days</string>
+        </dict>
+        <key>HomeSharepoint</key>
+        <dict>
+            <key>value</key>
+            <string>Домашняя папка</string>
+            <key>comment</key>
+            <string>Пункт меню для монтирования домашней папки из AD</string>
+        </dict>
+        <key>LoginWindow-OldPasswordLabel</key>
+        <dict>
+            <key>value</key>
+            <string>Старый пароль</string>
+            <key>comment</key>
+            <string>Ярлык для старого пароля</string>
+        </dict>
+        <key>LoginWindow-PasswordLabel</key>
+        <dict>
+            <key>value</key>
+            <string>Пароль</string>
+            <key>comment</key>
+            <string>Ярлык для пароля</string>
+        </dict>
+        <key>NoMADMenuController-SmartcardSignIn</key>
+        <dict>
+            <key>value</key>
+            <string>Смарт-карта</string>
+            <key>comment</key>
+            <string>Пункт меню для входа с помощью смарт-карты</string>
+        </dict>
+        <key>NoMADMenuController-SignInWithSmartcard</key>
+        <dict>
+            <key>value</key>
+            <string>Аутентификация при помощи смарт-карты.</string>
+            <key>comment</key>
+            <string>Пункт меню для входа с помощью смарт-карты</string>
+        </dict>
+        <key>NoMADMenuController-NotLoggedIn</key>
+        <dict>
+            <key>value</key>
+            <string>Вход не выполнен</string>
+            <key>comment</key>
+            <string>Статус пользователя о времени жизни тикета Kerberos при отсутствии подключения</string>
+        </dict>
+        <key>NoMADMenuController-NotSignedIn</key>
+        <dict>
+            <key>value</key>
+            <string>Идентификация не выполнена</string>
+            <key>comment</key>
+            <string>Статус неидентифицированного пользователя</string>
+        </dict>
+        <key>NoMADMenuController-NoUser</key>
+        <dict>
+            <key>value</key>
+            <string>Пользователя с такм именем нет</string>
+            <key>comment</key>
+            <string>Статус пользователя, когда имя не найдено</string>
+        </dict>
+        <key>UserInformation-PasswordChanged</key>
+        <dict>
+            <key>value</key>
+            <string>Пароль изменен</string>
+            <key>comment</key>
+            <string>Уведомление об измененном пароле</string>
+        </dict>
+        <key>UserInformation-PwdChangedSignInAgain</key>
+        <dict>
+            <key>value</key>
+            <string>Пароль пользователя был изменен, выполните повторный вход в NoMAD для обновления пароля.</string>
+            <key>comment</key>
+            <string>Уведомление о запросе повторной авторизации</string>
+        </dict>
+        <key>UserInformation-Ignore</key>
+        <dict>
+            <key>value</key>
+            <string>Игнорировать</string>
+            <key>comment</key>
+            <string>Кнопка игнорирования уведомления о смене пароля</string>
+        </dict>
+    </dict></plist>
