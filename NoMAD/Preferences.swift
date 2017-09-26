@@ -202,6 +202,7 @@ enum Preferences {
     static let getHelpType = "GetHelpType"
     static let getHelpOptions = "GetHelpOptions"
     static let groups = "Groups"
+    static let hicFix = "HicFix"
     static let hideExpiration = "HideExpiration"
     static let hideExpirationMessage = "HideExpirationMessage"
     static let hideCertificateNumber = "HideCertificateNumber"

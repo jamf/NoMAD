@@ -237,14 +237,17 @@ class NoMADUser {
      - returns:
      A string containing any error text from KerbUtil
      */
-    func changeRemotePassword(_ oldPassword: String, newPassword1: String, newPassword2: String) throws {
+    
+    func changeRemotePassword(_ oldPassword: String, newPassword1: String, newPassword2: String, hicFix: Bool=true) throws {
         if (newPassword1 != newPassword2) {
             myLogger.logit(LogLevel.info, message: "New passwords do not match.")
             throw NoMADUserError.invalidParamater("New passwords do not match.")
         }
-
-
-
+        
+        
+        // if on Hi-Sierra we need to work around some things here
+        
+        if !hicFix {
         let currentConsoleUserKerberosPrincipal = getCurrentConsoleUserKerberosPrincipal()
         if currentConsoleUserIsADuser() {
             if ( kerberosPrincipal == currentConsoleUserKerberosPrincipal ) {
@@ -253,6 +256,7 @@ class NoMADUser {
             } else {
                 myLogger.logit(LogLevel.notice, message: "NoMAD User != Console User. Console user is AD user. You should prompt the user to change the local password.")
             }
+        }
         }
 
         let kerbPrefFile = checkKpasswdServer(true)
@@ -674,6 +678,20 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
                 return error.description
             } catch {
                 return "Unknown error changing keychain password"
+            }
+            
+            // fix for Hi-Sierra
+            
+            if defaults.bool(forKey: Preferences.hicFix) && ProcessInfo().operatingSystemVersion.minorVersion < 13 {
+                
+                do {
+                    try noMADUser.changeRemotePassword(currentPassword, newPassword1: newPassword1, newPassword2: newPassword2, hicFix: true)
+                } catch let error as NoMADUserError {
+                    myLogger.logit(LogLevel.base, message: error.description)
+                    return error.description
+                } catch {
+                    return "Unknown error changing remote password"
+                }
             }
         }
         
