@@ -682,7 +682,7 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
             
             // fix for Hi-Sierra
             
-            if defaults.bool(forKey: Preferences.hicFix) && ProcessInfo().operatingSystemVersion.minorVersion > 13 {
+            if defaults.bool(forKey: Preferences.hicFix) && ProcessInfo().operatingSystemVersion.minorVersion == 13 && ProcessInfo().operatingSystemVersion.patchVersion == 0 {
                 
                 do {
                     try noMADUser.changeRemotePassword(currentPassword, newPassword1: newPassword1, newPassword2: newPassword2, hicFix: true)
