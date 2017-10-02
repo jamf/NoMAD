@@ -1,5 +1,5 @@
 /* Class = "NSButtonCell"; title = "Renew Ticket"; ObjectID = "1RW-ej-qej"; */
-"1RW-ej-qej.title" = "Обновить тикет Kerberos";
+"1RW-ej-qej.title" = "Обновить тикет";
 
 /* Class = "NSTextFieldCell"; title = "AD Domain"; ObjectID = "3PC-dv-g1C"; */
 "3PC-dv-g1C.title" = "Домен AD";
