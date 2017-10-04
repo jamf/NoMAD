@@ -718,8 +718,22 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 
         } else {
             myLogger.logit(.debug, message: "Query Error: " + self.resolver.error.localizedDescription)
+            
             self.currentState = false
-            self.hosts.removeAll()
+            
+            print("Hosts known: " + String(describing: self.hosts.count))
+            
+            if self.hosts.count > 0 {
+                print("Keeping previous results, since we are unable to find new LDAP servers.")
+                
+                // set state to true, since we know at least one semi-valid server
+                
+                self.currentState = true
+                
+            } else {
+                print("Warning no LDAP servers found from any query.")
+            }
+            //self.hosts.removeAll()
         }
     }
 
