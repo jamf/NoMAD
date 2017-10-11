@@ -29,31 +29,48 @@ class Welcome: NSWindowController, NSWindowDelegate {
         let version = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""
         versionField.stringValue = "Version: " + shortVersion + " Build: " + version
         
+        
         // Setting the welcome splash screen
         do {
-            myLogger.logit(.debug, message: "Attempting to load custom welcome splash screen.")
             var customSplashPath : URL
             var customSplashDir : URL
+            var customSplashFile : String
+            
             if defaults.object(forKey: Preferences.menuWelcome) != nil {
                 
+                myLogger.logit(.debug, message: "Attempting to load custom welcome splash screen.")
+
                 // Loading the users custom view
-                let customSplashPref = "file://" + (defaults.object(forKey: Preferences.menuWelcome) as! String) + "/index.html"
-                customSplashDir = URL.init(fileURLWithPath: defaults.object(forKey: Preferences.menuWelcome) as! String, isDirectory: true)
-                myLogger.logit(.debug, message: "loading: " + customSplashPref)
-                customSplashPath = URL.init(string: customSplashPref, relativeTo: customSplashDir)!
-                //customSplashPath = URL.init(string: customSplashPref)!
+                
+                // check for trailing / and add if necessary
+                
+                var customSplash = defaults.object(forKey: Preferences.menuWelcome) as! String
+                
+                if customSplash.last != "/" {
+                    customSplash += "/"
+                }
+                
+                myLogger.logit(.debug, message: "loading: " + customSplash)
+                
+                customSplashPath =  URL.init(string: customSplash + "index.html")!
+                customSplashDir = URL.init(string: customSplash)!
+                
+                customSplashFile = try String.init(contentsOfFile: customSplashPath.absoluteString)
+                
             } else {
                 
                 // Using the default view
                 customSplashPath = Bundle.main.url(forResource: "WelcomeSplash", withExtension: "html")!
                 customSplashDir = customSplashPath
+                customSplashFile = try String(contentsOf: customSplashPath, encoding: String.Encoding.utf8)
             }
             
             // Displaying it out to the webview
 
             myLogger.logit(.debug, message: "Using Default display method due to older OSX version.")
-            let customSplashFile = try String(contentsOf: customSplashPath, encoding: String.Encoding.utf8)
-            webView.mainFrame.loadHTMLString(customSplashFile, baseURL: customSplashPath)
+            //let customSplashFile = try String(contentsOf: customSplashPath, encoding: String.Encoding.utf8)
+            
+            webView.mainFrame.loadHTMLString(customSplashFile, baseURL: customSplashDir)
         } catch {
             myLogger.logit(.debug, message: "Error reading contents of file")
             return
