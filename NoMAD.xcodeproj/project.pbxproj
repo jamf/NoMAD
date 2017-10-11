@@ -104,6 +104,7 @@
 		1A2CFB621EF0EAA300F1D74C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/PasswordChangeWindow.strings; sourceTree = "<group>"; };
 		1A2CFB681EF0EAA400F1D74C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/LoginWindow.strings; sourceTree = "<group>"; };
 		1A309D421E8E0FC600CEDC45 /* menu.nomad.NoMAD.shares.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = menu.nomad.NoMAD.shares.plist; sourceTree = "<group>"; };
+		1A4CD1AB1F8E5A42001415C2 /* krb5.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = krb5.h; path = "../../NoMAD-2/NoMAD PKINIT/krb5.h"; sourceTree = "<group>"; };
 		1A55D3511F68C8DA0077D99D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/LoginWindow.strings; sourceTree = "<group>"; };
 		1A55D3521F68C8DA0077D99D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/MainMenu.strings; sourceTree = "<group>"; };
 		1A55D3531F68C8DA0077D99D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PasswordChangeWindow.strings; sourceTree = "<group>"; };
@@ -294,6 +295,7 @@
 		1AFBDC6A1DEE4D0600C19AE1 /* Security */ = {
 			isa = PBXGroup;
 			children = (
+				1A4CD1AB1F8E5A42001415C2 /* krb5.h */,
 				1A1BA5D41F22694A00E506D0 /* GSSItem.h */,
 				1A58C88B1DD9264D002C0769 /* CSRGen.swift */,
 				84996CA91D503F9100793747 /* KerbUtil.h */,

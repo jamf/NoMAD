@@ -16,7 +16,7 @@
 // kerb bits
 
 #import <GSS/GSS.h>
-#import <krb5/krb5.h>
+#import "krb5.h"
 
 
 //extern OSStatus SecKeychainChangePassword(SecKeychainRef keychainRef, UInt32 oldPasswordLength, const void* oldPassword, UInt32 newPasswordLength, const void* newPassword);

@@ -16,8 +16,8 @@ class Welcome: NSWindowController, NSWindowDelegate {
     
     @IBOutlet weak var welcomeWindow: NSView!
     
+    @IBOutlet weak var webView: WebView!
     @IBOutlet weak var versionField: NSTextField!
-    @IBOutlet weak var displaySplash: WKWebView!
     
     override var windowNibName: String? {
         return "Welcome"
@@ -50,15 +50,10 @@ class Welcome: NSWindowController, NSWindowDelegate {
             }
             
             // Displaying it out to the webview
-            if #available(OSX 10.11, *) {
-                myLogger.logit(.debug, message: "Using newer splash display method.")
-                displaySplash.loadFileURL(customSplashPath, allowingReadAccessTo: customSplashDir)
-            } else {
-                myLogger.logit(.debug, message: "Using Default display method due to older OSX version.")
-                let customSplashFile = try String(contentsOf: customSplashPath, encoding: String.Encoding.utf8)
-                displaySplash.loadHTMLString(customSplashFile, baseURL: customSplashPath)
-            }
-            
+
+            myLogger.logit(.debug, message: "Using Default display method due to older OSX version.")
+            let customSplashFile = try String(contentsOf: customSplashPath, encoding: String.Encoding.utf8)
+            webView.mainFrame.loadHTMLString(customSplashFile, baseURL: customSplashPath)
         } catch {
             myLogger.logit(.debug, message: "Error reading contents of file")
             return
