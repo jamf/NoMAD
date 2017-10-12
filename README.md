@@ -2,6 +2,22 @@
 
 This gitlab page is used primarily for code storage and issue tracking. For the most up to ddate information on NoMAD, and installer donwloads, please see [nomad.menu](http://www.nomad.menu)
 
+***Current Version***
+
+NoMAD v. 1.1(772)
+
+***Development Version***
+
+NoMAD v. 1.1.1(778)
+
+***New Features in Development Version***
+
+- Norwegian Localization - build 778
+- Croatian Localization - build 778
+- Support for sites with no DCs listed. NoMAD will fall back to globally available DCs - build 778
+- Better support for < 10.12 systems and the Welcome Screen - build 778
+- Switch to Xcode 9 and Swift 3.2
+
 ***NoMAD***
 
 Get all of AD, with none of the bind! From now on you'll have no mo' need of AD.
