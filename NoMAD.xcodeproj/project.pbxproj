@@ -105,6 +105,18 @@
 		1A2CFB681EF0EAA400F1D74C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/LoginWindow.strings; sourceTree = "<group>"; };
 		1A309D421E8E0FC600CEDC45 /* menu.nomad.NoMAD.shares.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = menu.nomad.NoMAD.shares.plist; sourceTree = "<group>"; };
 		1A4CD1AB1F8E5A42001415C2 /* krb5.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = krb5.h; path = "../../NoMAD-2/NoMAD PKINIT/krb5.h"; sourceTree = "<group>"; };
+		1A4CD1AC1F8EF94B001415C2 /* hr-BA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "hr-BA"; path = "hr-BA.lproj/LoginWindow.strings"; sourceTree = "<group>"; };
+		1A4CD1AD1F8EF94C001415C2 /* hr-BA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "hr-BA"; path = "hr-BA.lproj/PreferencesWindow.strings"; sourceTree = "<group>"; };
+		1A4CD1AE1F8EF94D001415C2 /* hr-BA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "hr-BA"; path = "hr-BA.lproj/MainMenu.strings"; sourceTree = "<group>"; };
+		1A4CD1AF1F8EF94D001415C2 /* hr-BA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "hr-BA"; path = "hr-BA.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		1A4CD1B01F8EF94D001415C2 /* hr-BA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "hr-BA"; path = "hr-BA.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		1A4CD1B11F8EF94E001415C2 /* hr-BA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "hr-BA"; path = "hr-BA.lproj/PasswordChangeWindow.strings"; sourceTree = "<group>"; };
+		1A4CD1B21F8EF974001415C2 /* nn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nn; path = nn.lproj/LoginWindow.strings; sourceTree = "<group>"; };
+		1A4CD1B31F8EF975001415C2 /* nn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nn; path = nn.lproj/PreferencesWindow.strings; sourceTree = "<group>"; };
+		1A4CD1B41F8EF976001415C2 /* nn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nn; path = nn.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		1A4CD1B51F8EF976001415C2 /* nn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nn; path = nn.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		1A4CD1B61F8EF977001415C2 /* nn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nn; path = nn.lproj/Localizable.strings; sourceTree = "<group>"; };
+		1A4CD1B71F8EF977001415C2 /* nn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nn; path = nn.lproj/PasswordChangeWindow.strings; sourceTree = "<group>"; };
 		1A55D3511F68C8DA0077D99D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/LoginWindow.strings; sourceTree = "<group>"; };
 		1A55D3521F68C8DA0077D99D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/MainMenu.strings; sourceTree = "<group>"; };
 		1A55D3531F68C8DA0077D99D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PasswordChangeWindow.strings; sourceTree = "<group>"; };
@@ -623,6 +635,8 @@
 			children = (
 				1A1BA5B21F1D08B000E506D0 /* nl */,
 				1A55D3561F68C92F0077D99D /* ru */,
+				1A4CD1B01F8EF94D001415C2 /* hr-BA */,
+				1A4CD1B61F8EF977001415C2 /* nn */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -656,6 +670,8 @@
 				1AF30E611EB7DEFC00542ABB /* pl */,
 				1A2CFB601EF0EAA200F1D74C /* es */,
 				1A55D3521F68C8DA0077D99D /* ru */,
+				1A4CD1AE1F8EF94D001415C2 /* hr-BA */,
+				1A4CD1B41F8EF976001415C2 /* nn */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
@@ -672,6 +688,8 @@
 				1A88E8901EAF83EC00AC2E67 /* nl */,
 				84EB76031ED36C2E00716B48 /* es */,
 				1A55D3551F68C92E0077D99D /* ru */,
+				1A4CD1AF1F8EF94D001415C2 /* hr-BA */,
+				1A4CD1B51F8EF976001415C2 /* nn */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -688,6 +706,8 @@
 				1AF30E5F1EB7DEF800542ABB /* pl */,
 				1A2CFB621EF0EAA300F1D74C /* es */,
 				1A55D3531F68C8DA0077D99D /* ru */,
+				1A4CD1B11F8EF94E001415C2 /* hr-BA */,
+				1A4CD1B71F8EF977001415C2 /* nn */,
 			);
 			name = PasswordChangeWindow.xib;
 			sourceTree = "<group>";
@@ -704,6 +724,8 @@
 				1AF30E651EB7DF0700542ABB /* pl */,
 				1A2CFB611EF0EAA300F1D74C /* es */,
 				1A55D3541F68C8DA0077D99D /* ru */,
+				1A4CD1AD1F8EF94C001415C2 /* hr-BA */,
+				1A4CD1B31F8EF975001415C2 /* nn */,
 			);
 			name = PreferencesWindow.xib;
 			sourceTree = "<group>";
@@ -720,6 +742,8 @@
 				1AF30E631EB7DF0100542ABB /* pl */,
 				1A2CFB681EF0EAA400F1D74C /* es */,
 				1A55D3511F68C8DA0077D99D /* ru */,
+				1A4CD1AC1F8EF94B001415C2 /* hr-BA */,
+				1A4CD1B21F8EF974001415C2 /* nn */,
 			);
 			name = LoginWindow.xib;
 			sourceTree = "<group>";

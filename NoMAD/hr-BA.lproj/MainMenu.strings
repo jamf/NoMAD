@@ -1,0 +1,84 @@
+/* Class = "NSMenuItem"; ibShadowedToolTip = "Change your network password."; ObjectID = "0IM-ZO-KLA"; */
+"0IM-ZO-KLA.ibShadowedToolTip" = "Promijenite svoju mrežnu šifru.";
+
+/* Class = "NSMenuItem"; title = "Change Password"; ObjectID = "0IM-ZO-KLA"; */
+"0IM-ZO-KLA.title" = "Promijeni šifru";
+
+/* Class = "NSMenuItem"; ibShadowedToolTip = "Lock your screen."; ObjectID = "3Pf-2O-qR7"; */
+"3Pf-2O-qR7.ibShadowedToolTip" = "Zaključaj svoj ekran.";
+
+/* Class = "NSMenuItem"; title = "Lock Screen"; ObjectID = "3Pf-2O-qR7"; */
+"3Pf-2O-qR7.title" = "Zaključaj ekran";
+
+/* Class = "NSMenuItem"; title = "Preferences"; ObjectID = "3yQ-ft-CVW"; */
+"3yQ-ft-CVW.title" = "Postavci";
+
+/* Class = "NSMenuItem"; title = "Ticket Info"; ObjectID = "7uv-39-xiX"; */
+"7uv-39-xiX.title" = "Tiket Informacija";
+
+/* Class = "NSMenuItem"; ibShadowedToolTip = "Certificate expiration date."; ObjectID = "A9U-v2-LiT"; */
+"A9U-v2-LiT.ibShadowedToolTip" = "Datum isteka certifikata.";
+
+/* Class = "NSMenuItem"; title = "CertificateDate"; ObjectID = "A9U-v2-LiT"; */
+"A9U-v2-LiT.title" = "Datum certifikata";
+
+/* Class = "NSMenuItem"; ibShadowedToolTip = "Get a certificate."; ObjectID = "AlW-9M-CK2"; */
+"AlW-9M-CK2.ibShadowedToolTip" = "Primi certifikat.";
+
+/* Class = "NSMenuItem"; title = "Get Certificate"; ObjectID = "AlW-9M-CK2"; */
+"AlW-9M-CK2.title" = "Primi certifikat";
+
+/* Class = "NSMenuItem"; ibShadowedToolTip = "Time until your network password expires."; ObjectID = "CUr-ED-n29"; */
+"CUr-ED-n29.ibShadowedToolTip" = "Vrijeme do isteka vaše mrežne šifre.";
+
+/* Class = "NSMenuItem"; title = "password expires"; ObjectID = "CUr-ED-n29"; */
+"CUr-ED-n29.title" = "Šifra istiće";
+
+/* Class = "NSMenuItem"; ibShadowedToolTip = "Time until your Kerberos ticket expires."; ObjectID = "QYf-mL-9ta"; */
+"QYf-mL-9ta.ibShadowedToolTip" = "Vrijeme do isteka vašeg Kerber tiketa.";
+
+/* Class = "NSMenuItem"; title = "ticket life"; ObjectID = "QYf-mL-9ta"; */
+"QYf-mL-9ta.title" = "vijek tiketa";
+
+/* Class = "NSMenuItem"; ibShadowedToolTip = "Sign in with your network account."; ObjectID = "Wa6-S1-lXm"; */
+"Wa6-S1-lXm.ibShadowedToolTip" = "Prijavi se sa mrežnim korisnikom.";
+
+/* Class = "NSMenuItem"; title = "Sign In"; ObjectID = "Wa6-S1-lXm"; */
+"Wa6-S1-lXm.title" = "Prijavi se";
+
+/* Class = "NSMenuItem"; ibShadowedToolTip = "Sign in with your network account."; ObjectID = "XL2-b8-IwM"; */
+"XL2-b8-IwM.ibShadowedToolTip" = "Prijavi se sa mrežnim korisnikom.";
+
+/* Class = "NSMenuItem"; title = "Log In 2"; ObjectID = "XL2-b8-IwM"; */
+"XL2-b8-IwM.title" = "Prijava 2";
+
+/* Class = "NSMenuItem"; title = "Get Software"; ObjectID = "fuo-5h-NuR"; */
+"fuo-5h-NuR.title" = "Skini softver";
+
+/* Class = "NSMenuItem"; title = "Quit"; ObjectID = "gM7-FQ-f0l"; */
+"gM7-FQ-f0l.title" = "Prekini";
+
+/* Class = "NSMenuItem"; title = "Hidden Item 1"; ObjectID = "kql-Bl-QJE"; */
+"kql-Bl-QJE.title" = "Skriveni predmet 1";
+
+/* Class = "NSMenuItem"; title = "Dump Logs"; ObjectID = "pC8-5a-Aec"; */
+"pC8-5a-Aec.title" = "Logovi";
+
+/* Class = "NSMenuItem"; title = "Get Help"; ObjectID = "rbx-v6-fJx"; */
+"rbx-v6-fJx.title" = "Pomoć";
+
+/* Class = "NSMenuItem"; ibShadowedToolTip = "Your network user name."; ObjectID = "uQI-ol-UUw"; */
+"uQI-ol-UUw.ibShadowedToolTip" = "Vaše mrežno korisničko ime.";
+
+/* Class = "NSMenuItem"; title = "user"; ObjectID = "uQI-ol-UUw"; */
+"uQI-ol-UUw.title" = "Korisnik";
+
+/* Class = "NSMenuItem"; ibShadowedToolTip = "Sign out of your network account."; ObjectID = "w1A-iF-wAU"; */
+"w1A-iF-wAU.ibShadowedToolTip" = "Odjavi se od mrežnog korisnika.";
+
+/* Class = "NSMenuItem"; title = "Sign Out"; ObjectID = "w1A-iF-wAU"; */
+"w1A-iF-wAU.title" = "Odjava";
+
+/* Class = "NSMenuItem"; title = "Software and Help"; ObjectID = "wcV-DA-kNE"; */
+"wcV-DA-kNE.title" = "Softver i pomoć";
+
