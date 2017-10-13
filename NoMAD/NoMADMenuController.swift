@@ -946,6 +946,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         } else {
             myLogger.logit(.base, message: "Auto-login not attempted.")
         }
+    
+        // if keychain prompt is set ensure we have a keychain item
+        
+    
     }
 
     // Share Mount functions

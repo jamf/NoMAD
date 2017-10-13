@@ -292,6 +292,7 @@ enum Preferences {
     static let userCommandHotKey1 = "UserCommandHotKey1"
     static let userPasswordSetDates = "UserPasswordSetDates"
     static let useKeychain = "UseKeychain"
+    static let useKeychainPrompt = "UseKeychainPrompt"
     static let userAging = "UserAging"
     static let userEmail = "UserEmail"
     static let userShortName = "UserShortName"
