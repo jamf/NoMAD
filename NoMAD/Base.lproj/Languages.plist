@@ -268,5 +268,19 @@
 		<key>comment</key>
 		<string>Password change notification ignore button</string>
 	</dict>
+    <key>FileServers</key>
+    <dict>
+        <key>value</key>
+        <string>File Servers</string>
+        <key>comment</key>
+        <string>Menu item for File Servers</string>
+    </dict>
+    <key>Edit...</key>
+    <dict>
+        <key>value</key>
+        <string>Edit...</string>
+        <key>comment</key>
+        <string>Menu item for editing</string>
+    </dict>
 </dict>
 </plist>

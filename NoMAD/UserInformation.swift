@@ -3,7 +3,7 @@
 //  NoMAD
 //
 //  Created by Joel Rennich on 8/20/16.
-//  Copyright © 2016 Trusource Labs. All rights reserved.
+//  Copyright © 2016 Orchard & Grove Inc. All rights reserved.
 //
 
 import Foundation
@@ -35,6 +35,7 @@ class UserInformation {
 
     var userEmail: String
     var UPN: String
+    var dn: String
 
     // Password last set info
 
@@ -63,6 +64,7 @@ class UserInformation {
         userDisplayName = ""
         userEmail = ""
         UPN = ""
+        dn = ""
         if defaults.dictionary(forKey: Preferences.userPasswordSetDates) != nil {
             UserPasswordSetDates = defaults.dictionary(forKey: Preferences.userPasswordSetDates)! as [String : AnyObject]
         }
@@ -122,7 +124,7 @@ class UserInformation {
         // 2. check for tickets
 
         if myLDAPServers.tickets.state {
-            userPrincipal = myLDAPServers.tickets.principal
+            userPrincipal = myLDAPServers.tickets.returnDefaultPrincipal()
             realm = defaults.string(forKey: Preferences.kerberosRealm)!
             if userPrincipal.contains(realm) {
                 userPrincipalShort = userPrincipal.replacingOccurrences(of: "@" + realm, with: "")
@@ -150,7 +152,7 @@ class UserInformation {
 
             if !defaults.bool(forKey: Preferences.lDAPOnly) {
 
-            let attributes = ["pwdLastSet", "msDS-UserPasswordExpiryTimeComputed", "userAccountControl", "homeDirectory", "displayName", "memberOf", "mail", "userPrincipalName"] // passwordSetDate, computedExpireDateRaw, userPasswordUACFlag, userHomeTemp, userDisplayName, groupTemp
+            let attributes = ["pwdLastSet", "msDS-UserPasswordExpiryTimeComputed", "userAccountControl", "homeDirectory", "displayName", "memberOf", "mail", "userPrincipalName", "dn"] // passwordSetDate, computedExpireDateRaw, userPasswordUACFlag, userHomeTemp, userDisplayName, groupTemp
             // "maxPwdAge" // passwordExpirationLength
 
             let searchTerm = "sAMAccountName=" + userPrincipalShort
@@ -165,6 +167,7 @@ class UserInformation {
                 groupsTemp = ldapResult["memberOf"]
                 userEmail = ldapResult["mail"] ?? ""
                 UPN = ldapResult["userPrincipalName"] ?? ""
+                dn = ldapResult["dn"] ?? ""
             } else {
                 myLogger.logit(.base, message: "Unable to find user.")
                 canary = false
@@ -175,6 +178,25 @@ class UserInformation {
             if ( defaults.object(forKey: Preferences.passwordExpirationDays) ?? nil ) != nil {
                 passwordSetDate = nil
             }
+                
+                // now to get recursive groups if asked
+                
+                if defaults.bool(forKey: Preferences.recursiveGroupLookup) {
+                    let attributes = ["name"]
+                     let searchTerm = "(member:1.2.840.113556.1.4.1941:=" + dn.replacingOccurrences(of: "\\", with: "\\\\5c") + ")"
+                    if let ldifResult = try? myLDAPServers.getLDAPInformation(attributes, searchTerm: searchTerm) {
+                        print(ldifResult)
+                        
+                        groupsTemp = ""
+                        for item in ldifResult {
+                            for components in item {
+                                if components.key == "dn" {
+                                    groupsTemp?.append(components.value + ";")
+                                }
+                            }
+                        }
+                    }
+                }
             
             if canary {
                 if (passwordSetDate != nil) {
@@ -233,7 +255,7 @@ class UserInformation {
 
                     if ( passwordExpirationLength.characters.count > 15 ) {
                         passwordAging = false
-                    } else if ( passwordExpirationLength != "" ) {
+                    } else if ( passwordExpirationLength != "" ) && userPasswordUACFlag != "" {
                         if ~~( Int(userPasswordUACFlag)! & 0x10000 ) {
                             passwordAging = false
                             defaults.set(false, forKey: Preferences.userAging)
@@ -286,7 +308,7 @@ class UserInformation {
 
                     myLogger.logit(.base, message: "Password was changed underneath us.")
                         
-                    if (defaults.string(forKey: Preferences.uPCAlertAction) != nil ) {
+                    if (defaults.string(forKey: Preferences.uPCAlertAction) != nil ) && (defaults.string(forKey: Preferences.uPCAlertAction) != "" ) {
                         myLogger.logit(.base, message: "Firing UPC Alert Action")
                         cliTask(defaults.string(forKey: Preferences.uPCAlertAction)! + " &")
                     }
@@ -379,6 +401,8 @@ class UserInformation {
             defaults.set(userPrincipalShort, forKey: Preferences.lastUser)
             defaults.set(userPasswordExpireDate, forKey: Preferences.lastPasswordExpireDate)
             defaults.set(groups, forKey: Preferences.groups)
+            defaults.set(UPN, forKey: Preferences.userUPN)
+            defaults.set(userEmail, forKey: Preferences.userEmail)
         }
     }
 }

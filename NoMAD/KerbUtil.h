@@ -3,7 +3,7 @@
 //  NoMAD
 //
 //  Created by Joel Rennich on 4/26/16.
-//  Copyright © 2016 Trusource Labs. All rights reserved.
+//  Copyright © 2016 Orchard & Grove Inc. All rights reserved.
 //
 
 #ifndef Header_h
@@ -15,6 +15,8 @@
 #import <Security/Security.h>
 #import <DirectoryService/DirectoryService.h>
 #import <OpenDirectory/OpenDirectory.h>
+
+extern OSStatus SecKeychainItemSetAccessWithPassword(SecKeychainItemRef item, SecAccessRef access, UInt32 passLength, const void* password);
 
 @interface KerbUtil : NSObject
 @property (nonatomic, assign, readonly) BOOL						finished;   // observable

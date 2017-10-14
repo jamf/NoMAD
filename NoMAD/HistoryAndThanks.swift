@@ -3,7 +3,7 @@
 //  NoMAD
 //
 //  Created by Joel Rennich on 4/10/17.
-//  Copyright © 2017 Trusource Labs. All rights reserved.
+//  Copyright © 2017 Orchard & Grove Inc. All rights reserved.
 //
 
 import Foundation
@@ -68,6 +68,8 @@ class HistoryAndThanks {
         esotericBits.append("I first publicly discussed NoMAD on the MacAdmins podcast on Sept. 5, 2016. My second appearance in that podcast was where I didin't record my audio and we had to do it all over again.\n")
         esotericBits.append("The first conference where I talked about NoMAD was at MacSysAdmin 2016. You can find the session on the site, macsysadmin.se\n")
         esotericBits.append("NoMAD was officially launched at the University of Utah Mac Managers meeting on Dec. 21, 2016.\n")
+        esotericBits.append("Version 1.1 took waaay longer than it was supposed to.")
+        esotericBits.append("MacSysAdmin 2017 is where we'll show off NoMAD 2.0 for the first time in public. Note to self... better get working on that.")
         
         return esotericBits
     }

@@ -3,7 +3,7 @@
 //  NoMAD
 //
 //  Created by Boushy, Phillip on 9/28/16.
-//  Copyright © 2016 Trusource Labs. All rights reserved.
+//  Copyright © 2016 Orchard & Grove Inc. All rights reserved.
 //
 
 #import "DNSResolver.h"
@@ -62,6 +62,7 @@
     if (self->_dnsService == NULL) {
         self.error = nil;
         self.finished = NO;
+        [_mutableQueryResponse removeAllObjects];
         [self startInternal];
     }
 }

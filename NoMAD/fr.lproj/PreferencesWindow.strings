@@ -17,7 +17,7 @@
 "Q7A-Jc-5cc.placeholderString" = "optionnel";
 
 /* Class = "NSTextFieldCell"; title = "Kerberos Realm"; ObjectID = "Ufb-5N-kJA"; */
-"Ufb-5N-kJA.title" = "Kerberos Domaine";
+"Ufb-5N-kJA.title" = "Domaine Kerberos";
 
 /* Class = "NSTextField"; ibShadowedToolTip = "The name of your AD Domain."; ObjectID = "ZGq-je-gSa"; */
 "ZGq-je-gSa.ibShadowedToolTip" = "Nom de votre domaine AD";

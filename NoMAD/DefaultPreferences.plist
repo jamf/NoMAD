@@ -76,6 +76,8 @@
 	<false/>
 	<key>UserShortName</key>
 	<string></string>
+	<key>UserUPN</key>
+	<string></string>
 	<key>UserAging</key>
 	<false/>
 	<key>Verbose</key>

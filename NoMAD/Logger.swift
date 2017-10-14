@@ -3,7 +3,7 @@
 //  NoMAD
 //
 //  Created by Joel Rennich on 9/6/16.
-//  Copyright © 2016 Trusource Labs. All rights reserved.
+//  Copyright © 2016 Orchard & Grove Inc. All rights reserved.
 //
 
 /// A singleton `Logger` instance for the app to use.
@@ -58,7 +58,21 @@ class Logger {
     ///   - level: A value from `LogLevel` enum
     ///   - message: A `String` that describes the information to be logged
     func logit(_ level: LogLevel, message: String) {
-        if (level.rawValue <= loglevel.rawValue) {
+        if (level.rawValue <= loglevel.rawValue) && !CommandLine.arguments.contains("-v") {
+            
+            // sanitize the message
+            
+            var set = CharacterSet.alphanumerics
+            
+            set.formUnion(CharacterSet.whitespaces)
+            set.formUnion(CharacterSet.decimalDigits)
+            set.formUnion(CharacterSet.init(charactersIn: "-:.,$@[]"))
+            
+            // anything not in the set, percent encode for safety
+            
+            guard let logMessage = message.addingPercentEncoding(withAllowedCharacters: set) else { return }
+            NSLog("level: \(level) - " + logMessage)
+        } else {
             NSLog("level: \(level) - " + message)
         }
     }

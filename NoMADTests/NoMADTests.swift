@@ -3,7 +3,7 @@
 //  NoMADTests
 //
 //  Created by Bitson on 8/3/16.
-//  Copyright © 2016 Trusource Labs. All rights reserved.
+//  Copyright © 2016 Orchard & Grove Inc. All rights reserved.
 //
 
 import XCTest

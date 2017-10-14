@@ -3,7 +3,7 @@
 //  NoMAD
 //
 //  Created by Joel Rennich on 4/25/17.
-//  Copyright © 2017 Trusource Labs. All rights reserved.
+//  Copyright © 2017 Orchard & Grove Inc. All rights reserved.
 //
 
 import Foundation
@@ -36,12 +36,32 @@ class KeychainMinder : NSWindowController, NSWindowDelegate {
 
     override func windowDidLoad() {
         clearWindow()
+        
+        // pull in any customizations
+        
+        // window name
+        
+        self.window?.title = defaults.string(forKey: Preferences.keychainMinderWindowTitle) ?? "Keychain Locked"
+        
+        // window text
+        
+        if let customText = defaults.string(forKey: Preferences.keychainMinderWindowMessage) {
+            messageText.stringValue = customText
+        }
+        
+        // show create new button
+        
     }
 
 
     func windowWillClose(_ notification: Notification) {
         stopOperations()
         clearWindow()
+        
+        // update NoMAD
+        
+        NotificationCenter.default.post(updateNotification)
+
     }
 
     // functions

@@ -3,7 +3,7 @@
 //  NoMAD
 //
 //  Created by Tom Nook on 11/12/16.
-//  Copyright © 2016 Trusource Labs. All rights reserved.
+//  Copyright © 2016 Orchard & Grove Inc. All rights reserved.
 //
 
 
@@ -47,6 +47,8 @@ enum Preferences {
 
     // hideExpirationMessage - r/w - string - message to show in the menu bar for when your passowrd doesn't expire
     
+    // hideCertificateNumber - number - hiding the "Get Certificate" option when this number of certificates is found
+    
     // hideHelp - r/w - bool - determines if the Get Help menu item should be shown
 
     // hideLockScreen - r/w - bool - determines if the Lock Screen menu item should be shown
@@ -66,6 +68,9 @@ enum Preferences {
     // iconOnDark = r/w - string - file path to an icon for when you're on the network
 
     // kerberosRealm - r/w - string - determines the Kerberos realm to use for all Kerberos activites. If left blank this will be set to the all-caps version of the AD Domain
+
+    // keychainItems - r/w - [String] - Array of keychain item names to be synced when changing passwords
+    // keychainPasswordMatch - r/w - bool - determines if we should keep the keychain password the same as the login password if possible
 
     // lastCertificateExpiration - r/o - date - keeps track of the most future expiration date of certificates associated with the user's NT Principal for the Subj. Alternate Name on the certificate
 
@@ -89,7 +94,7 @@ enum Preferences {
     
     // LocalPasswordSyncDontSyncNetworkUsers - r/w - array - and array of AD user names that shouldn't have their password synced locally.
 
-    // LockedKeychainCheck - r/w - bool - check if the deafult keychain is locked
+    // LockedKeychainCheck - r/w - bool - check if the default keychain is locked
 
     // lDAPoverSSL - r/w - bool - flag to use LDAPS instead of LDAP
 
@@ -106,6 +111,8 @@ enum Preferences {
     // menuRenewTickets - r/w - string - title of the Rewnew Tickets menu
 
     // menuUserName - r/w - string - title of the User Name menu before anyone is logged in
+    
+    // menuWelcome - r/w - string - path to the custom splash screen directory containing an index.html file and all the assets needed, must be locally stored on the machine
 
     // messageLocalSync - r/w - string - text to display when the user is asked for their local password to allow the local accont password to be synced from the network account
 
@@ -172,6 +179,8 @@ enum Preferences {
 
     // userShortName - r/o - string - the user's short name as pulled from AD
 
+    // userUPN - r/o - string - the current users UPN
+
     // verbose - r/w - bool - determines if verbose logging is enabled or not
     
     // x509CA - r/w - string - URL for the Windows WebCA for certificate generation
@@ -186,13 +195,17 @@ enum Preferences {
     static let configureChromeDomain = "ConfigureChromeDomain"
     static let displayName = "DisplayName"
     static let dontMatchKerbPrefs = "DontMatchKerbPrefs"
+    static let dontShowWelcome = "DontShowWelcome"
     static let exportableKey = "ExportableKey"
+    static let firstRunDone = "FirstRunDone"
     static let getCertAutomatically = "GetCertificateAutomatically"
     static let getHelpType = "GetHelpType"
     static let getHelpOptions = "GetHelpOptions"
     static let groups = "Groups"
+    static let hicFix = "HicFix"
     static let hideExpiration = "HideExpiration"
     static let hideExpirationMessage = "HideExpirationMessage"
+    static let hideCertificateNumber = "HideCertificateNumber"
     static let hideHelp = "HideHelp"
     static let hideGetSoftware = "HideGetSoftware"
     static let hideLockScreen = "HideLockScreen"
@@ -205,13 +218,21 @@ enum Preferences {
     static let iconOn = "IconOn"
     static let iconOnDark = "IconOnDark"
     static let kerberosRealm = "KerberosRealm"
+    static let keychainItems = "KeychainItems"
+    static let keychainItemsDebug = "KeychainItemsDebug"
+    static let keychainMinderWindowTitle = "KeychainMinderWindowTitle"
+    static let keychainMinderWindowMessage = "KeychainMinderWindowMessage"
+    static let keychainMinderShowReset = "KeychainMinderShowReset"
+    static let keychainPasswordMatch = "KeychainPasswordMatch"
     static let lastCertificateExpiration = "LastCertificateExpiration"
     static let loginComamnd = "LoginComamnd"
     static let loginItem = "LoginItem"
+    static let ldapAnonymous = "LDAPAnonymous"
     static let lDAPSchema = "LDAPSchema"
     static let lDAPServerList = "LDAPServerList"
     static let lDAPoverSSL = "LDAPOverSSL"
     static let lDAPOnly = "LDAPOnly"
+    static let lDAPType = "LDAPType"
     static let localPasswordSync = "LocalPasswordSync"
     static let localPasswordSyncDontSyncLocalUsers = "LocalPasswordSyncDontSyncLocalUsers"
     static let localPasswordSyncDontSyncNetworkUsers = "LocalPasswordSyncDontSyncNetworkUsers"
@@ -228,6 +249,7 @@ enum Preferences {
     static let menuPasswordExpires = "MenuPasswordExpires"
     static let menuRenewTickets = "MenuRenewTickets"
     static let menuUserName = "MenuUserName"
+    static let menuWelcome = "MenuWelcome"
     static let messageLocalSync = "MessageLocalSync"
     static let messageNotConnected = "MessageNotConnected"
     static let messagePasswordChangePolicy = "MessagePasswordChangePolicy"
@@ -238,6 +260,8 @@ enum Preferences {
     static let passwordExpireCustomAlertTime = "PasswordExpireCustomAlertTime"
     static let passwordPolicy = "PasswordPolicy"
     static let persistExpiration = "PersistExpiration"
+    
+    static let recursiveGroupLookup = "RecursiveGroupLookup"
 
     /// Should NoMAD automatically attempt to renew Kerberos tickets on behalf of the user.
     static let renewTickets = "RenewTickets"
@@ -247,7 +271,10 @@ enum Preferences {
     static let secondsToRenew = "SecondsToRenew"
     static let selfServicePath = "SelfServicePath"
     static let signInCommand = "SignInCommand"
+    static let signInWindowAlert = "SignInWindowAlert"
+    static let signInWindowAlertTime = "SignInWindowAlertTime"
     static let signInWindowOnLaunch = "SignInWindowOnLaunch"
+    static let signInWindowOnLaunchExclusions = "SignInWindowOnLaunchExclusions"
     static let signedIn = "SignedIn"
     static let signOutCommand = "SignOutCommand"
     static let siteIgnore = "SiteIgnore"
@@ -266,9 +293,12 @@ enum Preferences {
     static let userPasswordSetDates = "UserPasswordSetDates"
     static let useKeychain = "UseKeychain"
     static let userAging = "UserAging"
+    static let userEmail = "UserEmail"
     static let userShortName = "UserShortName"
+    static let userUPN = "UserUPN"
 
     /// Should verbose logging be used. This will significantly increase log spew.
     static let verbose = "Verbose"
+    static let wifiNetworks = "WifiNetworks"
     static let x509CA = "X509CA"
 }

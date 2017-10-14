@@ -3,7 +3,7 @@
 //  NoMAD
 //
 //  Created by Joel Rennich on 7/8/16.
-//  Copyright © 2016 Trusource Labs. All rights reserved.
+//  Copyright © 2016 Orchard & Grove Inc. All rights reserved.
 //
 
 import Cocoa
@@ -61,6 +61,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     @IBOutlet weak var NoMADMenuSeperatorTicketLife: NSMenuItem!
 
     let NoMADMenuHome = NSMenuItem()
+    let myShareMenuItem = NSMenuItem()
 
     // menu bar icons
 
@@ -87,9 +88,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     var updateRunning = false
     var menuAnimated = false
 
-    var signInOffered = false
-
-    // for PKINIT additions
+    let myShareMounter = ShareMounter()
 
     var PKINIT = false
 
@@ -110,6 +109,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     
     let myKeychainutil = KeychainUtil()
 
+    var signInOffered = false
+
     /// Fired when the menu loads the first time
     override func awakeFromNib() {
 
@@ -117,16 +118,23 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         // check for locked keychains
         
-        if myKeychainutil.checkLockedKeychain() && defaults.bool(forKey: Preferences.lockedKeychainCheck) {
+        if self.myKeychainutil.checkLockedKeychain() && defaults.bool(forKey: Preferences.lockedKeychainCheck) {
             // notify on the keychain
             myLogger.logit(.base, message: "Keychain is locked, showing notification.")
             keychainMinder.window?.forceToFrontAndFocus(nil)
         }
         
-        while myKeychainutil.checkLockedKeychain() && defaults.bool(forKey: Preferences.lockedKeychainCheck) {
-            // pause until Keychain is fixed
-            myLogger.logit(.base, message: "Waiting for keychain to unlock.")
-            RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
+//        while myKeychainutil.checkLockedKeychain() && defaults.bool(forKey: Preferences.lockedKeychainCheck) {
+//            // pause until Keychain is fixed
+//            myLogger.logit(.base, message: "Waiting for keychain to unlock.")
+//            RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
+//        }
+        
+        let defaultPreferences = NSDictionary(contentsOf: Bundle.main.url(forResource: "DefaultPreferences", withExtension: "plist")!)
+        defaults.register(defaults: defaultPreferences as! [String : Any])
+        
+        if !defaults.bool(forKey: Preferences.dontShowWelcome) && ProcessInfo().operatingSystemVersion.minorVersion > 10 {
+            welcome.window?.forceToFrontAndFocus(nil)
         }
 
         // AppleEvents
@@ -135,6 +143,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         let eventManager = NSAppleEventManager.shared()
 
         eventManager.setEventHandler(self, andSelector: #selector(handleAppleEvent), forEventClass: AEEventClass(kInternetEventClass), andEventID: AEEventID(kAEGetURL))
+        
+        // set up shares
+        
+        shareMounterMenu.updateShares(connected: self.userInformation.connected)
         
         // set up Icons - we need 2 sets of 2 for light and dark modes
         
@@ -184,11 +196,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             }
         }
 
-        let defaultPreferences = NSDictionary(contentsOf: Bundle.main.url(forResource: "DefaultPreferences", withExtension: "plist")!)
-        defaults.register(defaults: defaultPreferences as! [String : Any])
-
         // Register for update notifications.
-        NotificationCenter.default.addObserver(self, selector: #selector(doTheNeedfull), name: NSNotification.Name(rawValue: "updateNow"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(doTheNeedfull), name: NSNotification.Name(rawValue: "menu.nomad.NoMAD.updateNow"), object: nil)
 
         DistributedNotificationCenter.default.addObserver(self, selector: #selector(interfaceModeChanged), name: NSNotification.Name(rawValue: "AppleInterfaceThemeChangedNotification"), object: nil)
 
@@ -304,7 +313,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         NoMADMenuLockScreen.title = "Lock Screen".translate
         NoMADMenuChangePassword.title = defaults.string(forKey: Preferences.menuChangePassword) ?? "NoMADMenuController-ChangePassword".translate
 
-        if defaults.bool(forKey: Preferences.hideLockScreen) {
+        if defaults.bool(forKey: Preferences.hideLockScreen) || ProcessInfo().operatingSystemVersion.minorVersion > 12 {
             NoMADMenuLockScreen.isHidden = true
         }
 
@@ -432,8 +441,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
         // fire off the SignOutCommand script if there is one
 
-        if defaults.string(forKey: Preferences.signOutCommand) != "" {
-            let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)
+        if let command = defaults.string(forKey: Preferences.signOutCommand) {
+            let myResult = cliTask(command)
             myLogger.logit(LogLevel.base, message: myResult)
         }
         userInformation.connected = false
@@ -642,7 +651,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         myLogger.logit(.base, message:"User short name: " + getConsoleUser())
         myLogger.logit(.base, message:"User long name: " + NSUserName())
         myLogger.logit(.base, message:"User principal: " + userInformation.userPrincipal)
-        myLogger.logit(.base, message:"TGT expires: " + String(describing: userInformation.myLDAPServers.tickets.expire))
+        //myLogger.logit(.base, message:"TGT expires: " + String(describing: userInformation.myLDAPServers.tickets.expire))
         myLogger.logit(.base, message:"User password set date: " + String(describing: userInformation.userPasswordSetDate))
         myLogger.logit(.base, message:"User password expire date: " + String(describing: userInformation.userPasswordExpireDate))
         myLogger.logit(.base, message:"User home share: " + userInformation.userHome)
@@ -650,7 +659,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         myLogger.logit(.base, message:"---- User Record ----")
         logEntireUserRecord()
         myLogger.logit(.base, message:"---- Kerberos Tickets ----")
-        myLogger.logit(.base, message:(userInformation.myLDAPServers.tickets.returnAllTickets()))
+        //myLogger.logit(.base, message:(userInformation.myLDAPServers.tickets.returnTickets()))
 
     }
 
@@ -729,7 +738,23 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 self.NoMADMenuChangePassword.isEnabled = true
             }
             if (self.NoMADMenuGetCertificate != nil)  {
-                self.NoMADMenuGetCertificate.isEnabled = true
+                
+                // Getting list of Certificates
+                let keychainUtilInstance = KeychainUtil()
+                guard let certList = keychainUtilInstance.findAllUserCerts(self.userInformation.UPN, defaultNamingContext: self.userInformation.myLDAPServers.defaultNamingContext ) else {
+                    myLogger.logit(.base, message: "Could not retrive certificate list.")
+                    return false
+                }
+                
+                // Determining whether to hid the certificate button or not
+                if let certMaximum = defaults.object(forKey: Preferences.hideCertificateNumber) as? Int{
+                    if (certList.count >= certMaximum) {
+                        myLogger.logit(.debug, message: "Hiding the certificate menu")
+                        self.NoMADMenuGetCertificate.isEnabled = false
+                    }
+                } else {
+                        self.NoMADMenuGetCertificate.isEnabled = true
+                }
             }
             if (self.PKINITMenuItem != nil ) {
                 self.PKINITMenuItem.isEnabled = true
@@ -817,7 +842,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // simple function to renew tickets
     func renewTickets(){
         cliTask("/usr/bin/kinit -R")
-        userInformation.myLDAPServers.tickets.getDetails()
+        userInformation.myLDAPServers.tickets.klist()
         if defaults.bool(forKey: Preferences.verbose) == true {
             myLogger.logit(.base, message:"Renewing tickets.")
         }
@@ -920,6 +945,31 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             }
         } else {
             myLogger.logit(.base, message: "Auto-login not attempted.")
+        }
+    }
+
+    // Share Mount functions
+
+    @objc func mountShareFromMenu(share: URL) {
+
+    }
+
+    func openShareFromMenu(_ sender: AnyObject) {
+
+        print("***" + sender.title + "***")
+
+        for share in myShareMounter.all_shares {
+            if share.name == sender.title {
+                if share.mountStatus != .mounted && share.mountStatus != .mounting {
+                    myLogger.logit(.debug, message: "Mounting share: " + String(describing: share.url))
+                    myShareMounter.asyncMountShare(share.url, options: share.options, open: true)
+                    //cliTask("open " + share.url.absoluteString.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlPathAllowed)!)
+                } else if share.mountStatus == .mounted {
+                    print(share.localMountPoints ?? "")
+                    // open up the local shares
+                    NSWorkspace.shared().open(URL(fileURLWithPath: share.localMountPoints!, isDirectory: true))
+                }
+            }
         }
     }
 
@@ -1155,6 +1205,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 self.userInformation.getUserInfo()
 
                 DispatchQueue.main.sync(execute: { () -> Void in
+                    
+                    // check shares
+                    
+                    shareMounterMenu.updateShares(connected: self.userInformation.connected)
 
                     // build the menu
 
@@ -1184,29 +1238,40 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
                             self.statusItem.toolTip = dateFormatter.string(from: self.userInformation.userPasswordExpireDate as Date)
 
-                            self.NoMADMenuTicketLife.title = dateFormatter.string(from: self.userInformation.myLDAPServers.tickets.expire as Date) + " " + self.userInformation.myLDAPServers.currentServer + " NoMAD Version: " + String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!) + " " +  String(describing: Bundle.main.infoDictionary!["CFBundleVersion"]!)
+                            self.NoMADMenuTicketLife.title = dateFormatter.string(from: self.userInformation.myLDAPServers.tickets.defaultExpires ?? Date.distantPast) + " " + self.userInformation.myLDAPServers.currentServer + " NoMAD Version: " + String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!) + " " +  String(describing: Bundle.main.infoDictionary!["CFBundleVersion"]!)
 
                             let daysToGo = Int(abs(self.userInformation.userPasswordExpireDate.timeIntervalSinceNow)/86400)
 
                             if defaults.string(forKey: Preferences.passwordExpireCustomAlert) != nil {
 
                                 let len = defaults.string(forKey: Preferences.passwordExpireCustomAlert)?.characters.count
-
+                                
+                                var myMutableString = NSMutableAttributedString(string: defaults.string(forKey: Preferences.passwordExpireCustomAlert) ?? "")
+                                
+                                if defaults.string(forKey: Preferences.passwordExpireCustomAlert) == "<<days>>" {
+                                    myMutableString = NSMutableAttributedString(string: String(daysToGo) + "d".translate)
+                                }
+                                
                                 if Int(daysToGo) < defaults.integer(forKey: Preferences.passwordExpireCustomAlertTime) {
-                                    let myMutableString = NSMutableAttributedString(string: defaults.string(forKey: Preferences.passwordExpireCustomAlert)!)
+
                                     myMutableString.addAttribute(NSForegroundColorAttributeName, value: NSColor.red, range: NSRange(location: 0, length: len!))
 
                                     self.statusItem.attributedTitle = myMutableString
                                     self.statusItem.attributedTitle = myMutableString
 
                                 } else if Int(daysToGo) < defaults.integer(forKey: Preferences.passwordExpireCustomWarnTime) {
-                                    let myMutableString = NSMutableAttributedString(string: defaults.string(forKey: Preferences.passwordExpireCustomAlert)!)
+
                                     myMutableString.addAttribute(NSForegroundColorAttributeName, value: NSColor.yellow, range: NSRange(location: 0, length: len!))
 
                                     self.statusItem.attributedTitle = myMutableString
                                     self.statusItem.attributedTitle = myMutableString
 
 
+                                } else {
+                                    // reset to nothing
+                                    let myMutableString = NSMutableAttributedString(string: "")
+                                    self.statusItem.attributedTitle = myMutableString
+                                    self.statusItem.attributedTitle = myMutableString
                                 }
                                     self.NoMADMenuPasswordExpires.title = String(format: "NoMADMenuController-PasswordExpiresInDays".translate, String(daysToGo))
 
@@ -1231,7 +1296,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                             // we do this twice b/c doing it only once seems to make it less than full width
                             self.statusItem.title = ""
                             self.statusItem.title = ""
-                            self.NoMADMenuTicketLife.title = dateFormatter.string(from: self.userInformation.myLDAPServers.tickets.expire as Date) + " " + self.userInformation.myLDAPServers.currentServer + " NoMAD Version: " + String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!) + " " +  String(describing: Bundle.main.infoDictionary!["CFBundleVersion"]!)
+                            self.NoMADMenuTicketLife.title = dateFormatter.string(from: self.userInformation.myLDAPServers.tickets.defaultExpires ?? Date.distantPast) + " " + self.userInformation.myLDAPServers.currentServer + " NoMAD Version: " + String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!) + " " +  String(describing: Bundle.main.infoDictionary!["CFBundleVersion"]!)
                             self.statusItem.toolTip = defaults.string(forKey: Preferences.hideExpirationMessage) ?? "PasswordDoesNotExpire".translate
                             self.NoMADMenuPasswordExpires.title = defaults.string(forKey: Preferences.hideExpirationMessage) ?? "PasswordDoesNotExpire".translate
                         }
@@ -1307,22 +1372,43 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                             self.NoMADMenu.removeItem(self.NoMADMenuHome)
 
                         }
-
-                        // Share Mounter setup taken out for now
-
-                        //self.myShareMounter.asyncMountShare("smb:" + defaults.stringForKey("UserHome")!)
-                        //self.myShareMounter.mount()
                     }
+
+                    if self.userInformation.status == "Logged In" {
+                        
+                        self.myShareMenuItem.title = "FileServers".translate
+                        self.myShareMenuItem.submenu = shareMounterMenu.buildMenu(connected: self.userInformation.connected)
+                        
+                        if shareMounterMenu.sharesAvilable() {
+                            
+                            // light it up
+                            
+                            if !self.NoMADMenu.items.contains(self.myShareMenuItem) {
+                                let lockIndex = self.NoMADMenu.index(of: self.NoMADMenuLockScreen)
+                                self.NoMADMenu.insertItem(self.myShareMenuItem, at: (lockIndex + 1 ))
+                            }
+                        } else {
+                            // remove the menu if it exists
+                            
+                            if self.NoMADMenu.items.contains(self.myShareMenuItem) {
+                                self.NoMADMenu.removeItem(self.myShareMenuItem)
+                            }
+                        }
+                    }  else {
+                        // remove the menu if it exists
+                        
+                        if self.NoMADMenu.items.contains(self.myShareMenuItem) {
+                            self.NoMADMenu.removeItem(self.myShareMenuItem)
+                        }
+                    }
+                    
                 })
 
                 // check if we need to renew the ticket
 
-                if defaults.bool(forKey: Preferences.renewTickets) && self.userInformation.status == "Logged In" && ( abs(self.userInformation.myLDAPServers.tickets.expire.timeIntervalSinceNow) <= Double(defaults.integer(forKey: Preferences.secondsToRenew))) {
+                if defaults.bool(forKey: Preferences.renewTickets) && self.userInformation.status == "Logged In" && ( abs(self.userInformation.myLDAPServers.tickets.defaultExpires?.timeIntervalSinceNow ?? Date.distantPast.timeIntervalSinceNow) <= Double(defaults.integer(forKey: Preferences.secondsToRenew))) {
                     self.renewTickets()
                 }
-
-                // check if we need to notify the user
-
 
                 // reset the counter if the password change is over the default
 
@@ -1365,15 +1451,20 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 
                 // login if we need to
                 if reachCheck { self.autoLogin() }
-
+                
                 // if we're set to show the sign in window on launch, show it, if we don't already have tickets
-
+                
                 if defaults.bool(forKey: Preferences.signInWindowOnLaunch) && self.userInformation.connected && !self.userInformation.myLDAPServers.tickets.state && !self.signInOffered {
-
-                    // move this back to the foreground
-                    DispatchQueue.main.async {
-                        self.NoMADMenuClickLogIn(NSMenuItem())
-                        self.signInOffered = true
+                    
+                    // check to ensure we're not a member of an exclusion group
+                    
+                    if !((defaults.array(forKey: Preferences.signInWindowOnLaunchExclusions)?.contains(where: { ($0 as! String)  == NSUserName() } )) ?? false ) {
+                        
+                        // move this back to the foreground
+                        DispatchQueue.main.async {
+                            self.NoMADMenuClickLogIn(NSMenuItem())
+                            self.signInOffered = true
+                        }
                     }
                 }
 
@@ -1399,17 +1490,18 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     NoMADMenuGetCertificateDate.title = dateFormatter.string(from: expireDate)
                 } else {
                     NoMADMenuGetCertificateDate.title = "No Certs"
+                }
+            } else {
+                myLogger.logit(.debug, message: "No Certificate expiration saved.")
+                
+                //Checking if the cert should be automatically retrieved
+                
+                if defaults.bool(forKey: Preferences.getCertAutomatically) {
+                    myLogger.logit(.base, message: "Attempting to get certificate automatically.")
+                    self.getCert(false)
                     
-                    // automatically get a cert if asked
-                    // if 1. asked, 2. logged in, 3. on network
-                    // TODO: suppress alerts 
-                    
-                    if defaults.bool(forKey: Preferences.getCertAutomatically) {
-                        myLogger.logit(.base, message: "Attempting to get certificate automatically.")
-                        self.getCert(false)
-                        // set the date to now so we don't get a second cert
-                        defaults.set(Date(), forKey: Preferences.lastCertificateExpiration)
-                    }
+                    // set the date to now so we don't get a second cert
+                    defaults.set(Date(), forKey: Preferences.lastCertificateExpiration)
                 }
             }
         } else {
@@ -1419,9 +1511,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.updateRunning = false
             
             if ( !updateScheduled ) {
-                //delayTimer = Timer(timeInterval: 3.0, target: self, selector: #selector(updateUserInfo), userInfo: nil, repeats: false)
-                //RunLoop.main.add(delayTimer, forMode: RunLoopMode.defaultRunLoopMode)
-                //delayTimer.fire()
                 Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(updateUserInfo), userInfo: nil, repeats: false)
                 
                 updateScheduled = true

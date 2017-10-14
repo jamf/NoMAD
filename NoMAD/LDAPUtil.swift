@@ -3,7 +3,7 @@
 //  NoMAD
 //
 //  Created by Joel Rennich on 6/27/16.
-//  Copyright © 2016 Trusource Labs. All rights reserved.
+//  Copyright © 2016 Orchard & Grove Inc. All rights reserved.
 //
 
 import Foundation
@@ -143,7 +143,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         // on a network change we need to relook at things
         // if we have a static list of servers, use that
 
-        tickets.getDetails()
+        tickets.klist()
 
         if defaults.string(forKey: Preferences.lDAPServerList) != "" {
 
@@ -213,7 +213,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 
     func check() {
 
-        tickets.getDetails()
+        tickets.klist()
 
         if testSocket(self.currentServer) && testLDAP(self.currentServer) && tickets.state {
 
@@ -247,10 +247,18 @@ class LDAPServers : NSObject, DNSResolverDelegate {
                 testHosts()
             }
         }
+
+        // ensure we're using the right kerberos credential cache
+        swapPrincipals(false)
+
         let command = "/usr/bin/ldapsearch"
         var arguments: [String] = [String]()
         arguments.append("-N")
+        if defaults.bool(forKey: Preferences.ldapAnonymous) {
+            arguments.append("-x")
+        } else {
         arguments.append("-Q")
+        }
         arguments.append("-LLL")
         arguments.append("-o")
         arguments.append("nettimeout=1")
@@ -280,6 +288,8 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 
         let myResult = cleanLDIF(ldapResult)
 
+        swapPrincipals(true)
+
         /*
          if baseSearch {
          myResult = cleanLDAPResults(ldapResult, attributesFilter: attributes)
@@ -291,7 +301,11 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     }
 
     func returnFullRecord(_ searchTerm: String) -> String {
+        // ensure we're using the right kerberos credential cache
+        swapPrincipals(false)
+
         let myResult = cliTaskNoTerm("/usr/bin/ldapsearch -N -Q -LLL " + maxSSF + "-H " + URIPrefix + self.currentServer + " -b " + self.defaultNamingContext + " " + searchTerm )
+        swapPrincipals(true)
         return myResult
     }
 
@@ -520,7 +534,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
      */
     // private function to clean the LDAP results if we're looking for multiple returns
 
-    fileprivate func cleanLDAPResultsMultiple(_ result: String, attribute: String) -> String {
+    func cleanLDAPResultsMultiple(_ result: String, attribute: String) -> String {
         let lines = result.components(separatedBy: "\n")
 
         var myResult = ""
@@ -558,8 +572,26 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         if defaults.bool(forKey: Preferences.verbose) {
             myLogger.logit(.info, message:"Testing " + host + ".")
         }
-        let attribute = "defaultNamingContext"
-        let myLDAPResult = cliTask("/usr/bin/ldapsearch -N -LLL -Q " + maxSSF + "-l 3 -s base -H " + URIPrefix + host + " " + attribute)
+        var attribute = "defaultNamingContext"
+                
+        // if socket test works, then attempt ldapsearch to get default naming context
+        
+        if defaults.string(forKey: Preferences.lDAPType) == "OD" {
+            attribute = "namingContexts"
+        }
+
+        swapPrincipals(false)
+
+        var myLDAPResult = ""
+
+        if defaults.bool(forKey: Preferences.ldapAnonymous) {
+            myLDAPResult = cliTask("/usr/bin/ldapsearch -N -LLL -x " + maxSSF + "-l 3 -s base -H " + URIPrefix + host + " " + attribute)
+        } else {
+        myLDAPResult = cliTask("/usr/bin/ldapsearch -N -LLL -Q " + maxSSF + "-l 3 -s base -H " + URIPrefix + host + " " + attribute)
+        }
+
+        swapPrincipals(true)
+
         if myLDAPResult != "" && !myLDAPResult.contains("GSSAPI Error") && !myLDAPResult.contains("Can't contact") {
             let ldifResult = cleanLDIF(myLDAPResult)
             if ( ldifResult.count > 0 ) {
@@ -708,9 +740,26 @@ class LDAPServers : NSObject, DNSResolverDelegate {
                     
                     if mySocketResult.contains("succeeded!") {
                         
+                        var attribute = "defaultNamingContext"
+                        
                         // if socket test works, then attempt ldapsearch to get default naming context
-                        let attribute = "defaultNamingContext"
-                        let myLDAPResult = cliTaskNoTerm("/usr/bin/ldapsearch -N -LLL -Q " + maxSSF + "-l 3 -s base -H " + URIPrefix + hosts[i].host + " " + attribute)
+                        
+                        if defaults.string(forKey: Preferences.lDAPType) == "OD" {
+                            attribute = "namingContexts"
+                        }
+                        
+                        swapPrincipals(false)
+
+                        var myLDAPResult = ""
+
+                        if defaults.bool(forKey: Preferences.ldapAnonymous) {
+                            myLDAPResult = cliTask("/usr/bin/ldapsearch -N -LLL -x " + maxSSF + "-l 3 -s base -H " + URIPrefix + hosts[i].host + " " + port + " " + attribute)
+                        } else {
+                            myLDAPResult = cliTask("/usr/bin/ldapsearch -N -LLL -Q " + maxSSF + "-l 3 -s base -H " + URIPrefix + hosts[i].host + " " + port + " " + attribute)
+                        }
+
+                        swapPrincipals(true)
+
                         if myLDAPResult != "" && !myLDAPResult.contains("GSSAPI Error") && !myLDAPResult.contains("Can't contact") {
                             let ldifResult = cleanLDIF(myLDAPResult)
                             if ( ldifResult.count > 0 ) {
@@ -749,6 +798,16 @@ class LDAPServers : NSObject, DNSResolverDelegate {
             self.currentState = true
         }
     }
+
+    func swapPrincipals(_ backToDefault: Bool) {
+//        if tickets.defaultPrincipal != tickets.principal {
+//        if backToDefault {
+//            cliTask("/usr/bin/kswitch -p " + tickets.defaultPrincipal!)
+//        } else {
+//            cliTask("/usr/bin/kswitch -p " + tickets.principal)
+//        }
+//    }
+    }
     
     // MARK: DNSResolver Delegate Methods
     var resolver: DNSResolver;
@@ -760,5 +819,5 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     func dnsResolver(_ resolver: DNSResolver!, didStopQueryWithError error: NSError!) {
         myLogger.logit(.debug, message: "Did Recieve Query Result: " + error.description);
     }
-    
+
 }
