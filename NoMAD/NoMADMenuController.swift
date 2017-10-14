@@ -949,7 +949,19 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     
         // if keychain prompt is set ensure we have a keychain item
         
-    
+        // only do this if 1) we have the default set 2) we are on the domain 3) we do not have a password in the keychain
+        
+        if defaults.bool(forKey: Preferences.useKeychainPrompt) && (defaults.string(forKey: Preferences.lastUser) != "") && userInformation.myLDAPServers.currentState {
+            do {
+                
+                // we don't need to know the password, just that one is there
+                
+                try myKeychainutil.findPassword(defaults.string(forKey: Preferences.lastUser)!)
+            } catch {
+                // no password - prompt the user to sign in
+                loginWindow.window!.forceToFrontAndFocus(nil)
+            }
+        }
     }
 
     // Share Mount functions
@@ -1380,7 +1392,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
 
                     if self.userInformation.status == "Logged In" {
                         
-                        self.myShareMenuItem.title = "FileServers".translate
+                        self.myShareMenuItem.title = defaults.string(forKey: Preferences.menuFileServers) ?? "FileServers".translate
                         self.myShareMenuItem.submenu = shareMounterMenu.buildMenu(connected: self.userInformation.connected)
                         
                         if shareMounterMenu.sharesAvilable() {

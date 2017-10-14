@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Lock Screen</key>
+	<dict>
+		<key>value</key>
+		<string>Lås Skjerm</string>
+		<key>comment</key>
+		<string>Menyvalg for å låse skjerm</string>
+	</dict>
+	<key>SignIn</key>
+	<dict>
+		<key>value</key>
+		<string>Logg Inn</string>
+		<key>comment</key>
+		<string>Menyvalg for å logge inn</string>
+	</dict>
+	<key>NoMADMenuController-Connected</key>
+	<dict>
+		<key>value</key>
+		<string></string>
+		<key>comment</key>
+		<string>Text in the menu bar to show that NoMAD can find the Domain</string>
+	</dict>
+	<key>NoMADMenuController-NotConnected</key>
+	<dict>
+		<key>value</key>
+		<string>Ikke Tilkoblet</string>
+		<key>comment</key>
+		<string>Tekst i menylinjen som viser at NoMAD ikke kan finne domenet</string>
+	</dict>
+	<key>NoMADMenuController-ChangePassword</key>
+	<dict>
+		<key>value</key>
+		<string>Endre Passord</string>
+		<key>comment</key>
+		<string>Menyvalg for å Endre Passord</string>
+	</dict>
+	<key>UserName</key>
+	<dict>
+		<key>value</key>
+		<string>Brukernavn</string>
+		<key>comment</key>
+		<string>Brukers Fulle Navn</string>
+	</dict>
+	<key>NoMADMenuController-GetSoftware</key>
+	<dict>
+		<key>comment</key>
+		<string>Menyvalg for åpning av Programvare-portal.</string>
+		<key>value</key>
+		<string>Hent Programvare</string>
+	</dict>
+	<key>NoMADMenuController-GetHelp</key>
+	<dict>
+		<key>value</key>
+		<string>Få Hjelp</string>
+		<key>comment</key>
+		<string>Menyvalg for å åpne supportressurser.</string>
+	</dict>
+	<key>NoMADMenuController-Preferences</key>
+	<dict>
+		<key>value</key>
+		<string>Innstillinger</string>
+		<key>comment</key>
+		<string>Menyvalg for å åpne Innstillingsvindu.</string>
+	</dict>
+	<key>NoMADMenuController-Quit</key>
+	<dict>
+		<key>value</key>
+		<string>Avslutt</string>
+		<key>comment</key>
+		<string>Menyvalg for å avslutte NoMAD.</string>
+	</dict>
+	<key>NoMADMenuController-RenewTickets</key>
+	<dict>
+		<key>comment</key>
+		<string>Menyvalg for å fornye Kerberos-billetter</string>
+		<key>value</key>
+		<string>Forny Billetter</string>
+	</dict>
+	<key>NoMADMenuController-PasswordExpiresInDays</key>
+	<dict>
+		<key>comment</key>
+		<string>Lang tekst som viser hvor mange dager til passordet ditt utløper</string>
+		<key>value</key>
+		<string>Passordet utløper om: %@ dager</string>
+	</dict>
+	<key>PasswordDoesNotExpire</key>
+	<dict>
+		<key>value</key>
+		<string>Passordet har ikke utløp</string>
+		<key>comment</key>
+		<string>Menyvalg for når passordet ikke har utløp</string>
+	</dict>
+	<key>PasswordChangeSuccessful</key>
+	<dict>
+		<key>value</key>
+		<string>Passordet ble endret. NB: det kan ta opp til en time før passordutløpstiden blir oppdatert.</string>
+		<key>comment</key>
+		<string>melding som forteller bruker at passord endringen har skjedd.</string>
+	</dict>
+	<key>InvalidPassword</key>
+	<dict>
+		<key>value</key>
+		<string>Ugyldig Passord. Venligst prøv igjen.</string>
+		<key>comment</key>
+		<string>feilmelding når passordet er feil</string>
+	</dict>
+	<key>InvalidUsername</key>
+	<dict>
+		<key>value</key>
+		<string>Ugyldig Brukernavn. Venligst prøv igjen.</string>
+		<key>comment</key>
+		<string>feilmelding når brukernavnet er feil</string>
+	</dict>
+	<key>PasswordExpire</key>
+	<dict>
+		<key>value</key>
+		<string>Passordet ditt har utløpt. Vennligst sett nytt passord nå.</string>
+		<key>comment</key>
+		<string>feilmelding når passordet har utløpt</string>
+	</dict>
+	<key>PasswordAboutToExpire</key>
+	<dict>
+		<key>value</key>
+		<string>Passordet ditt er i ferd med å utløpe!</string>
+		<key>comment</key>
+		<string>melding når passordet er i ferd med å utløpe</string>
+	</dict>
+	<key>PasswordExpiresOn</key>
+	<dict>
+		<key>value</key>
+		<string>Ditt nettverkspassord vil utløpe den </string>
+		<key>comment</key>
+		<string>Ditt nettverkspassord vil utløpe den &lt;date&gt;</string>
+	</dict>
+	<key>PasswordMismatch</key>
+	<dict>
+		<key>value</key>
+		<string>Nye passord samsvarer ikke.</string>
+		<key>comment</key>
+		<string>feilmelding når nye passord ikke samsvarer</string>
+	</dict>
+	<key>NetworkLocalMismatch</key>
+	<dict>
+		<key>value</key>
+		<string>Ditt nettverks- og lokalpassord samsvarer ikke. Vennligst legg inn ditt lokale Mac-passord.</string>
+		<key>comment</key>
+		<string>feilmelding når nettverks- og lokalpassord ikke samsvarer</string>
+	</dict>
+	<key>ValidCertificate</key>
+	<dict>
+		<key>value</key>
+		<string>Du har allerede et gyldig sertifikat.</string>
+		<key>comment</key>
+		<string>bruker har allerede et gyldig sertifikat</string>
+	</dict>
+	<key>Cancel</key>
+	<dict>
+		<key>value</key>
+		<string>Avslutt</string>
+		<key>comment</key>
+		<string>knapp for å avbryte handlinger</string>
+	</dict>
+	<key>RequestAnyway</key>
+	<dict>
+		<key>value</key>
+		<string>Hent Alikevel</string>
+		<key>comment</key>
+		<string>knapp for å hente alikevel</string>
+	</dict>
+	<key>CertConnectionError</key>
+	<dict>
+		<key>value</key>
+		<string>Tilkoblingsfeil. Vennligst sørg for at SSL sertifikater er godkjente og URL til din X509 CA er korrekt.</string>
+		<key>comment</key>
+		<string>melding når CA ikke kan nås</string>
+	</dict>
+	<key>CAConfigError</key>
+	<dict>
+		<key>value</key>
+		<string>Vennligst sørg for at dine CA-innstillinger er korrekte.</string>
+		<key>comment</key>
+		<string>feilmelding når CA-ikke kan nås</string>
+	</dict>
+	<key>d</key>
+	<dict>
+		<key>value</key>
+		<string>d</string>
+		<key>comment</key>
+		<string>kortform for dager</string>
+	</dict>
+	<key>HomeSharepoint</key>
+	<dict>
+		<key>value</key>
+		<string>Hjemmeområde</string>
+		<key>comment</key>
+		<string>Menyvalg for å åpne brukers hjemmeområde tilknyttet deres AD-profil</string>
+	</dict>
+	<key>LoginWindow-OldPasswordLabel</key>
+	<dict>
+		<key>value</key>
+		<string>Gammet Passord</string>
+		<key>comment</key>
+		<string>Merkelapp for gammelt passord</string>
+	</dict>
+	<key>LoginWindow-PasswordLabel</key>
+	<dict>
+		<key>value</key>
+		<string>Passord</string>
+		<key>comment</key>
+		<string>Merkelapp for passord</string>
+	</dict>
+	<key>NoMADMenuController-SmartcardSignIn</key>
+	<dict>
+		<key>value</key>
+		<string>Smartcard Logg Inn</string>
+		<key>comment</key>
+		<string>PKINIT smartcard meny logg inn</string>
+	</dict>
+	<key>NoMADMenuController-SignInWithSmartcard</key>
+	<dict>
+		<key>value</key>
+		<string>Logg Inn med et Smartcard.</string>
+		<key>comment</key>
+		<string>PKINIT smartcard meny logg inn tips</string>
+	</dict>
+	<key>NoMADMenuController-NotLoggedIn</key>
+	<dict>
+		<key>value</key>
+		<string>Ikke pålogget.</string>
+		<key>comment</key>
+		<string>Brukerinfo for billetutløp når ikke pålogget</string>
+	</dict>
+	<key>NoMADMenuController-NotSignedIn</key>
+	<dict>
+		<key>value</key>
+		<string>Ikke Pålogget</string>
+		<key>comment</key>
+		<string>Brukerinfo når ikke pålogget</string>
+	</dict>
+	<key>NoMADMenuController-NoUser</key>
+	<dict>
+		<key>value</key>
+		<string>Ingen Bruker</string>
+		<key>comment</key>
+		<string>Brukerinfo når det ikke er noen tilgjengelig bruker</string>
+	</dict>
+	<key>UserInformation-PasswordChanged</key>
+	<dict>
+		<key>value</key>
+		<string>Passord Endret</string>
+		<key>comment</key>
+		<string>Varslingstittel når passordet er endret</string>
+	</dict>
+	<key>UserInformation-PwdChangedSignInAgain</key>
+	<dict>
+		<key>value</key>
+		<string>Ditt passord har blitt endret. Vennligst logg på NoMAD på nytt for å oppdatere passordet ditt.</string>
+		<key>comment</key>
+		<string>Varslingstekst som ber bruker om å logge på på nytt</string>
+	</dict>
+	<key>UserInformation-Ignore</key>
+	<dict>
+		<key>value</key>
+		<string>Ignorer</string>
+		<key>comment</key>
+		<string>Passord bytte varsling ignorer-knapp</string>
+	</dict>
+    <key>FileServers</key>
+    <dict>
+        <key>value</key>
+        <string>Filtjenere</string>
+        <key>comment</key>
+        <string>Menyvalg for Filservere</string>
+    </dict>
+    <key>Endre...</key>
+    <dict>
+        <key>value</key>
+        <string>Endre...</string>
+        <key>comment</key>
+        <string>Menyvalg for endringer</string>
+    </dict>
+</dict>
+</plist>

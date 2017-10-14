@@ -29,6 +29,8 @@ class Welcome: NSWindowController, NSWindowDelegate {
         let version = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""
         versionField.stringValue = "Version: " + shortVersion + " Build: " + version
         
+        welcomeWindow.window?.title = "Welcome to " + ((Bundle.main.bundlePath.components(separatedBy: "/").last?.replacingOccurrences(of: ".app", with: "")) ?? "NoMAD" )
+        
         
         // Setting the welcome splash screen
         do {

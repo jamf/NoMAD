@@ -246,6 +246,7 @@ enum Preferences {
     static let menuGetCertificate = "MenuGetCertificate"
     static let menuGetHelp = "MenuGetHelp"
     static let menuGetSoftware = "MenuGetSoftware"
+    static let menuFileServers = "MenuFileServers"
     static let menuPasswordExpires = "MenuPasswordExpires"
     static let menuRenewTickets = "MenuRenewTickets"
     static let menuUserName = "MenuUserName"
