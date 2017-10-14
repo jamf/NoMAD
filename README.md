@@ -8,7 +8,7 @@ NoMAD v. 1.1(772)
 
 ***Development Version***
 
-NoMAD v. 1.1.1(778)
+NoMAD v. 1.1.1(781)
 
 ***New Features in Development Version***
 
@@ -16,7 +16,10 @@ NoMAD v. 1.1.1(778)
 - Croatian Localization - build 778
 - Support for sites with no DCs listed. NoMAD will fall back to globally available DCs - build 778
 - Better support for < 10.12 systems and the Welcome Screen - build 778
-- Switch to Xcode 9 and Swift 3.2
+- Switch to Xcode 9 and Swift 3.2 - build 778
+- MenuFileServers - Sets the menu item title for the File Servers menu - build 781
+- UseKeychainPrompt - Prompts the user to sign in if there's no entry in the keychain, regardless of if they have tickets - build 781
+- Welcome window is now titled the same as the Application - build 781
 
 ***NoMAD***
 
