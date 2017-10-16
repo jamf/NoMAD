@@ -951,12 +951,16 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         // only do this if 1) we have the default set 2) we are on the domain 3) we do not have a password in the keychain
         
-        if defaults.bool(forKey: Preferences.useKeychainPrompt) && (defaults.string(forKey: Preferences.lastUser) != "") && userInformation.myLDAPServers.currentState {
+        if defaults.bool(forKey: Preferences.useKeychainPrompt) && (defaults.string(forKey: Preferences.lastUser) != "") && userInformation.myLDAPServers.currentState  {
             do {
+                myLogger.logit(.debug, message: "Checking if the user has a password in the keychain.")
                 
                 // we don't need to know the password, just that one is there
                 
-                try myKeychainutil.findPassword(defaults.string(forKey: Preferences.lastUser)!)
+                let userPrinc = defaults.string(forKey: Preferences.lastUser)! + "@" + defaults.string(forKey: Preferences.kerberosRealm)!
+                
+                try myKeychainutil.findPassword(userPrinc)
+                
             } catch {
                 // no password - prompt the user to sign in
                 loginWindow.window!.forceToFrontAndFocus(nil)
