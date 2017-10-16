@@ -253,6 +253,7 @@ enum Preferences {
     static let menuWelcome = "MenuWelcome"
     static let messageLocalSync = "MessageLocalSync"
     static let messageNotConnected = "MessageNotConnected"
+    static let messageUPCAlert = "MessageUPCAlert"
     static let messagePasswordChangePolicy = "MessagePasswordChangePolicy"
     static let passwordExpirationDays = "PasswordExpirationDays"
     static let passwordExpireAlertTime = "PasswordExpireAlertTime"

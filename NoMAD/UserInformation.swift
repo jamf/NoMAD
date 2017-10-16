@@ -327,7 +327,7 @@ class UserInformation {
 
                         let notification = NSUserNotification()
                         notification.title = "UserInformation-PasswordChanged".translate
-                        notification.informativeText = "UserInformation-PwdChangedSignInAgain".translate
+                        notification.informativeText = defaults.string(forKey: Preferences.messageUPCAlert) ?? "UserInformation-PwdChangedSignInAgain".translate
                         //notification.deliveryDate = date
                         notification.hasActionButton = true
                         notification.actionButtonTitle = "SignIn".translate
