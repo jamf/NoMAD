@@ -121,7 +121,7 @@ class ShareMounter: NSArrayController {
                 
                 // check for variable substitution
                 
-                let cleanURL = subVariables(mount["URL"] as! String)
+               // let cleanURL = subVariables(mount["URL"] as! String)
                 
                 // check for groups
                 
@@ -284,7 +284,7 @@ class ShareMounter: NSArrayController {
                 var requestID: AsyncRequestID? = nil
                 let queue = DispatchQueue.main
                 
-                myLogger.logit(.debug, message: "Attempting to mount: " + String(describing: all_shares[i].url))
+                myLogger.logit(.debug, message: "Attempting to mount: " + all_shares[i].url.absoluteString)
                 var mountError: Int32? = nil
                 
                 mountError = NetFSMountURLAsync(all_shares[i].url as CFURL!,

@@ -61,6 +61,8 @@ extension String {
         let upn = defaults.string(forKey: Preferences.userUPN) ?? ""
         let email = defaults.string(forKey: Preferences.userEmail) ?? ""
         
+        cleanString = cleanString.replacingOccurrences(of: " ", with: "%20") //cleanString.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlHostAllowed) ?? cleanString
+        
         cleanString = cleanString.replacingOccurrences(of: "<<domain>>", with: domain)
         cleanString = cleanString.replacingOccurrences(of: "<<fullname>>", with: fullName)
         cleanString = cleanString.replacingOccurrences(of: "<<serial>>", with: serial)
