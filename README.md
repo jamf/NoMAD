@@ -20,6 +20,8 @@ NoMAD v. 1.1.1(781)
 - MenuFileServers - Sets the menu item title for the File Servers menu - build 781
 - UseKeychainPrompt - Prompts the user to sign in if there's no entry in the keychain, regardless of if they have tickets - build 781
 - Welcome window is now titled the same as the Application - build 781
+- Fix for shares being mis-escaped for spaces and other non-compliant characters - build 783
+- MessageUPCAlert - customize UPC alert notification text - build 784
 
 ***NoMAD***
 
