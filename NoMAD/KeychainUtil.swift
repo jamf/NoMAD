@@ -124,6 +124,10 @@ class KeychainUtil {
         
         let certList = findAllUserCerts(identifier, defaultNamingContext: defaultNamingContext)
         
+        if certList == nil || certList!.count < 1 {
+            return nil
+        }
+        
         for cert in certList! {
             if lastExpire.timeIntervalSinceNow < cert.expireDate.timeIntervalSinceNow {
                 lastExpire = cert.expireDate
