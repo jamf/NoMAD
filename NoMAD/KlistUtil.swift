@@ -165,7 +165,8 @@ class KlistUtil {
             } else {
                 // kill expired tickets with fire
                 
-                kdestroy(princ: tick.value.principal)
+                cliTask("/usr/bin/kdestroy -p " + tick.value.principal)
+                
             }
         }
         
@@ -217,7 +218,9 @@ class KlistUtil {
         var context: krb5_context? = nil
         krb5_init_secure_context(&context)
         
-        krb5_cc_destroy(context, tickets[name]?.krb5Cache)
+        if tickets[name]?.krb5Cache != nil {
+            krb5_cc_destroy(context, tickets[name]?.krb5Cache)
+        }
     }
     
     // function to switch the default cache
