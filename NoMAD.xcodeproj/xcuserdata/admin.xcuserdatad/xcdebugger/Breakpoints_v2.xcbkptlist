@@ -57,13 +57,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "NoMAD/NoMADMenuController.swift"
-            timestampString = "523897752.858384"
+            filePath = "NoMAD/LoginWindow.swift"
+            timestampString = "523556065.078163"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "466"
-            endingLineNumber = "466"
-            landmarkName = "NoMADMenuController"
+            startingLineNumber = "717"
+            endingLineNumber = "717"
+            landmarkName = "LoginWindow"
             landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
@@ -73,14 +73,14 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "NoMAD/LoginWindow.swift"
-            timestampString = "523556065.078163"
+            filePath = "NoMAD/ShareMounterMenu.swift"
+            timestampString = "530068599.640311"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "717"
-            endingLineNumber = "717"
-            landmarkName = "LoginWindow"
-            landmarkType = "3">
+            startingLineNumber = "87"
+            endingLineNumber = "87"
+            landmarkName = "openShareFromMenu(_:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

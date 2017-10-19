@@ -33,6 +33,11 @@ class KeychainUtil {
 
     func findPassword(_ name: String) throws -> String {
 
+        // clean up anything lingering
+        
+        passPtr = nil
+        passLength = 0
+        
         myErr = SecKeychainFindGenericPassword(nil, UInt32(serviceName.characters.count), serviceName, UInt32(name.characters.count), name, &passLength, &passPtr, &myKeychainItem)
 
         if myErr == OSStatus(errSecSuccess) {

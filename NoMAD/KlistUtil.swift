@@ -162,6 +162,10 @@ class KlistUtil {
             if !tick.value.expired {
                 // ticket is not expired add it back
                 tickets[tick.value.principal] = tick.value
+            } else {
+                // kill expired tickets with fire
+                
+                kdestroy(princ: tick.value.principal)
             }
         }
         
@@ -171,8 +175,17 @@ class KlistUtil {
             let realm = defaults.string(forKey: "KerberosRealm") ?? ""
             myLogger.logit(.debug, message:"Looking for tickets using realm: " + realm )
             for ticket in tickets {
+                
                 let name = ticket.key
                 if name.contains("@" + realm ) {
+                    
+                    // get rid of any machine tickets first
+                    
+                    if name.contains("$") {
+                        kdestroy(princ: name)
+                        state = false
+                        continue
+                    }
                     state = true
                     continue
                 } else {
