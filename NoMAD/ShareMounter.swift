@@ -518,7 +518,7 @@ class ShareMounter: NSArrayController {
         let shareURLUnmanaged = NetFSCopyURLForRemountingVolume(share as CFURL)
         if shareURLUnmanaged != nil {
             let shareURL: URL = shareURLUnmanaged?.takeRetainedValue() as! URL
-            return URL(string: (shareURL.scheme! + "://" + shareURL.host! + shareURL.path.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlPathAllowed)!))!
+            return URL(string: (shareURL.scheme! + "://" + shareURL.host! + shareURL.path.safeURLPath()!))!
         } else {
             return URL(fileURLWithPath: "")
         }
@@ -529,8 +529,8 @@ class ShareMounter: NSArrayController {
         var createdURL = url
         
         guard let domain = defaults.string(forKey: Preferences.aDDomain),
-            let fullName = defaults.string(forKey: Preferences.displayName)?.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed),
-            let serial = getSerial().addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed),
+            let fullName = defaults.string(forKey: Preferences.displayName)?.safeURLPath(),
+            let serial = getSerial().safeURLPath(),
             let shortName = defaults.string(forKey: Preferences.userShortName)
             else {
                 myLogger.logit(.base, message: "Error doing variable substitution on file share.")

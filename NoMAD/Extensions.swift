@@ -49,6 +49,16 @@ extension String {
     func containsIgnoringCase(_ find: String) -> Bool {
         return self.range(of: find, options: NSString.CompareOptions.caseInsensitive) != nil
     }
+    
+    func safeURLPath() -> String? {
+        let allowedCharacters = CharacterSet(bitmapRepresentation: CharacterSet.urlPathAllowed.bitmapRepresentation)
+        return addingPercentEncoding(withAllowedCharacters: allowedCharacters)
+    }
+    
+    func safeURLQuery() -> String? {
+        let allowedCharacters = CharacterSet(bitmapRepresentation: CharacterSet.urlQueryAllowed.bitmapRepresentation)
+        return addingPercentEncoding(withAllowedCharacters: allowedCharacters)
+    }
 
     func safeAddingPercentEncoding(withAllowedCharacters allowedCharacters: CharacterSet) -> String? {
             // using a copy to workaround magic: https://stackoverflow.com/q/44754996/1033581
