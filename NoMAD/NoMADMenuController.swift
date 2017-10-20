@@ -1508,6 +1508,18 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 } else {
                     NoMADMenuGetCertificateDate.title = "No Certs"
                 }
+                
+                if defaults.integer(forKey: Preferences.autoRenewCert) != nil && (expireDate.timeIntervalSinceNow < Double( 24 * 60 * 60 * defaults.integer(forKey: Preferences.autoRenewCert))) {
+                    // cert has expired, or will expire, and we should renew
+                    myLogger.logit(.base, message: "Attempting to get a new certificate automatically.")
+
+                    self.getCert(false)
+                    
+                    // set the date to now so we don't get a second cert
+                    defaults.set(Date(), forKey: Preferences.lastCertificateExpiration)
+                    
+                }
+                
             } else {
                 myLogger.logit(.debug, message: "No Certificate expiration saved.")
                 

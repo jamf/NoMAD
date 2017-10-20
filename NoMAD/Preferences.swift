@@ -187,6 +187,7 @@ enum Preferences {
 
     static let aDDomain = "ADDomain"
     static let autoConfigure = "AutoConfigure"
+    static let autoRenewCert = "AutoRenewCert"
     static let changePasswordCommand = "ChangePasswordCommand"
     static let changePasswordType = "ChangePasswordType"
     static let changePasswordOptions = "ChangePasswordOptions"
