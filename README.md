@@ -22,6 +22,10 @@ NoMAD v. 1.1.1(781)
 - Welcome window is now titled the same as the Application - build 781
 - Fix for shares being mis-escaped for spaces and other non-compliant characters - build 783
 - MessageUPCAlert - customize UPC alert notification text - build 784
+- Fix for URL encoding with File Shares - build 789
+- Fix for expired certificates causing menu to show strangely - build 789
+- Fix for non-automounted shares not being able to mount - regression from 1.1 - build 791
+- AutoRenewCert - Int - Key to specify number of days to go on a cert before automatically renewing - build 791
 
 ***NoMAD***
 
