@@ -76,9 +76,7 @@ class ShareMounterMenu: NSObject {
     }
     
     @IBAction func openShareFromMenu(_ sender: AnyObject) {
-        
-        print("***" + sender.title + "***")
-        
+                
         for share in myShareMounter.all_shares {
             if share.name == sender.title {
                 if share.mountStatus != .mounted && share.mountStatus != .mounting {
