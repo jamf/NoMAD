@@ -28,7 +28,7 @@
             ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
             <ActionContent
                title = "Run Script"
-               scriptText = "oldBuild=$(/usr/libexec/PlistBuddy -c &quot;Print :CFBundleShortVersionString&quot; &quot;${PROJECT_DIR}/${INFOPLIST_FILE}&quot;)&#10;/usr/libexec/PlistBuddy -c &quot;Set :CFBundleShortVersionString ${oldBuild}&quot; &quot;${PROJECT_DIR}/${INFOPLIST_FILE}&quot;&#10;&#10;# Set the build number to &quot;DEVELOPMENT&quot;&#10;/usr/libexec/PlistBuddy -c &quot;Set :CFBundleVersion DEVELOPMENT&quot; &quot;${PROJECT_DIR}/${INFOPLIST_FILE}&quot;&#10;">
+               scriptText = "oldBuild=$(defaults read &quot;${PROJECT_DIR}/${INFOPLIST_FILE}&quot; CFBundleShortVersionString-orginal)&#10;/usr/libexec/PlistBuddy -c &quot;Set :CFBundleShortVersionString ${oldBuild}&quot; &quot;${PROJECT_DIR}/${INFOPLIST_FILE}&quot;&#10;&#10;# Set the build number to &quot;DEVELOPMENT&quot;&#10;/usr/libexec/PlistBuddy -c &quot;Set :CFBundleVersion DEVELOPMENT&quot; &quot;${PROJECT_DIR}/${INFOPLIST_FILE}&quot;&#10;">
                <EnvironmentBuildable>
                   <BuildableReference
                      BuildableIdentifier = "primary"
