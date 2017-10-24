@@ -8,7 +8,7 @@ NoMAD v. 1.1(772)
 
 ***Development Version***
 
-NoMAD v. 1.1.1(781)
+NoMAD v. 1.1.1(793)RC3
 
 ***New Features in Development Version***
 
