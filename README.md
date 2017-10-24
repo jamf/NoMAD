@@ -26,6 +26,7 @@ NoMAD v. 1.1.1(781)
 - Fix for expired certificates causing menu to show strangely - build 789
 - Fix for non-automounted shares not being able to mount - regression from 1.1 - build 791
 - AutoRenewCert - Int - Key to specify number of days to go on a cert before automatically renewing - build 791
+- Ability to have multiple Chrome domains specified for NoMAD to add into the Chrome preferences - build 792
 
 ***NoMAD***
 
