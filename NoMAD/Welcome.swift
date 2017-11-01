@@ -26,8 +26,7 @@ class Welcome: NSWindowController, NSWindowDelegate {
     override func windowDidLoad() {
         // set the version number
         let shortVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
-        let version = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""
-        versionField.stringValue = "Version: " + shortVersion + " Build: " + version
+        versionField.stringValue = "Version: " + shortVersion
         
         welcomeWindow.window?.title = "Welcome to " + ((Bundle.main.bundlePath.components(separatedBy: "/").last?.replacingOccurrences(of: ".app", with: "")) ?? "NoMAD" )
         
