@@ -162,7 +162,10 @@ class LDAPServers : NSObject, DNSResolverDelegate {
             currentState = true
             lookupServers = false
             site = "static"
-            testHosts()
+            
+            if tickets.state {
+                testHosts()
+            }
         } else {
             currentState = false
             site = ""
