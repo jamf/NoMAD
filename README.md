@@ -4,29 +4,17 @@ This gitlab page is used primarily for code storage and issue tracking. For the 
 
 ***Current Version***
 
-NoMAD v. 1.1(772)
+NoMAD v. 1.1.1(793)
 
 ***Development Version***
 
-NoMAD v. 1.1.1(793)RC3
+NoMAD v. 1.1.2(797)RC1
 
 ***New Features in Development Version***
 
-- Norwegian Localization - build 778
-- Croatian Localization - build 778
-- Support for sites with no DCs listed. NoMAD will fall back to globally available DCs - build 778
-- Better support for < 10.12 systems and the Welcome Screen - build 778
-- Switch to Xcode 9 and Swift 3.2 - build 778
-- MenuFileServers - Sets the menu item title for the File Servers menu - build 781
-- UseKeychainPrompt - Prompts the user to sign in if there's no entry in the keychain, regardless of if they have tickets - build 781
-- Welcome window is now titled the same as the Application - build 781
-- Fix for shares being mis-escaped for spaces and other non-compliant characters - build 783
-- MessageUPCAlert - customize UPC alert notification text - build 784
-- Fix for URL encoding with File Shares - build 789
-- Fix for expired certificates causing menu to show strangely - build 789
-- Fix for non-automounted shares not being able to mount - regression from 1.1 - build 791
-- AutoRenewCert - Int - Key to specify number of days to go on a cert before automatically renewing - build 791
-- Ability to have multiple Chrome domains specified for NoMAD to add into the Chrome preferences - build 792
+- fix for pulling certs too often when GetCertAutomatically is set - build 794
+- fix for LDAPServerList not working - build 795
+- remove build numbers from UI since builds are now in version number - build 797
 
 ***NoMAD***
 
