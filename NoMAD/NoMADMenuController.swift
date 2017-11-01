@@ -148,6 +148,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         shareMounterMenu.updateShares(connected: self.userInformation.connected)
         
+        print(defaults.integer(forKey: Preferences.autoRenewCert))
+        
         // set up Icons - we need 2 sets of 2 for light and dark modes
         
         if defaults.string(forKey: Preferences.iconOn) != nil {
