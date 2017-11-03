@@ -183,10 +183,10 @@ class UserInformation {
                 
                 if defaults.bool(forKey: Preferences.recursiveGroupLookup) {
                     let attributes = ["name"]
-                     let searchTerm = "(member:1.2.840.113556.1.4.1941:=" + dn.replacingOccurrences(of: "\\", with: "\\\\5c") + ")"
+                     let searchTerm = "(member:1.2.840.113556.1.4.1941:=" + dn.replacingOccurrences(of: "\\", with: "\\5c") + ")"
                     if let ldifResult = try? myLDAPServers.getLDAPInformation(attributes, searchTerm: searchTerm) {
-                        print(ldifResult)
-                        
+                        myLogger.logit(.debug, message: "Raw group results: " + String(describing: ldifResult))
+
                         groupsTemp = ""
                         for item in ldifResult {
                             for components in item {
