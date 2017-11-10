@@ -675,8 +675,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     
     // this will update the menu when it's clicked
     override func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
-        // Makes all NoMAD windows come to top
-        // NSApp.activateIgnoringOtherApps(true)
         
         if menuItem.title == "Lock Screen".translate {
             updateUserInfo()
@@ -974,9 +972,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     }
     
     func openShareFromMenu(_ sender: AnyObject) {
-        
-        print("***" + sender.title + "***")
-        
+                
         for share in myShareMounter.all_shares {
             if share.name == sender.title {
                 if share.mountStatus != .mounted && share.mountStatus != .mounting {

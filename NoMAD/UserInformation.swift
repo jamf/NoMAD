@@ -48,6 +48,11 @@ class UserInformation {
     let myKeychainUtil = KeychainUtil()
 
     var UserPasswordSetDates = [String : AnyObject ]()
+    
+    // timer information
+    
+    var myTimer: Timer?
+    var timerDate: Date?
 
     init() {
         // zero everything out
@@ -184,9 +189,7 @@ class UserInformation {
                 if defaults.bool(forKey: Preferences.recursiveGroupLookup) {
                     let attributes = ["name"]
                      let searchTerm = "(member:1.2.840.113556.1.4.1941:=" + dn.replacingOccurrences(of: "\\", with: "\\\\5c") + ")"
-                    if let ldifResult = try? myLDAPServers.getLDAPInformation(attributes, searchTerm: searchTerm) {
-                        print(ldifResult)
-                        
+                    if let ldifResult = try? myLDAPServers.getLDAPInformation(attributes, searchTerm: searchTerm) {                        
                         groupsTemp = ""
                         for item in ldifResult {
                             for components in item {
@@ -308,6 +311,16 @@ class UserInformation {
 
                     myLogger.logit(.base, message: "Password was changed underneath us.")
                         
+                        // if we are using a web method to change the password we should update more often
+                        
+                        if defaults.string(forKey: Preferences.changePasswordType) == "URL" {
+                            
+                            timerDate = Date()
+                            
+                            myTimer = Timer.init(timeInterval: 30, target: self, selector: #selector(postUpdate), userInfo: nil, repeats: true)
+                            RunLoop.main.add(myTimer!, forMode: .commonModes)
+                        }
+                        
                     if (defaults.string(forKey: Preferences.uPCAlertAction) != nil ) && (defaults.string(forKey: Preferences.uPCAlertAction) != "" ) {
                         myLogger.logit(.base, message: "Firing UPC Alert Action")
                         cliTask(defaults.string(forKey: Preferences.uPCAlertAction)! + " &")
@@ -403,6 +416,16 @@ class UserInformation {
             defaults.set(groups, forKey: Preferences.groups)
             defaults.set(UPN, forKey: Preferences.userUPN)
             defaults.set(userEmail, forKey: Preferences.userEmail)
+        }
+    }
+    
+    // for timer - post update
+    
+    @objc func postUpdate() {
+        NotificationQueue.default.enqueue(updateNotification, postingStyle: .now)
+        
+        if (timerDate?.timeIntervalSinceNow)! < ( 0 - ( 15 * 60 )) {
+            myTimer?.invalidate()
         }
     }
 }
