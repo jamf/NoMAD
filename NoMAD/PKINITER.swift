@@ -18,7 +18,6 @@ func findPKINITer() -> Bool {
 
     let selfServiceFileManager = FileManager.default
     let bundlePath = Bundle.main.resourcePath
-    print("***" + bundlePath! + "***")
     if selfServiceFileManager.fileExists(atPath: bundlePath! + "/PKINITer.app") {
         myLogger.logit(.info, message:"Enabling PKINIT functionality")
         return true
