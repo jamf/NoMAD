@@ -426,6 +426,7 @@ class NoMADUser {
 
         // We may have gotten multiple ODRecords that match username,
         // So make sure it also matches the UID.
+        
         if ( records != nil ) {
             for case let record in records {
                 let attribute = "dsAttrTypeStandard:UniqueID"
@@ -478,6 +479,9 @@ class NoMADUser {
                 let libDefaults = NSMutableDictionary()
                 libDefaults.setValue(defaults.string(forKey: Preferences.kerberosRealm)!, forKey: "default_realm")
                 kerbPrefs?.set(libDefaults, forKey: "libdefaults")
+                
+                kerbPrefs?.synchronize()
+                
                 clearLibDefaults = true
             }
 
@@ -497,6 +501,11 @@ class NoMADUser {
                 realm.setValue(myLDAPServers.currentServer, forKey: "kpasswd")
                 kerbRealms[defaults.string(forKey: Preferences.kerberosRealm)!] = realm
                 kerbPrefs?.set(kerbRealms, forKey: "realms")
+                
+                // hunting down the no default domain set issue
+                
+                kerbPrefs?.synchronize()
+                
                 return true
             }
         } else {

@@ -121,7 +121,7 @@ class ShareMounter: NSArrayController {
                 
                 // check for variable substitution
                 
-                let cleanURL = subVariables(mount["URL"] as! String)
+               // let cleanURL = subVariables(mount["URL"] as! String)
                 
                 // check for groups
                 
@@ -132,7 +132,7 @@ class ShareMounter: NSArrayController {
                             
                             
                             // get all the pieces
-                            var currentShare = share_info(groups: mount["Groups"]! as! [String], url: URL(string: (mount["URL"] as! String).variableSwap().addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlPathAllowed)!)!, name: mount["Name"] as! String, options: mount["Options"] as! [String], connectedOnly: mount["ConnectedOnly"] as! Bool, mountStatus: .unmounted, localMount: mount["LocalMount"] as! String, autoMount: mount[shareKeys.autoMount] as! Bool, reqID: nil, attemptDate: nil, localMountPoints: nil)
+                            var currentShare = share_info(groups: mount["Groups"]! as! [String], url: URL(string: (mount["URL"] as! String).variableSwap())!, name: mount["Name"] as! String, options: mount["Options"] as! [String], connectedOnly: mount["ConnectedOnly"] as! Bool, mountStatus: .unmounted, localMount: mount["LocalMount"] as! String, autoMount: mount[shareKeys.autoMount] as! Bool, reqID: nil, attemptDate: nil, localMountPoints: nil)
                             
                             // see if we know about it
                             
@@ -147,7 +147,7 @@ class ShareMounter: NSArrayController {
                 } else {
                     
                     // get all the pieces
-                    var currentShare = share_info(groups: mount["Groups"]! as! [String], url: URL(string: (mount["URL"] as! String).variableSwap().addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlPathAllowed)!)!, name: mount["Name"] as! String, options: mount["Options"] as! [String], connectedOnly: mount["ConnectedOnly"] as! Bool, mountStatus: .unmounted, localMount: mount["LocalMount"] as! String, autoMount: mount[shareKeys.autoMount] as! Bool, reqID: nil, attemptDate: nil, localMountPoints: nil)
+                    var currentShare = share_info(groups: mount["Groups"]! as! [String], url: URL(string: (mount["URL"] as! String).variableSwap())!, name: mount["Name"] as! String, options: mount["Options"] as! [String], connectedOnly: mount["ConnectedOnly"] as! Bool, mountStatus: .unmounted, localMount: mount["LocalMount"] as! String, autoMount: mount[shareKeys.autoMount] as! Bool, reqID: nil, attemptDate: nil, localMountPoints: nil)
                     
                     // see if we know about it
                     
@@ -284,7 +284,7 @@ class ShareMounter: NSArrayController {
                 var requestID: AsyncRequestID? = nil
                 let queue = DispatchQueue.main
                 
-                myLogger.logit(.debug, message: "Attempting to mount: " + String(describing: all_shares[i].url))
+                myLogger.logit(.debug, message: "Attempting to mount: " + all_shares[i].url.absoluteString)
                 var mountError: Int32? = nil
                 
                 mountError = NetFSMountURLAsync(all_shares[i].url as CFURL!,
@@ -518,7 +518,7 @@ class ShareMounter: NSArrayController {
         let shareURLUnmanaged = NetFSCopyURLForRemountingVolume(share as CFURL)
         if shareURLUnmanaged != nil {
             let shareURL: URL = shareURLUnmanaged?.takeRetainedValue() as! URL
-            return URL(string: (shareURL.scheme! + "://" + shareURL.host! + shareURL.path.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlPathAllowed)!))!
+            return URL(string: (shareURL.scheme! + "://" + shareURL.host! + shareURL.path.safeURLPath()!))!
         } else {
             return URL(fileURLWithPath: "")
         }
@@ -529,13 +529,16 @@ class ShareMounter: NSArrayController {
         var createdURL = url
         
         guard let domain = defaults.string(forKey: Preferences.aDDomain),
-            let fullName = defaults.string(forKey: Preferences.displayName)?.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed),
-            let serial = getSerial().addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed),
+            let fullName = defaults.string(forKey: Preferences.displayName)?.safeURLPath(),
+            let serial = getSerial().safeURLPath(),
             let shortName = defaults.string(forKey: Preferences.userShortName)
             else {
                 myLogger.logit(.base, message: "Error doing variable substitution on file share.")
                 return nil
         }
+        // filter out any blank spaces too
+        
+        createdURL = createdURL.replacingOccurrences(of: " ", with: "%20")
         createdURL = createdURL.replacingOccurrences(of: "<<domain>>", with: domain)
         createdURL = createdURL.replacingOccurrences(of: "<<fullname>>", with: fullName)
         createdURL = createdURL.replacingOccurrences(of: "<<serial>>", with: serial)

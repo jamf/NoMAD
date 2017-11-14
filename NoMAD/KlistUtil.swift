@@ -162,6 +162,11 @@ class KlistUtil {
             if !tick.value.expired {
                 // ticket is not expired add it back
                 tickets[tick.value.principal] = tick.value
+            } else {
+                // kill expired tickets with fire
+                
+                cliTask("/usr/bin/kdestroy -p " + tick.value.principal)
+                
             }
         }
         
@@ -171,8 +176,17 @@ class KlistUtil {
             let realm = defaults.string(forKey: "KerberosRealm") ?? ""
             myLogger.logit(.debug, message:"Looking for tickets using realm: " + realm )
             for ticket in tickets {
+                
                 let name = ticket.key
                 if name.contains("@" + realm ) {
+                    
+                    // get rid of any machine tickets first
+                    
+                    if name.contains("$") {
+                        kdestroy(princ: name)
+                        state = false
+                        continue
+                    }
                     state = true
                     continue
                 } else {
@@ -204,7 +218,9 @@ class KlistUtil {
         var context: krb5_context? = nil
         krb5_init_secure_context(&context)
         
-        krb5_cc_destroy(context, tickets[name]?.krb5Cache)
+        if tickets[name]?.krb5Cache != nil {
+            krb5_cc_destroy(context, tickets[name]?.krb5Cache)
+        }
     }
     
     // function to switch the default cache

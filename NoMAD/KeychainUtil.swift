@@ -33,6 +33,11 @@ class KeychainUtil {
 
     func findPassword(_ name: String) throws -> String {
 
+        // clean up anything lingering
+        
+        passPtr = nil
+        passLength = 0
+        
         myErr = SecKeychainFindGenericPassword(nil, UInt32(serviceName.characters.count), serviceName, UInt32(name.characters.count), name, &passLength, &passPtr, &myKeychainItem)
 
         if myErr == OSStatus(errSecSuccess) {
@@ -123,6 +128,10 @@ class KeychainUtil {
         var lastExpire = Date.distantPast
         
         let certList = findAllUserCerts(identifier, defaultNamingContext: defaultNamingContext)
+        
+        if certList == nil || certList!.count < 1 {
+            return nil
+        }
         
         for cert in certList! {
             if lastExpire.timeIntervalSinceNow < cert.expireDate.timeIntervalSinceNow {

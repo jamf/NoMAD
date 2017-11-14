@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12121" systemVersion="16G29" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13196" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12121"/>
-        <plugIn identifier="com.apple.WebKit2IBPlugin" version="12121"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13196"/>
+        <plugIn identifier="com.apple.WebKitIBPlugin" version="13196"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="Welcome" customModule="NoMAD" customModuleProvider="target">
             <connections>
-                <outlet property="displaySplash" destination="BQo-Hr-Cl6" id="JPb-lQ-Xoj"/>
                 <outlet property="versionField" destination="mzc-Ew-nLv" id="vUW-yI-FUJ"/>
+                <outlet property="webView" destination="rme-1t-RoP" id="yvj-oF-vrN"/>
                 <outlet property="welcomeWindow" destination="EiT-Mj-1SZ" id="w0k-AU-964"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="hP1-yU-9eb"/>
             </connections>
@@ -26,7 +26,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="672" height="564"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mzc-Ew-nLv">
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mzc-Ew-nLv">
                         <rect key="frame" x="24" y="49" width="624" height="17"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Version Info" id="vNV-FA-wea">
                             <font key="font" metaFont="system"/>
@@ -44,20 +44,6 @@
                             <binding destination="gk6-vD-w96" name="value" keyPath="values.DontShowWelcome" id="lhr-Pp-8XC"/>
                         </connections>
                     </button>
-                    <wkWebView wantsLayer="YES" canDrawConcurrently="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BQo-Hr-Cl6" userLabel="displaySplash">
-                        <rect key="frame" x="0.0" y="74" width="672" height="470"/>
-                        <constraints>
-                            <constraint firstAttribute="width" secondItem="BQo-Hr-Cl6" secondAttribute="height" multiplier="336:235" id="PTZ-JX-jD6"/>
-                            <constraint firstAttribute="width" secondItem="BQo-Hr-Cl6" secondAttribute="height" multiplier="336:235" id="Rpz-v2-Q5u"/>
-                            <constraint firstAttribute="width" constant="672" id="lr5-Fg-IXj"/>
-                            <constraint firstAttribute="height" constant="470" id="qVw-H8-6pu"/>
-                        </constraints>
-                        <wkWebViewConfiguration key="configuration">
-                            <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
-                            <wkPreferences key="preferences" javaScriptCanOpenWindowsAutomatically="NO"/>
-                        </wkWebViewConfiguration>
-                        <accessibility identifier="displaySplash"/>
-                    </wkWebView>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="5kW-qr-Cgk">
                         <rect key="frame" x="586" y="13" width="72" height="32"/>
                         <buttonCell key="cell" type="push" title="Done" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="4Bl-ig-6g8">
@@ -71,17 +57,27 @@ DQ
                             <action selector="clickDone:" target="-2" id="zbV-0O-BGx"/>
                         </connections>
                     </button>
+                    <webView translatesAutoresizingMaskIntoConstraints="NO" id="rme-1t-RoP">
+                        <rect key="frame" x="0.0" y="74" width="672" height="470"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="672" id="MHi-gO-4cZ"/>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="672" id="xj7-6s-QUq"/>
+                        </constraints>
+                        <webPreferences key="preferences" defaultFontSize="16" defaultFixedFontSize="13" minimumFontSize="0">
+                            <nil key="identifier"/>
+                        </webPreferences>
+                    </webView>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="mzc-Ew-nLv" firstAttribute="top" secondItem="BQo-Hr-Cl6" secondAttribute="bottom" constant="8" id="5pb-KZ-lIu"/>
+                    <constraint firstItem="rme-1t-RoP" firstAttribute="centerX" secondItem="mzc-Ew-nLv" secondAttribute="centerX" id="2vS-nK-FHU"/>
                     <constraint firstItem="KEe-xh-ayP" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" id="Iht-k5-S9B"/>
                     <constraint firstAttribute="bottom" secondItem="KEe-xh-ayP" secondAttribute="bottom" constant="20" id="K0i-Qg-vlA"/>
+                    <constraint firstAttribute="bottom" secondItem="rme-1t-RoP" secondAttribute="bottom" constant="74" id="SMD-J5-JB8"/>
                     <constraint firstItem="mzc-Ew-nLv" firstAttribute="centerX" secondItem="EiT-Mj-1SZ" secondAttribute="centerX" id="X0J-dI-oHy"/>
-                    <constraint firstItem="BQo-Hr-Cl6" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" id="YI1-i9-zn1"/>
-                    <constraint firstItem="BQo-Hr-Cl6" firstAttribute="centerX" secondItem="mzc-Ew-nLv" secondAttribute="centerX" id="d7x-l7-ZkF"/>
                     <constraint firstAttribute="trailing" secondItem="5kW-qr-Cgk" secondAttribute="trailing" constant="20" id="fAy-Vj-crc"/>
                     <constraint firstItem="mzc-Ew-nLv" firstAttribute="centerX" secondItem="EiT-Mj-1SZ" secondAttribute="centerX" id="gS7-Uu-e8O"/>
                     <constraint firstAttribute="bottom" secondItem="mzc-Ew-nLv" secondAttribute="bottom" constant="49" id="nhw-gQ-px3"/>
+                    <constraint firstItem="rme-1t-RoP" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" id="pw2-DZ-IHh"/>
                     <constraint firstAttribute="bottom" secondItem="5kW-qr-Cgk" secondAttribute="bottom" constant="20" id="zLm-Cf-lcl"/>
                 </constraints>
             </view>

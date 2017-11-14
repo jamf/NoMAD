@@ -62,7 +62,7 @@ class HistoryAndThanks {
         esotericBits.append("The original repo was on a private BitBucket account, which I think still exists.\n")
         esotericBits.append("It really was an attempt to get Ben Toms to do more with Swift, and wasn't really intended to be a project on it's own.\n")
         esotericBits.append("Carrie the Caribou, the NoMAD mascot, is named after Carrie Fisher who died as we were designing the logo.\n")
-        esotericBits.append("Although I'm not really sure if female caribou have antlers... should probalby look into that.\n")
+        esotericBits.append("Although I'm not really sure if female caribou have antlers... should probably look into that.\n")
         esotericBits.append("The caribou is the most nomadic land mammal, hence why a such a majastic gentle giant of the North graces the NoMAD icon.\n")
         esotericBits.append("It's even possible that we are here because of the caribou - https://en.wikipedia.org/wiki/Gwich%27in.\n")
         esotericBits.append("I first publicly discussed NoMAD on the MacAdmins podcast on Sept. 5, 2016. My second appearance in that podcast was where I didin't record my audio and we had to do it all over again.\n")

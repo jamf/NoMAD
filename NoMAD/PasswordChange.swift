@@ -56,8 +56,8 @@ class PasswordChange {
         }
 
         guard let domain = defaults.string(forKey: Preferences.aDDomain),
-            let fullName = defaults.string(forKey: Preferences.displayName)?.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed),
-            let serial = getSerial().addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed),
+            let fullName = defaults.string(forKey: Preferences.displayName)?.safeURLQuery(),
+            let serial = getSerial().safeURLQuery(),
             let shortName = defaults.string(forKey: Preferences.userShortName)
             else {
                 myLogger.logit(.base, message: "Could not create password change URL.")
