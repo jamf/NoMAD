@@ -302,8 +302,8 @@ class NoMADUser {
                     kerbPrefs?.set(libDefaults, forKey: "libdefaults")
                 }
             }
+            defaults.synchronize()
         }
-
     }
 
     /**
@@ -512,7 +512,6 @@ class NoMADUser {
             myLogger.logit(LogLevel.base, message: "Couldn't find kpasswd server that matches current LDAP server. Letting system chose.")
             return false
         }
-        return false
     }
 }
 

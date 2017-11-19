@@ -30,7 +30,7 @@ class UserInformation {
     var userPrincipalShort: String
     var userDisplayName: String
     var userPasswordSetDate = NSDate()
-    var userPasswordExpireDate = NSDate()
+    var userPasswordExpireDate = NSDate.distantPast as NSDate
     var userHome: String
 
     var userEmail: String
@@ -61,7 +61,7 @@ class UserInformation {
         userLongName = ""
         userPrincipal = ""
         userPrincipalShort = ""
-        userPasswordSetDate = NSDate()
+        userPasswordSetDate = NSDate.distantPast as NSDate
         userPasswordExpireDate = NSDate()
         userHome = ""
         userCertDate = NSDate()
@@ -188,8 +188,10 @@ class UserInformation {
                 
                 if defaults.bool(forKey: Preferences.recursiveGroupLookup) {
                     let attributes = ["name"]
-                     let searchTerm = "(member:1.2.840.113556.1.4.1941:=" + dn.replacingOccurrences(of: "\\", with: "\\\\5c") + ")"
-                    if let ldifResult = try? myLDAPServers.getLDAPInformation(attributes, searchTerm: searchTerm) {                        
+                     let searchTerm = "(member:1.2.840.113556.1.4.1941:=" + dn.replacingOccurrences(of: "\\", with: "\\5c") + ")"
+                    if let ldifResult = try? myLDAPServers.getLDAPInformation(attributes, searchTerm: searchTerm) {
+                        myLogger.logit(.debug, message: "Raw group results: " + String(describing: ldifResult))
+
                         groupsTemp = ""
                         for item in ldifResult {
                             for components in item {
@@ -304,10 +306,12 @@ class UserInformation {
             // Check if the password was changed without NoMAD knowing.
             myLogger.logit(LogLevel.debug, message: "Password set: " + String(describing: UserPasswordSetDates[userPrincipal]))
             if (UserPasswordSetDates[userPrincipal] != nil) && ( (UserPasswordSetDates[userPrincipal] as? String) != "just set" ) {
+                
                 // user has been previously set so we can check it
+                // but first check to see that we actually connected successfully
 
                 if let passLastChangeDate = (UserPasswordSetDates[userPrincipal] as? Date ) {
-                    if ((userPasswordSetDate.timeIntervalSince(passLastChangeDate as Date)) > 1 * 60 ){
+                    if ((userPasswordSetDate.timeIntervalSince(passLastChangeDate as Date)) > 1 * 60 ) && canary && passLastChangeDate != NSDate.distantPast {
 
                     myLogger.logit(.base, message: "Password was changed underneath us.")
                         
@@ -331,7 +335,7 @@ class UserInformation {
                     UserPasswordSetDates[userPrincipal] = userPasswordSetDate
                     defaults.set(UserPasswordSetDates, forKey: Preferences.userPasswordSetDates)
                     
-                    // set a flag it we should alert the user
+                    // set a flag if we should alert the user
                     if (defaults.bool(forKey: Preferences.uPCAlert ) == true) {
 
                         // fire the notification
