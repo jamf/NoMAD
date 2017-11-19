@@ -1,6 +1,6 @@
 ***Main Web Site***
 
-This gitlab page is used primarily for code storage and issue tracking. For the most up to ddate information on NoMAD, and installer donwloads, please see [nomad.menu](http://www.nomad.menu)
+This Gitlab page is used primarily for code storage and issue tracking. For the most up to date information on NoMAD, and installer downloads, please see [nomad.menu](http://www.nomad.menu)
 
 ***Current Version***
 
@@ -12,9 +12,9 @@ NoMAD v. 1.1.2(797)RC1
 
 ***New Features in Development Version***
 
-- fix for pulling certs too often when GetCertAutomatically is set - build 794
-- fix for LDAPServerList not working - build 795
-- remove build numbers from UI since builds are now in version number - build 797
+- Fix for pulling certs too often when GetCertAutomatically is set - build 794
+- Fix for LDAPServerList not working - build 795
+- Femove build numbers from UI since builds are now in version number - build 797
 
 ***NoMAD***
 
