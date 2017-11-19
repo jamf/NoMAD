@@ -791,6 +791,11 @@ class LDAPServers : NSObject, DNSResolverDelegate {
                         }
                         // We didn't get an actual LDIF Result... so LDAP isn't working.
                         myLogger.logit(.info, message:"Server is dead by way of ldap test: " + hosts[i].host)
+                        
+                        if defaults.bool(forKey: Preferences.deadLDAPKillTickets) {
+                           _ = cliTask("/usr/bin/kdestroy -A")
+                        }
+                        
                         hosts[i].status = "dead"
                         hosts[i].timeStamp = Date()
                         break

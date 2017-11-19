@@ -194,6 +194,7 @@ enum Preferences {
     static let caribouTime = "CaribouTime"
     static let configureChrome = "ConfigureChrome"
     static let configureChromeDomain = "ConfigureChromeDomain"
+    static let deadLDAPKillTickets = "DeadLDAPKillTickets"
     static let displayName = "DisplayName"
     static let dontMatchKerbPrefs = "DontMatchKerbPrefs"
     static let dontShowWelcome = "DontShowWelcome"
