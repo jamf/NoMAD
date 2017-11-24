@@ -272,8 +272,9 @@ class KeychainUtil {
 
         var itemSearch: [String:AnyObject] = [
             kSecClass as String: kSecClassGenericPassword as AnyObject,
-            //kSecAttrAccount as String: defaults.string(forKey: Preferences.userUPN) as AnyObject,
-            kSecMatchLimit as String : kSecMatchLimitAll as AnyObject
+            kSecMatchLimit as String : kSecMatchLimitAll as AnyObject,
+            kSecReturnAttributes as String: true as AnyObject,
+            kSecReturnRef as String : true as AnyObject,
         ]
         
         // set up the new password dictionary
@@ -292,10 +293,6 @@ class KeychainUtil {
 
             itemSearch[kSecAttrService as String] = item.key as AnyObject
             
-            var aclUpdate = false
-            //var passLength: UInt32 = 0
-            //var passPtr: UnsafeMutableRawPointer? = nil
-            //var myKeychainItem: SecKeychainItem?
             var itemAccess: SecAccess? = nil
             var secApp: SecTrustedApplication? = nil
             var myACLs : CFArray? = nil
@@ -307,15 +304,15 @@ class KeychainUtil {
             
             if account != "" && account != "<<NONE>>" && account != "<<ANY>>" {
                 itemSearch[kSecAttrAccount as String] = (item.value as! String).variableSwap() as AnyObject
+            } else {
+                
+                // remove the account attribute if it's in there
+                itemSearch.removeValue(forKey: kSecAttrAccount as String)
             }
                 
             if defaults.bool(forKey: Preferences.keychainItemsDebug) {
                 print(itemSearch)
             }
-            
-            // now to loop through and find out if the item is available
-            
-            //myErr = SecKeychainFindGenericPassword(nil, UInt32(item.key.characters.count), item.key, UInt32(account.characters.count), account, &passLength, &passPtr, &myKeychainItem)
             
             myErr = SecItemCopyMatching(itemSearch as CFDictionary, &searchReturn)
             
@@ -333,25 +330,36 @@ class KeychainUtil {
                 myLogger.logit(.debug, message: "Keychain item does not currently exist.")
                 continue
             }
-            
 
             for entry in items {
                 
-                var silly : SecKeychainItem?
-                silly = entry as! SecKeychainItem
+                // now to loop through and find out if the item is available
+                // suppress the user UI first
                 
-                myErr = SecKeychainFindGenericPassword(nil, UInt32(item.key.characters.count), item.key, UInt32(account.characters.count), account, &passLength, &passPtr, &silly)
+                SecKeychainSetUserInteractionAllowed(false)
+                
+                let account = entry["acct"] as! String
+                let itemName = entry["labl"] as! String
+                var myKeychainItem: SecKeychainItem?
+                
+                myErr = SecKeychainFindGenericPassword(nil, UInt32(itemName.count), itemName, UInt32(account.count), account, &passLength, &passPtr, &myKeychainItem)
+                
+                SecKeychainSetUserInteractionAllowed(true)
+
+                passLength = 0
+                passPtr = nil
                 
             if myErr != 0 {
                 
-                myLogger.logit(.debug, message: "Adjusting ACL of keychain item \(item.key) : \(item.value) in keychain item \(entry).")
-                aclUpdate = true
-                    myErr = SecKeychainItemCopyAccess(entry as! SecKeychainItem, &itemAccess)
+                myLogger.logit(.debug, message: "Adjusting ACL of keychain item \(itemName) : \(account)")
+                
+                myErr = SecKeychainItemCopyAccess(myKeychainItem!, &itemAccess)
+                
                 myErr = SecTrustedApplicationCreateFromPath( nil, &secApp)
                     
                 // DECRYPT ACL
                     
-                myACLs = SecAccessCopyMatchingACLList(itemAccess!, kSecACLAuthorizationChangeACL)//kSecACLAuthorizationDecrypt)
+                myACLs = SecAccessCopyMatchingACLList(itemAccess!, kSecACLAuthorizationDecrypt)
                     
                 var appList: CFArray? = nil
                 var desc: CFString? = nil
@@ -360,30 +368,39 @@ class KeychainUtil {
                 
                 for acl in myACLs as! Array<SecACL> {
                     SecACLCopyContents(acl, &appList, &desc, &prompt)
+                    
                     newacl = acl
                     
                     if appList != nil {
-                        var newAppList = appList.unsafelyUnwrapped as! Array<SecTrustedApplication>
-                        
+                        var newAppList = appList as! [SecTrustedApplication]
+    
                         newAppList.append(secApp!)
                         
                         // adding NoMAD to the ACL app list
-                        myErr = SecACLSetContents(acl, newAppList as CFArray, "No Prompt" as CFString, SecKeychainPromptSelector.invalidAct)
+                        myErr = SecACLSetContents(acl, newAppList as CFArray, desc!, SecKeychainPromptSelector.init(rawValue: 0))
+                    } else {
+                        let newAppList : [SecTrustedApplication] = [
+                            secApp!
+                        ]
+                        myErr = SecACLSetContents(acl, newAppList as CFArray, desc!, SecKeychainPromptSelector.init(rawValue: 0))
                     }
+                    
+                    // Hi Rick, how's things?
+                    
+                    myErr = SecKeychainItemSetAccessWithPassword(entry as! SecKeychainItem, itemAccess!, UInt32(newPassword.count), newPassword)
                 }
-                
-                // Hi Rick, how's things?
-                
-                myErr = SecKeychainItemSetAccessWithPassword(entry as! SecKeychainItem, itemAccess!, UInt32(newPassword.characters.count), newPassword)
                 
                 if myErr != 0 {
                     myLogger.logit(.base, message: "Error setting keychain ACL.")
                 }
+                
             } else {
-                myLogger.logit(.debug, message: "Keychain item \(item.key) : \(item.value) is available via ACLs.")
+                myLogger.logit(.debug, message: "Keychain item \(itemName) : \(account) is available via ACLs.")
             }
             }
 
+            // now that all ACLs are checked, we can update all the items
+            
             myErr = SecItemUpdate(itemSearch as CFDictionary, attrToUpdate as CFDictionary)
 
             if myErr == 0 {
