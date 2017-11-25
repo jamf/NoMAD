@@ -4,17 +4,18 @@ This Gitlab page is used primarily for code storage and issue tracking. For the 
 
 ***Current Version***
 
-NoMAD v. 1.1.1(793)
+NoMAD v. 1.1.2(797)
 
 ***Development Version***
 
-NoMAD v. 1.1.2(797)RC1
+NoMAD v. 1.1.3(808)
 
 ***New Features in Development Version***
 
-- Fix for pulling certs too often when GetCertAutomatically is set - build 794
-- Fix for LDAPServerList not working - build 795
-- Femove build numbers from UI since builds are now in version number - build 797
+- Fewer prompts when updating keychain items - build 808
+- Match any keychain item account with <<ANY>> - build 808
+- Recursive group search works with "," in user names - build 808
+- When using UPCAlert and a URL to change passowrd, check for password change every 30 seconds - build 808
 
 ***NoMAD***
 
