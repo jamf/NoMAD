@@ -305,7 +305,6 @@ class KeychainUtil {
             if account != "" && account != "<<NONE>>" && account != "<<ANY>>" {
                 itemSearch[kSecAttrAccount as String] = (item.value as! String).variableSwap() as AnyObject
             } else {
-                
                 // remove the account attribute if it's in there
                 itemSearch.removeValue(forKey: kSecAttrAccount as String)
             }
@@ -338,11 +337,11 @@ class KeychainUtil {
                 
                 SecKeychainSetUserInteractionAllowed(false)
                 
-                let account = entry["acct"] as! String
-                let itemName = entry["labl"] as! String
-                var myKeychainItem: SecKeychainItem?
+                let account = entry["acct"] as? String ?? ""
+                let itemName = entry["labl"] as? String ?? ""
+                let myKeychainItem = entry["v_Ref"] as! SecKeychainItem
                 
-                myErr = SecKeychainFindGenericPassword(nil, UInt32(itemName.count), itemName, UInt32(account.count), account, &passLength, &passPtr, &myKeychainItem)
+                myErr = SecKeychainFindGenericPassword(nil, UInt32(itemName.count), itemName, UInt32(account.count), account, &passLength, &passPtr, nil)
                 
                 SecKeychainSetUserInteractionAllowed(true)
 
@@ -353,41 +352,62 @@ class KeychainUtil {
                 
                 myLogger.logit(.debug, message: "Adjusting ACL of keychain item \(itemName) : \(account)")
                 
-                myErr = SecKeychainItemCopyAccess(myKeychainItem!, &itemAccess)
+                myErr = SecKeychainItemCopyAccess(myKeychainItem, &itemAccess)
                 
                 myErr = SecTrustedApplicationCreateFromPath( nil, &secApp)
                     
                 // DECRYPT ACL
                     
-                myACLs = SecAccessCopyMatchingACLList(itemAccess!, kSecACLAuthorizationDecrypt)
+                SecAccessCopyACLList(itemAccess!, &myACLs)
                     
                 var appList: CFArray? = nil
                 var desc: CFString? = nil
-                var newacl: AnyObject? = nil
                 var prompt = SecKeychainPromptSelector()
                 
                 for acl in myACLs as! Array<SecACL> {
                     SecACLCopyContents(acl, &appList, &desc, &prompt)
+                    let authArray = SecACLCopyAuthorizations(acl)
                     
-                    newacl = acl
-                    
-                    if appList != nil {
-                        var newAppList = appList as! [SecTrustedApplication]
-    
-                        newAppList.append(secApp!)
-                        
-                        // adding NoMAD to the ACL app list
-                        myErr = SecACLSetContents(acl, newAppList as CFArray, desc!, SecKeychainPromptSelector.init(rawValue: 0))
-                    } else {
-                        let newAppList : [SecTrustedApplication] = [
-                            secApp!
-                        ]
-                        myErr = SecACLSetContents(acl, newAppList as CFArray, desc!, SecKeychainPromptSelector.init(rawValue: 0))
+                    if !(authArray as! [String]).contains("ACLAuthorizationPartitionID") {
+                        continue
                     }
+                    
+                    // pull in the description that's really a functional plist <sigh>
+                    
+                    let rawData = Data.init(fromHexEncodedString: desc! as String)
+                    var format: PropertyListSerialization.PropertyListFormat = .xml
+                    
+                    var propertyListObject = try? PropertyListSerialization.propertyList(from: rawData!, options: [], format: &format) as! [ String: [String]]
+                    
+                    // add in the team ID that NoMAD is signed with if it doesn't already exist
+                    
+                    if !(propertyListObject!["Partitions"]?.contains("teamid:AAPZK3CB24"))! {
+                        propertyListObject!["Partitions"]?.append("teamid:AAPZK3CB24")
+                    }
+
+                    if defaults.bool(forKey: Preferences.keychainItemsDebug) {
+                        myLogger.logit(.debug, message: String(describing: propertyListObject))
+                    }
+                    
+                    // now serialize it back into a plist
+                    
+                    var xmlObject = try? PropertyListSerialization.data(fromPropertyList: propertyListObject, format: format, options: 0)
                     
                     // Hi Rick, how's things?
                     
-                    myErr = SecKeychainItemSetAccessWithPassword(entry as! SecKeychainItem, itemAccess!, UInt32(newPassword.count), newPassword)
+                    myErr = SecKeychainItemSetAccessWithPassword(myKeychainItem, itemAccess!, UInt32(newPassword.count), newPassword)
+                    
+                    // now that all ACLs has been adjusted, we can update the item
+
+                    myErr = SecItemUpdate(itemSearch as CFDictionary, attrToUpdate as CFDictionary)
+                    
+                    // now add NoMAD and the original apps back into the property object
+                    
+                    myErr = SecACLSetContents(acl, appList, xmlObject!.hexEncodedString() as CFString, prompt)
+                    
+                    // smack it again to set the ACL
+                    
+                    myErr = SecKeychainItemSetAccessWithPassword(myKeychainItem, itemAccess!, UInt32(newPassword.count), newPassword)
                 }
                 
                 if myErr != 0 {
@@ -398,11 +418,7 @@ class KeychainUtil {
                 myLogger.logit(.debug, message: "Keychain item \(itemName) : \(account) is available via ACLs.")
             }
             }
-
-            // now that all ACLs are checked, we can update all the items
             
-            myErr = SecItemUpdate(itemSearch as CFDictionary, attrToUpdate as CFDictionary)
-
             if myErr == 0 {
                 myLogger.logit(.debug, message: "Updated password for service: \(item.key)")
             } else {
