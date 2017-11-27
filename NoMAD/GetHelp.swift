@@ -19,14 +19,14 @@ class GetHelp {
         if let getHelpType = defaults.string(forKey: Preferences.getHelpType),
             let getHelpOptions = defaults.string(forKey: Preferences.getHelpOptions) {
 
-            if getHelpType.characters.count > 0 && getHelpOptions.characters.count > 0 {
+            if getHelpType.count > 0 && getHelpOptions.count > 0 {
                 switch getHelpType {
                 case "Bomgar":
                     if let myURL = subVariables(getHelpOptions) {
                         OperationQueue.main.addOperation() {
-                            cliTask("curl -o /tmp/BomgarClient " + myURL )
-                            cliTaskNoTerm("/usr/bin/unzip -o -d /tmp /tmp/BomgarClient")
-                            cliTask("/usr/bin/open /tmp/Bomgar/Double-Click\\ To\\ Start\\ Support\\ Session.app")
+                            let _ = cliTask("curl -o /tmp/BomgarClient " + myURL )
+                            let _ = cliTaskNoTerm("/usr/bin/unzip -o -d /tmp /tmp/BomgarClient")
+                            let _ = cliTask("/usr/bin/open /tmp/Bomgar/Double-Click\\ To\\ Start\\ Support\\ Session.app")
                         }
                     }
                 case "URL":
@@ -36,7 +36,7 @@ class GetHelp {
                         }
                         NSWorkspace.shared().open(url)
                 case "Path":
-                    cliTask(getHelpOptions.replacingOccurrences(of: " ", with: "\\ "))
+                    let _ = cliTask(getHelpOptions.replacingOccurrences(of: " ", with: "\\ "))
                 case "App":
                     NSWorkspace.shared().launchApplication(getHelpOptions)
                 default:
