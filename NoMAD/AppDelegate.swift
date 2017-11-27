@@ -51,7 +51,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
             if (defaults.string(forKey: Preferences.stateChangeAction) != "" ) {
                 myLogger.logit(.base, message: "Firing State Change Action")
-                cliTask(defaults.string(forKey: Preferences.stateChangeAction)! + " &")
+                let _ = cliTask(defaults.string(forKey: Preferences.stateChangeAction)! + " &")
             }
         }
 
