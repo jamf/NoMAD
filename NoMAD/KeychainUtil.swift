@@ -12,8 +12,8 @@ import Foundation
 import Security
 
 struct certDates {
-    var serial : String
-    var expireDate : Date
+    var serial: String
+    var expireDate: Date
 }
 
 class KeychainUtil {
@@ -21,8 +21,7 @@ class KeychainUtil {
     var myErr: OSStatus
     let serviceName = "NoMAD"
     var passLength: UInt32 = 0
-    var passPtr: UnsafeMutableRawPointer? = nil
-
+    var passPtr: UnsafeMutableRawPointer?
     var myKeychainItem: SecKeychainItem?
 
     init() {
@@ -38,11 +37,11 @@ class KeychainUtil {
         passPtr = nil
         passLength = 0
         
-        myErr = SecKeychainFindGenericPassword(nil, UInt32(serviceName.characters.count), serviceName, UInt32(name.characters.count), name, &passLength, &passPtr, &myKeychainItem)
+        myErr = SecKeychainFindGenericPassword(nil, UInt32(serviceName.count), serviceName, UInt32(name.count), name, &passLength, &passPtr, &myKeychainItem)
 
         if myErr == OSStatus(errSecSuccess) {
             let password = NSString(bytes: passPtr!, length: Int(passLength), encoding: String.Encoding.utf8.rawValue)
-            return password as! String
+            return password! as String
         } else {
             throw NoADError.noStoredPassword
         }
@@ -52,7 +51,7 @@ class KeychainUtil {
 
     func setPassword(_ name: String, pass: String) -> OSStatus {
 
-        myErr = SecKeychainAddGenericPassword(nil, UInt32(serviceName.characters.count), serviceName, UInt32(name.characters.count), name, UInt32(pass.characters.count), pass, nil)
+        myErr = SecKeychainAddGenericPassword(nil, UInt32(serviceName.count), serviceName, UInt32(name.count), name, UInt32(pass.count), pass, nil)
 
         return myErr
     }
@@ -61,7 +60,7 @@ class KeychainUtil {
 
     func updatePassword(_ name: String, pass: String) -> Bool {
         if (try? findPassword(name)) != nil {
-            deletePassword()
+           let _ = deletePassword()
         }
         myErr = setPassword(name, pass: pass)
         if myErr == OSStatus(errSecSuccess) {
@@ -110,11 +109,12 @@ class KeychainUtil {
 
     func findAndDelete(_ name: String) -> Bool {
         do {
-            try findPassword(name)
-        } catch{
+          let _ = try findPassword(name)
+        } catch {
             return false
         }
-        if ( deletePassword() == 0 ) {
+
+        if  deletePassword() == 0 {
             return true
         } else {
             return false
@@ -288,8 +288,10 @@ class KeychainUtil {
             // add in the Service name
 
             itemSearch[kSecAttrService as String] = item.key as AnyObject
-            
-            var aclUpdate = false
+
+            // TODO: both the aclUpdate and the newaxl variables here are written to but never actually used.
+            // Commented out until I can have a discussion to figure out the purpose, as of now it's just burning allocs.
+//            var aclUpdate = false
             var passLength: UInt32 = 0
             var passPtr: UnsafeMutableRawPointer? = nil
             var myKeychainItem: SecKeychainItem?
@@ -312,7 +314,7 @@ class KeychainUtil {
             
             // now to loop through and find out if the item is available
             
-            myErr = SecKeychainFindGenericPassword(nil, UInt32(item.key.characters.count), item.key, UInt32(account.characters.count), account, &passLength, &passPtr, &myKeychainItem)
+            myErr = SecKeychainFindGenericPassword(nil, UInt32(item.key.count), item.key, UInt32(account.count), account, &passLength, &passPtr, &myKeychainItem)
             
             // if no item, don't attempt to change
             
@@ -323,19 +325,19 @@ class KeychainUtil {
             
             if myErr != 0 {
                 myLogger.logit(.debug, message: "Adjusting ACL of keychain item \(item.key) : \(item.value).")
-                aclUpdate = true
+//                aclUpdate = true
                 myErr = SecKeychainItemCopyAccess(myKeychainItem!, &itemAccess)
                 myErr = SecTrustedApplicationCreateFromPath( nil, &secApp)
                 myACLs = SecAccessCopyMatchingACLList(itemAccess!, kSecACLAuthorizationDecrypt)
                 var appList: CFArray? = nil
                 var desc: CFString? = nil
-                var newacl: AnyObject? = nil
+//                var newacl: AnyObject? = nil
                 var prompt = SecKeychainPromptSelector()
                 
                 for acl in myACLs as! Array<SecACL> {
                     SecACLCopyContents(acl, &appList, &desc, &prompt)
-                    newacl = acl
-                    
+//                    newacl = acl
+
                     if appList != nil {
                         var newAppList = appList.unsafelyUnwrapped as! Array<SecTrustedApplication>
                         
@@ -348,7 +350,7 @@ class KeychainUtil {
                 
                 // Hi Rick, how's things?
                 
-                myErr = SecKeychainItemSetAccessWithPassword(myKeychainItem, itemAccess!, UInt32(newPassword.characters.count), newPassword)
+                myErr = SecKeychainItemSetAccessWithPassword(myKeychainItem, itemAccess!, UInt32(newPassword.count), newPassword)
                 
                 if myErr != 0 {
                     myLogger.logit(.base, message: "Error setting keychain ACL.")
