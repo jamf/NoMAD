@@ -33,7 +33,7 @@ class PasswordChange {
                 }
                 NSWorkspace.shared().open(url)
             case "App":
-                cliTask("/usr/bin/open " + passwordChangeOptions.replacingOccurrences(of: " ", with: "\\ ") )
+                let _ = cliTask("/usr/bin/open " + passwordChangeOptions.replacingOccurrences(of: " ", with: "\\ ") )
             case "None":
                 myLogger.logit(.base, message: "No password changes allowed.")
             default:
