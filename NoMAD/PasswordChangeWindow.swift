@@ -260,8 +260,8 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
     }
     
     override func controlTextDidEndEditing(_ obj: Notification) {
-        
-        if obj.object.unsafelyUnwrapped as! NSSecureTextField == newPassword {
+        /// Changed to check for object equality
+        if obj.object.unsafelyUnwrapped as! NSSecureTextField === newPassword {
             if policyAlert.image == NSImage.init(imageLiteralResourceName: NSImageNameStatusUnavailable) {
                 showPopover(object: newPassword)
             }
