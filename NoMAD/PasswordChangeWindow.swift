@@ -36,10 +36,10 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
 
     @IBOutlet weak var secondaryAlert: NSButton!
     @IBOutlet weak var policyAlert: NSButton!
-    let caps: Set<Character> = Set("ABCDEFGHIJKLKMNOPQRSTUVWXYZ".characters)
-    let lowers: Set<Character> = Set("abcdefghijklmnopqrstuvwxyz".characters)
-    let numbers: Set<Character> = Set("1234567890".characters)
-    let symbols: Set<Character> = Set("!\"@#$%^&*()_-+={}[]|:;<>,.?~`\\/".characters)
+    let caps: Set<Character> = Set("ABCDEFGHIJKLKMNOPQRSTUVWXYZ")
+    let lowers: Set<Character> = Set("abcdefghijklmnopqrstuvwxyz")
+    let numbers: Set<Character> = Set("1234567890")
+    let symbols: Set<Character> = Set("!\"@#$%^&*()_-+={}[]|:;<>,.?~`\\/")
     var passwordPolicy = [String : AnyObject ]()
 
     var minLength: String = "0"
@@ -88,7 +88,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
 
         // show the policy button
 
-        if let passwordPolicyText = defaults.string(forKey: Preferences.messagePasswordChangePolicy) {
+        if defaults.string(forKey: Preferences.messagePasswordChangePolicy) != nil {
             HelpButton.isEnabled = true
             HelpButton.isHidden = false
         } else {
@@ -162,7 +162,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
                 alertController.beginSheetModal(for: self.window!, completionHandler: nil)
                 passwordChangeSpinner.isHidden = true
                 passwordChangeSpinner.stopAnimation(nil)
-                EXIT_FAILURE
+                
             } else {
                 let alertController = NSAlert()
                 alertController.messageText = "PasswordChangeSuccessful".translate
@@ -191,7 +191,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
             let alertController = NSAlert()
             alertController.messageText = "PasswordMismatch".translate
             alertController.beginSheetModal(for: self.window!, completionHandler: nil)
-            EXIT_FAILURE
+
         }
     }
 
@@ -206,44 +206,44 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
 
         var result = ""
 
-        let capsOnly = String(pass.characters.filter({ (caps.contains($0))}))
-        let lowerOnly = String(pass.characters.filter({ (lowers.contains($0))}))
-        let numberOnly = String(pass.characters.filter({ (numbers.contains($0))}))
-        let symbolOnly = String(pass.characters.filter({ (symbols.contains($0))}))
+        let capsOnly = String(pass.filter({ (caps.contains($0))}))
+        let lowerOnly = String(pass.filter({ (lowers.contains($0))}))
+        let numberOnly = String(pass.filter({ (numbers.contains($0))}))
+        let symbolOnly = String(pass.filter({ (symbols.contains($0))}))
 
             var totalMatches = 0
 
             // TODO: set up all of these for translation
 
-            if pass.characters.count < Int(minLength)! {
+            if pass.count < Int(minLength)! {
                 result.append("Length requirement not met.\n")
             }
 
-            if capsOnly.characters.count < Int(minUpperCase)! {
+            if capsOnly.count < Int(minUpperCase)! {
                 result.append("Upper case character requirement not met.\n")
             } else {
                 totalMatches += 1
             }
 
-            if lowerOnly.characters.count < Int(minLowerCase)! {
+            if lowerOnly.count < Int(minLowerCase)! {
                 result.append("Lower case character requirement not met.\n")
             } else {
                 totalMatches += 1
             }
 
-            if numberOnly.characters.count < Int(minNumber)! {
+            if numberOnly.count < Int(minNumber)! {
                 result.append("Numeric character requirement not met.\n")
             } else {
                 totalMatches += 1
             }
 
-            if symbolOnly.characters.count < Int(minSymbol)! {
+            if symbolOnly.count < Int(minSymbol)! {
                 result.append("Symbolic character requirement not met.\n")
             } else {
                 totalMatches += 1
             }
 
-            if totalMatches >= Int(minMatches)! && Int(minMatches) != 0 && pass.characters.count >= Int(minLength)! {
+            if totalMatches >= Int(minMatches)! && Int(minMatches) != 0 && pass.count >= Int(minLength)! {
                 result = ""
             }
 
