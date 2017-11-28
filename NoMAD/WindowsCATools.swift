@@ -255,7 +255,7 @@ class WindowsCATools {
         
         err = SecItemCopyMatching(pubKeyDict as CFDictionary, &pubKeyBits)
         
-        pubKeyData = (pubKeyDataPtr! as? Data)!
+        pubKeyData = (pubKeyDataPtr! as Data)
         
         return pubKeyDataPtr! as Data
         
@@ -276,7 +276,7 @@ class WindowsCATools {
             resultString = kCryptoExportImportManagerRequestInitialTag
         }
         var charCount = 0
-        for character in base64EncodedString.characters {
+        for character in base64EncodedString {
             charCount += 1
             currentLine.append(character)
             if charCount == kCryptoExportImportManagerPublicNumberOfCharactersInALine {
