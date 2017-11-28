@@ -182,8 +182,8 @@ class WindowsCATools {
 
             for line in responseLines! {
                 if line.contains("certnew.cer?ReqID=") {
-                    myresponse = reqIDRegEx.stringByReplacingMatches(in: line, options: [], range: NSMakeRange(0, line.characters.count), withTemplate: "")
-                    myresponse = reqIDRegExEnd.stringByReplacingMatches(in: myresponse, options: [], range: NSMakeRange(0, myresponse.characters.count), withTemplate: "").replacingOccurrences(of: "\r", with: "")
+                    myresponse = reqIDRegEx.stringByReplacingMatches(in: line, options: [], range: NSMakeRange(0, line.count), withTemplate: "")
+                    myresponse = reqIDRegExEnd.stringByReplacingMatches(in: myresponse, options: [], range: NSMakeRange(0, myresponse.count), withTemplate: "").replacingOccurrences(of: "\r", with: "")
                     return Int(myresponse)!
                 }
             }
@@ -286,7 +286,7 @@ class WindowsCATools {
             }
         }
         // final line (if any)
-        if currentLine.characters.count > 0 { resultString += currentLine + "\n" }
+        if currentLine.count > 0 { resultString += currentLine + "\n" }
         // final tag
         if PEMType == "RSA" {
             resultString += kCryptoExportImportManagerPublicKeyFinalTag

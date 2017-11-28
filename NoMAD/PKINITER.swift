@@ -33,7 +33,7 @@ func findPKINITer() -> Bool {
 
 func launchPKINITer() {
 
-        let selfServiceFileManager = FileManager.default
+//        let selfServiceFileManager = FileManager.default
         let bundlePath = Bundle.main.resourcePath
 
         // build the options
