@@ -90,7 +90,7 @@ class ShareMounter: NSArrayController {
         if homeDict != nil {
             // adding the home mount to the shares
             myLogger.logit(.debug, message: "Evaluating home share for automounts.")
-            var currentShare = share_info(groups: homeDict?[shareKeys.groups] as! [String], url: URL(string: "smb:" + (defaults.string(forKey: Preferences.userHome))!)!, name: defaults.string(forKey: Preferences.menuHomeDirectory) ?? "HomeSharepoint".translate, options: homeDict?[shareKeys.options] as! [String], connectedOnly: true, mountStatus: mountStatus.toBeMounted, localMount: nil, autoMount: (homeDict?["Mount"]) as! Bool, reqID: nil, attemptDate: nil, localMountPoints: nil)
+            let currentShare = share_info(groups: homeDict?[shareKeys.groups] as! [String], url: URL(string: "smb:" + (defaults.string(forKey: Preferences.userHome))!)!, name: defaults.string(forKey: Preferences.menuHomeDirectory) ?? "HomeSharepoint".translate, options: homeDict?[shareKeys.options] as! [String], connectedOnly: true, mountStatus: mountStatus.toBeMounted, localMount: nil, autoMount: (homeDict?["Mount"]) as! Bool, reqID: nil, attemptDate: nil, localMountPoints: nil)
             
             if mountedShares.contains(currentShare.url) {
                 //currentShare.mountStatus = .mounted
@@ -132,7 +132,7 @@ class ShareMounter: NSArrayController {
                             
                             
                             // get all the pieces
-                            var currentShare = share_info(groups: mount["Groups"]! as! [String], url: URL(string: (mount["URL"] as! String).variableSwap())!, name: mount["Name"] as! String, options: mount["Options"] as! [String], connectedOnly: mount["ConnectedOnly"] as! Bool, mountStatus: .unmounted, localMount: mount["LocalMount"] as! String, autoMount: mount[shareKeys.autoMount] as! Bool, reqID: nil, attemptDate: nil, localMountPoints: nil)
+                            let currentShare = share_info(groups: mount["Groups"]! as! [String], url: URL(string: (mount["URL"] as! String).variableSwap())!, name: mount["Name"] as! String, options: mount["Options"] as! [String], connectedOnly: mount["ConnectedOnly"] as! Bool, mountStatus: .unmounted, localMount: mount["LocalMount"] as! String, autoMount: mount[shareKeys.autoMount] as! Bool, reqID: nil, attemptDate: nil, localMountPoints: nil)
                             
                             // see if we know about it
                             
@@ -147,7 +147,7 @@ class ShareMounter: NSArrayController {
                 } else {
                     
                     // get all the pieces
-                    var currentShare = share_info(groups: mount["Groups"]! as! [String], url: URL(string: (mount["URL"] as! String).variableSwap())!, name: mount["Name"] as! String, options: mount["Options"] as! [String], connectedOnly: mount["ConnectedOnly"] as! Bool, mountStatus: .unmounted, localMount: mount["LocalMount"] as! String, autoMount: mount[shareKeys.autoMount] as! Bool, reqID: nil, attemptDate: nil, localMountPoints: nil)
+                    let currentShare = share_info(groups: mount["Groups"]! as! [String], url: URL(string: (mount["URL"] as! String).variableSwap())!, name: mount["Name"] as! String, options: mount["Options"] as! [String], connectedOnly: mount["ConnectedOnly"] as! Bool, mountStatus: .unmounted, localMount: mount["LocalMount"] as! String, autoMount: mount[shareKeys.autoMount] as! Bool, reqID: nil, attemptDate: nil, localMountPoints: nil)
                     
                     // see if we know about it
                     
