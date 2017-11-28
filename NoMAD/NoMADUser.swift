@@ -29,9 +29,9 @@ enum NoMADUserError: Error, CustomStringConvertible {
 }
 /*
  extension NoMADUserError {
-	var description: String {
+ var description: String {
 
-	}
+ }
  }
  */
 class NoMADUser {
@@ -125,18 +125,18 @@ class NoMADUser {
      - password: The user's current password as a String.
      */
     /*
-    func checkCurrentConsoleUserPassword(_ password: String) -> Bool {
-        do {
-            try currentConsoleUserRecord.verifyPassword(password)
-            return true
-        } catch let unknownError as NSError {
-            myLogger.logit(LogLevel.base, message: "Local User Password is incorrect. Error: " + unknownError.description)
-            return false
-        }
-    }
-    */
+     func checkCurrentConsoleUserPassword(_ password: String) -> Bool {
+     do {
+     try currentConsoleUserRecord.verifyPassword(password)
+     return true
+     } catch let unknownError as NSError {
+     myLogger.logit(LogLevel.base, message: "Local User Password is incorrect. Error: " + unknownError.description)
+     return false
+     }
+     }
+     */
     func checkCurrentConsoleUserPassword(_ password: String) -> String {
-     
+
         do {
             try currentConsoleUserRecord.verifyPassword(password)
             return "Valid"
@@ -155,8 +155,8 @@ class NoMADUser {
 
     func preflightCurrentConsoleUserPassword(_ password: String) throws -> String {
         do {
-        try currentConsoleUserRecord.passwordChangeAllowed(password)
-        return "Valid"
+            try currentConsoleUserRecord.passwordChangeAllowed(password)
+            return "Valid"
         } catch let unknownError as NSError {
             myLogger.logit(LogLevel.base, message: "Current Console User password pre-flight failed. Error: " + unknownError.description)
             throw NoMADUserError.unknownError("Local password doesn't meet policy requirements.")
@@ -206,7 +206,7 @@ class NoMADUser {
         }
 
         // Test if the keychain password is correct by trying to unlock it.
-        let passwordLength = UInt32(password.characters.count)
+        let passwordLength = UInt32(password.count)
         err = SecKeychainUnlock(myDefaultKeychain, passwordLength, password, true)
         if (err == noErr) {
             return true
@@ -248,15 +248,15 @@ class NoMADUser {
         // if on Hi-Sierra we need to work around some things here
         
         if !hicFix {
-        let currentConsoleUserKerberosPrincipal = getCurrentConsoleUserKerberosPrincipal()
-        if currentConsoleUserIsADuser() {
-            if ( kerberosPrincipal == currentConsoleUserKerberosPrincipal ) {
-                myLogger.logit(LogLevel.base, message: "User signed into NoMAD is the same as user logged onto console. Console user is AD user. Can't use changeRemotePassword.")
-                throw NoMADUserError.invalidParamater("NoMAD User = Console User. Console user is AD user. Can't use changeRemotePassword. Use changeCurrentConsoleUserPassword() instead.")
-            } else {
-                myLogger.logit(LogLevel.notice, message: "NoMAD User != Console User. Console user is AD user. You should prompt the user to change the local password.")
+            let currentConsoleUserKerberosPrincipal = getCurrentConsoleUserKerberosPrincipal()
+            if currentConsoleUserIsADuser() {
+                if ( kerberosPrincipal == currentConsoleUserKerberosPrincipal ) {
+                    myLogger.logit(LogLevel.base, message: "User signed into NoMAD is the same as user logged onto console. Console user is AD user. Can't use changeRemotePassword.")
+                    throw NoMADUserError.invalidParamater("NoMAD User = Console User. Console user is AD user. Can't use changeRemotePassword. Use changeCurrentConsoleUserPassword() instead.")
+                } else {
+                    myLogger.logit(LogLevel.notice, message: "NoMAD User != Console User. Console user is AD user. You should prompt the user to change the local password.")
+                }
             }
-        }
         }
 
         let kerbPrefFile = checkKpasswdServer(true)
@@ -332,7 +332,7 @@ class NoMADUser {
         }
 
         do {
-            try preflightCurrentConsoleUserPassword(newPassword1)
+            let _ =  try preflightCurrentConsoleUserPassword(newPassword1)
         } catch let unknownError as NSError {
             myLogger.logit(LogLevel.base, message: "New password does not meet local complexity requirements. Error: " + unknownError.description)
             return unknownError.localizedDescription
@@ -365,8 +365,8 @@ class NoMADUser {
 
         // Test if the keychain password is correct by trying to unlock it.
 
-        let oldPasswordLength = UInt32(oldPassword.characters.count)
-        let newPasswordLength = UInt32(newPassword1.characters.count)
+        let oldPasswordLength = UInt32(oldPassword.count)
+        let newPasswordLength = UInt32(newPassword1.count)
 
         err = SecKeychainChangePassword(myDefaultKeychain, oldPasswordLength, oldPassword, newPasswordLength, newPassword1)
         if (err == noErr) {
@@ -427,16 +427,16 @@ class NoMADUser {
         // We may have gotten multiple ODRecords that match username,
         // So make sure it also matches the UID.
         
-        if ( records != nil ) {
-            for case let record in records {
-                let attribute = "dsAttrTypeStandard:UniqueID"
-                if let odUid = try? String(describing: record.values(forAttribute: attribute)[0]) {
-                    if ( odUid == uid) {
-                        return record
-                    }
+
+        for case let record in records {
+            let attribute = "dsAttrTypeStandard:UniqueID"
+            if let odUid = try? String(describing: record.values(forAttribute: attribute)[0]) {
+                if ( odUid == uid) {
+                    return record
                 }
             }
         }
+
         return nil
     }
 
@@ -512,7 +512,6 @@ class NoMADUser {
             myLogger.logit(LogLevel.base, message: "Couldn't find kpasswd server that matches current LDAP server. Letting system chose.")
             return false
         }
-        return false
     }
 }
 
@@ -582,7 +581,7 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
 
                     doLocalPasswordSync = true
                     do {
-                        try noMADUser.preflightCurrentConsoleUserPassword(newPassword1)
+                        let _ = try noMADUser.preflightCurrentConsoleUserPassword(newPassword1)
                     } catch let error as NoMADUserError {
                         myLogger.logit(LogLevel.base, message: error.description)
                         return error.description
@@ -593,13 +592,13 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
                 }
             } else {
 
-            doLocalPasswordSync = true
-            do {
-            try noMADUser.preflightCurrentConsoleUserPassword(newPassword1)
-            } catch let error as NoMADUserError {
-                myLogger.logit(LogLevel.base, message: error.description)
-                return error.description
-            }
+                doLocalPasswordSync = true
+                do {
+                    let _ =  try noMADUser.preflightCurrentConsoleUserPassword(newPassword1)
+                } catch let error as NoMADUserError {
+                    myLogger.logit(LogLevel.base, message: error.description)
+                    return error.description
+                }
             }
         }
 
@@ -706,7 +705,7 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
         
         if useKeychain {
             do {
-                try noMADUser.updateKeychainItem(newPassword1, newPassword2: newPassword2)
+                let _ = try noMADUser.updateKeychainItem(newPassword1, newPassword2: newPassword2)
             } catch let error as NoMADUserError {
                 myLogger.logit(LogLevel.base, message: error.description)
                 return error.description
