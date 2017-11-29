@@ -122,7 +122,7 @@ public class CertificateSigningRequest:NSObject {
 
         var certificationRequestInfo = buldCertificationRequestInfo(publicKeyBits)
         var shaBytes:[UInt8]
-        var padding:SecPadding
+        // let padding = SecPadding.PKCS1SHA1 // Not needed on macOS as there is only one choice.
         var certificationRequestInfoBytes = [UInt8](repeating: 0, count: certificationRequestInfo.count)
         certificationRequestInfo.copyBytes(to: &certificationRequestInfoBytes, count: certificationRequestInfo.count)
         var digest:[UInt8]
@@ -137,7 +137,6 @@ public class CertificateSigningRequest:NSObject {
             digest = [UInt8](repeating: 0, count: cryptoAlgorithm.digestLength)
             CC_SHA1_Final(&digest, &SHA1)
             shaBytes = SEQUENCE_OBJECT_sha1WithRSAEncryption
-            padding = SecPadding.PKCS1SHA1
 
         case .sha256:
 
@@ -148,7 +147,6 @@ public class CertificateSigningRequest:NSObject {
             digest = [UInt8](repeating: 0, count: cryptoAlgorithm.digestLength)
             CC_SHA256_Final(&digest, &SHA256)
             shaBytes = SEQUENCE_OBJECT_sha256WithRSAEncryption
-            padding = SecPadding.PKCS1SHA1
 
         case .sha512:
 
@@ -159,7 +157,6 @@ public class CertificateSigningRequest:NSObject {
             digest = [UInt8](repeating: 0, count: cryptoAlgorithm.digestLength)
             CC_SHA512_Final(&digest, &SHA512)
             shaBytes = SEQUENCE_OBJECT_sha512WithRSAEncryption
-            padding = SecPadding.PKCS1SHA1
 
         default:
 
@@ -169,7 +166,7 @@ public class CertificateSigningRequest:NSObject {
 
         // Build signature - step 2: Sign hash
         var signature = [UInt8](repeating: 0, count: 256)
-        var signatureLen = signature.count
+        let signatureLen = signature.count
 
         // this is iOS-only - converted to using SecTransform - Joel Rennich
 
