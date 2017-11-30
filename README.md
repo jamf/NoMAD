@@ -16,6 +16,8 @@ NoMAD v. 1.1.3(808)
 - Match any keychain item account with <<ANY>> - build 808
 - Recursive group search works with "," in user names - build 808
 - When using UPCAlert and a URL to change passowrd, check for password change every 30 seconds - build 808
+- Prevent sign in window from closing when SignInAlert is set - build 809
+- Write out current AD Site to "ADSite" in preferences - build 809
 
 ***NoMAD***
 
