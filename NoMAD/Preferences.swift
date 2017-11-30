@@ -186,6 +186,7 @@ enum Preferences {
     // x509CA - r/w - string - URL for the Windows WebCA for certificate generation
 
     static let aDDomain = "ADDomain"
+    static let aDSite = "ADSite"                    // current AD site
     static let autoConfigure = "AutoConfigure"
     static let autoRenewCert = "AutoRenewCert"
     static let changePasswordCommand = "ChangePasswordCommand"

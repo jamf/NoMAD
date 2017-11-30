@@ -67,7 +67,21 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
             alertTimer = Timer.init(timeInterval: TimeInterval(alertTime), target: self, selector: #selector(showAlert), userInfo: nil, repeats: true)
             RunLoop.main.add(alertTimer!, forMode: .commonModes)
         //}
+    }
+    
+    func windowShouldClose(_ sender: Any) -> Bool {
         
+        if defaults.bool(forKey: Preferences.signInWindowOnLaunch) && defaults.string(forKey: Preferences.lastUser) != "" {
+            
+            // check to ensure we're not a member of an exclusion group
+            
+            if !((defaults.array(forKey: Preferences.signInWindowOnLaunchExclusions)?.contains(where: { ($0 as! String)  == NSUserName() } )) ?? false ) {
+                
+                // move this back to the foreground
+                return false
+            }
+        }
+        return true
     }
     
     func windowWillClose(_ notification: Notification) {

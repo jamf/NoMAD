@@ -386,6 +386,9 @@ class LDAPServers : NSObject, DNSResolverDelegate {
                 myLogger.logit(LogLevel.base, message: "Unable to find site")
             }
         }
+        
+        defaults.set(site, forKey: Preferences.aDSite)
+        
         myLogger.logit(LogLevel.debug, message:"Resetting default naming context to: " + tempDefaultNamingContext)
         defaultNamingContext = tempDefaultNamingContext
     }
