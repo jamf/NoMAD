@@ -13,7 +13,6 @@
 		1A1BA5D11F2268A300E506D0 /* libkrb5.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A1BA5D01F2268A300E506D0 /* libkrb5.tbd */; };
 		1A1BA5D31F2268AA00E506D0 /* libkrb5support.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A1BA5D21F2268AA00E506D0 /* libkrb5support.tbd */; };
 		1A206B2D1D58312800539FA6 /* KeychainUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A206B2C1D58312800539FA6 /* KeychainUtil.swift */; };
-		1A22AEC11E200D600012220D /* ShareEditWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A22AEC01E200D600012220D /* ShareEditWindow.xib */; };
 		1A24EF481D7F01B3006A1866 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A24EF471D7F01B3006A1866 /* Logger.swift */; };
 		1A26AFF51D3BE620000776A4 /* WindowsCATools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A26AFF41D3BE620000776A4 /* WindowsCATools.swift */; };
 		1A26AFF71D46E4BF000776A4 /* GetHelp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A26AFF61D46E4BF000776A4 /* GetHelp.swift */; };
@@ -69,6 +68,7 @@
 		84EB75FE1ECE07BD00716B48 /* PasswordPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84EB75FD1ECE07BD00716B48 /* PasswordPolicy.swift */; };
 		84EB760D1ED3B0D100716B48 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 84EB760F1ED3B0D100716B48 /* InfoPlist.strings */; };
 		84F93A2B1D3886FA00ED2070 /* AutoConfigure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F93A2A1D3886FA00ED2070 /* AutoConfigure.swift */; };
+		9CD3248E1FD07631005C4266 /* ShareEditWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A22AEC01E200D600012220D /* ShareEditWindow.xib */; };
 		BF34324D1D52844300CE8F89 /* NoMADTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF34324C1D52844300CE8F89 /* NoMADTests.swift */; };
 		FC03F3F51F59F54E0054B5F7 /* WelcomeSplash.html in Resources */ = {isa = PBXBuildFile; fileRef = FC03F3F41F59F54E0054B5F7 /* WelcomeSplash.html */; };
 		FC03F3F91F5A019F0054B5F7 /* Assets in Resources */ = {isa = PBXBuildFile; fileRef = FC03F3F81F5A019F0054B5F7 /* Assets */; };
@@ -533,11 +533,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				84CC67E11D30A18A00115C76 /* Assets.xcassets in Resources */,
-				1A22AEC11E200D600012220D /* ShareEditWindow.xib in Resources */,
 				1AFBDC671DE675C000C19AE1 /* DefaultPreferences.plist in Resources */,
 				1A1BA5B11F1D08B000E506D0 /* Localizable.strings in Resources */,
 				1AE1DFC11DA6B1E100456E3E /* Languages.plist in Resources */,
 				346CD2711DA205B500255F66 /* MainMenu.xib in Resources */,
+				9CD3248E1FD07631005C4266 /* ShareEditWindow.xib in Resources */,
 				1A309D431E8E0FC600CEDC45 /* menu.nomad.NoMAD.shares.plist in Resources */,
 				FC03F3F51F59F54E0054B5F7 /* WelcomeSplash.html in Resources */,
 				84BB02891EA5718E00AE801D /* (null) in Resources */,
