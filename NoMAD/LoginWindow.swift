@@ -33,12 +33,12 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
     
     //var noMADUser: NoMADUser? = nil
     
-    var suppressPasswordChange = false
-    var alertTimer: Timer? = nil
+    @objc var suppressPasswordChange = false
+    @objc var alertTimer: Timer? = nil
     
     
-    override var windowNibName: String! {
-        return "LoginWindow"
+    @objc override var windowNibName: NSNib.Name! {
+        return NSNib.Name(rawValue: "LoginWindow")
     }
     
     override func windowDidLoad() {
@@ -136,7 +136,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
                     alertController.messageText = "PasswordExpire".translate
                     alertController.addButton(withTitle: "Change Password")
                     alertController.beginSheetModal(for: self.window!, completionHandler: { [unowned self] (returnCode) -> Void in
-                        if returnCode == NSAlertFirstButtonReturn {
+                        if returnCode == NSApplication.ModalResponse.alertFirstButtonReturn {
                             myLogger.logit(.base, message:myError!)
                             self.setWindowToChange()
                         }
@@ -320,7 +320,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
                 
                 alertController.beginSheetModal(for: self.window!, completionHandler: { [unowned self] (returnCode) -> Void in
                     myLogger.logit(LogLevel.debug, message: "Sheet Modal completed")
-                    if ( returnCode == NSAlertFirstButtonReturn ) {
+                    if ( returnCode == NSApplication.ModalResponse.alertFirstButtonReturn ) {
                         let currentLocalPassword = localPassword.stringValue
                         let newPassword = self.Password.stringValue
                         let consoleUserPasswordResult = noMADUser.checkCurrentConsoleUserPassword(currentLocalPassword)
@@ -469,7 +469,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
                 alertController.messageText = "PasswordChangeSuccessful".translate
                 
                 alertController.beginSheetModal(for: self.window!, completionHandler: {( response ) in
-                    if ( response == 0 ) {
+                    if ( response.rawValue == 0 ) {
                         
                         // login via kinit here with the new password
                         

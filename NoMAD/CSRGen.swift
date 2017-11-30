@@ -118,7 +118,7 @@ public class CertificateSigningRequest:NSObject {
         self.init(commonName: nil, organizationName:nil, organizationUnitName:nil, countryName:nil, cryptoAlgorithm: cryptoAlgorithm)
     }
 
-    public func build(_ publicKeyBits:Data, privateKey: SecKey) -> Data?{
+    @objc public func build(_ publicKeyBits:Data, privateKey: SecKey) -> Data?{
 
         var certificationRequestInfo = buldCertificationRequestInfo(publicKeyBits)
         var shaBytes:[UInt8]
@@ -201,7 +201,7 @@ public class CertificateSigningRequest:NSObject {
         return certificationRequest
     }
 
-    func buldCertificationRequestInfo(_ publicKeyBits:Data) -> Data{
+    @objc func buldCertificationRequestInfo(_ publicKeyBits:Data) -> Data{
         var certificationRequestInfo = Data(capacity: 256)
 
         //Add version
@@ -246,7 +246,7 @@ public class CertificateSigningRequest:NSObject {
     }
 
     /// Utility class methods ...
-    func buildPublicKeyInfo(_ publicKeyBits:Data)-> Data{
+    @objc func buildPublicKeyInfo(_ publicKeyBits:Data)-> Data{
 
         var publicKeyInfo = Data(capacity: 390)
 
@@ -355,7 +355,7 @@ public class CertificateSigningRequest:NSObject {
 
     // From http://stackoverflow.com/questions/3840005/how-to-find-out-the-modulus-and-exponent-of-rsa-public-key-on-iphone-objective-c
 
-    func getPublicKeyExp(_ publicKeyBits:Data)->Data{
+    @objc func getPublicKeyExp(_ publicKeyBits:Data)->Data{
 
         var iterator = 0
 
@@ -374,7 +374,7 @@ public class CertificateSigningRequest:NSObject {
         return publicKeyBits.subdata(in: range)
     }
 
-    func getPublicKeyMod(_ publicKeyBits: Data)->Data{
+    @objc func getPublicKeyMod(_ publicKeyBits: Data)->Data{
 
         var iterator = 0
 

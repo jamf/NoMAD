@@ -53,29 +53,29 @@ struct mounting_shares_info {
 }
 
 class ShareMounter: NSArrayController {
-    var sharePrefs: UserDefaults? = UserDefaults.init(suiteName: "menu.nomad.shares")
+    @objc var sharePrefs: UserDefaults? = UserDefaults.init(suiteName: "menu.nomad.shares")
     var all_shares = [share_info]()
-    let ws = NSWorkspace.init()
+    @objc let ws = NSWorkspace.init()
     //var prefs: [String]
-    lazy var userPrincipal: String = ""
-    var mountedShares = [URL]()
-    var knownShares = [URL]()
-    lazy var shareCount = 0
-    lazy var myGroups = [String]()
-    lazy var mountHome: Bool = false
+    @objc lazy var userPrincipal: String = ""
+    @objc var mountedShares = [URL]()
+    @objc var knownShares = [URL]()
+    @objc lazy var shareCount = 0
+    @objc lazy var myGroups = [String]()
+    @objc lazy var mountHome: Bool = false
     lazy var all_mounting_shares = [mounting_shares_info]()
-    var connectedState: Bool = false
+    @objc var connectedState: Bool = false
     
-    var mountedSharePaths = [URL:String]()
+    @objc var mountedSharePaths = [URL:String]()
     
-    func windowShouldClose(_ sender: Any) -> Bool {
+    @objc func windowShouldClose(_ sender: Any) -> Bool {
         return true
     }
     
     
     // Utility functions
     
-    func getMounts() {
+    @objc func getMounts() {
         
         //knownShares = mountedShares
         
@@ -165,7 +165,7 @@ class ShareMounter: NSArrayController {
     }
     
     // refresh what's been mounted
-    func refreshMounts() {
+    @objc func refreshMounts() {
         
         if all_shares.count == 0 {
             return
@@ -183,7 +183,7 @@ class ShareMounter: NSArrayController {
     
     // create a dictionary for open options
     
-    func openOptionsDict() -> CFMutableDictionary {
+    @objc func openOptionsDict() -> CFMutableDictionary {
         let dict = NSMutableDictionary()
         dict[kNAUIOptionKey] = kNAUIOptionNoUI
         dict[kNetFSUseGuestKey] = false
@@ -194,7 +194,7 @@ class ShareMounter: NSArrayController {
     
     // create a dictionary for mount options
     
-    func mountOptionsDict() -> NSMutableDictionary {
+    @objc func mountOptionsDict() -> NSMutableDictionary {
         let dict = NSMutableDictionary()
         dict[kNetFSSoftMountKey] = true
         return dict
@@ -202,7 +202,7 @@ class ShareMounter: NSArrayController {
     
     // the actual mounting of the shares - we do this asynchronously
     
-    func mountShares() {
+    @objc func mountShares() {
         
         if all_shares.count == 0 {
             // no need to continue
@@ -331,7 +331,7 @@ class ShareMounter: NSArrayController {
     // this makes the app go all beach-bally so
     // we use async mounting instead
     
-    func syncMountShare(_ serverAddress: URL, options: [String], open: Bool=false) {
+    @objc func syncMountShare(_ serverAddress: URL, options: [String], open: Bool=false) {
         
         let open_options : CFMutableDictionary = openOptionsDict()
         let mount_options = mountOptionsDict()
@@ -376,12 +376,12 @@ class ShareMounter: NSArrayController {
         
         if let mountPoint = mountArray!.takeRetainedValue() as? [String] {
         if myResult == 0 && open {
-            NSWorkspace.shared().open(URL(fileURLWithPath: mountPoint[0], isDirectory: true))
+            NSWorkspace.shared.open(URL(fileURLWithPath: mountPoint[0], isDirectory: true))
         }
         }
     }
     
-    func asyncMountShare(_ serverAddress: URL, options: [String], open: Bool=false) {
+    @objc func asyncMountShare(_ serverAddress: URL, options: [String], open: Bool=false) {
         
         let open_options : CFMutableDictionary = openOptionsDict()
         let mount_options = mountOptionsDict()
@@ -440,7 +440,7 @@ class ShareMounter: NSArrayController {
                     myLogger.logit(.debug, message: "Mounted share: " + String(describing: serverAddress))
                 
                 if let mountPoint = (mountpoints! as! [String]).first {
-                    NSWorkspace.shared().open(URL(fileURLWithPath: mountPoint, isDirectory: true))
+                    NSWorkspace.shared.open(URL(fileURLWithPath: mountPoint, isDirectory: true))
                 }
             } else {
                 myLogger.logit(.debug, message: "Error mounting share: " + String(describing: serverAddress))
@@ -450,7 +450,7 @@ class ShareMounter: NSArrayController {
     
     // function to determine what shares may be already mounted
     
-    func getMountedShares() {
+    @objc func getMountedShares() {
         let fm = FileManager.default
         
         // zero out the currently mounted shares

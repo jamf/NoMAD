@@ -31,7 +31,7 @@ class PasswordChange {
                     myLogger.logit(.base, message: "Could not create password change NSURL.")
                     break
                 }
-                NSWorkspace.shared().open(url)
+                NSWorkspace.shared.open(url)
             case "App":
                 let _ = cliTask("/usr/bin/open " + passwordChangeOptions.replacingOccurrences(of: " ", with: "\\ ") )
             case "None":
@@ -41,7 +41,7 @@ class PasswordChange {
                     myLogger.logit(.base, message: "Could not create default support URL.")
                     break
                 }
-                NSWorkspace.shared().open(url)
+                NSWorkspace.shared.open(url)
             }
         } else {
             myLogger.logit(.debug, message: "Invalid PasswordChangeType or PasswordChangeOptions, defaulting to change via Kerberos.")

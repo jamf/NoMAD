@@ -34,8 +34,8 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
     @IBOutlet weak var RenewTickets: NSButton!
     @IBOutlet weak var ShowHome: NSButton!
 
-    override var windowNibName: String? {
-        return "PreferencesWindow"
+    @objc override var windowNibName: NSNib.Name {
+        return NSNib.Name(rawValue: "PreferencesWindow")
     }
 
     override func windowDidLoad() {
@@ -44,7 +44,7 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
         self.disableManagedPrefs()
     }
 
-    func windowShouldClose(_ sender: Any) -> Bool {
+    func windowShouldClose(_ sender: NSWindow) -> Bool {
 
         // Make sure we have an AD Domain. Either require the user to enter one
         // or quit.
@@ -54,7 +54,7 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
             alertController.addButton(withTitle: "OK")
             alertController.addButton(withTitle: "Quit NoMAD")
             alertController.beginSheetModal(for: self.window!) { response in
-                if response == 1001 {
+                if response.rawValue == 1001 {
                     NSApp.terminate(self)
                 }
             }
@@ -90,7 +90,7 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
     /// the `contentView` of the window and looking at their `identifier` keys.
     /// These keys are set to the same string as the preference value they
     /// control.
-    func disableManagedPrefs() {
+    @objc func disableManagedPrefs() {
         guard let controls = self.window?.contentView?.subviews else {
             myLogger.logit(.debug, message: "Preference window somehow drew without any controls.")
             return
@@ -98,7 +98,7 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
         //MARK: TODO This smells to be overly clever. We should find a simpler way.
         for object in controls {
             let identifier = object.identifier
-            if defaults.objectIsForced(forKey: identifier!) {
+            if defaults.objectIsForced(forKey: identifier!.rawValue) {
                 switch object.className {
                 case "NSTextField":
                     let textField = object as! NSTextField
@@ -113,7 +113,7 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
         }
     }
 
-    func configureChrome() {
+    @objc func configureChrome() {
 
         // create new instance of defaults for com.google.Chrome
 

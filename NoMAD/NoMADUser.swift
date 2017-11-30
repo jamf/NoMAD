@@ -105,7 +105,7 @@ class NoMADUser {
             if let originalAuthenticationAuthority = try? String(describing: currentConsoleUserRecord.values(forAttribute: "dsAttrTypeStandard:OriginalAuthenticationAuthority")[0]) {
                 let range = originalAuthenticationAuthority.range(of: "(?<=Kerberosv5;;).+@[^;]+", options:.regularExpression)
                 if range != nil {
-                    return originalAuthenticationAuthority.substring(with: range!)
+                    return String(originalAuthenticationAuthority[range!])
                 }
                 myLogger.logit(LogLevel.debug, message: "Somehow an AD user does not have OriginalAuthenticationAuthority")
             }

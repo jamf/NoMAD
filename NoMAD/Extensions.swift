@@ -9,7 +9,7 @@
 import Foundation
 
 extension NSWindow {
-    func forceToFrontAndFocus(_ sender: AnyObject?) {
+    @objc func forceToFrontAndFocus(_ sender: AnyObject?) {
         NSApp.activate(ignoringOtherApps: true)
         self.makeKeyAndOrderFront(sender);
     }

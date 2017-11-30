@@ -15,11 +15,11 @@ let shareMounterQueue = DispatchQueue(label: "menu.nomad.NoMAD.shareMounting", a
 
 class ShareMounterMenu: NSObject {
     
-    let myShareMounter = ShareMounter()
-    var worksWhenModal = true
-    let myShareMenu = NSMenu()
+    @objc let myShareMounter = ShareMounter()
+    @objc var worksWhenModal = true
+    @objc let myShareMenu = NSMenu()
     
-    func updateShares(connected: Bool=false) {
+    @objc func updateShares(connected: Bool=false) {
         shareMounterQueue.sync(execute: {
             self.myShareMounter.connectedState = connected
             self.myShareMounter.userPrincipal = defaults.string(forKey: Preferences.userPrincipal)!
@@ -29,7 +29,7 @@ class ShareMounterMenu: NSObject {
         })
     }
     
-    func buildMenu(connected: Bool=false) -> NSMenu {
+    @objc func buildMenu(connected: Bool=false) -> NSMenu {
         
         if myShareMounter.all_shares.count > 0 {
             // Menu Items and Menu
@@ -50,16 +50,16 @@ class ShareMounterMenu: NSObject {
                 myItem.toolTip = String(describing: share.url)
                 if share.mountStatus == .mounted {
                     myItem.isEnabled = true
-                    myItem.state = 1
+                    myItem.state = NSControl.StateValue(rawValue: 1)
                 } else if share.mountStatus == .mounting {
                     myItem.isEnabled = false
-                    myItem.state = 0
+                    myItem.state = NSControl.StateValue(rawValue: 0)
                 } else if share.mountStatus == .unmounted {
                     myItem.isEnabled = true
-                    myItem.state = 0
+                    myItem.state = NSControl.StateValue(rawValue: 0)
                 } else if share.mountStatus == .errorOnMount {
                     myItem.isEnabled = false
-                    myItem.state = 0
+                    myItem.state = NSControl.StateValue(rawValue: 0)
                 }
 
                 myShareMenu.addItem(myItem)
@@ -86,7 +86,7 @@ class ShareMounterMenu: NSObject {
                 } else if share.mountStatus == .mounted {
                     print(share.localMountPoints ?? "")
                     // open up the local shares
-                    NSWorkspace.shared().open(URL(fileURLWithPath: share.localMountPoints!, isDirectory: true))
+                    NSWorkspace.shared.open(URL(fileURLWithPath: share.localMountPoints!, isDirectory: true))
                 }
             }
         }
@@ -95,7 +95,7 @@ class ShareMounterMenu: NSObject {
     
     // utility functions
     
-    func sharesAvilable() -> Bool {
+    @objc func sharesAvilable() -> Bool {
         if myShareMenu.items.count == 0 {
             return false
         } else {

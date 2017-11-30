@@ -34,11 +34,11 @@ class GetHelp {
                             myLogger.logit(.base, message: "Could not create help URL.")
                             break
                         }
-                        NSWorkspace.shared().open(url)
+                        NSWorkspace.shared.open(url)
                 case "Path":
                     let _ = cliTask(getHelpOptions.replacingOccurrences(of: " ", with: "\\ "))
                 case "App":
-                    NSWorkspace.shared().launchApplication(getHelpOptions)
+                    NSWorkspace.shared.launchApplication(getHelpOptions)
                 default:
                     myLogger.logit(.info, message: "Invalid getHelpType or getHelpOptions, defaulting to www.apple.com/support")
                     openDefaultHelpURL()
@@ -55,7 +55,7 @@ class GetHelp {
             myLogger.logit(.base, message: "Could not create default help URL.")
             return
         }
-        NSWorkspace.shared().open(url)
+        NSWorkspace.shared.open(url)
     }
 
     fileprivate func subVariables(_ url: String) -> String? {
