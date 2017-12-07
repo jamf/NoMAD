@@ -139,10 +139,12 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
             // Let's present any errors we got before we do anything else.
             // We're using guard to check if myError is the correct value
             // because we want to force it to return otherwise.
+            
+            
             guard myError == nil else {
-                switch myError! {
+
                 // Password expired, so we need to present a password change window for the user to change it.
-                case "Password has expired":
+                if (myError?.contains("Password has expired"))! {
                     defaults.set(userName.stringValue, forKey: Preferences.userPrincipal)
                     //print(userName.stringValue)
                     //print(defaults.string(forKey: "userPrincipal"))
@@ -155,7 +157,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
                             self.setWindowToChange()
                         }
                     })
-                case "Client (" + userNameChecked + ") unknown":
+                } else if (myError?.contains("Client (" + userNameChecked + ") unknown"))! {
                     let alertController = NSAlert()
                     alertController.messageText = "InvalidUsername".translate
                     alertController.beginSheetModal(for: self.window!, completionHandler: nil)
@@ -164,10 +166,28 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
                     logInButton.isEnabled = true
                     myLogger.logit(.base, message:myError!)
                     EXIT_FAILURE
-                //
-                default:
+                } else if (myError?.contains("unable to reach any KDC in realm"))! {
+                    let alertController = NSAlert()
+                    alertController.messageText = "NoMADMenuController-NotConnected".translate + ". Unable to reach any KDCs in your realm. You are most likely not connected to the AD domain."
+                    alertController.beginSheetModal(for: self.window!, completionHandler: nil)
+                    signInSpinner.isHidden = true
+                    signInSpinner.stopAnimation(nil)
+                    logInButton.isEnabled = true
+                    myLogger.logit(.base, message:myError!)
+                    EXIT_FAILURE
+                } else if (myError?.contains("Password incorrect"))! {
                     let alertController = NSAlert()
                     alertController.messageText = "InvalidPassword".translate
+                    alertController.beginSheetModal(for: self.window!, completionHandler: nil)
+                    signInSpinner.isHidden = true
+                    signInSpinner.stopAnimation(nil)
+                    logInButton.isEnabled = true
+                    myLogger.logit(.base, message:myError!)
+                    EXIT_FAILURE
+                } else {
+                    // let any other random Kerb errors flow through
+                    let alertController = NSAlert()
+                    alertController.messageText = myError ?? "Unknown error occured."
                     alertController.beginSheetModal(for: self.window!, completionHandler: nil)
                     signInSpinner.isHidden = true
                     signInSpinner.stopAnimation(nil)
@@ -241,7 +261,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
             let consoleUserIsAD = noMADUser.currentConsoleUserIsADuser()
             let currentConsoleUserMatchesNoMADUser = noMADUser.currentConsoleUserMatchesNoMADUser()
             
-            let passwordChangeMethod: String
+            let passwordChangeMethod: String 
+            
             if (consoleUserIsAD && currentConsoleUserMatchesNoMADUser) {
                 passwordChangeMethod = "OD"
             } else {
@@ -475,9 +496,15 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
             var myError = ""
             myError = performPasswordChange(username: userPrincipal, currentPassword: currentPassword, newPassword1: newPassword1, newPassword2: newPassword2)
             
-            if myError != "" {
+            // treat no local sync as a soft error for now
+            // TODO: handle edge case of 1. not bound, 2. local password sync, 3. first login
+            
+            var destroyTickets = false
+            
+            if myError != "" && !myError.contains("does not match console user") {
                 let alertController = NSAlert()
                 alertController.messageText = myError
+                
                 alertController.beginSheetModal(for: self.window!, completionHandler: nil)
                 changePasswordSpinner.isHidden = true
                 changePasswordSpinner.stopAnimation(nil)
@@ -487,8 +514,13 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
                 let alertController = NSAlert()
                 alertController.messageText = "PasswordChangeSuccessful".translate
                 
+                if myError.contains("does not match console user") {
+                    alertController.messageText = "Local password not in sync, please try signing in again again to sync local password now that AD password is updated."
+                    destroyTickets = true
+                }
+                
                 alertController.beginSheetModal(for: self.window!, completionHandler: {( response ) in
-                    if ( response == 0 ) {
+                    if ( response == 0 ) && !destroyTickets {
                         
                         // login via kinit here with the new password
                         
