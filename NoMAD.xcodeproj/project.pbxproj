@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1A00489B1FDF9D5E00453A90 /* menu.nomad.keychainItems.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1A00489A1FDF9D5E00453A90 /* menu.nomad.keychainItems.plist */; };
+		1A0048A31FDFB4A500453A90 /* DFSResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0048A21FDFB4A500453A90 /* DFSResolver.swift */; };
 		1A08F1F31D36DA0900FA68C4 /* NoMADApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A08F1F21D36DA0900FA68C4 /* NoMADApplication.swift */; };
 		1A1BA5B11F1D08B000E506D0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A1BA5B31F1D08B000E506D0 /* Localizable.strings */; };
 		1A1BA5CF1F22688C00E506D0 /* libgssapi_krb5.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A1BA5CE1F22688C00E506D0 /* libgssapi_krb5.tbd */; };
@@ -87,6 +88,7 @@
 
 /* Begin PBXFileReference section */
 		1A00489A1FDF9D5E00453A90 /* menu.nomad.keychainItems.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = menu.nomad.keychainItems.plist; sourceTree = "<group>"; };
+		1A0048A21FDFB4A500453A90 /* DFSResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DFSResolver.swift; sourceTree = "<group>"; };
 		1A08F1F21D36DA0900FA68C4 /* NoMADApplication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NoMADApplication.swift; sourceTree = "<group>"; };
 		1A1BA5B21F1D08B000E506D0 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Localizable.strings; sourceTree = "<group>"; };
 		1A1BA5B41F1D08B100E506D0 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -259,6 +261,7 @@
 				1ADCEC611D75476D005D33F5 /* ShareMounter.swift */,
 				1A22AEC01E200D600012220D /* ShareEditWindow.xib */,
 				1A2727311F3F5E29005B7378 /* ShareMounterMenu.swift */,
+				1A0048A21FDFB4A500453A90 /* DFSResolver.swift */,
 			);
 			name = "Share Mount";
 			sourceTree = "<group>";
@@ -600,6 +603,7 @@
 				84996CA81D503F8400793747 /* LDAPUtil.swift in Sources */,
 				346CD27F1DA4776600255F66 /* Extensions.swift in Sources */,
 				84B54B7F1F3A09980025E397 /* Welcome.swift in Sources */,
+				1A0048A31FDFB4A500453A90 /* DFSResolver.swift in Sources */,
 				1AA2B64A1E4FBDD60088DF03 /* PKINITER.swift in Sources */,
 				1A2727321F3F5E29005B7378 /* ShareMounterMenu.swift in Sources */,
 				1A58C88C1DD9264D002C0769 /* CSRGen.swift in Sources */,
