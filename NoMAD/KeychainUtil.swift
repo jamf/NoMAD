@@ -16,6 +16,15 @@ struct certDates {
     var expireDate : Date
 }
 
+struct KeychaItem {
+    var account : String
+    var itemClass : String
+    var label : String
+    var service : String
+    var appPath : [String]?
+    var teamID : [String]?
+}
+
 class KeychainUtil {
 
     var myErr: OSStatus
@@ -356,7 +365,7 @@ class KeychainUtil {
                 
                 myErr = SecTrustedApplicationCreateFromPath( nil, &secApp)
                     
-                // DECRYPT ACL
+                // Decode ACL
                     
                 SecAccessCopyACLList(itemAccess!, &myACLs)
                     
@@ -428,6 +437,200 @@ class KeychainUtil {
             // For internet passwords - we'll have to loop through this all again
             
             //itemSearch[kSecClass as String ] = kSecClassInternetPassword
+        }
+    }
+    
+    func createItems(pass: String) {
+        
+        enum itemPart {
+            static let account = "Account"
+            static let itemClass = "Class"
+            static let label = "Label"
+            static let service = "Service"
+            static let appPath = "AppPath"
+            static let teamID = "TeamID"
+        }
+        
+        // take Dict of item class, item label, account name, item service and Team ID
+        
+        // read in the pref file
+        
+        let keyPrefs : UserDefaults? = UserDefaults.init(suiteName: "menu.nomad.keychainitems")
+        
+        // sanity check the file
+        
+        if keyPrefs == nil {
+            // unable to get prefs
+            myLogger.logit(.debug, message: "Failed to read keychain item create preference file.")
+            return
+        }
+        
+        if keyPrefs?.integer(forKey: "Version") != 1 {
+            // unknown version
+            myLogger.logit(.debug, message: "Unknown version of keychain item create file.")
+            return
+        }
+        
+        // now check the serial against known good serial
+        
+        if keyPrefs?.integer(forKey: "Serial") ?? 0 >= defaults.integer(forKey: Preferences.keychainItemsCreateSerial) {
+            // we've already created this set
+            myLogger.logit(.debug, message: "Preference file serial less than or equal to current serial of created items.")
+            return
+        }
+        
+        // get dict of items to create
+        
+        guard let items = keyPrefs?.array(forKey: "Items") as? [Dictionary<String,AnyObject>] else {
+            // unable to make dictionary, need to leave
+            myLogger.logit(.debug, message: "Unable to make dictionary out of keychain item creation preference")
+            return
+        }
+        
+        if items.count < 1 {
+            // no items in preference file
+            myLogger.logit(.debug, message: "Preference file has no items.")
+            return
+        }
+        
+        // now loop through every item
+        // 1. ensure enough parts to make the item are there
+        // 2. test to see if the item already exists
+        // 3. if not make the item
+        
+        for item in items {
+            
+            // create an empty search/create dict
+            
+            var itemAttrs = [ String : AnyObject ]()
+            
+            // check class
+            
+            if (item[itemPart.itemClass] as? String ?? "genp") == "genp" {
+            
+                itemAttrs[kSecAttrType as String] = "genp" as AnyObject
+                
+            // 1. ensure enough parts to make the item are there
+            
+            if item[itemPart.account] == nil && item[itemPart.service] == nil {
+                // not enough to make an item
+                myLogger.logit(.debug, message: "Unable to make keychain item, not enough information.")
+                continue
+            }
+            
+            if item[itemPart.account] != nil {
+                let account = (item[itemPart.account] as? String)?.variableSwap() ?? ""
+                itemAttrs[kSecAttrAccount as String] = account as AnyObject
+            }
+            
+            if item[itemPart.service] != nil {
+                let service = (item[itemPart.service] as? String)?.variableSwap() ?? ""
+                itemAttrs[kSecAttrService as String] = service as AnyObject
+            }
+            
+            if item[itemPart.label] != nil {
+                let label = (item[itemPart.label] as? String)?.variableSwap() ?? ""
+                itemAttrs[kSecAttrLabel as String] = label as AnyObject
+            }
+                
+                // add Secure Apps if listed
+                
+                
+            } else {
+                // create a generic iternet password "inet"
+            }
+            
+            // 2. now to check if the item exists
+            
+            var result : AnyObject? = nil
+            var createErr = OSStatus()
+            
+            createErr = SecItemCopyMatching(itemAttrs as CFDictionary, &result)
+            
+            if createErr != 0 {
+                // item already exists
+                
+                continue
+            }
+            
+            // 3. create the item
+            
+            itemAttrs[kSecValueRef as String ] = pass as AnyObject
+            
+            createErr = SecItemAdd(itemAttrs as CFDictionary, &result)
+            
+            if createErr != 0 {
+                // something went wrong on creating the item
+                
+                continue
+            }
+            
+            // now to edit the partition ids
+            
+            if item[itemPart.teamID] != nil {
+                
+                myLogger.logit(.debug, message: "Adjusting ACL of keychain item \(item[itemPart.label] ?? "" as AnyObject) : \(item[itemPart.account] ?? "" as AnyObject)")
+                
+                var itemAccess: SecAccess? = nil
+                var myACLs : CFArray? = nil
+
+                createErr = SecKeychainItemCopyAccess(result as! SecKeychainItem, &itemAccess)
+                
+                // Decode ACL
+                
+                SecAccessCopyACLList(itemAccess!, &myACLs)
+                
+                var appList: CFArray? = nil
+                var desc: CFString? = nil
+                var prompt = SecKeychainPromptSelector()
+                
+                for acl in myACLs as! Array<SecACL> {
+                    SecACLCopyContents(acl, &appList, &desc, &prompt)
+                    let authArray = SecACLCopyAuthorizations(acl)
+                    
+                    if !(authArray as! [String]).contains("ACLAuthorizationPartitionID") {
+                        continue
+                    }
+                    
+                    // pull in the description that's really a functional plist <sigh>
+                    
+                    let rawData = Data.init(fromHexEncodedString: desc! as String)
+                    var format: PropertyListSerialization.PropertyListFormat = .xml
+                    
+                    var propertyListObject = try? PropertyListSerialization.propertyList(from: rawData!, options: [], format: &format) as! [ String: [String]]
+                    
+                    // add in the team ID that NoMAD is signed with if it doesn't already exist
+                    
+                    for teamID in item[itemPart.teamID] as! [String] {
+                        if !(propertyListObject!["Partitions"]?.contains(teamID))! {
+                            propertyListObject!["Partitions"]?.append(teamID)
+                        }
+                    }
+
+                    if defaults.bool(forKey: Preferences.keychainItemsDebug) {
+                        myLogger.logit(.debug, message: String(describing: propertyListObject))
+                    }
+                    
+                    // now serialize it back into a plist
+                    
+                    let xmlObject = try? PropertyListSerialization.data(fromPropertyList: propertyListObject as Any, format: format, options: 0)
+                    
+                    // Hi Rick, how's things?
+                    
+                    // now add NoMAD and the original apps back into the property object
+                    
+                    createErr = SecACLSetContents(acl, appList, xmlObject!.hexEncodedString() as CFString, prompt)
+                    
+                    // smack it again to set the ACL
+                    
+                    createErr = SecKeychainItemSetAccessWithPassword(myKeychainItem, itemAccess!, UInt32(pass.count), pass)
+                }
+                
+                if createErr != 0 {
+                    myLogger.logit(.base, message: "Error setting keychain ACL.")
+                }
+            }
+
         }
     }
 }

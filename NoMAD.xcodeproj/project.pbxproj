@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1A00489B1FDF9D5E00453A90 /* menu.nomad.keychainItems.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1A00489A1FDF9D5E00453A90 /* menu.nomad.keychainItems.plist */; };
 		1A08F1F31D36DA0900FA68C4 /* NoMADApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A08F1F21D36DA0900FA68C4 /* NoMADApplication.swift */; };
 		1A1BA5B11F1D08B000E506D0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A1BA5B31F1D08B000E506D0 /* Localizable.strings */; };
 		1A1BA5CF1F22688C00E506D0 /* libgssapi_krb5.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A1BA5CE1F22688C00E506D0 /* libgssapi_krb5.tbd */; };
@@ -85,6 +86,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1A00489A1FDF9D5E00453A90 /* menu.nomad.keychainItems.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = menu.nomad.keychainItems.plist; sourceTree = "<group>"; };
 		1A08F1F21D36DA0900FA68C4 /* NoMADApplication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NoMADApplication.swift; sourceTree = "<group>"; };
 		1A1BA5B21F1D08B000E506D0 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Localizable.strings; sourceTree = "<group>"; };
 		1A1BA5B41F1D08B100E506D0 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -319,6 +321,7 @@
 				1AA2B6491E4FBDD60088DF03 /* PKINITER.swift */,
 				84EB75FD1ECE07BD00716B48 /* PasswordPolicy.swift */,
 				1A9FBD5C1F9520B400399996 /* krb5.h */,
+				1A00489A1FDF9D5E00453A90 /* menu.nomad.keychainItems.plist */,
 			);
 			name = Security;
 			sourceTree = "<group>";
@@ -540,6 +543,7 @@
 				346CD2711DA205B500255F66 /* MainMenu.xib in Resources */,
 				1A309D431E8E0FC600CEDC45 /* menu.nomad.NoMAD.shares.plist in Resources */,
 				FC03F3F51F59F54E0054B5F7 /* WelcomeSplash.html in Resources */,
+				1A00489B1FDF9D5E00453A90 /* menu.nomad.keychainItems.plist in Resources */,
 				84BB02891EA5718E00AE801D /* (null) in Resources */,
 				FC03F3F91F5A019F0054B5F7 /* Assets in Resources */,
 				84B54B7E1F3A09980025E397 /* Welcome.xib in Resources */,

@@ -222,6 +222,7 @@ enum Preferences {
     static let iconOnDark = "IconOnDark"
     static let kerberosRealm = "KerberosRealm"
     static let keychainItems = "KeychainItems"
+    static let keychainItemsCreateSerial = "KeychainItemsCreateSerial"
     static let keychainItemsDebug = "KeychainItemsDebug"
     static let keychainMinderWindowTitle = "KeychainMinderWindowTitle"
     static let keychainMinderWindowMessage = "KeychainMinderWindowMessage"
