@@ -81,11 +81,15 @@ class ShareMounterMenu: NSObject {
             if share.name == sender.title {
                 if share.mountStatus != .mounted && share.mountStatus != .mounting {
                     myLogger.logit(.debug, message: "Mounting share: " + String(describing: share.url))
+                    
                     //myShareMounter.asyncMountShare(share.url, options: share.options, open: true)
-                    cliTask("open " + share.url.absoluteString.safeURLPath()!)
+                    _ = cliTask("open " + DFSResolver.checkAndReplace(url: share.url))
+                    //cliTask("open " + share.url.absoluteString.safeURLPath()!)
                 } else if share.mountStatus == .mounted {
                     print(share.localMountPoints ?? "")
                     // open up the local shares
+                    
+                    // cliTask(“open ” + DFSResolver.checkAndReplace(url: share.url))
                     NSWorkspace.shared().open(URL(fileURLWithPath: share.localMountPoints!, isDirectory: true))
                 }
             }
