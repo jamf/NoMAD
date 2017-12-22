@@ -14,7 +14,6 @@
 		1A1BA5D11F2268A300E506D0 /* libkrb5.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A1BA5D01F2268A300E506D0 /* libkrb5.tbd */; };
 		1A1BA5D31F2268AA00E506D0 /* libkrb5support.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A1BA5D21F2268AA00E506D0 /* libkrb5support.tbd */; };
 		1A206B2D1D58312800539FA6 /* KeychainUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A206B2C1D58312800539FA6 /* KeychainUtil.swift */; };
-		1A22AEC11E200D600012220D /* ShareEditWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A22AEC01E200D600012220D /* ShareEditWindow.xib */; };
 		1A24EF481D7F01B3006A1866 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A24EF471D7F01B3006A1866 /* Logger.swift */; };
 		1A26AFF51D3BE620000776A4 /* WindowsCATools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A26AFF41D3BE620000776A4 /* WindowsCATools.swift */; };
 		1A26AFF71D46E4BF000776A4 /* GetHelp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A26AFF61D46E4BF000776A4 /* GetHelp.swift */; };
@@ -28,10 +27,6 @@
 		1AA2B64A1E4FBDD60088DF03 /* PKINITER.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AA2B6491E4FBDD60088DF03 /* PKINITER.swift */; };
 		1ADCEC621D75476D005D33F5 /* ShareMounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ADCEC611D75476D005D33F5 /* ShareMounter.swift */; };
 		1AE1DFC11DA6B1E100456E3E /* Languages.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1AE1DFC31DA6B1E100456E3E /* Languages.plist */; };
-		1AF30E6C1EB7DF3200542ABB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1AF30E6B1EB7DF3200542ABB /* InfoPlist.strings */; };
-		1AF30E6E1EB7DF6600542ABB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1AF30E6D1EB7DF6600542ABB /* InfoPlist.strings */; };
-		1AF30E701EB7DF8600542ABB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1AF30E6F1EB7DF8600542ABB /* InfoPlist.strings */; };
-		1AF30E721EB7DFBD00542ABB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1AF30E711EB7DFBD00542ABB /* InfoPlist.strings */; };
 		1AFBDC651DE675B000C19AE1 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AFBDC641DE675B000C19AE1 /* Preferences.swift */; };
 		1AFBDC671DE675C000C19AE1 /* DefaultPreferences.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1AFBDC661DE675C000C19AE1 /* DefaultPreferences.plist */; };
 		1AFBDC701DEE4F4800C19AE1 /* SelfServiceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AFBDC6F1DEE4F4800C19AE1 /* SelfServiceManager.swift */; };
@@ -44,7 +39,6 @@
 		34BBA63F1DAF09CE005E4633 /* NoMADUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BBA63E1DAF09CE005E4633 /* NoMADUser.swift */; };
 		34E186BF1D9C681000265138 /* DNSResolver.m in Sources */ = {isa = PBXBuildFile; fileRef = 34E186BE1D9C681000265138 /* DNSResolver.m */; };
 		34E186C21D9E405400265138 /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 34E186C11D9E405400265138 /* libresolv.tbd */; };
-		841453761E3C01220085890B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 841453781E3C01220085890B /* InfoPlist.strings */; };
 		841453831E3C2D7D0085890B /* PasswordChangeWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 841453851E3C2D7D0085890B /* PasswordChangeWindow.xib */; };
 		841453881E3C2D940085890B /* PreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8414538A1E3C2D940085890B /* PreferencesWindow.xib */; };
 		8414538D1E3C2DA10085890B /* LoginWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8414538F1E3C2DA10085890B /* LoginWindow.xib */; };
@@ -55,11 +49,6 @@
 		84996CA81D503F8400793747 /* LDAPUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84996CA71D503F8400793747 /* LDAPUtil.swift */; };
 		84996CAB1D503F9100793747 /* KerbUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 84996CAA1D503F9100793747 /* KerbUtil.m */; };
 		84996CAD1D503F9700793747 /* PreferencesWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84996CAC1D503F9700793747 /* PreferencesWindow.swift */; };
-		849D1A081EAABFDF00AD25F9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 849D1A071EAABFDF00AD25F9 /* InfoPlist.strings */; };
-		849D1A0A1EAAC0CE00AD25F9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 849D1A091EAAC0CE00AD25F9 /* InfoPlist.strings */; };
-		849D1A0C1EAAC0FE00AD25F9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 849D1A0B1EAAC0FE00AD25F9 /* InfoPlist.strings */; };
-		849D1A0E1EAAC14500AD25F9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 849D1A0D1EAAC14500AD25F9 /* InfoPlist.strings */; };
-		849D1A101EAAC16500AD25F9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 849D1A0F1EAAC16500AD25F9 /* InfoPlist.strings */; };
 		84B54B7E1F3A09980025E397 /* Welcome.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84B54B7C1F3A09980025E397 /* Welcome.xib */; };
 		84B54B7F1F3A09980025E397 /* Welcome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B54B7D1F3A09980025E397 /* Welcome.swift */; };
 		84BB02891EA5718E00AE801D /* (null) in Resources */ = {isa = PBXBuildFile; };
@@ -71,6 +60,7 @@
 		84EB75FE1ECE07BD00716B48 /* PasswordPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84EB75FD1ECE07BD00716B48 /* PasswordPolicy.swift */; };
 		84EB760D1ED3B0D100716B48 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 84EB760F1ED3B0D100716B48 /* InfoPlist.strings */; };
 		84F93A2B1D3886FA00ED2070 /* AutoConfigure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F93A2A1D3886FA00ED2070 /* AutoConfigure.swift */; };
+		9CD3248E1FD07631005C4266 /* ShareEditWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A22AEC01E200D600012220D /* ShareEditWindow.xib */; };
 		BF34324D1D52844300CE8F89 /* NoMADTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF34324C1D52844300CE8F89 /* NoMADTests.swift */; };
 		FC03F3F51F59F54E0054B5F7 /* WelcomeSplash.html in Resources */ = {isa = PBXBuildFile; fileRef = FC03F3F41F59F54E0054B5F7 /* WelcomeSplash.html */; };
 		FC03F3F91F5A019F0054B5F7 /* Assets in Resources */ = {isa = PBXBuildFile; fileRef = FC03F3F81F5A019F0054B5F7 /* Assets */; };
@@ -164,10 +154,6 @@
 		1AF30E611EB7DEFC00542ABB /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/MainMenu.strings; sourceTree = "<group>"; };
 		1AF30E631EB7DF0100542ABB /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/LoginWindow.strings; sourceTree = "<group>"; };
 		1AF30E651EB7DF0700542ABB /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/PreferencesWindow.strings; sourceTree = "<group>"; };
-		1AF30E6B1EB7DF3200542ABB /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
-		1AF30E6D1EB7DF6600542ABB /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
-		1AF30E6F1EB7DF8600542ABB /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
-		1AF30E711EB7DFBD00542ABB /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
 		1AFBDC641DE675B000C19AE1 /* Preferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
 		1AFBDC661DE675C000C19AE1 /* DefaultPreferences.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DefaultPreferences.plist; sourceTree = "<group>"; };
 		1AFBDC6F1DEE4F4800C19AE1 /* SelfServiceManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelfServiceManager.swift; sourceTree = "<group>"; };
@@ -199,11 +185,6 @@
 		84996CA91D503F9100793747 /* KerbUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KerbUtil.h; sourceTree = "<group>"; };
 		84996CAA1D503F9100793747 /* KerbUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KerbUtil.m; sourceTree = "<group>"; };
 		84996CAC1D503F9700793747 /* PreferencesWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesWindow.swift; sourceTree = "<group>"; };
-		849D1A071EAABFDF00AD25F9 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
-		849D1A091EAAC0CE00AD25F9 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
-		849D1A0B1EAAC0FE00AD25F9 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
-		849D1A0D1EAAC14500AD25F9 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
-		849D1A0F1EAAC16500AD25F9 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
 		84B54B7C1F3A09980025E397 /* Welcome.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Welcome.xib; sourceTree = "<group>"; };
 		84B54B7D1F3A09980025E397 /* Welcome.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Welcome.swift; sourceTree = "<group>"; };
 		84BB027D1EA4439D00AE801D /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -427,15 +408,6 @@
 			isa = PBXGroup;
 			children = (
 				84EB760F1ED3B0D100716B48 /* InfoPlist.strings */,
-				1AF30E711EB7DFBD00542ABB /* InfoPlist.strings */,
-				1AF30E6F1EB7DF8600542ABB /* InfoPlist.strings */,
-				1AF30E6D1EB7DF6600542ABB /* InfoPlist.strings */,
-				1AF30E6B1EB7DF3200542ABB /* InfoPlist.strings */,
-				849D1A0F1EAAC16500AD25F9 /* InfoPlist.strings */,
-				849D1A0D1EAAC14500AD25F9 /* InfoPlist.strings */,
-				849D1A0B1EAAC0FE00AD25F9 /* InfoPlist.strings */,
-				849D1A091EAAC0CE00AD25F9 /* InfoPlist.strings */,
-				849D1A071EAABFDF00AD25F9 /* InfoPlist.strings */,
 				BF34324C1D52844300CE8F89 /* NoMADTests.swift */,
 				BF34324E1D52844300CE8F89 /* Info.plist */,
 			);
@@ -487,12 +459,12 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0910;
 				ORGANIZATIONNAME = "Trusource Labs";
 				TargetAttributes = {
 					84CC67DA1D30A18A00115C76 = {
 						CreatedOnToolsVersion = 7.3.1;
-						LastSwiftMigration = 0810;
+						LastSwiftMigration = 0910;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
@@ -502,7 +474,7 @@
 					};
 					BF3432491D52844300CE8F89 = {
 						CreatedOnToolsVersion = 7.3.1;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0910;
 						TestTargetID = 84CC67DA1D30A18A00115C76;
 					};
 				};
@@ -539,11 +511,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				84CC67E11D30A18A00115C76 /* Assets.xcassets in Resources */,
-				1A22AEC11E200D600012220D /* ShareEditWindow.xib in Resources */,
 				1AFBDC671DE675C000C19AE1 /* DefaultPreferences.plist in Resources */,
 				1A1BA5B11F1D08B000E506D0 /* Localizable.strings in Resources */,
 				1AE1DFC11DA6B1E100456E3E /* Languages.plist in Resources */,
 				346CD2711DA205B500255F66 /* MainMenu.xib in Resources */,
+				9CD3248E1FD07631005C4266 /* ShareEditWindow.xib in Resources */,
 				1A309D431E8E0FC600CEDC45 /* menu.nomad.NoMAD.shares.plist in Resources */,
 				FC03F3F51F59F54E0054B5F7 /* WelcomeSplash.html in Resources */,
 				1A00489B1FDF9D5E00453A90 /* menu.nomad.keychainItems.plist in Resources */,
@@ -553,7 +525,6 @@
 				1A88E88A1EAF718400AC2E67 /* KeychainMinder.xib in Resources */,
 				841453881E3C2D940085890B /* PreferencesWindow.xib in Resources */,
 				8414538D1E3C2DA10085890B /* LoginWindow.xib in Resources */,
-				841453761E3C01220085890B /* InfoPlist.strings in Resources */,
 				841453831E3C2D7D0085890B /* PasswordChangeWindow.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -562,15 +533,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				849D1A081EAABFDF00AD25F9 /* InfoPlist.strings in Resources */,
-				1AF30E701EB7DF8600542ABB /* InfoPlist.strings in Resources */,
-				1AF30E6E1EB7DF6600542ABB /* InfoPlist.strings in Resources */,
-				1AF30E6C1EB7DF3200542ABB /* InfoPlist.strings in Resources */,
-				849D1A0E1EAAC14500AD25F9 /* InfoPlist.strings in Resources */,
-				849D1A0C1EAAC0FE00AD25F9 /* InfoPlist.strings in Resources */,
-				849D1A0A1EAAC0CE00AD25F9 /* InfoPlist.strings in Resources */,
-				1AF30E721EB7DFBD00542ABB /* InfoPlist.strings in Resources */,
-				849D1A101EAAC16500AD25F9 /* InfoPlist.strings in Resources */,
 				84EB760D1ED3B0D100716B48 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -779,14 +741,20 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -827,14 +795,20 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -878,7 +852,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "NoMAD/NoMAD-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -902,7 +876,7 @@
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "NoMAD/NoMAD-Bridging-Header.h";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
@@ -916,7 +890,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.trusourcelabs.NoMADTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NoMAD.app/Contents/MacOS/NoMAD";
 			};
 			name = Debug;
@@ -930,7 +904,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.trusourcelabs.NoMADTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NoMAD.app/Contents/MacOS/NoMAD";
 			};
 			name = Release;

@@ -1,6 +1,21 @@
 ***Main Web Site***
 
-This gitlab page is used primarily for code storage and issue tracking. For the most up to ddate information on NoMAD, and installer donwloads, please see [nomad.menu](http://www.nomad.menu)
+This Gitlab page is used primarily for code storage and issue tracking. For the most up to date information on NoMAD, and installer downloads, please see [nomad.menu](http://www.nomad.menu)
+
+***Current Version***
+
+NoMAD v. 1.1.2(797)
+
+***Development Version***
+
+NoMAD v. 1.1.3(808)
+
+***New Features in Development Version***
+
+- Fewer prompts when updating keychain items - build 808
+- Match any keychain item account with <<ANY>> - build 808
+- Recursive group search works with "," in user names - build 808
+- When using UPCAlert and a URL to change passowrd, check for password change every 30 seconds - build 808
 
 ***NoMAD***
 

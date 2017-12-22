@@ -19,8 +19,8 @@ class Welcome: NSWindowController, NSWindowDelegate {
     @IBOutlet weak var webView: WebView!
     @IBOutlet weak var versionField: NSTextField!
     
-    override var windowNibName: String? {
-        return "Welcome"
+    @objc override var windowNibName: NSNib.Name {
+        return NSNib.Name(rawValue: "Welcome")
     }
     
     override func windowDidLoad() {

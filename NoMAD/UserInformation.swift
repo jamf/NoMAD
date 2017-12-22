@@ -113,7 +113,7 @@ class UserInformation {
         // 1. check if AD can be reached
 
         var canary = true
-        checkNetwork()
+        let _ = checkNetwork()
 
         //myLDAPServers.tickets.getDetails()
 
@@ -247,7 +247,7 @@ class UserInformation {
                     var passwordExpirationLength: String
                     let attribute = "maxPwdAge"
                     
-                    if defaults.integer(forKey: Preferences.passwordExpirationDays) != nil {
+                    if defaults.integer(forKey: Preferences.passwordExpirationDays) != 0 {
                         passwordExpirationLength = String(describing: defaults.integer(forKey: Preferences.passwordExpirationDays))
                     } else {
 
@@ -258,7 +258,7 @@ class UserInformation {
                     }
                 }
 
-                    if ( passwordExpirationLength.characters.count > 15 ) {
+                    if ( passwordExpirationLength.count > 15 ) {
                         passwordAging = false
                     } else if ( passwordExpirationLength != "" ) && userPasswordUACFlag != "" {
                         if ~~( Int(userPasswordUACFlag)! & 0x10000 ) {
@@ -327,7 +327,7 @@ class UserInformation {
                         
                     if (defaults.string(forKey: Preferences.uPCAlertAction) != nil ) && (defaults.string(forKey: Preferences.uPCAlertAction) != "" ) {
                         myLogger.logit(.base, message: "Firing UPC Alert Action")
-                        cliTask(defaults.string(forKey: Preferences.uPCAlertAction)! + " &")
+                       let _ = cliTask(defaults.string(forKey: Preferences.uPCAlertAction)! + " &")
                     }
 
                     // record the new password set date

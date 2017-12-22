@@ -53,29 +53,29 @@ struct mounting_shares_info {
 }
 
 class ShareMounter: NSArrayController {
-    var sharePrefs: UserDefaults? = UserDefaults.init(suiteName: "menu.nomad.shares")
+    @objc var sharePrefs: UserDefaults? = UserDefaults.init(suiteName: "menu.nomad.shares")
     var all_shares = [share_info]()
-    let ws = NSWorkspace.init()
+    @objc let ws = NSWorkspace.init()
     //var prefs: [String]
-    lazy var userPrincipal: String = ""
-    var mountedShares = [URL]()
-    var knownShares = [URL]()
-    lazy var shareCount = 0
-    lazy var myGroups = [String]()
-    lazy var mountHome: Bool = false
+    @objc lazy var userPrincipal: String = ""
+    @objc var mountedShares = [URL]()
+    @objc var knownShares = [URL]()
+    @objc lazy var shareCount = 0
+    @objc lazy var myGroups = [String]()
+    @objc lazy var mountHome: Bool = false
     lazy var all_mounting_shares = [mounting_shares_info]()
-    var connectedState: Bool = false
+    @objc var connectedState: Bool = false
     
-    var mountedSharePaths = [URL:String]()
+    @objc var mountedSharePaths = [URL:String]()
     
-    func windowShouldClose(_ sender: Any) -> Bool {
+    @objc func windowShouldClose(_ sender: Any) -> Bool {
         return true
     }
     
     
     // Utility functions
     
-    func getMounts() {
+    @objc func getMounts() {
         
         //knownShares = mountedShares
         
@@ -90,7 +90,7 @@ class ShareMounter: NSArrayController {
         if homeDict != nil {
             // adding the home mount to the shares
             myLogger.logit(.debug, message: "Evaluating home share for automounts.")
-            var currentShare = share_info(groups: homeDict?[shareKeys.groups] as! [String], url: URL(string: "smb:" + (defaults.string(forKey: Preferences.userHome))!)!, name: defaults.string(forKey: Preferences.menuHomeDirectory) ?? "HomeSharepoint".translate, options: homeDict?[shareKeys.options] as! [String], connectedOnly: true, mountStatus: mountStatus.toBeMounted, localMount: nil, autoMount: (homeDict?["Mount"]) as! Bool, reqID: nil, attemptDate: nil, localMountPoints: nil)
+            let currentShare = share_info(groups: homeDict?[shareKeys.groups] as! [String], url: URL(string: "smb:" + (defaults.string(forKey: Preferences.userHome))!)!, name: defaults.string(forKey: Preferences.menuHomeDirectory) ?? "HomeSharepoint".translate, options: homeDict?[shareKeys.options] as! [String], connectedOnly: true, mountStatus: mountStatus.toBeMounted, localMount: nil, autoMount: (homeDict?["Mount"]) as! Bool, reqID: nil, attemptDate: nil, localMountPoints: nil)
             
             if mountedShares.contains(currentShare.url) {
                 //currentShare.mountStatus = .mounted
@@ -115,10 +115,10 @@ class ShareMounter: NSArrayController {
             
             let mounts = mountsRaw as! [NSDictionary]
             
-            let myGroups = defaults.array(forKey: Preferences.groups)
-            
+
             for mount in mounts {
-                
+                let myGroups = defaults.array(forKey: Preferences.groups)
+
                 // check for variable substitution
                 
                // let cleanURL = subVariables(mount["URL"] as! String)
@@ -132,7 +132,7 @@ class ShareMounter: NSArrayController {
                             
                             
                             // get all the pieces
-                            var currentShare = share_info(groups: mount["Groups"]! as! [String], url: URL(string: (mount["URL"] as! String).variableSwap())!, name: mount["Name"] as! String, options: mount["Options"] as! [String], connectedOnly: mount["ConnectedOnly"] as! Bool, mountStatus: .unmounted, localMount: mount["LocalMount"] as! String, autoMount: mount[shareKeys.autoMount] as! Bool, reqID: nil, attemptDate: nil, localMountPoints: nil)
+                            let currentShare = share_info(groups: mount["Groups"]! as! [String], url: URL(string: (mount["URL"] as! String).variableSwap())!, name: mount["Name"] as! String, options: mount["Options"] as! [String], connectedOnly: mount["ConnectedOnly"] as! Bool, mountStatus: .unmounted, localMount: mount["LocalMount"] as? String, autoMount: mount[shareKeys.autoMount] as! Bool, reqID: nil, attemptDate: nil, localMountPoints: nil)
                             
                             // see if we know about it
                             
@@ -147,7 +147,7 @@ class ShareMounter: NSArrayController {
                 } else {
                     
                     // get all the pieces
-                    var currentShare = share_info(groups: mount["Groups"]! as! [String], url: URL(string: (mount["URL"] as! String).variableSwap())!, name: mount["Name"] as! String, options: mount["Options"] as! [String], connectedOnly: mount["ConnectedOnly"] as! Bool, mountStatus: .unmounted, localMount: mount["LocalMount"] as! String, autoMount: mount[shareKeys.autoMount] as! Bool, reqID: nil, attemptDate: nil, localMountPoints: nil)
+                    let currentShare = share_info(groups: mount["Groups"]! as! [String], url: URL(string: (mount["URL"] as! String).variableSwap())!, name: mount["Name"] as! String, options: mount["Options"] as! [String], connectedOnly: mount["ConnectedOnly"] as! Bool, mountStatus: .unmounted, localMount: mount["LocalMount"] as? String, autoMount: mount[shareKeys.autoMount] as! Bool, reqID: nil, attemptDate: nil, localMountPoints: nil)
                     
                     // see if we know about it
                     
@@ -165,7 +165,7 @@ class ShareMounter: NSArrayController {
     }
     
     // refresh what's been mounted
-    func refreshMounts() {
+    @objc func refreshMounts() {
         
         if all_shares.count == 0 {
             return
@@ -183,7 +183,7 @@ class ShareMounter: NSArrayController {
     
     // create a dictionary for open options
     
-    func openOptionsDict() -> CFMutableDictionary {
+    @objc func openOptionsDict() -> CFMutableDictionary {
         let dict = NSMutableDictionary()
         dict[kNAUIOptionKey] = kNAUIOptionNoUI
         dict[kNetFSUseGuestKey] = false
@@ -194,7 +194,7 @@ class ShareMounter: NSArrayController {
     
     // create a dictionary for mount options
     
-    func mountOptionsDict() -> NSMutableDictionary {
+    @objc func mountOptionsDict() -> NSMutableDictionary {
         let dict = NSMutableDictionary()
         dict[kNetFSSoftMountKey] = true
         return dict
@@ -202,7 +202,7 @@ class ShareMounter: NSArrayController {
     
     // the actual mounting of the shares - we do this asynchronously
     
-    func mountShares() {
+    @objc func mountShares() {
         
         if all_shares.count == 0 {
             // no need to continue
@@ -211,7 +211,7 @@ class ShareMounter: NSArrayController {
         
         // find out what groups we're in
         
-        let myGroups = defaults.array(forKey: Preferences.groups)
+        let _ = defaults.array(forKey: Preferences.groups)
         
         for i in 0...(all_shares.count - 1) {
             
@@ -226,7 +226,7 @@ class ShareMounter: NSArrayController {
                 myLogger.logit(.debug, message: "Skipping mount because it's already mounted.")
                 continue
             } else {
-                all_shares[i].mountStatus == .unmounted
+                all_shares[i].mountStatus = .unmounted
             }
             
             if !all_shares[i].autoMount {
@@ -244,7 +244,7 @@ class ShareMounter: NSArrayController {
             if all_shares[i].mountStatus != .errorOnMount {
                 
                 let open_options : CFMutableDictionary = openOptionsDict()
-                var mount_options = mountOptionsDict()
+                let mount_options = mountOptionsDict()
                 
                 if all_shares[i].options.count > 0 {
                     var mountFlagValue = 0
@@ -285,9 +285,8 @@ class ShareMounter: NSArrayController {
                 let queue = DispatchQueue.main
                 
                 myLogger.logit(.debug, message: "Attempting to mount: " + all_shares[i].url.absoluteString)
-                var mountError: Int32? = nil
-                
-                mountError = NetFSMountURLAsync(all_shares[i].url as CFURL!,
+
+                let _ = NetFSMountURLAsync(all_shares[i].url as CFURL!,
                                                 nil,
                                                 userPrincipal as CFString!,
                                                 nil,
@@ -304,7 +303,7 @@ class ShareMounter: NSArrayController {
                                 self.all_shares[i].mountStatus = .mounted
                                 self.all_shares[i].reqID = nil
                                 let mounts = mountpoints as! Array<String>
-                                self.all_shares[i].localMountPoints = mounts[0] ?? ""
+                                self.all_shares[i].localMountPoints = mounts[0]
                             } else {
                                 myLogger.logit(.debug, message: "Error on mounting share: " + self.all_shares[i].name)
                                 self.all_shares[i].mountStatus = .errorOnMount
@@ -321,7 +320,7 @@ class ShareMounter: NSArrayController {
                 // clean up any errored mounts
                 let mountInterval = (all_shares[i].attemptDate?.timeIntervalSinceNow)!
                 if abs(mountInterval) > 5 * 60 {
-                    all_shares[i].mountStatus == .toBeMounted
+                    all_shares[i].mountStatus = .toBeMounted
                 }
             }
         }
@@ -332,10 +331,10 @@ class ShareMounter: NSArrayController {
     // this makes the app go all beach-bally so
     // we use async mounting instead
     
-    func syncMountShare(_ serverAddress: URL, options: [String], open: Bool=false) {
+    @objc func syncMountShare(_ serverAddress: URL, options: [String], open: Bool=false) {
         
         let open_options : CFMutableDictionary = openOptionsDict()
-        var mount_options = mountOptionsDict()
+        let mount_options = mountOptionsDict()
         
         if options.count > 0 {
             var mountFlagValue = 0
@@ -377,15 +376,15 @@ class ShareMounter: NSArrayController {
         
         if let mountPoint = mountArray!.takeRetainedValue() as? [String] {
         if myResult == 0 && open {
-            NSWorkspace.shared().open(URL(fileURLWithPath: mountPoint[0], isDirectory: true))
+            NSWorkspace.shared.open(URL(fileURLWithPath: mountPoint[0], isDirectory: true))
         }
         }
     }
     
-    func asyncMountShare(_ serverAddress: URL, options: [String], open: Bool=false) {
+    @objc func asyncMountShare(_ serverAddress: URL, options: [String], open: Bool=false) {
         
         let open_options : CFMutableDictionary = openOptionsDict()
-        var mount_options = mountOptionsDict()
+        let mount_options = mountOptionsDict()
         
         if options.count > 0 {
             var mountFlagValue = 0
@@ -426,9 +425,8 @@ class ShareMounter: NSArrayController {
         let queue = DispatchQueue.main
         
         myLogger.logit(.debug, message: "Attempting to mount: " + String(describing: serverAddress))
-        var mountError: Int32? = nil
-        
-        mountError = NetFSMountURLAsync(serverAddress as CFURL!,
+
+        let _ = NetFSMountURLAsync(serverAddress as CFURL!,
                                         nil,
                                         userPrincipal as CFString!,
                                         nil,
@@ -442,7 +440,7 @@ class ShareMounter: NSArrayController {
                     myLogger.logit(.debug, message: "Mounted share: " + String(describing: serverAddress))
                 
                 if let mountPoint = (mountpoints! as! [String]).first {
-                    NSWorkspace.shared().open(URL(fileURLWithPath: mountPoint, isDirectory: true))
+                    NSWorkspace.shared.open(URL(fileURLWithPath: mountPoint, isDirectory: true))
                 }
             } else {
                 myLogger.logit(.debug, message: "Error mounting share: " + String(describing: serverAddress))
@@ -452,7 +450,7 @@ class ShareMounter: NSArrayController {
     
     // function to determine what shares may be already mounted
     
-    func getMountedShares() {
+    @objc func getMountedShares() {
         let fm = FileManager.default
         
         // zero out the currently mounted shares
@@ -480,7 +478,7 @@ class ShareMounter: NSArrayController {
             
             // ocassionaly we get a crash here on getting the retained value of the pointer, so let's wrap in a do/catch
             
-            do {
+            // Removed dead do/catch
                 switch myType! {
                 case "smbfs"    :
                     myLogger.logit(.debug, message: "Volume: " + share.path + " is a SMB network volume.")
@@ -506,22 +504,21 @@ class ShareMounter: NSArrayController {
                     // not a remote share
                     myLogger.logit(.debug, message: "Volume: " + share.path + " is not a network volume.")
                 }
-            } catch {
-                myLogger.logit(.debug, message: "Problem getting the retained value of the share.")
-                continue
-            }
         }
         myLogger.logit(.debug, message: "Mounted shares: " + String(describing: mountedShares) )
     }
     
     private func getURL(share: URL) -> URL {
         let shareURLUnmanaged = NetFSCopyURLForRemountingVolume(share as CFURL)
-        if shareURLUnmanaged != nil {
-            let shareURL: URL = shareURLUnmanaged?.takeRetainedValue() as! URL
-            return URL(string: (shareURL.scheme! + "://" + shareURL.host! + shareURL.path.safeURLPath()!))!
-        } else {
+        defer { shareURLUnmanaged?.release() }
+
+        guard let myShare = shareURLUnmanaged else {
             return URL(fileURLWithPath: "")
         }
+
+        let shareURL = myShare.takeUnretainedValue() as URL
+        return URL(string: (shareURL.scheme! + "://" + shareURL.host! + shareURL.path.safeURLPath()!))!
+
     }
     
     fileprivate func subVariables(_ url: String) -> String? {

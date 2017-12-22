@@ -1,5 +1,5 @@
 //
-//  Login.swift
+//  LoginWindow.swift
 //  NoMAD
 //
 //  Created by Joel Rennich on 4/21/16.
@@ -33,12 +33,12 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
     
     //var noMADUser: NoMADUser? = nil
     
-    var suppressPasswordChange = false
-    var alertTimer: Timer? = nil
+    @objc var suppressPasswordChange = false
+    @objc var alertTimer: Timer? = nil
     
     
-    override var windowNibName: String! {
-        return "LoginWindow"
+    @objc override var windowNibName: NSNib.Name! {
+        return NSNib.Name(rawValue: "LoginWindow")
     }
     
     override func windowDidLoad() {
@@ -152,7 +152,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
                     alertController.messageText = "PasswordExpire".translate
                     alertController.addButton(withTitle: "Change Password")
                     alertController.beginSheetModal(for: self.window!, completionHandler: { [unowned self] (returnCode) -> Void in
-                        if returnCode == NSAlertFirstButtonReturn {
+                        if returnCode == NSApplication.ModalResponse.alertFirstButtonReturn {
                             myLogger.logit(.base, message:myError!)
                             self.setWindowToChange()
                         }
@@ -202,7 +202,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
             // Checks if console password is correct.
             let consoleUserPasswordResult = noMADUser.checkCurrentConsoleUserPassword(currentPassword)
             // Checks if keychain password is correct
-            let keychainPasswordIsCorrect = try noMADUser.checkKeychainPassword(currentPassword)
+            let _ = try noMADUser.checkKeychainPassword(currentPassword)
             // Check if we want to store the password in the keychain.
             let useKeychain = defaults.bool(forKey: Preferences.useKeychain)
             // Check if we want to sync the console user's password with the remote AD password.
@@ -307,12 +307,12 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
             
             // make sure the just logged in user is the current user and then reset the password warning
             // TODO: @mactroll - why is this 1296000?
-            cliTask("/usr/bin/kswitch -p " + userNameChecked )
+           let _ = cliTask("/usr/bin/kswitch -p " + userNameChecked )
             defaults.set(1296000, forKey: Preferences.lastPasswordWarning)
             
             if ( useKeychain ) {
                 do {
-                    try noMADUser.updateKeychainItem(currentPassword, newPassword2: currentPassword)
+                   let _ = try noMADUser.updateKeychainItem(currentPassword, newPassword2: currentPassword)
                 } catch let error as NoMADUserError {
                     myLogger.logit(LogLevel.base, message: error.description)
                 } catch {
@@ -347,7 +347,6 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
                     signInSpinner.isHidden = true
                     signInSpinner.stopAnimation(nil)
                     logInButton.isEnabled = true
-                    EXIT_FAILURE
                     // TODO: figure out if this is the proper way to handle this.
                     return
                 }
@@ -355,7 +354,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
                 
                 alertController.beginSheetModal(for: self.window!, completionHandler: { [unowned self] (returnCode) -> Void in
                     myLogger.logit(LogLevel.debug, message: "Sheet Modal completed")
-                    if ( returnCode == NSAlertFirstButtonReturn ) {
+                    if ( returnCode == NSApplication.ModalResponse.alertFirstButtonReturn ) {
                         let currentLocalPassword = localPassword.stringValue
                         let newPassword = self.Password.stringValue
                         let consoleUserPasswordResult = noMADUser.checkCurrentConsoleUserPassword(currentLocalPassword)
@@ -373,14 +372,13 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
                             self.signInSpinner.isHidden = true
                             self.signInSpinner.stopAnimation(nil)
                             self.logInButton.isEnabled = true
-                            EXIT_FAILURE
                             // TODO: figure out if this is the proper way to handle this.
                             return
                         }
                         myLogger.logit(.base, message:"Local password is right. Syncing.")
                         
                         do {
-                            try noMADUser.changeCurrentConsoleUserPassword(currentLocalPassword, newPassword1: newPassword, newPassword2: newPassword, forceChange: true)
+                            let _ = try noMADUser.changeCurrentConsoleUserPassword(currentLocalPassword, newPassword1: newPassword, newPassword2: newPassword, forceChange: true)
                         } catch {
                             myError = "Could not change the current console user's password."
                         }
@@ -394,7 +392,6 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
                             self.signInSpinner.isHidden = true
                             self.signInSpinner.stopAnimation(nil)
                             self.logInButton.isEnabled = true
-                            EXIT_FAILURE
                             // TODO: figure out if this is the proper way to handle this.
                             return
                         }
@@ -441,7 +438,6 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
             alertController.messageText = nomadUserError.description
             alertController.beginSheetModal(for: self.window!, completionHandler: nil)
             myLogger.logit(.base, message:myError!)
-            EXIT_FAILURE
             self.Password.stringValue = ""
             signInSpinner.isHidden = true
             signInSpinner.stopAnimation(nil)
@@ -452,7 +448,6 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
             alertController.messageText = "Unknown error."
             alertController.beginSheetModal(for: self.window!, completionHandler: nil)
             myLogger.logit(.base, message:myError!)
-            EXIT_FAILURE
             self.Password.stringValue = ""
             signInSpinner.isHidden = true
             signInSpinner.stopAnimation(nil)
@@ -509,7 +504,6 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
                 changePasswordSpinner.isHidden = true
                 changePasswordSpinner.stopAnimation(nil)
                 changePasswordButton.isEnabled = true
-                EXIT_FAILURE
             } else {
                 let alertController = NSAlert()
                 alertController.messageText = "PasswordChangeSuccessful".translate
@@ -559,7 +553,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
             let alertController = NSAlert()
             alertController.messageText = "PasswordMismatch".translate
             alertController.beginSheetModal(for: self.window!, completionHandler: nil)
-            EXIT_FAILURE
+
             
         }
         

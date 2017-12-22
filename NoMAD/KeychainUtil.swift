@@ -12,8 +12,8 @@ import Foundation
 import Security
 
 struct certDates {
-    var serial : String
-    var expireDate : Date
+    var serial: String
+    var expireDate: Date
 }
 
 struct KeychaItem {
@@ -30,8 +30,7 @@ class KeychainUtil {
     var myErr: OSStatus
     let serviceName = "NoMAD"
     var passLength: UInt32 = 0
-    var passPtr: UnsafeMutableRawPointer? = nil
-
+    var passPtr: UnsafeMutableRawPointer?
     var myKeychainItem: SecKeychainItem?
 
     init() {
@@ -47,11 +46,11 @@ class KeychainUtil {
         passPtr = nil
         passLength = 0
         
-        myErr = SecKeychainFindGenericPassword(nil, UInt32(serviceName.characters.count), serviceName, UInt32(name.characters.count), name, &passLength, &passPtr, &myKeychainItem)
+        myErr = SecKeychainFindGenericPassword(nil, UInt32(serviceName.count), serviceName, UInt32(name.count), name, &passLength, &passPtr, &myKeychainItem)
 
         if myErr == OSStatus(errSecSuccess) {
             let password = NSString(bytes: passPtr!, length: Int(passLength), encoding: String.Encoding.utf8.rawValue)
-            return password as! String
+            return password! as String
         } else {
             throw NoADError.noStoredPassword
         }
@@ -61,7 +60,7 @@ class KeychainUtil {
 
     func setPassword(_ name: String, pass: String) -> OSStatus {
 
-        myErr = SecKeychainAddGenericPassword(nil, UInt32(serviceName.characters.count), serviceName, UInt32(name.characters.count), name, UInt32(pass.characters.count), pass, nil)
+        myErr = SecKeychainAddGenericPassword(nil, UInt32(serviceName.count), serviceName, UInt32(name.count), name, UInt32(pass.count), pass, nil)
 
         return myErr
     }
@@ -70,7 +69,7 @@ class KeychainUtil {
 
     func updatePassword(_ name: String, pass: String) -> Bool {
         if (try? findPassword(name)) != nil {
-            deletePassword()
+           let _ = deletePassword()
         }
         myErr = setPassword(name, pass: pass)
         if myErr == OSStatus(errSecSuccess) {
@@ -119,11 +118,12 @@ class KeychainUtil {
 
     func findAndDelete(_ name: String) -> Bool {
         do {
-            try findPassword(name)
-        } catch{
+          let _ = try findPassword(name)
+        } catch {
             return false
         }
-        if ( deletePassword() == 0 ) {
+
+        if  deletePassword() == 0 {
             return true
         } else {
             return false
