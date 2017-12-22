@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		1A00489B1FDF9D5E00453A90 /* menu.nomad.keychainItems.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1A00489A1FDF9D5E00453A90 /* menu.nomad.keychainItems.plist */; };
-		1A0048A31FDFB4A500453A90 /* DFSResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0048A21FDFB4A500453A90 /* DFSResolver.swift */; };
 		1A08F1F31D36DA0900FA68C4 /* NoMADApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A08F1F21D36DA0900FA68C4 /* NoMADApplication.swift */; };
 		1A1BA5B11F1D08B000E506D0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A1BA5B31F1D08B000E506D0 /* Localizable.strings */; };
 		1A1BA5CF1F22688C00E506D0 /* libgssapi_krb5.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A1BA5CE1F22688C00E506D0 /* libgssapi_krb5.tbd */; };
@@ -21,6 +20,7 @@
 		1A26AFF71D46E4BF000776A4 /* GetHelp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A26AFF61D46E4BF000776A4 /* GetHelp.swift */; };
 		1A2727321F3F5E29005B7378 /* ShareMounterMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2727311F3F5E29005B7378 /* ShareMounterMenu.swift */; };
 		1A2728F91DD19B1400616778 /* PasswordChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2728F81DD19B1400616778 /* PasswordChange.swift */; };
+		1A2EE4431FED7B0E00B6A3BF /* DFSResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0048A21FDFB4A500453A90 /* DFSResolver.swift */; };
 		1A309D431E8E0FC600CEDC45 /* menu.nomad.NoMAD.shares.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1A309D421E8E0FC600CEDC45 /* menu.nomad.NoMAD.shares.plist */; };
 		1A58C88C1DD9264D002C0769 /* CSRGen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A58C88B1DD9264D002C0769 /* CSRGen.swift */; };
 		1A88E8881EAF717600AC2E67 /* KeychainMinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A88E8871EAF717600AC2E67 /* KeychainMinder.swift */; };
@@ -603,7 +603,7 @@
 				84996CA81D503F8400793747 /* LDAPUtil.swift in Sources */,
 				346CD27F1DA4776600255F66 /* Extensions.swift in Sources */,
 				84B54B7F1F3A09980025E397 /* Welcome.swift in Sources */,
-				1A0048A31FDFB4A500453A90 /* DFSResolver.swift in Sources */,
+				1A2EE4431FED7B0E00B6A3BF /* DFSResolver.swift in Sources */,
 				1AA2B64A1E4FBDD60088DF03 /* PKINITER.swift in Sources */,
 				1A2727321F3F5E29005B7378 /* ShareMounterMenu.swift in Sources */,
 				1A58C88C1DD9264D002C0769 /* CSRGen.swift in Sources */,
