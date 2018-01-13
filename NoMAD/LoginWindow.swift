@@ -259,16 +259,18 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
             
             
             let consoleUserIsAD = noMADUser.currentConsoleUserIsADuser()
-            let currentConsoleUserMatchesNoMADUser = noMADUser.currentConsoleUserMatchesNoMADUser()
-            
-            let passwordChangeMethod: String 
-            
-            if (consoleUserIsAD && currentConsoleUserMatchesNoMADUser) {
-                passwordChangeMethod = "OD"
-            } else {
-                passwordChangeMethod = "NoMAD"
-            }
-            
+
+            // Commented out seemingly dead code. We set the properties, but never use them.
+
+//            let currentConsoleUserMatchesNoMADUser = noMADUser.currentConsoleUserMatchesNoMADUser()
+
+//            var passwordChangeMethod: String
+//            if consoleUserIsAD && currentConsoleUserMatchesNoMADUser {
+//                passwordChangeMethod = "OD"
+//            } else {
+//                passwordChangeMethod = "NoMAD"
+//            }
+
             // check to see if the keychain password is correct
             // this is specific to the usecase where we're using the keychain, an AD user and
             // the password was changed outside of NoMAD
@@ -514,7 +516,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
                 }
                 
                 alertController.beginSheetModal(for: self.window!, completionHandler: {( response ) in
-                    if ( response == 0 ) && !destroyTickets {
+                    if ( response.rawValue == 0 ) && !destroyTickets {
                         
                         // login via kinit here with the new password
                         

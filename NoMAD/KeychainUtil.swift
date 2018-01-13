@@ -371,6 +371,7 @@ class KeychainUtil {
                     
                 var appList: CFArray? = nil
                 var desc: CFString? = nil
+//                var newacl: AnyObject? = nil
                 var prompt = SecKeychainPromptSelector()
                 
                 for acl in myACLs as! Array<SecACL> {
@@ -418,6 +419,10 @@ class KeychainUtil {
                     
                     myErr = SecKeychainItemSetAccessWithPassword(myKeychainItem, itemAccess!, UInt32(newPassword.count), newPassword)
                 }
+                
+                // Hi Rick, how's things?
+                
+                myErr = SecKeychainItemSetAccessWithPassword(myKeychainItem, itemAccess!, UInt32(newPassword.count), newPassword)
                 
                 if myErr != 0 {
                     myLogger.logit(.base, message: "Error setting keychain ACL.")

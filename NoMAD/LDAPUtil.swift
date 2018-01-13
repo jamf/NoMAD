@@ -282,11 +282,24 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         if ( searchTerm != "") {
             arguments.append(searchTerm)
         }
+        
         arguments.append(contentsOf: attributes)
+        
+        if CommandLine.arguments.contains("-rawLDAP") {
+            myLogger.logit(.base, message: "LDAP search arguments: " + String(describing: arguments))
+        }
+        
         let ldapResult = cliTask(command, arguments: arguments)
 
         if (ldapResult.contains("GSSAPI Error") || ldapResult.contains("Can't contact")) {
             throw NoADError.ldapConnectionError
+        }
+        
+        if CommandLine.arguments.contains("-rawLDAP") {
+            myLogger.logit(.base, message: "***LDAP QUERY RESULTS***")
+            myLogger.logit(.base, message: ldapResult)
+            myLogger.logit(.base, message: "***END LDAP QUERY RESULTS***")
+
         }
 
         let myResult = cleanLDIF(ldapResult)

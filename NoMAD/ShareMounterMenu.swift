@@ -90,7 +90,7 @@ class ShareMounterMenu: NSObject {
                     // open up the local shares
                     
                     // cliTask(“open ” + DFSResolver.checkAndReplace(url: share.url))
-                    NSWorkspace.shared().open(URL(fileURLWithPath: share.localMountPoints!, isDirectory: true))
+                    NSWorkspace.shared.open(URL(fileURLWithPath: share.localMountPoints!, isDirectory: true))
                 }
             }
         }
