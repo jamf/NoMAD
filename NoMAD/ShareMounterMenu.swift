@@ -19,7 +19,11 @@ class ShareMounterMenu: NSObject {
     @objc var worksWhenModal = true
     @objc let myShareMenu = NSMenu()
     
+    var sharePrefs: UserDefaults? = UserDefaults.init(suiteName: "menu.nomad.shares")
+    
     @objc func updateShares(connected: Bool=false) {
+        
+        if (sharePrefs?.integer(forKey: "Version") ?? 0) >= 1 {
         shareMounterQueue.sync(execute: {
             self.myShareMounter.connectedState = connected
             self.myShareMounter.userPrincipal = defaults.string(forKey: Preferences.userPrincipal)!
@@ -27,9 +31,14 @@ class ShareMounterMenu: NSObject {
             self.myShareMounter.getMounts()
             self.myShareMounter.mountShares()
         })
+        }
     }
     
     @objc func buildMenu(connected: Bool=false) -> NSMenu {
+        
+        if sharePrefs?.integer(forKey: "Version") != 1 {
+            return NSMenu.init()
+        }
         
         if myShareMounter.all_shares.count > 0 {
             // Menu Items and Menu

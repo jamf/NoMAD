@@ -146,6 +146,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         // set up shares
         
+        // only do this if shares are available
+        
         shareMounterMenu.updateShares(connected: self.userInformation.connected)
         
         print(defaults.integer(forKey: Preferences.autoRenewCert))
