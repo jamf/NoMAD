@@ -235,6 +235,7 @@ enum Preferences {
     static let ldapAnonymous = "LDAPAnonymous"
     static let lDAPSchema = "LDAPSchema"
     static let lDAPServerList = "LDAPServerList"
+    static let lDAPServerListDeny = "LDAPServerListDeny"
     static let lDAPoverSSL = "LDAPOverSSL"
     static let lDAPOnly = "LDAPOnly"
     static let lDAPType = "LDAPType"

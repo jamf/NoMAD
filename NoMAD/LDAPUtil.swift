@@ -763,6 +763,14 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     @objc func testHosts() {
         if self.currentState == true {
             for i in 0...( hosts.count - 1) {
+                
+                if let blockList = defaults.array(forKey: Preferences.lDAPServerListDeny) as? [String] {
+                    if blockList.contains(hosts[i].host) {
+                        myLogger.logit(.info, message: "Host: \(hosts[i].host) is on block list, marking as dead.")
+                        hosts[i].status = "dead"
+                    }
+                }
+                
                 if hosts[i].status != "dead" {
                     myLogger.logit(.info, message:"Trying host: " + hosts[i].host)
 
