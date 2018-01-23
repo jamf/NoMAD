@@ -313,8 +313,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         // check if we need to clean certs
         
-        if defaults.bool(forKey: Preferences.cleanCerts) {
+        if !defaults.bool(forKey: Preferences.cleanCerts) {
             myWorkQueue.async(execute: {
+                myLogger.logit(.debug, message: "Starting Cert clean")
             KeychainUtil().cleanCerts()
             })
         }
@@ -1072,6 +1073,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             }
         case "update":
             doTheNeedfull()
+        case "cleancerts":
+            KeychainUtil().cleanCerts()
         default:
             break
         }
