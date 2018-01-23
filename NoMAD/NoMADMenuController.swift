@@ -314,7 +314,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         // check if we need to clean certs
         
         if defaults.bool(forKey: Preferences.cleanCerts) {
+            myWorkQueue.async(execute: {
             KeychainUtil().cleanCerts()
+            })
         }
         
         firstRun = false
