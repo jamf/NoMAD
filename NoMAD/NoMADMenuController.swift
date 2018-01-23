@@ -311,6 +311,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             NoMADMenuQuit.isHidden = true
         }
         
+        // check if we need to clean certs
+        
+        if defaults.bool(forKey: Preferences.cleanCerts) {
+            KeychainUtil().cleanCerts()
+        }
+        
         firstRun = false
         
         // set up menu titles w/translation

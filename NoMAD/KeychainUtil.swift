@@ -14,6 +14,7 @@ import Security
 struct certDates {
     var serial: String
     var expireDate: Date
+    var certRef: SecIdentity?
 }
 
 struct KeychaItem {
@@ -239,7 +240,7 @@ class KeychainUtil {
                                 
                                 // pack the data up into a certDate
                                 
-                                let certificate = certDates( serial: serial, expireDate: expireDate)
+                                let certificate = certDates( serial: serial, expireDate: expireDate, certRef: cert as! SecIdentity)
                                 
                                 // append to the list
                                 
@@ -401,7 +402,7 @@ class KeychainUtil {
                     
                     // now serialize it back into a plist
                     
-                    var xmlObject = try? PropertyListSerialization.data(fromPropertyList: propertyListObject, format: format, options: 0)
+                    let xmlObject = try? PropertyListSerialization.data(fromPropertyList: propertyListObject as Any, format: format, options: 0)
                     
                     // Hi Rick, how's things?
                     
@@ -638,6 +639,76 @@ class KeychainUtil {
                 }
             }
 
+        }
+    }
+    
+    func cleanCerts() {
+        
+        myLogger.logit(.debug, message: "Beginning cert clean.")
+
+        // CLEAN CERTS
+        
+        if defaults.string(forKey: Preferences.userUPN) == "" {
+            // no UPN available
+            return
+        }
+        
+        let certListTemp = findAllUserCerts(defaults.string(forKey: Preferences.userUPN)!, defaultNamingContext: "blank" )
+        
+        if certListTemp == nil {
+            
+            // no certs, so return
+            
+            myLogger.logit(.debug, message: "No certs found, so no certs to clean.")
+            return
+        }
+        
+        if certListTemp?.count ?? 0 > 0 {
+            
+            _ = certListTemp?.sorted(by: {$0.expireDate.compare($1.expireDate) == .orderedAscending })
+            
+            for i in 0...(certListTemp!.count - 1) {
+                
+                // delete all but the 2 youngest and the 2 oldest
+                
+                if i > 1 && ( i < certListTemp!.count - 2 ) {
+                    
+                    // get SecCert from SecIdentity Ref
+                    
+                    var certRef : SecCertificate? = nil
+                    
+                    var myErr = SecIdentityCopyCertificate(certListTemp![i].certRef!, &certRef)
+                    
+                    // delete cert
+                    
+                    myLogger.logit(.debug, message: "Deleting cert with expiration: " + String(describing: certListTemp![i].expireDate))
+                    if myErr != 0 {
+                        let itemAttrs : [String: AnyObject]  = [
+                            kSecClass as String: kSecClassCertificate,
+                            kSecMatchItemList as String : [ certRef ] as AnyObject,
+                            ]
+                        
+                        myErr = SecItemDelete(itemAttrs as CFDictionary)
+                        
+                        if myErr != 0 {
+                            myLogger.logit(.debug, message: "Error deleting cert.")
+                        }
+                    }
+                    
+                    // now for the Key
+                    
+                    let itemAttrs : [String: AnyObject]  = [
+                        kSecClass as String: kSecClassIdentity,
+                        kSecMatchItemList as String : [ certListTemp![i].certRef ] as AnyObject,
+                        ]
+                    
+                    myErr = SecItemDelete(itemAttrs as CFDictionary)
+                    
+                    if myErr != 0 {
+                        myLogger.logit(.debug, message: "Error deleting key.")
+                    }
+                }
+            }
         }
     }
 }

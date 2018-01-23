@@ -193,6 +193,7 @@ enum Preferences {
     static let changePasswordType = "ChangePasswordType"
     static let changePasswordOptions = "ChangePasswordOptions"
     static let caribouTime = "CaribouTime"
+    static let cleanCerts = "CleanCerts"
     static let configureChrome = "ConfigureChrome"
     static let configureChromeDomain = "ConfigureChromeDomain"
     static let deadLDAPKillTickets = "DeadLDAPKillTickets"
