@@ -45,6 +45,11 @@ class ShareMounterMenu: NSObject {
             
             myShareMenu.removeAllItems()
             
+            if CommandLine.arguments.contains("-shares") {
+                print("***Building Share Menu***")
+                print(self.myShareMounter.all_shares)
+            }
+            
             for share in self.myShareMounter.all_shares {
                 let myItem = NSMenuItem()
                 myItem.title = share.name
@@ -79,6 +84,11 @@ class ShareMounterMenu: NSObject {
             //myShareMenu.addItem(NSMenuItem.separator())
             //myShareMenu.addItem(withTitle: "Edit...".translate, action: nil, keyEquivalent: "")
             
+        }
+        
+        if CommandLine.arguments.contains("-shares") {
+            print("***Share Menuu***")
+            print(myShareMenu)
         }
         
         return myShareMenu

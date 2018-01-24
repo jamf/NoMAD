@@ -87,6 +87,11 @@ class ShareMounter: NSArrayController {
         
         let homeDict = sharePrefs?.dictionary(forKey: shareKeys.homeMount)
         
+        if CommandLine.arguments.contains("-shares") {
+            print("***RAW SHARE PREFS***")
+            print(homeDict)
+        }
+        
         if homeDict != nil {
             // adding the home mount to the shares
             myLogger.logit(.debug, message: "Evaluating home share for automounts.")
@@ -160,6 +165,12 @@ class ShareMounter: NSArrayController {
                 }
                 
             }
+            
+            if CommandLine.arguments.contains("-shares") {
+                print("***All Shares***")
+                print(all_shares)
+            }
+            
             refreshMounts()
         }
     }
