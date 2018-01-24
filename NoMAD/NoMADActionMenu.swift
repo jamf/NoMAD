@@ -16,17 +16,49 @@ class NoMADActionMenu : NSObject {
     
     @objc let menu = NSMenu()
     var actions = [NoMADAction]()
+    let sharePrefs: UserDefaults? = UserDefaults.init(suiteName: "menu.nomad.actions")
     
+    // prefkeys
+    
+    static let kPrefVersion = "Version"
+    static let kPrefActions = "Actions"
+
     // init
     
     override init() {
-        let action1 = NoMADAction()
-        action1.text = "action 1"
-        let action2 = NoMADAction()
-        action2.text = "action 2"
         
-        actions.append(action1)
-        actions.append(action2)
+        // pull in all actions from a pref file
+        
+    }
+    
+    // update actions
+    
+    func update() {
+        
+        // read in the preferences
+        
+        if sharePrefs?.integer(forKey: NoMADActionMenu.kPrefVersion) ?? 0 != 1 {
+            // wrong version
+            return
+        }
+        
+        guard let rawPrefs = sharePrefs?.array(forKey: NoMADActionMenu.kPrefActions) as? [Dictionary<String, AnyObject?>] else { return }
+        
+        // if no shares we bail
+        
+        if rawPrefs.count ?? 0 < 1 {
+            return
+        }
+        
+        // loop through the shares
+        
+        for action in rawPrefs {
+            
+            guard let actionName = action["Name"] as? String else { continue }
+            
+            let newAction = NoMADAction.init(actionName, guid: action["GUID"] as? String ?? nil)
+            actions.append(newAction)
+        }
     }
     
     // create menu
@@ -40,7 +72,7 @@ class NoMADActionMenu : NSObject {
             //let itemAction = #selector(action.action)
             
             let menuItem = NSMenuItem()
-            menuItem.title = "Boo"
+            menuItem.title = action.actionName
             menuItem.toolTip = "A NoMAD custom action"
             //menuItem.target = action
 

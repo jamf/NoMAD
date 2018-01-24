@@ -47,6 +47,7 @@
 		8454EFE51D35968100422D4E /* LoginWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454EFE41D35968100422D4E /* LoginWindow.swift */; };
 		846DDD3A201919F800D94821 /* NoMADAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846DDD39201919F800D94821 /* NoMADAction.swift */; };
 		846DDD3C20191CD800D94821 /* NoMADActionMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846DDD3B20191CD800D94821 /* NoMADActionMenu.swift */; };
+		846DDD3E2019422E00D94821 /* menu.nomad.actions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 846DDD3D2019422D00D94821 /* menu.nomad.actions.plist */; };
 		84847A671D3DDF5600FAE468 /* KlistUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84847A661D3DDF5600FAE468 /* KlistUtil.swift */; };
 		84996CA81D503F8400793747 /* LDAPUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84996CA71D503F8400793747 /* LDAPUtil.swift */; };
 		84996CAB1D503F9100793747 /* KerbUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 84996CAA1D503F9100793747 /* KerbUtil.m */; };
@@ -184,6 +185,7 @@
 		8454EFE41D35968100422D4E /* LoginWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = LoginWindow.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		846DDD39201919F800D94821 /* NoMADAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoMADAction.swift; sourceTree = "<group>"; };
 		846DDD3B20191CD800D94821 /* NoMADActionMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoMADActionMenu.swift; sourceTree = "<group>"; };
+		846DDD3D2019422D00D94821 /* menu.nomad.actions.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = menu.nomad.actions.plist; sourceTree = "<group>"; };
 		84847A661D3DDF5600FAE468 /* KlistUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KlistUtil.swift; sourceTree = "<group>"; };
 		84996CA71D503F8400793747 /* LDAPUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = LDAPUtil.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		84996CA91D503F9100793747 /* KerbUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KerbUtil.h; sourceTree = "<group>"; };
@@ -376,6 +378,7 @@
 		846DDD38201919E100D94821 /* Action Menu */ = {
 			isa = PBXGroup;
 			children = (
+				846DDD3D2019422D00D94821 /* menu.nomad.actions.plist */,
 				846DDD39201919F800D94821 /* NoMADAction.swift */,
 				846DDD3B20191CD800D94821 /* NoMADActionMenu.swift */,
 			);
@@ -536,6 +539,7 @@
 				84BB02891EA5718E00AE801D /* (null) in Resources */,
 				FC03F3F91F5A019F0054B5F7 /* Assets in Resources */,
 				84B54B7E1F3A09980025E397 /* Welcome.xib in Resources */,
+				846DDD3E2019422E00D94821 /* menu.nomad.actions.plist in Resources */,
 				1A88E88A1EAF718400AC2E67 /* KeychainMinder.xib in Resources */,
 				841453881E3C2D940085890B /* PreferencesWindow.xib in Resources */,
 				8414538D1E3C2DA10085890B /* LoginWindow.xib in Resources */,

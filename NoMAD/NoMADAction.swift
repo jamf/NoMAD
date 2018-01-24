@@ -13,6 +13,18 @@ import Foundation
 
 class NoMADAction : NSObject {
     
+    // each action needs a name and GUID
+    // we'll assign a GUID if one is not present
+    
+    let actionName : String
+    let actionGUID : String
+    
+    // actions
+    
+    var showType: String? = nil
+    var preType: String? = nil
+    var actionType: String? = nil
+    
     // globals
     
     var display : Bool = false
@@ -20,8 +32,13 @@ class NoMADAction : NSObject {
     
     // init
     
-    override init() {
-        
+    init(_ name: String, guid : String?) {
+        actionName = name
+        if guid == nil {
+            actionGUID = UUID().uuidString
+        } else {
+            actionGUID = guid!
+        }
     }
     
     // tests
@@ -33,7 +50,16 @@ class NoMADAction : NSObject {
     }
     
     func preTest() {
-        
+        if preType != nil {
+            switch preType {
+            case "group"? :
+                if defaults.array(forKey: Preferences.groups)?.contains(where: { $0 as! String == "admin" }) ?? false {
+                    print("group passed")
+                }
+            default :
+                break
+            }
+        }
     }
     
     func displayItem() -> String {

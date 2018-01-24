@@ -1409,7 +1409,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     // ACTIONS
                     
                     let nActions = NoMADActionMenu()
-                    
+                    nActions.update()
                     
                     if !self.NoMADMenu.items.contains(self.myActionsMenu) {
                     
