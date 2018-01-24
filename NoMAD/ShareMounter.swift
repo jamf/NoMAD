@@ -88,7 +88,7 @@ class ShareMounter: NSArrayController {
         let homeDict = sharePrefs?.dictionary(forKey: shareKeys.homeMount)
         
         if CommandLine.arguments.contains("-shares") {
-            print("***RAW SHARE PREFS***")
+            print("***Raw Home Share Prefs***")
             print(homeDict)
         }
         
@@ -117,6 +117,11 @@ class ShareMounter: NSArrayController {
             //if userMounts.count != 0 {
             //   mounts.append(contentsOf: userMounts)
             //}
+            
+            if CommandLine.arguments.contains("-shares") {
+                print("***Raw Share Prefs***")
+                print(mountsRaw)
+            }
             
             let mounts = mountsRaw as! [NSDictionary]
             

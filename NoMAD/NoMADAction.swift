@@ -22,8 +22,13 @@ class NoMADAction : NSObject {
     // actions
     
     var showType: String? = nil
+    var showTypeOptions: String? = nil
+    
     var preType: String? = nil
+    var preTypeOptions: String? = nil
+    
     var actionType: String? = nil
+    var actionTypeOptions: String? = nil
     
     // globals
     

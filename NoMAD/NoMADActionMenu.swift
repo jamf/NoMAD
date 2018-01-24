@@ -10,7 +10,7 @@ import Cocoa
 
 // class to create a menu of all the actions
 
-class NoMADActionMenu : NSObject {
+@objc class NoMADActionMenu : NSObject {
     
     // globals
     
@@ -73,12 +73,14 @@ class NoMADActionMenu : NSObject {
             
             let menuItem = NSMenuItem()
             menuItem.title = action.actionName
-            menuItem.toolTip = "A NoMAD custom action"
-            //menuItem.target = action
+            menuItem.isEnabled = true
 
-            menuItem.action = #selector(runAction(_:))
-            //menuItem.isEnabled = true
+            menuItem.toolTip = "A NoMAD custom action"
+            menuItem.action = #selector(runAction)
+            menuItem.target = self
+            
             //menuItem.state = NSControl.StateValue(rawValue: 1)
+            
             print(menuItem)
             menu.addItem(menuItem)
         }
@@ -86,13 +88,8 @@ class NoMADActionMenu : NSObject {
         return menu
     }
     
-    @IBAction func runAction(_ sender: AnyObject) {
+    @objc func runAction() {
         print("Clicky clicky")
         
-    }
-    
-        override func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
-            print("validating \(menuItem.title)")
-            return true
     }
 }

@@ -116,6 +116,10 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "-shares"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "-rawLDAP"
             isEnabled = "YES">
          </CommandLineArgument>
