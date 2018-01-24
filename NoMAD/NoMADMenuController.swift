@@ -62,6 +62,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     
     @objc let NoMADMenuHome = NSMenuItem()
     @objc let myShareMenuItem = NSMenuItem()
+    @objc let myActionsMenu = NSMenuItem()
     
     // menu bar icons
     
@@ -1402,8 +1403,19 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                             self.NoMADMenuHome.isEnabled = true
                         } else if self.NoMADMenu.items.contains(self.NoMADMenuHome) {
                             self.NoMADMenu.removeItem(self.NoMADMenuHome)
-                            
                         }
+                    }
+                    
+                    // ACTIONS
+                    
+                    let nActions = NoMADActionMenu()
+                    
+                    
+                    if !self.NoMADMenu.items.contains(self.myActionsMenu) {
+                    
+                    self.myActionsMenu.title = "Actions"
+                    self.myActionsMenu.submenu = nActions.createMenu()
+                    self.NoMADMenu.addItem(self.myActionsMenu)
                     }
                     
                     if self.userInformation.status == "Logged In" {

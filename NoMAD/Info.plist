@@ -17,9 +17,9 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.1.3</string>
+	<string>1.1.3.865.865.865</string>
 	<key>CFBundleShortVersionString-orginal</key>
-	<string>1.1.3</string>
+	<string>1.1.3.865.865.865</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
@@ -38,7 +38,7 @@
 		<true/>
 	</dict>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2016 Orchard &amp; Grove. All rights reserved.</string>
+	<string>Copyright © 2018 Orchard &amp; Grove. All rights reserved.</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>

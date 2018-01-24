@@ -45,6 +45,8 @@
 		8454EFDB1D34ADA600422D4E /* NSTaskWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454EFDA1D34ADA600422D4E /* NSTaskWrapper.swift */; };
 		8454EFDD1D34ADEE00422D4E /* PasswordChangeWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454EFDC1D34ADEE00422D4E /* PasswordChangeWindow.swift */; };
 		8454EFE51D35968100422D4E /* LoginWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454EFE41D35968100422D4E /* LoginWindow.swift */; };
+		846DDD3A201919F800D94821 /* NoMADAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846DDD39201919F800D94821 /* NoMADAction.swift */; };
+		846DDD3C20191CD800D94821 /* NoMADActionMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846DDD3B20191CD800D94821 /* NoMADActionMenu.swift */; };
 		84847A671D3DDF5600FAE468 /* KlistUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84847A661D3DDF5600FAE468 /* KlistUtil.swift */; };
 		84996CA81D503F8400793747 /* LDAPUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84996CA71D503F8400793747 /* LDAPUtil.swift */; };
 		84996CAB1D503F9100793747 /* KerbUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 84996CAA1D503F9100793747 /* KerbUtil.m */; };
@@ -180,6 +182,8 @@
 		8454EFDA1D34ADA600422D4E /* NSTaskWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSTaskWrapper.swift; sourceTree = "<group>"; };
 		8454EFDC1D34ADEE00422D4E /* PasswordChangeWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PasswordChangeWindow.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		8454EFE41D35968100422D4E /* LoginWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = LoginWindow.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		846DDD39201919F800D94821 /* NoMADAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoMADAction.swift; sourceTree = "<group>"; };
+		846DDD3B20191CD800D94821 /* NoMADActionMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoMADActionMenu.swift; sourceTree = "<group>"; };
 		84847A661D3DDF5600FAE468 /* KlistUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KlistUtil.swift; sourceTree = "<group>"; };
 		84996CA71D503F8400793747 /* LDAPUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = LDAPUtil.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		84996CA91D503F9100793747 /* KerbUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KerbUtil.h; sourceTree = "<group>"; };
@@ -369,6 +373,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		846DDD38201919E100D94821 /* Action Menu */ = {
+			isa = PBXGroup;
+			children = (
+				846DDD39201919F800D94821 /* NoMADAction.swift */,
+				846DDD3B20191CD800D94821 /* NoMADActionMenu.swift */,
+			);
+			name = "Action Menu";
+			sourceTree = "<group>";
+		};
 		84CC67D21D30A18A00115C76 = {
 			isa = PBXGroup;
 			children = (
@@ -391,6 +404,7 @@
 		84CC67DD1D30A18A00115C76 /* NoMAD */ = {
 			isa = PBXGroup;
 			children = (
+				846DDD38201919E100D94821 /* Action Menu */,
 				1A22AEBF1E200D0A0012220D /* Share Mount */,
 				1AFBDC681DEE4C0800C19AE1 /* Networking */,
 				1AFBDC6E1DEE4DC400C19AE1 /* CoreBits */,
@@ -546,6 +560,7 @@
 			files = (
 				84996CAB1D503F9100793747 /* KerbUtil.m in Sources */,
 				1ADCEC621D75476D005D33F5 /* ShareMounter.swift in Sources */,
+				846DDD3C20191CD800D94821 /* NoMADActionMenu.swift in Sources */,
 				8454EFDD1D34ADEE00422D4E /* PasswordChangeWindow.swift in Sources */,
 				84CC67DF1D30A18A00115C76 /* AppDelegate.swift in Sources */,
 				345226E41DAA052C0066C922 /* ADLDAPPing.swift in Sources */,
@@ -566,6 +581,7 @@
 				346CD27F1DA4776600255F66 /* Extensions.swift in Sources */,
 				84B54B7F1F3A09980025E397 /* Welcome.swift in Sources */,
 				1A2EE4431FED7B0E00B6A3BF /* DFSResolver.swift in Sources */,
+				846DDD3A201919F800D94821 /* NoMADAction.swift in Sources */,
 				1AA2B64A1E4FBDD60088DF03 /* PKINITER.swift in Sources */,
 				1A2727321F3F5E29005B7378 /* ShareMounterMenu.swift in Sources */,
 				1A58C88C1DD9264D002C0769 /* CSRGen.swift in Sources */,
