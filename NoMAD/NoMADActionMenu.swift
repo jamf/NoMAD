@@ -8,13 +8,17 @@
 import Foundation
 import Cocoa
 
+
+let nActionMenu = NoMADActionMenu()
+
 // class to create a menu of all the actions
 
 @objc class NoMADActionMenu : NSObject {
     
     // globals
     
-    @objc let menu = NSMenu()
+    @objc public let actionMenu = NSMenu()
+    
     var actions = [NoMADAction]()
     let sharePrefs: UserDefaults? = UserDefaults.init(suiteName: "menu.nomad.actions")
     
@@ -22,14 +26,6 @@ import Cocoa
     
     static let kPrefVersion = "Version"
     static let kPrefActions = "Actions"
-
-    // init
-    
-    override init() {
-        
-        // pull in all actions from a pref file
-        
-    }
     
     // update actions
     
@@ -46,7 +42,7 @@ import Cocoa
         
         // if no shares we bail
         
-        if rawPrefs.count ?? 0 < 1 {
+        if rawPrefs.count < 1 {
             return
         }
         
@@ -57,39 +53,51 @@ import Cocoa
             guard let actionName = action["Name"] as? String else { continue }
             
             let newAction = NoMADAction.init(actionName, guid: action["GUID"] as? String ?? nil)
+            
+            newAction.showTest = action["ShowTest"] as? [Dictionary<String,String?>] ?? nil
+            newAction.action = action["Action"] as? [Dictionary<String,String?>] ?? nil
+            newAction.title = action["Title"] as? Dictionary<String,String?> ?? nil
+            
+            // add in all options
+            
             actions.append(newAction)
         }
     }
     
     // create menu
     
-    @objc func createMenu() -> NSMenu {
+    @objc func createMenu() {
         
-        menu.removeAllItems()
+        actionMenu.removeAllItems()
         
         for action in actions {
             
             //let itemAction = #selector(action.action)
             
-            let menuItem = NSMenuItem()
-            menuItem.title = action.actionName
-            menuItem.isEnabled = true
+            if !action.runCommand(commands: action.showTest) {
+                continue
+            }
+            
+            let menuItem = NSMenuItem.init()
+            menuItem.title = action.getTitle()
+            menuItem.target = action
+            menuItem.action = #selector(action.runAction)
 
+            menuItem.isEnabled = true
             menuItem.toolTip = "A NoMAD custom action"
-            menuItem.action = #selector(runAction)
-            menuItem.target = self
-            
-            //menuItem.state = NSControl.StateValue(rawValue: 1)
-            
-            print(menuItem)
-            menu.addItem(menuItem)
+            menuItem.state = NSControl.StateValue(rawValue: 0)
+            actionMenu.addItem(menuItem)
         }
-        
-        return menu
+        //print(actionMenu)
+        //actionMenu.autoenablesItems = false
+       // return actionMenu
     }
     
-    @objc func runAction() {
+    @IBAction func actionClick(_ sender: AnyObject) {
         print("Clicky clicky")
-        
+    }
+    
+    @objc func doeet() {
+        print("DOEET")
     }
 }

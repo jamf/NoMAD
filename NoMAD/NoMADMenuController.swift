@@ -1408,15 +1408,20 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     
                     // ACTIONS
                     
-                    let nActions = NoMADActionMenu()
-                    nActions.update()
+                    nActionMenu.update()
                     
                     if !self.NoMADMenu.items.contains(self.myActionsMenu) {
                     
                     self.myActionsMenu.title = "Actions"
-                    self.myActionsMenu.submenu = nActions.createMenu()
+                    nActionMenu.createMenu()
+                    self.myActionsMenu.submenu = nActionMenu.actionMenu
                     self.NoMADMenu.addItem(self.myActionsMenu)
+                        self.myActionsMenu.isEnabled = true
+                    } else {
+                        nActionMenu.createMenu()
                     }
+                    
+                    
                     
                     if self.userInformation.status == "Logged In" {
                         

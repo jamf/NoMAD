@@ -1,20 +1,88 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-
 <plist version="1.0">
-    <dict>
-        <key>Version</key>
-        <integer>1</integer>
-        <key>Actions</key>
-        <array>
-            <dict>
-                <key>Name</key>
-                <string>Action the first</string>
-            </dict>
-            <dict>
-                <key>Name</key>
-                <string>Action the second</string>
-            </dict>
-        </array>
-    </dict>
+<dict>
+	<key>Version</key>
+	<integer>1</integer>
+	<key>Actions</key>
+	<array>
+		<dict>
+			<key>Name</key>
+			<string>update test</string>
+			<key>Title</key>
+			<dict>
+				<key>Command</key>
+				<string>path</string>
+				<key>CommandOptions</key>
+				<string>/bin/cat /tmp/titleText</string>
+			</dict>
+			<key>ShowTest</key>
+			<array>
+				<dict>
+					<key>Command</key>
+					<string>ping</string>
+					<key>CommandOptions</key>
+					<string>www.apple.com</string>
+				</dict>
+			</array>
+			<key>Action</key>
+			<array>
+				<dict>
+					<key>Command</key>
+					<string>path</string>
+					<key>CommandOptions</key>
+					<string>/usr/bin/touch /tmp/action</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>Name</key>
+			<string>non-working ping test</string>
+			<key>ShowTest</key>
+			<array>
+				<dict>
+					<key>Command</key>
+					<string>ping</string>
+					<key>CommandOptions</key>
+					<string>dc8.nomad.test</string>
+				</dict>
+			</array>
+			<key>Action</key>
+			<array>
+				<dict>
+					<key>Command</key>
+					<string>path</string>
+					<key>CommandOptions</key>
+					<string>/usr/bin/touch /tmp/action1</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>Name</key>
+			<string>Working ping test</string>
+			<key>ShowTest</key>
+			<array>
+				<dict>
+					<key>Command</key>
+					<string>ping</string>
+					<key>CommandOptions</key>
+					<string>www.apple.com</string>
+				</dict>
+			</array>
+			<key>Action</key>
+			<array>
+				<dict>
+					<key>Command</key>
+					<string>path</string>
+					<key>CommandOptions</key>
+					<string>/usr/bin/touch /tmp/action2</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>Name</key>
+			<string>Placeholder</string>
+		</dict>
+	</array>
+</dict>
 </plist>

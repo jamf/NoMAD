@@ -21,14 +21,15 @@ class NoMADAction : NSObject {
     
     // actions
     
-    var showType: String? = nil
-    var showTypeOptions: String? = nil
+    var showTest: [Dictionary<String, String?>]? = nil
+    var title: Dictionary<String, String?>? = nil
+    var action : [Dictionary<String, String?>]? = nil
     
     var preType: String? = nil
-    var preTypeOptions: String? = nil
+    var preTypeOptions: [String]? = nil
     
     var actionType: String? = nil
-    var actionTypeOptions: String? = nil
+    var actionTypeOptions: [String]? = nil
     
     // globals
     
@@ -50,8 +51,28 @@ class NoMADAction : NSObject {
     
     // determines if you should show the menu or not
     
-    func showTest() -> Bool {
+    func runCommand(commands : [Dictionary<String,String?>]?) -> Bool {
+        
+        if commands == nil {
+            return true
+        }
+        
+        for command in commands! {
+            let result = runActionCommand(action: command["Command"] as? String ?? "none" , options: command["CommandOptions"] as? String ?? "none" )
+            if result == "false" {
+                return false
+            }
+        }
         return true
+    }
+    
+    func getTitle() -> String {
+        
+        if title == nil {
+            return actionName
+        }
+        
+        return runActionCommand(action: title!["Command"] as? String ?? "none", options: title!["CommandOptions"] as? String ?? "none")
     }
     
     func preTest() {
@@ -72,8 +93,14 @@ class NoMADAction : NSObject {
         return text
     }
     
-    @IBAction func action(_ sender: AnyObject) {
-        print("action \(text) done")
+    @IBAction func runAction(_ sender: AnyObject) {
+        let result = runCommand(commands: action)
+        
+        if result {
+            myLogger.logit(.base, message: "Action succeeded: \(actionName)")
+        } else {
+            myLogger.logit(.base, message: "Action failed: \(actionName)")
+        }
     }
     
     override func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
