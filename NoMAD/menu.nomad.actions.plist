@@ -71,8 +71,6 @@
 		<dict>
 			<key>Name</key>
 			<string>Working ping test</string>
-			<key>Timer</key>
-			<integer>5</integer>
 			<key>Show</key>
 			<array>
 				<dict>
@@ -88,7 +86,7 @@
 					<key>Command</key>
 					<string>path</string>
 					<key>CommandOptions</key>
-					<string>/usr/bin/touch /tmp/action2</string>
+					<string>/bin/cat /tmp/titleText</string>
 				</dict>
 			</array>
 			<key>Post</key>
@@ -97,7 +95,7 @@
 					<key>Command</key>
 					<string>alert</string>
 					<key>CommandOptions</key>
-					<string>This is just a test!</string>
+					<string>&lt;&lt;result&gt;&gt;</string>
 				</dict>
 				<dict>
 					<key>Command</key>

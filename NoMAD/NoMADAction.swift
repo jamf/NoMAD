@@ -43,6 +43,7 @@ class NoMADAction : NSObject {
     var display : Bool = false
     var text : String = "action item"
     var tip : String = ""
+    var actionResult : String = ""
     
     // init
     
@@ -55,9 +56,10 @@ class NoMADAction : NSObject {
         }
     }
     
-    // tests
-    
-    // determines if you should show the menu or not
+    /// Run a command set
+    ///
+    /// - Parameter commands: a dictionary of Commands
+    /// - Returns: Bool passed back from the commands
     
     func runCommand(commands : [Dictionary<String,String?>]?) -> Bool {
         
@@ -66,9 +68,11 @@ class NoMADAction : NSObject {
         }
         
         for command in commands! {
-            let result = runActionCommand(action: command["Command"] as? String ?? "none" , options: command["CommandOptions"] as? String ?? "none" )
+            let result = runActionCommand(action: command["Command"] as? String ?? "none" , options: (command["CommandOptions"] as? String ?? "none").replacingOccurrences(of: "<<result>>", with: actionResult) )
             if result == "false" {
                 return false
+            } else if result != "true" {
+                actionResult = result
             }
         }
         return true
@@ -87,6 +91,9 @@ class NoMADAction : NSObject {
             return actionName
         } else if result == "false" {
             status = "red"
+            return actionName
+        } else if result == "yellow" {
+            status = "yellow"
             return actionName
         } else {
             return result
@@ -110,6 +117,23 @@ class NoMADAction : NSObject {
             // run any post commands
             // TODO: add in a way to report on result of Action
 
+            _ = runCommand(commands: post)
+        }
+    }
+    
+    func runActionSilent() {
+        let result = runCommand(commands: action)
+        
+        if result {
+            myLogger.logit(.base, message: "Action succeeded: \(actionName)")
+        } else {
+            myLogger.logit(.base, message: "Action failed: \(actionName)")
+        }
+        
+        if post != nil {
+            // run any post commands
+            // TODO: add in a way to report on result of Action
+            
             _ = runCommand(commands: post)
         }
     }

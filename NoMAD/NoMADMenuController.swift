@@ -1080,6 +1080,20 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             doTheNeedfull()
         case "cleancerts":
             KeychainUtil().cleanCerts()
+        case "action":
+            
+            if nActionMenu.actions.count < 1 {
+                break
+            }
+            
+            let actionToRun = fullCommand?.path.replacingOccurrences(of: "/", with: "").removingPercentEncoding ?? "none"
+            
+            for i in 0...(nActionMenu.actions.count - 1 ) {
+                if nActionMenu.actions[i].actionName == actionToRun {
+                    _ = nActionMenu.actions[i].runActionSilent()
+                }
+            }
+            
         default:
             break
         }
