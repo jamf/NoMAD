@@ -18,9 +18,9 @@ An action is comprised of some meta data and then four phases. Each phase has a 
 | Action | Command Set that make up the actual Action itself | Array | no
 | Post | Command Set that will happen after the Action commands are run | Array | no
 | GUID | Unique ID for the Action | String | no
-|Connected | If the action set should only be run when connected to the AD domain | Bool | true
-|Timer| Length in minutes between firing the Action | Int | 15
-|ToolTip| The text to be shown when hovering over the menu item | String | Click here for support
+|Connected | If the action set should only be run when connected to the AD domain | Bool | no
+|Timer| Length in minutes between firing the Action | Int | no
+|ToolTip| The text to be shown when hovering over the menu item | String | no
 
 * Note that the Title command set can only have one command
 * If the Title command returns "false" or "true" the text of the title won't be updated. Instead a red, in the case of "false", or green dot will be next to the menu item and the title will be the Name of the action set.
