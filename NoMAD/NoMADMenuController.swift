@@ -890,6 +890,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             } catch {
                 myLogger.logit(.base, message: "Unable to find password in keychain for auto-login.")
                 updateUserInfo()
+                if defaults.bool(forKey: Preferences.useKeychainPrompt) {
+                    loginWindow.window!.forceToFrontAndFocus(nil)
+                }
                 return
             }
             
