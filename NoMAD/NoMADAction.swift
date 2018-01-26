@@ -24,6 +24,7 @@ class NoMADAction : NSObject {
     var showTest: [Dictionary<String, String?>]? = nil
     var title: Dictionary<String, String?>? = nil
     var action : [Dictionary<String, String?>]? = nil
+    var post : [Dictionary<String, String?>]? = nil
     
     var preType: String? = nil
     var preTypeOptions: [String]? = nil
@@ -89,7 +90,6 @@ class NoMADAction : NSObject {
     }
     
     func displayItem() -> String {
-        
         return text
     }
     
@@ -101,15 +101,16 @@ class NoMADAction : NSObject {
         } else {
             myLogger.logit(.base, message: "Action failed: \(actionName)")
         }
+        
+        if post != nil {
+            // run any post commands
+            
+            
+        }
     }
     
     override func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
-        print("********")
         return true
-    }
-    
-    func post() {
-        
     }
 }
 

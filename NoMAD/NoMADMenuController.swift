@@ -1412,7 +1412,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     
                     if !self.NoMADMenu.items.contains(self.myActionsMenu) {
                     
-                    self.myActionsMenu.title = "Actions"
+                    self.myActionsMenu.title = defaults.string(forKey: Preferences.menuActions)
                     nActionMenu.createMenu()
                     self.myActionsMenu.submenu = nActionMenu.actionMenu
                     self.NoMADMenu.addItem(self.myActionsMenu)
@@ -1420,8 +1420,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     } else {
                         nActionMenu.createMenu()
                     }
-                    
-                    
                     
                     if self.userInformation.status == "Logged In" {
                         

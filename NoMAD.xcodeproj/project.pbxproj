@@ -188,6 +188,7 @@
 		846DDD3B20191CD800D94821 /* NoMADActionMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoMADActionMenu.swift; sourceTree = "<group>"; };
 		846DDD3D2019422D00D94821 /* menu.nomad.actions.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = menu.nomad.actions.plist; sourceTree = "<group>"; };
 		846DDD3F201942C400D94821 /* NoMADActionCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoMADActionCommands.swift; sourceTree = "<group>"; };
+		846DDD41201A8A6700D94821 /* ACTIONS README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "ACTIONS README.md"; sourceTree = "<group>"; };
 		84847A661D3DDF5600FAE468 /* KlistUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KlistUtil.swift; sourceTree = "<group>"; };
 		84996CA71D503F8400793747 /* LDAPUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = LDAPUtil.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		84996CA91D503F9100793747 /* KerbUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KerbUtil.h; sourceTree = "<group>"; };
@@ -384,6 +385,7 @@
 				846DDD39201919F800D94821 /* NoMADAction.swift */,
 				846DDD3B20191CD800D94821 /* NoMADActionMenu.swift */,
 				846DDD3F201942C400D94821 /* NoMADActionCommands.swift */,
+				846DDD41201A8A6700D94821 /* ACTIONS README.md */,
 			);
 			name = "Action Menu";
 			sourceTree = "<group>";

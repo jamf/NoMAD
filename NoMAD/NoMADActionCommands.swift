@@ -47,13 +47,12 @@ public func runActionCommand( action: String, options: String) -> String {
                     }
                 }
             }
-            
             return "false"
 
         case "SRV" :
             // TODO: use SRV lookup class here
             break
-        case "groups" :
+        case "adgroup" :
             if (defaults.array(forKey: Preferences.groups) as! [String]).contains(options) {
                 result = "true"
             } else {

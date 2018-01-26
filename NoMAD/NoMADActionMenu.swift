@@ -78,6 +78,10 @@ let nActionMenu = NoMADActionMenu()
                 continue
             }
             
+            if action.actionName.lowercased() == "separator" {
+                let separator = NSMenuItem.separator()
+                actionMenu.addItem(separator)
+            } else {
             let menuItem = NSMenuItem.init()
             menuItem.title = action.getTitle()
             menuItem.target = action
@@ -87,6 +91,7 @@ let nActionMenu = NoMADActionMenu()
             menuItem.toolTip = "A NoMAD custom action"
             menuItem.state = NSControl.StateValue(rawValue: 0)
             actionMenu.addItem(menuItem)
+            }
         }
         //print(actionMenu)
         //actionMenu.autoenablesItems = false

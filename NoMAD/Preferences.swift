@@ -248,6 +248,7 @@ enum Preferences {
     static let lastUser = "LastUser"
     static let lastPasswordWarning = "LastPasswordWarning"
     static let lastPasswordExpireDate = "LastPasswordExpireDate"
+    static let menuActions = "MenuActions"
     static let menuChangePassword = "MenuChangePassword"
     static let menuHomeDirectory = "MenuHomeDirectory"
     static let menuGetCertificate = "MenuGetCertificate"
