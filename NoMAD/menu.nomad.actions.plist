@@ -9,6 +9,8 @@
 		<dict>
 			<key>Name</key>
 			<string>update test</string>
+			<key>Connected</key>
+			<true/>
 			<key>Title</key>
 			<dict>
 				<key>Command</key>
@@ -16,7 +18,7 @@
 				<key>CommandOptions</key>
 				<string>/bin/cat /tmp/titleText</string>
 			</dict>
-			<key>ShowTest</key>
+			<key>Show</key>
 			<array>
 				<dict>
 					<key>Command</key>
@@ -38,15 +40,15 @@
 		<dict>
 			<key>Name</key>
 			<string>non-working ping test</string>
-			<key>ShowTest</key>
-			<array>
-				<dict>
-					<key>Command</key>
-					<string>ping</string>
-					<key>CommandOptions</key>
-					<string>dc8.nomad.test</string>
-				</dict>
-			</array>
+			<key>ToolTip</key>
+			<string>This is a ping test</string>
+			<key>Title</key>
+			<dict>
+				<key>Command</key>
+				<string>ping</string>
+				<key>CommandOptions</key>
+				<string>dc1.nomad.test</string>
+			</dict>
 			<key>Action</key>
 			<array>
 				<dict>
@@ -56,11 +58,22 @@
 					<string>/usr/bin/touch /tmp/action1</string>
 				</dict>
 			</array>
+			<key>Post</key>
+			<array>
+				<dict>
+					<key>Command</key>
+					<string>alert</string>
+					<key>CommandOptions</key>
+					<string>This is just a test</string>
+				</dict>
+			</array>
 		</dict>
 		<dict>
 			<key>Name</key>
 			<string>Working ping test</string>
-			<key>ShowTest</key>
+			<key>Timer</key>
+			<integer>5</integer>
+			<key>Show</key>
 			<array>
 				<dict>
 					<key>Command</key>
@@ -78,10 +91,29 @@
 					<string>/usr/bin/touch /tmp/action2</string>
 				</dict>
 			</array>
+			<key>Post</key>
+			<array>
+				<dict>
+					<key>Command</key>
+					<string>alert</string>
+					<key>CommandOptions</key>
+					<string>This is just a test!</string>
+				</dict>
+				<dict>
+					<key>Command</key>
+					<string>notify</string>
+					<key>CommandOptions</key>
+					<string>Notification test</string>
+				</dict>
+			</array>
 		</dict>
 		<dict>
 			<key>Name</key>
-			<string>Placeholder</string>
+			<string>separator</string>
+		</dict>
+		<dict>
+			<key>Name</key>
+			<string>Just a message</string>
 		</dict>
 	</array>
 </dict>

@@ -21,21 +21,28 @@ class NoMADAction : NSObject {
     
     // actions
     
-    var showTest: [Dictionary<String, String?>]? = nil
+    var show: [Dictionary<String, String?>]? = nil
     var title: Dictionary<String, String?>? = nil
     var action : [Dictionary<String, String?>]? = nil
     var post : [Dictionary<String, String?>]? = nil
     
-    var preType: String? = nil
-    var preTypeOptions: [String]? = nil
+    // timers and triggers
+
+    var timer : Int? = nil
+    var timerObject : Timer? = nil
+    var trigger : [String]? = nil
     
-    var actionType: String? = nil
-    var actionTypeOptions: [String]? = nil
+    // status
+    
+    var status: String? = nil
+    var visible: Bool = true
+    var connected: Bool = false
     
     // globals
     
     var display : Bool = false
     var text : String = "action item"
+    var tip : String = ""
     
     // init
     
@@ -73,19 +80,16 @@ class NoMADAction : NSObject {
             return actionName
         }
         
-        return runActionCommand(action: title!["Command"] as? String ?? "none", options: title!["CommandOptions"] as? String ?? "none")
-    }
-    
-    func preTest() {
-        if preType != nil {
-            switch preType {
-            case "group"? :
-                if defaults.array(forKey: Preferences.groups)?.contains(where: { $0 as! String == "admin" }) ?? false {
-                    print("group passed")
-                }
-            default :
-                break
-            }
+        let result =  runActionCommand(action: title!["Command"] as? String ?? "none", options: title!["CommandOptions"] as? String ?? "none")
+        
+        if result == "true" {
+            status = "green"
+            return actionName
+        } else if result == "false" {
+            status = "red"
+            return actionName
+        } else {
+            return result
         }
     }
     
@@ -104,8 +108,9 @@ class NoMADAction : NSObject {
         
         if post != nil {
             // run any post commands
-            
-            
+            // TODO: add in a way to report on result of Action
+
+            _ = runCommand(commands: post)
         }
     }
     

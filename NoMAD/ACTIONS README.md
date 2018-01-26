@@ -18,9 +18,13 @@ An action is comprised of some meta data and then four phases. Each phase has a 
 | Action | Command Set that make up the actual Action itself | Array | no
 | Post | Command Set that will happen after the Action commands are run | Array | no
 | GUID | Unique ID for the Action | String | no
+|Connected | If the action set should only be run when connected to the AD domain | Bool | true
+|Timer| Length in minutes between firing the Action | Int | 15
+|ToolTip| The text to be shown when hovering over the menu item | String | Click here for support
 
 * Note that the Title command set can only have one command
-* An Action with the Name of "Separtor" will become a separator bar in the menu.
+* If the Title command returns "false" or "true" the text of the title won't be updated. Instead a red, in the case of "false", or green dot will be next to the menu item and the title will be the Name of the action set.
+* An Action with the Name of "Separator" will become a separator bar in the menu.
 
 ## Commands
 
@@ -34,11 +38,10 @@ Each command has a CommandOptions value that determines what the command does. A
 | app | Launch an app at a specific file path | The path to the application
 | url | Launch a URL in the user's default browser | The URL to launch
 | ping | Ping a host, will return false if the host is unpingable | The host to ping
-| srv | Lookup up SRV records, returning false if they can't be found | The SRV records to lookup
 | adgroup | Determine if the current user is a member of an AD group | The group to test with
 | alert | Display a modal dialog to the user | Text of the dialog
-
-* Note that Post action sets with an alert will automatically show the results of the Action set.
+|notify| Display a notification in the notification center | Text of the notification
+|false| A command that always returns false | Anything
 
 ## Workflow
 
@@ -53,7 +56,6 @@ Each command has a CommandOptions value that determines what the command does. A
 
 There's a few more features that we'd like to get down before release. Currently all of these are achievable.
 
-* Timers - Schedule the execution of an Action based upon a repeating time. Note that you can have "silent" Actions that do not show up in the Actions Menu, but do execute on a repeated schedule.
 * Triggers - Trigger actions based upon system events such as:
 	* Network change
-* Status images - Red/yellow/green dots next to menu items based upon the Show command set of the item. Currently you can "cheat" and use emoji in your menu titles.
+* Action -> Post - Allow actions to send messages/status to the Post command set

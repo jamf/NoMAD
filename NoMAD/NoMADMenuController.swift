@@ -151,6 +151,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         shareMounterMenu.updateShares(connected: self.userInformation.connected)
         
+        // load up the actions
+        
+        nActionMenu.load()
+        
         print(defaults.integer(forKey: Preferences.autoRenewCert))
         
         // set up Icons - we need 2 sets of 2 for light and dark modes
@@ -1408,18 +1412,32 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     
                     // ACTIONS
                     
-                    nActionMenu.update()
+                    // update the actions first
+                    
+                    nActionMenu.updateActions(self.userInformation.connected)
+                    
+                    // pivot on if the menu exists or not
                     
                     if !self.NoMADMenu.items.contains(self.myActionsMenu) {
-                    
-                    self.myActionsMenu.title = defaults.string(forKey: Preferences.menuActions)
-                    nActionMenu.createMenu()
-                    self.myActionsMenu.submenu = nActionMenu.actionMenu
-                    self.NoMADMenu.addItem(self.myActionsMenu)
-                        self.myActionsMenu.isEnabled = true
-                    } else {
+                        
                         nActionMenu.createMenu()
+                        
+                        if nActionMenu.actionMenu.items.count > 0 {
+                            // we have a menu add it to the main menu
+                            
+                            self.myActionsMenu.title = defaults.string(forKey: Preferences.menuActions) ?? "Actions"
+                            self.myActionsMenu.submenu = nActionMenu.actionMenu
+                            
+                            let lockIndex = self.NoMADMenu.index(of: self.NoMADMenuLockScreen)
+                            self.NoMADMenu.insertItem(self.myActionsMenu, at: (lockIndex + 1 ))
+
+                        }
+                        
+                    } else {
+                        nActionMenu.updateMenu()
                     }
+                    
+                    
                     
                     if self.userInformation.status == "Logged In" {
                         

@@ -58,6 +58,28 @@ public func runActionCommand( action: String, options: String) -> String {
             } else {
                 return "false"
             }
+        case "alert" :
+            // show an alert
+            
+            let myAlert = NSAlert()
+            myAlert.messageText = options
+            
+            // move to the foreground since we're displaying UI
+            
+            DispatchQueue.main.async {
+                myAlert.runModal()
+            }
+        case "notify" :
+            
+            let notification = NSUserNotification()
+            notification.informativeText = options
+            notification.hasReplyButton = false
+            notification.hasActionButton = false
+            notification.soundName = NSUserNotificationDefaultSoundName
+            NSUserNotificationCenter.default.deliver(notification)
+        
+        case "false" :
+            return "false"
         default :
             break
         }

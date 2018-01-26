@@ -87,7 +87,7 @@ class ShareMounterMenu: NSObject {
         }
         
         if CommandLine.arguments.contains("-shares") {
-            print("***Share Menuu***")
+            print("***Share Menu***")
             print(myShareMenu)
         }
         
