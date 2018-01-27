@@ -43,6 +43,8 @@ Each command has a CommandOptions value that determines what the command does. A
 |notify| Display a notification in the notification center | Text of the notification
 |false| A command that always returns false | Anything
 
+
+
 ## Workflow
 
 * On launch NoMAD looks at the `menu.nomad.actions` preference domain and reads in any Actions.
@@ -51,6 +53,10 @@ Each command has a CommandOptions value that determines what the command does. A
 * An item that is clicked on will cause the item's Action command set to be run.
 * Following the Action set running, the Post set will then be run acting on the result of the Action set.
 * Every time NoMAD updates (every 15 minutes, network change or NoMAD menu interaction) the Actions items will be updated with the same process.
+
+## URIs
+
+Actions will respond to `nomad://action/ActionName` URIs so you can run them from the command line via `open nomad://action/DoSomething`. For actions with a space in the name, or other upper ascii characters, use standard percent encoding when listing them in the URI. When running actions in this way, the Test will not be done 
 
 ## Still to come
 
