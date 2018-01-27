@@ -66,7 +66,7 @@ extension String {
             return addingPercentEncoding(withAllowedCharacters: allowedCharacters)
     }
     
-    func variableSwap() -> String {
+    func variableSwap(_ encoding: Bool=true) -> String {
         
         var cleanString = self
         
@@ -77,7 +77,9 @@ extension String {
         let upn = defaults.string(forKey: Preferences.userUPN) ?? ""
         let email = defaults.string(forKey: Preferences.userEmail) ?? ""
         
-        cleanString = cleanString.replacingOccurrences(of: " ", with: "%20") //cleanString.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlHostAllowed) ?? cleanString
+        if encoding {
+            cleanString = cleanString.replacingOccurrences(of: " ", with: "%20") //cleanString.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlHostAllowed) ?? cleanString
+        }
         
         cleanString = cleanString.replacingOccurrences(of: "<<domain>>", with: domain)
         cleanString = cleanString.replacingOccurrences(of: "<<fullname>>", with: fullName)

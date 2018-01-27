@@ -4,6 +4,8 @@
 <dict>
 	<key>Version</key>
 	<integer>1</integer>
+	<key>MenuIcon</key>
+	<true/>
 	<key>Actions</key>
 	<array>
 		<dict>

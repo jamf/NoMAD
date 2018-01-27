@@ -67,12 +67,36 @@ class NoMADAction : NSObject {
             return true
         }
         
+        var result : String = ""
+        
         for command in commands! {
-            let result = runActionCommand(action: command["Command"] as? String ?? "none" , options: (command["CommandOptions"] as? String ?? "none").replacingOccurrences(of: "<<result>>", with: actionResult) )
+            
+            if result == "false" && (command["Command"] as? String ?? "" ).contains("True") {
+                // result was false so don't trigger any True action
+                continue
+            }
+            
+            if result == "true" && (command["Command"] as? String ?? "" ).contains("False") {
+                // result was true so don't trigger any false action
+                continue
+            }
+            
+            result = runActionCommand(action: (command["Command"] as? String ?? "none").replacingOccurrences(of: "True", with: "").replacingOccurrences(of: "False", with: "") , options: (command["CommandOptions"] as? String ?? "none").replacingOccurrences(of: "<<result>>", with: actionResult) )
             if result == "false" {
+                actionResult = ""
+                if result.contains("<<menu>>") {
+                    nActionMenu.menuText = result.replacingOccurrences(of: "<<menu>>", with: "")
+                }
                 return false
             } else if result != "true" {
                 actionResult = result
+                
+                if result.contains("<<menu>>") {
+                    nActionMenu.menuText = result.replacingOccurrences(of: "<<menu>>", with: "")
+                }
+                
+            } else {
+                actionResult = "true"
             }
         }
         return true
@@ -121,7 +145,7 @@ class NoMADAction : NSObject {
         }
     }
     
-    func runActionSilent() {
+    func runActionCLI() {
         let result = runCommand(commands: action)
         
         if result {
@@ -132,10 +156,20 @@ class NoMADAction : NSObject {
         
         if post != nil {
             // run any post commands
-            // TODO: add in a way to report on result of Action
             
             _ = runCommand(commands: post)
         }
+    }
+    
+    func runActionCLISilent() {
+        let result = runCommand(commands: action)
+        
+        if result {
+            myLogger.logit(.base, message: "Action succeeded: \(actionName)")
+        } else {
+            myLogger.logit(.base, message: "Action failed: \(actionName)")
+        }
+        // this method runs no post commands
     }
     
     override func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {

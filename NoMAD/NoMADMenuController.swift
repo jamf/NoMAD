@@ -1090,7 +1090,21 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             
             for i in 0...(nActionMenu.actions.count - 1 ) {
                 if nActionMenu.actions[i].actionName == actionToRun {
-                    _ = nActionMenu.actions[i].runActionSilent()
+                    _ = nActionMenu.actions[i].runActionCLI()
+                }
+            }
+            
+        case "actionsilent":
+            
+            if nActionMenu.actions.count < 1 {
+                break
+            }
+            
+            let actionToRun = fullCommand?.path.replacingOccurrences(of: "/", with: "").removingPercentEncoding ?? "none"
+            
+            for i in 0...(nActionMenu.actions.count - 1 ) {
+                if nActionMenu.actions[i].actionName == actionToRun {
+                    _ = nActionMenu.actions[i].runActionCLISilent()
                 }
             }
             
@@ -1442,6 +1456,22 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                             self.myActionsMenu.title = defaults.string(forKey: Preferences.menuActions) ?? "Actions"
                             self.myActionsMenu.submenu = nActionMenu.actionMenu
                             
+                            // check the icon
+                            
+                            if nActionMenu.menuIconEnabled && nActionMenu.menuIcon != nil {
+                                self.myActionsMenu.image = nActionMenu.menuIcon
+                            } else {
+                                self.myActionsMenu.image = nil
+                            }
+                            
+                            // check the menu title
+                            
+                            if nActionMenu.menuTextEnabled && nActionMenu.menuText != nil {
+                                self.myActionsMenu.title = nActionMenu.menuText!
+                            } else {
+                                self.myActionsMenu.title = defaults.string(forKey: Preferences.menuActions) ?? "Actions"
+                            }
+                            
                             let lockIndex = self.NoMADMenu.index(of: self.NoMADMenuLockScreen)
                             self.NoMADMenu.insertItem(self.myActionsMenu, at: (lockIndex + 1 ))
 
@@ -1449,6 +1479,20 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         
                     } else {
                         nActionMenu.updateMenu()
+                        
+                        // check the menu title
+                        
+                        if nActionMenu.menuTextEnabled && nActionMenu.menuText != nil {
+                            self.myActionsMenu.title = nActionMenu.menuText!
+                        } else {
+                            self.myActionsMenu.title = defaults.string(forKey: Preferences.menuActions) ?? "Actions"
+                        }
+                        
+                        if nActionMenu.menuIconEnabled && nActionMenu.menuIcon != nil {
+                            self.myActionsMenu.image = nActionMenu.menuIcon
+                        } else {
+                            self.myActionsMenu.image = nil
+                        }
                     }
                     
                     

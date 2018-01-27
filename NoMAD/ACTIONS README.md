@@ -6,6 +6,23 @@ This file lays out the design goals of the Actions Menu that you can add into No
 
 The Actions Menu is composed of "actions" which are defined by a prefrence file in the "menu.nomad.actions" domain. In this file Actions are listed as an array of dictionaries with each dictionary comprising one action. NoMAD Actions are simultaneously attempting to be highly configurable without being overly complicated.
 
+At this time actions are only updated on NoMAD application launch. If you change actions while NoMAD is running you'll need to restart NoMAD for them to take effect.
+
+Actions are run lazilly in the background, so don't expect immediate satisfaction when testing things. Since the commands are checked every time NoMAD does an update cycle (on launch, every 15 minutes, on network change, or when the menu is clicked), but run in the background, the first time the UI is shown it may have the old status/text/data. The actions will update in the background and the UI will update accordingly.
+
+## Global Options
+
+Within the `menu.nomad.actions` there are a few global pref keys that can determine the behavior of the menu.
+
+| Attribute  |Definition   |Type   | Required
+|---|---|---|---|---|
+| Version | The numeric version of the pref file. Currently only "1" is suppored| Int | yes
+| MenuIcon | Determines if the Actions menu itself will have a red/yellow/green light next to it. | Bool | no
+|MenuText| Determines if the text of the main Action menu be the result of a command | Bool | no
+
+* MenuIcon will put a red/yellow/green icon next to the main Action menu based upon "worst" of the visible items in the submenu. In other words if you have any visible submenu actions that have a red icon next to them, the main menu will have a red icon. If any visible submenu actions are yellow, and none are red, the main menu item will have a yellow icon.
+* MenuText requires a command to return a result of "<<menu>>" followed by the text you'd like to make the menu. The last command to return a result containing "<<menu>>" will determine what the menu title is.
+
 ## Anatomy of an action
 
 An action is comprised of some meta data and then four phases. Each phase has a collection of Commands in them. These commands have the Command itself and then a CommandOptions that can modify the command. Commands can execute external scripts or use the built in functions included with Actions. The only required part of the Action is the name of the action, all the other parts are optional. To break out a sample Action
@@ -23,7 +40,7 @@ An action is comprised of some meta data and then four phases. Each phase has a 
 |ToolTip| The text to be shown when hovering over the menu item | String | no
 
 * Note that the Title command set can only have one command
-* If the Title command returns "false" or "true" the text of the title won't be updated. Instead a red, in the case of "false", or green dot will be next to the menu item and the title will be the Name of the action set.
+* If the Title command returns "false" or "true" the text of the title won't be updated. Instead a red, in the case of "false", or green dot will be next to the menu item and the title will be the Name of the action set. If the Title command returns "yellow" a yellow dot will be shown next to the item.
 * An Action with the Name of "Separator" will become a separator bar in the menu.
 
 ## Commands
@@ -42,8 +59,14 @@ Each command has a CommandOptions value that determines what the command does. A
 | alert | Display a modal dialog to the user | Text of the dialog
 |notify| Display a notification in the notification center | Text of the notification
 |false| A command that always returns false | Anything
+|true| A command that always returns true | Anything
 
-
+* The result of any command can be passed on to the next one. Using <<result>> in your command options will cause it to be replaced with the result of the previous command. Note that "true" or "false" results will not be conveyed to the next command.
+* When using the "alert" and "notify" commands, if the command options are blank or are either "true" or "false", no alert or notification will be displayed. You can use this to only show errors.
+* Adding "True" or "False" at the end of the command will only trigger that command if the previously run command returns "true" or "false". For example, using "alertTrue" as the command name will only run that command if the previously run command returned "true". Keep in mind that the result state is persistant, so you can have one "path" command, for example, return "true" and then multiple commands following it with "False" in the command name. None of the "False" commands would run. Also note that capitalization is important here.
+* The "true" and "false" commands, note the capitalization, can be used to clear any previous results in the command set.
+* Results do not persist between command sets.
+* Command options support the standard NoMAD variable swaps such as <<domain>>, <<user>>, and <<email>>.
 
 ## Workflow
 
@@ -56,12 +79,11 @@ Each command has a CommandOptions value that determines what the command does. A
 
 ## URIs
 
-Actions will respond to `nomad://action/ActionName` URIs so you can run them from the command line via `open nomad://action/DoSomething`. For actions with a space in the name, or other upper ascii characters, use standard percent encoding when listing them in the URI. When running actions in this way, the Test will not be done 
+Actions will respond to `nomad://action/ActionName` URIs so you can run them from the command line via `open nomad://action/DoSomething`. For actions with a space in the name, or other upper ascii characters, use standard percent encoding when listing them in the URI. When running actions in this way, the Test will not be done.
+
+Using `nomad://actionsilent/ActionName` will run the specified Action command set, but not the corresponding Post command set.
 
 ## Still to come
 
-There's a few more features that we'd like to get down before release. Currently all of these are achievable.
-
 * Triggers - Trigger actions based upon system events such as:
 	* Network change
-* Action -> Post - Allow actions to send messages/status to the Post command set

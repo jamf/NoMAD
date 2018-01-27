@@ -25,7 +25,7 @@ public func runActionCommand( action: String, options: String) -> String {
         return "error"
     }
     
-    let optionsClean = options.variableSwap()
+    let optionsClean = options.variableSwap(false)
         
         switch action.lowercased() {
         case "path" :
@@ -61,9 +61,10 @@ public func runActionCommand( action: String, options: String) -> String {
                 return "false"
             }
         case "alert" :
+            
             // show an alert only if we have options
             
-            if optionsClean == "" {
+            if optionsClean == "" || optionsClean == "false" || optionsClean == "true" {
                 break
             }
             
@@ -77,6 +78,12 @@ public func runActionCommand( action: String, options: String) -> String {
             }
         case "notify" :
             
+            // show a notification only if we have options
+            
+            if optionsClean == "" || optionsClean == "false" || optionsClean == "true" {
+                break
+            }
+            
             let notification = NSUserNotification()
             notification.informativeText = options
             notification.hasReplyButton = false
@@ -86,6 +93,8 @@ public func runActionCommand( action: String, options: String) -> String {
         
         case "false" :
             return "false"
+        case "true" :
+            return "true"
         default :
             break
         }

@@ -28,6 +28,15 @@ let actionMenuQueue = DispatchQueue(label: "menu.nomad.NoMAD.actions", attribute
     
     static let kPrefVersion = "Version"
     static let kPrefActions = "Actions"
+    static let kPrefMenuIcon = "MenuIcon"
+    static let kPrefMenuText = "MenuText"
+    
+    // menu settings
+    
+    var menuIconEnabled : Bool = false
+    var menuIcon : NSImage? = nil
+    var menuTextEnabled : Bool = false
+    var menuText : String? = nil
     
     // load the actions
     
@@ -39,6 +48,11 @@ let actionMenuQueue = DispatchQueue(label: "menu.nomad.NoMAD.actions", attribute
             // wrong version
             return
         }
+        
+        // check to see if we'll update the icon
+        
+        menuIconEnabled = sharePrefs?.bool(forKey: NoMADActionMenu.kPrefMenuIcon) ?? false
+        menuTextEnabled = sharePrefs?.bool(forKey: NoMADActionMenu.kPrefMenuText) ?? false
         
         guard let rawPrefs = sharePrefs?.array(forKey: NoMADActionMenu.kPrefActions) as? [Dictionary<String, AnyObject?>] else { return }
         
@@ -105,6 +119,8 @@ let actionMenuQueue = DispatchQueue(label: "menu.nomad.NoMAD.actions", attribute
     // create menu
     
     @objc func createMenu() {
+        
+        var menuIconColor : String? = nil
             
             for action in self.actions {
                 
@@ -122,10 +138,23 @@ let actionMenuQueue = DispatchQueue(label: "menu.nomad.NoMAD.actions", attribute
                         switch action.status {
                         case "red"? :
                             menuItem.image = NSImage.init(imageLiteralResourceName: NSImage.Name.statusUnavailable.rawValue)
+                            if action.display {
+                                menuIconColor = "red"
+                            }
                         case "green"? :
                             menuItem.image = NSImage.init(imageLiteralResourceName: NSImage.Name.statusAvailable.rawValue)
+                            
+                            if action.display && menuIconColor == nil {
+                                menuIconColor = "green"
+                            }
+                            
                         case "yellow"? :
                             menuItem.image = NSImage.init(imageLiteralResourceName: NSImage.Name.statusPartiallyAvailable.rawValue)
+                            
+                            if menuIconColor != "red" && action.display {
+                                menuIconColor = "yellow"
+                            }
+                            
                         default:
                             break
                         }
@@ -144,6 +173,19 @@ let actionMenuQueue = DispatchQueue(label: "menu.nomad.NoMAD.actions", attribute
                     self.actionMenu.addItem(menuItem)
                 }
             }
+        
+        // determine what color to make the primary menu
+        
+        if menuIconColor == "green" {
+            
+            menuIcon = NSImage.init(imageLiteralResourceName: NSImage.Name.statusAvailable.rawValue)
+        } else if menuIconColor == "yellow" {
+            menuIcon = NSImage.init(imageLiteralResourceName: NSImage.Name.statusPartiallyAvailable.rawValue)
+        } else if menuIconColor == "red" {
+            menuIcon = NSImage.init(imageLiteralResourceName: NSImage.Name.statusUnavailable.rawValue)
+        } else {
+            menuIcon = nil
+        }
     }
     
     func updateMenu() {
@@ -152,6 +194,8 @@ let actionMenuQueue = DispatchQueue(label: "menu.nomad.NoMAD.actions", attribute
             return
         }
         
+        var menuIconColor : String? = nil
+        
         for i in 0...(actionMenu.items.count - 1 ) {
             actionMenu.items[i].title = actions[i].text
             
@@ -159,10 +203,24 @@ let actionMenuQueue = DispatchQueue(label: "menu.nomad.NoMAD.actions", attribute
                 switch actions[i].status {
                 case "red"? :
                     actionMenu.items[i].image = NSImage.init(imageLiteralResourceName: NSImage.Name.statusUnavailable.rawValue)
+                    
+                    if actions[i].display {
+                        menuIconColor = "red"
+                    }
+                    
                 case "green"? :
                     actionMenu.items[i].image = NSImage.init(imageLiteralResourceName: NSImage.Name.statusAvailable.rawValue)
+                    
+                    if actions[i].display && menuIconColor == nil {
+                        menuIconColor = "green"
+                    }
+                    
                 case "yellow"? :
                     actionMenu.items[i].image = NSImage.init(imageLiteralResourceName: NSImage.Name.statusPartiallyAvailable.rawValue)
+                    
+                    if menuIconColor != "red" && actions[i].display {
+                        menuIconColor = "yellow"
+                    }
                 default:
                     break
                 }
@@ -174,13 +232,18 @@ let actionMenuQueue = DispatchQueue(label: "menu.nomad.NoMAD.actions", attribute
                 actionMenu.items[i].isHidden = false
             }
         }
-    }
-    
-    @IBAction func actionClick(_ sender: AnyObject) {
-        print("Clicky clicky")
-    }
-    
-    @objc func doeet() {
-        print("DOEET")
+        
+        // determine what color to make the primary menu
+        
+        if menuIconColor == "green" {
+            
+            menuIcon = NSImage.init(imageLiteralResourceName: NSImage.Name.statusAvailable.rawValue)
+        } else if menuIconColor == "yellow" {
+            menuIcon = NSImage.init(imageLiteralResourceName: NSImage.Name.statusPartiallyAvailable.rawValue)
+        } else if menuIconColor == "red" {
+            menuIcon = NSImage.init(imageLiteralResourceName: NSImage.Name.statusUnavailable.rawValue)
+        } else {
+            menuIcon = nil
+        }
     }
 }
