@@ -230,7 +230,6 @@ class WindowsCATools {
             kSecAttrLabel as String : privateKeyName as AnyObject,
             kSecPrivateKeyAttrs as String : privKeyGenDict as CFDictionary,
             kSecPublicKeyAttrs as String : pubKeyGenDict as CFDictionary,
-            kSecAttrAccess as String : access as AnyObject,
             ]
         
         if defaults.bool(forKey: Preferences.allowEAPOL) {
