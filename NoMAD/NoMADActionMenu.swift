@@ -165,7 +165,10 @@ let actionMenuQueue = DispatchQueue(label: "menu.nomad.NoMAD.actions", attribute
                     }
                     
                     menuItem.target = action
-                    menuItem.action = #selector(action.runAction)
+                    
+                    if action.action != nil {
+                        menuItem.action = #selector(action.runAction)
+                    }
                     
                     menuItem.isEnabled = true
                     menuItem.toolTip = action.tip
