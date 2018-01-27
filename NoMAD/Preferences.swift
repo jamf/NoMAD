@@ -187,6 +187,7 @@ enum Preferences {
 
     static let aDDomain = "ADDomain"
     static let aDSite = "ADSite"                    // current AD site
+    static let allowEAPOL = "AllowEAPOL"            // allow airportd and eapolclient access to generated private keys
     static let autoConfigure = "AutoConfigure"
     static let autoRenewCert = "AutoRenewCert"
     static let changePasswordCommand = "ChangePasswordCommand"
