@@ -8,19 +8,22 @@ NoMAD v. 1.1.2(797)
 
 ***Development Version***
 
-NoMAD v. 1.1.3(808)
+NoMAD v. 1.1.3(872)
 
 ***New Features in Development Version***
 
 - Fewer prompts when updating keychain items - build 808
-- Match any keychain item account with <<ANY>> - build 808
+- Match any keychain item account with `<<ANY>>` - build 808
 - Recursive group search works with "," in user names - build 808
 - When using UPCAlert and a URL to change passowrd, check for password change every 30 seconds - build 808
 - Prevent sign in window from closing when SignInAlert is set - build 809
 - Write out current AD Site to "ADSite" in preferences - build 809
+- Prevent "unknown realm" errors when changing password - build 809
 - Allow for both AD password expired and local sync on a seperate password - build 813
 - Swift 4, which explains the large build number change - build 853
 - Pref key DontShowWelcomeDefaultOff which sets the default Welcome window setting to only show the window once - build 854
+- UseKeychainPrompt will now show the Sign In window whenever the user does not have a password in the keychain, even if the user has already signed in at least once - build 854
+- Actions menu - build 872
 
 ***NoMAD***
 
