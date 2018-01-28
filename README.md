@@ -8,7 +8,7 @@ NoMAD v. 1.1.2(797)
 
 ***Development Version***
 
-NoMAD v. 1.1.3(872)
+NoMAD v. 1.1.3(882)
 
 ***New Features in Development Version***
 
@@ -19,11 +19,15 @@ NoMAD v. 1.1.3(872)
 - Prevent sign in window from closing when SignInAlert is set - build 809
 - Write out current AD Site to "ADSite" in preferences - build 809
 - Prevent "unknown realm" errors when changing password - build 809
+- Block known lame Domain Controllers from being used with `LDAPServerListDeny`, an array of FQDNs of servers not to be used - build 809
 - Allow for both AD password expired and local sync on a seperate password - build 813
 - Swift 4, which explains the large build number change - build 853
 - Pref key DontShowWelcomeDefaultOff which sets the default Welcome window setting to only show the window once - build 854
 - UseKeychainPrompt will now show the Sign In window whenever the user does not have a password in the keychain, even if the user has already signed in at least once - build 854
+- Better handling of current time when checking for UPCAlerts - should result in fewer spurious UPC Alerts - build 854
 - Actions menu - build 872
+- Lots of Actions menu update - build 882
+- Certs pulled via NoMAD can allow passwordless access to `airportd` and `eapolclient` when using the `AllowEAPOL` Boolean pref - 882
 
 ***NoMAD***
 
