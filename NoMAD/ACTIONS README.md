@@ -4,9 +4,9 @@ This file lays out the design goals of the Actions Menu that you can add into No
 
 ## Philosophy
 
-The Actions Menu is composed of "actions" which are defined by a prefrence file in the "menu.nomad.actions" domain. In this file Actions are listed as an array of dictionaries with each dictionary comprising one action. NoMAD Actions are simultaneously attempting to be highly configurable without being overly complicated.
+The Actions Menu is composed of "actions" which are defined by preferences in the "menu.nomad.actions" domain. In this domain Actions are listed as an array of dictionaries with each dictionary comprising one action. NoMAD Actions are simultaneously attempting to be highly configurable without being overly complicated, as such most things are optional.
 
-At this time actions are only updated on NoMAD application launch. If you change actions while NoMAD is running you'll need to restart NoMAD for them to take effect.
+The Actions Menu is aware of updates to the preference file and does not require NoMAD to be re-launched in order to load the new actions. When the preferences are changed, NoMAD rebuilds the entire menu from scratch and runs all tests and other housekeeping items.
 
 Actions are run lazilly in the background, so don't expect immediate satisfaction when testing things. Since the commands are checked every time NoMAD does an update cycle (on launch, every 15 minutes, on network change, or when the menu is clicked), but run in the background, the first time the UI is shown it may have the old status/text/data. The actions will update in the background and the UI will update accordingly.
 
@@ -42,6 +42,7 @@ An action is comprised of some meta data and then four phases. Each phase has a 
 * Note that the Title command set can only have one command
 * If the Title command returns "false" or "true" the text of the title won't be updated. Instead a red, in the case of "false", or green dot will be next to the menu item and the title will be the Name of the action set. If the Title command returns "yellow" a yellow dot will be shown next to the item.
 * An Action with the Name of "Separator" will become a separator bar in the menu.
+* An Action with no Action command set will be greyed out in the menu bar. If you'd like to have a menu item enabeld but with no action, add the "true" command to the Action command set.
 
 ## Commands
 

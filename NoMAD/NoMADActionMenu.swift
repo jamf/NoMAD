@@ -19,10 +19,9 @@ let actionMenuQueue = DispatchQueue(label: "menu.nomad.NoMAD.actions", attribute
     
     // globals
     
-    @objc public var actionMenu = NSMenu()
-    
-    var actions = [NoMADAction]()
-    let sharePrefs: UserDefaults? = UserDefaults.init(suiteName: "menu.nomad.actions")
+    @objc public var actionMenu = NSMenu()      // the menu that will be created
+    var actions = [NoMADAction]()               // list of actions
+    let sharePrefs: UserDefaults? = UserDefaults.init(suiteName: "menu.nomad.actions") // action specific preferences
     
     // prefkeys
     
@@ -37,8 +36,10 @@ let actionMenuQueue = DispatchQueue(label: "menu.nomad.NoMAD.actions", attribute
     var menuIcon : NSImage? = nil
     var menuTextEnabled : Bool = false
     var menuText : String? = nil
-    
+        
     // load the actions
+    
+    /// initialization function to load in prefs for class
     
     func load() {
         
@@ -48,6 +49,10 @@ let actionMenuQueue = DispatchQueue(label: "menu.nomad.NoMAD.actions", attribute
             // wrong version
             return
         }
+        
+        // watch for any changes to the Actions section of the prefs
+        
+        sharePrefs?.addObserver(self, forKeyPath: NoMADActionMenu.kPrefActions, options: NSKeyValueObservingOptions.new, context: nil)
         
         // check to see if we'll update the icon
         
@@ -87,6 +92,10 @@ let actionMenuQueue = DispatchQueue(label: "menu.nomad.NoMAD.actions", attribute
         }
     }
     
+    /// Function to update all of the actions - including determining if the action should be shown and setting up any timers for the actions
+    ///
+    /// - Parameter connected: Bool of if the domain is visible or not
+    
     @objc func updateActions(_ connected: Bool=false) {
         
         if actions.count < 1 {
@@ -117,6 +126,8 @@ let actionMenuQueue = DispatchQueue(label: "menu.nomad.NoMAD.actions", attribute
     }
     
     // create menu
+    
+    /// Builds the NSMenu object that will be added to the main menu
     
     @objc func createMenu() {
         
@@ -191,6 +202,8 @@ let actionMenuQueue = DispatchQueue(label: "menu.nomad.NoMAD.actions", attribute
         }
     }
     
+    /// Update icons of all the menu items
+    
     func updateMenu() {
         
         if actionMenu.items.count == 0 {
@@ -248,5 +261,62 @@ let actionMenuQueue = DispatchQueue(label: "menu.nomad.NoMAD.actions", attribute
         } else {
             menuIcon = nil
         }
+    }
+    
+    /// function called when menu.nomad.actions "Actions" key is updated
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        
+        // read in the preferences again
+        
+        if sharePrefs?.integer(forKey: NoMADActionMenu.kPrefVersion) ?? 0 != 1 {
+            // wrong version
+            return
+        }
+        
+        // check to see if we'll update the icon
+        
+        menuIconEnabled = sharePrefs?.bool(forKey: NoMADActionMenu.kPrefMenuIcon) ?? false
+        menuTextEnabled = sharePrefs?.bool(forKey: NoMADActionMenu.kPrefMenuText) ?? false
+        
+        guard let rawPrefs = sharePrefs?.array(forKey: NoMADActionMenu.kPrefActions) as? [Dictionary<String, AnyObject?>] else { return }
+        
+        // if no shares we bail
+        
+        if rawPrefs.count < 1 {
+            return
+        }
+        
+        // remove all actions
+        
+        actions.removeAll()
+        
+        // loop through the shares
+        
+        for action in rawPrefs {
+            
+            // if no name we don't have a valid action, so skip it
+            
+            guard let actionName = action["Name"] as? String else { continue }
+            
+            let newAction = NoMADAction.init(actionName, guid: action["GUID"] as? String ?? nil)
+            
+            newAction.show = action["Show"] as? [Dictionary<String,String?>] ?? nil
+            newAction.action = action["Action"] as? [Dictionary<String,String?>] ?? nil
+            newAction.title = action["Title"] as? Dictionary<String,String?> ?? nil
+            newAction.post = action["Post"] as? [Dictionary<String,String?>] ?? nil
+            newAction.timer = action["Timer"] as? Int ?? nil
+            newAction.tip = action["ToolTip"] as? String ?? ""
+            
+            newAction.connected = action["Connected"] as? Bool ?? false
+            
+            // add in all options
+            
+            actions.append(newAction)
+        }
+        
+        // trigger a NoMAD-wide update, this will cause all actions to be updated
+        
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "menu.nomad.NoMAD.updateNow"), object: self)
     }
 }

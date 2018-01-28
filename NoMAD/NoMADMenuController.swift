@@ -154,6 +154,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         // load up the actions
         
         nActionMenu.load()
+        nActionMenu.updateActions(self.userInformation.connected)
         
         print(defaults.integer(forKey: Preferences.autoRenewCert))
         
