@@ -27,7 +27,7 @@ NoMAD v. 1.1.3(882)
 - Better handling of current time when checking for UPCAlerts - should result in fewer spurious UPC Alerts - build 854
 - Actions menu - build 872
 - Lots of Actions menu update - build 882
-- Certs pulled via NoMAD can allow passwordless access to `airportd` and `eapolclient` when using the `AllowEAPOL` Boolean pref - 882
+- Certs pulled via NoMAD can allow passwordless access to `airportd` and `eapolclient` when using the `AllowEAPOL` Boolean pref - build 882
 
 ***NoMAD***
 
