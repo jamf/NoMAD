@@ -25,7 +25,7 @@ Within the `menu.nomad.actions` there are a few global pref keys that can determ
 
 ## Anatomy of an action
 
-An action is comprised of some meta data and then four phases. Each phase has a collection of Commands in them. These commands have the Command itself and then a CommandOptions that can modify the command. Commands can execute external scripts or use the built in functions included with Actions. The only required part of the Action is the name of the action, all the other parts are optional. To break out a sample Action
+An action is comprised of some meta data and then four phases. Each phase has a collection of Commands in them. These Commands have the Command itself and then a CommandOptions that can modify the command. Commands can execute external scripts or use the built in functions included with Actions. The only required part of the Action is the name of the action, all the other parts are optional. To break out a sample Action
 
 | Attribute  |Definition   |Type   | Required
 |---|---|---|---|---|
@@ -39,7 +39,7 @@ An action is comprised of some meta data and then four phases. Each phase has a 
 |Timer| Length in minutes between firing the Action | Int | no
 |ToolTip| The text to be shown when hovering over the menu item | String | no
 
-* Note that the Title command set can only have one command
+* Note that the Title Command set can only have one command
 * If the Title command returns "false" or "true" the text of the title won't be updated. Instead a red, in the case of "false", or green dot will be next to the menu item and the title will be the Name of the action set. If the Title command returns "yellow" a yellow dot will be shown next to the item.
 * An Action with the Name of "Separator" will become a separator bar in the menu.
 * An Action with no Action command set will be greyed out in the menu bar. If you'd like to have a menu item enabeld but with no action, add the "true" command to the Action command set.
