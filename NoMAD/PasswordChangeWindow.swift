@@ -36,23 +36,23 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
 
     @IBOutlet weak var secondaryAlert: NSButton!
     @IBOutlet weak var policyAlert: NSButton!
-    let caps: Set<Character> = Set("ABCDEFGHIJKLKMNOPQRSTUVWXYZ".characters)
-    let lowers: Set<Character> = Set("abcdefghijklmnopqrstuvwxyz".characters)
-    let numbers: Set<Character> = Set("1234567890".characters)
-    let symbols: Set<Character> = Set("!\"@#$%^&*()_-+={}[]|:;<>,.?~`\\/".characters)
-    var passwordPolicy = [String : AnyObject ]()
+    let caps: Set<Character> = Set("ABCDEFGHIJKLKMNOPQRSTUVWXYZ")
+    let lowers: Set<Character> = Set("abcdefghijklmnopqrstuvwxyz")
+    let numbers: Set<Character> = Set("1234567890")
+    let symbols: Set<Character> = Set("!\"@#$%^&*()_-+={}[]|:;<>,.?~`\\/")
+    @objc var passwordPolicy = [String : AnyObject ]()
 
-    var minLength: String = "0"
-    var minUpperCase: String = "0"
-    var minLowerCase: String = "0"
-    var minNumber: String = "0"
-    var minSymbol: String = "0"
-    var minMatches: String = "0"
+    @objc var minLength: String = "0"
+    @objc var minUpperCase: String = "0"
+    @objc var minLowerCase: String = "0"
+    @objc var minNumber: String = "0"
+    @objc var minSymbol: String = "0"
+    @objc var minMatches: String = "0"
     
     var policy: PasswordPolicy?
 
-    override var windowNibName: String! {
-        return "PasswordChangeWindow"
+    @objc override var windowNibName: NSNib.Name! {
+        return NSNib.Name(rawValue: "PasswordChangeWindow")
     }
 
     override func windowDidLoad() {
@@ -75,8 +75,8 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
             // set up a text field delegate
             newPassword.delegate = self
             newPasswordAgain.delegate = self
-            policyAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusUnavailable)
-            secondaryAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusUnavailable)
+            policyAlert.image = NSImage.init(imageLiteralResourceName: NSImage.Name.statusUnavailable.rawValue)
+            secondaryAlert.image = NSImage.init(imageLiteralResourceName: NSImage.Name.statusUnavailable.rawValue)
 
             passwordChangeButton.isEnabled = false
         }
@@ -88,7 +88,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
 
         // show the policy button
 
-        if let passwordPolicyText = defaults.string(forKey: Preferences.messagePasswordChangePolicy) {
+        if defaults.string(forKey: Preferences.messagePasswordChangePolicy) != nil {
             HelpButton.isEnabled = true
             HelpButton.isHidden = false
         } else {
@@ -162,7 +162,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
                 alertController.beginSheetModal(for: self.window!, completionHandler: nil)
                 passwordChangeSpinner.isHidden = true
                 passwordChangeSpinner.stopAnimation(nil)
-                EXIT_FAILURE
+                
             } else {
                 let alertController = NSAlert()
                 alertController.messageText = "PasswordChangeSuccessful".translate
@@ -178,7 +178,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
                 }
 
                 alertController.beginSheetModal(for: self.window!, completionHandler: {( response ) in
-                    if ( response == 0 ) {
+                    if ( response.rawValue == 0 ) {
                         self.close()
                     } else {
                         self.close()
@@ -191,7 +191,7 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
             let alertController = NSAlert()
             alertController.messageText = "PasswordMismatch".translate
             alertController.beginSheetModal(for: self.window!, completionHandler: nil)
-            EXIT_FAILURE
+
         }
     }
 
@@ -202,48 +202,48 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
         alertController.beginSheetModal(for: self.window!, completionHandler: nil)
     }
 
-    func checkPassword(pass: String) -> String {
+    @objc func checkPassword(pass: String) -> String {
 
         var result = ""
 
-        let capsOnly = String(pass.characters.filter({ (caps.contains($0))}))
-        let lowerOnly = String(pass.characters.filter({ (lowers.contains($0))}))
-        let numberOnly = String(pass.characters.filter({ (numbers.contains($0))}))
-        let symbolOnly = String(pass.characters.filter({ (symbols.contains($0))}))
+        let capsOnly = String(pass.filter({ (caps.contains($0))}))
+        let lowerOnly = String(pass.filter({ (lowers.contains($0))}))
+        let numberOnly = String(pass.filter({ (numbers.contains($0))}))
+        let symbolOnly = String(pass.filter({ (symbols.contains($0))}))
 
             var totalMatches = 0
 
             // TODO: set up all of these for translation
 
-            if pass.characters.count < Int(minLength)! {
+            if pass.count < Int(minLength)! {
                 result.append("Length requirement not met.\n")
             }
 
-            if capsOnly.characters.count < Int(minUpperCase)! {
+            if capsOnly.count < Int(minUpperCase)! {
                 result.append("Upper case character requirement not met.\n")
             } else {
                 totalMatches += 1
             }
 
-            if lowerOnly.characters.count < Int(minLowerCase)! {
+            if lowerOnly.count < Int(minLowerCase)! {
                 result.append("Lower case character requirement not met.\n")
             } else {
                 totalMatches += 1
             }
 
-            if numberOnly.characters.count < Int(minNumber)! {
+            if numberOnly.count < Int(minNumber)! {
                 result.append("Numeric character requirement not met.\n")
             } else {
                 totalMatches += 1
             }
 
-            if symbolOnly.characters.count < Int(minSymbol)! {
+            if symbolOnly.count < Int(minSymbol)! {
                 result.append("Symbolic character requirement not met.\n")
             } else {
                 totalMatches += 1
             }
 
-            if totalMatches >= Int(minMatches)! && Int(minMatches) != 0 && pass.characters.count >= Int(minLength)! {
+            if totalMatches >= Int(minMatches)! && Int(minMatches) != 0 && pass.count >= Int(minLength)! {
                 result = ""
             }
 
@@ -254,15 +254,15 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
     
     // make popover
     
-    func showPopover(object: NSView) {
+    @objc func showPopover(object: NSView) {
         popText.stringValue = policy?.checkPassword(pass: newPassword.stringValue, username: defaults.string(forKey: Preferences.userShortName)!) ?? "All policies have been met."
         pop.show(relativeTo: object.visibleRect, of: object, preferredEdge: .minY)
     }
     
     override func controlTextDidEndEditing(_ obj: Notification) {
-        
-        if obj.object.unsafelyUnwrapped as! NSSecureTextField == newPassword {
-            if policyAlert.image == NSImage.init(imageLiteralResourceName: NSImageNameStatusUnavailable) {
+        /// Changed to check for object equality
+        if obj.object.unsafelyUnwrapped as! NSSecureTextField === newPassword {
+            if policyAlert.image == NSImage.init(imageLiteralResourceName: NSImage.Name.statusUnavailable.rawValue) {
                 showPopover(object: newPassword)
             }
         }
@@ -276,35 +276,35 @@ class PasswordChangeWindow: NSWindowController, NSWindowDelegate, NSTextFieldDel
             let result = policy?.checkPassword(pass: newPassword.stringValue, username: defaults.string(forKey: Preferences.userShortName)!)
             if result == "" {
                 popText.stringValue = "All required policies met."
-                policyAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusAvailable)
+                policyAlert.image = NSImage.init(imageLiteralResourceName: NSImage.Name.statusAvailable.rawValue)
             } else {
                 popText.stringValue = result!
-                policyAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusUnavailable)
+                policyAlert.image = NSImage.init(imageLiteralResourceName: NSImage.Name.statusUnavailable.rawValue)
             }
             if newPasswordAgain.stringValue == newPassword.stringValue && newPassword.stringValue != "" {
-                secondaryAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusAvailable)
+                secondaryAlert.image = NSImage.init(imageLiteralResourceName: NSImage.Name.statusAvailable.rawValue)
             } else {
-                secondaryAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusUnavailable)
+                secondaryAlert.image = NSImage.init(imageLiteralResourceName: NSImage.Name.statusUnavailable.rawValue)
             }
         case newPasswordAgain :
             let result = policy?.checkPassword(pass: newPassword.stringValue, username: defaults.string(forKey: Preferences.userShortName)!)
             if result == "" {
                 popText.stringValue = "All required policies met."
-                policyAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusAvailable)
+                policyAlert.image = NSImage.init(imageLiteralResourceName: NSImage.Name.statusAvailable.rawValue)
             } else {
                 popText.stringValue = result!
-                policyAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusUnavailable)
+                policyAlert.image = NSImage.init(imageLiteralResourceName: NSImage.Name.statusUnavailable.rawValue)
             }
             if newPasswordAgain.stringValue == newPassword.stringValue && newPassword.stringValue != "" {
-                secondaryAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusAvailable)
+                secondaryAlert.image = NSImage.init(imageLiteralResourceName: NSImage.Name.statusAvailable.rawValue)
             } else {
-                secondaryAlert.image = NSImage.init(imageLiteralResourceName: NSImageNameStatusUnavailable)
+                secondaryAlert.image = NSImage.init(imageLiteralResourceName: NSImage.Name.statusUnavailable.rawValue)
             }
         default:
             break
         }
         
-        if secondaryAlert.image == NSImage.init(imageLiteralResourceName: NSImageNameStatusAvailable) && policyAlert.image == NSImage.init(imageLiteralResourceName: NSImageNameStatusAvailable) {
+        if secondaryAlert.image == NSImage.init(imageLiteralResourceName: NSImage.Name.statusAvailable.rawValue) && policyAlert.image == NSImage.init(imageLiteralResourceName: NSImage.Name.statusAvailable.rawValue) {
             passwordChangeButton.isEnabled = true
         } else {
             passwordChangeButton.isEnabled = false

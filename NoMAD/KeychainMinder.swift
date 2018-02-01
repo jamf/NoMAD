@@ -30,8 +30,8 @@ class KeychainMinder : NSWindowController, NSWindowDelegate {
 
     // overrides
 
-    override var windowNibName: String? {
-        return "KeychainMinder"
+    @objc override var windowNibName: NSNib.Name {
+        return NSNib.Name(rawValue: "KeychainMinder")
     }
 
     override func windowDidLoad() {
@@ -66,7 +66,7 @@ class KeychainMinder : NSWindowController, NSWindowDelegate {
 
     // functions
 
-    func clearWindow() {
+    @objc func clearWindow() {
         // clear out the fields
 
         oldPassword.stringValue = ""
@@ -75,7 +75,7 @@ class KeychainMinder : NSWindowController, NSWindowDelegate {
         activitySpinner.isHidden = true
     }
 
-    func startOperations() {
+    @objc func startOperations() {
         activitySpinner.startAnimation(nil)
         activitySpinner.isHidden = false
         changeButton.isEnabled = false
@@ -83,14 +83,14 @@ class KeychainMinder : NSWindowController, NSWindowDelegate {
         oldPassword.isEnabled = false
     }
 
-    func stopOperations() {
+    @objc func stopOperations() {
         activitySpinner.stopAnimation(nil)
         activitySpinner.isHidden = true
         newPassword.isEnabled = true
         oldPassword.isEnabled = true
     }
 
-    func changePassword() -> String {
+    @objc func changePassword() -> String {
 
         let new = newPassword.stringValue
         let old = oldPassword.stringValue
@@ -120,7 +120,7 @@ class KeychainMinder : NSWindowController, NSWindowDelegate {
         return ""
     }
 
-    func resetLocalKeychain() -> String {
+    @objc func resetLocalKeychain() -> String {
 
         let new = newPassword.stringValue
 
@@ -148,7 +148,7 @@ class KeychainMinder : NSWindowController, NSWindowDelegate {
         return ""
     }
 
-    func showAlert(message: String) {
+    @objc func showAlert(message: String) {
 
         let myAlert = NSAlert()
         myAlert.messageText = message

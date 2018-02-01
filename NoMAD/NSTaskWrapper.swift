@@ -27,7 +27,7 @@ public func cliTask( _ command: String, arguments: [String]? = nil) -> String {
             var x = 0
 
             for line in commandPieces {
-                if line.characters.last == "\\" {
+                if line.last == "\\" {
                     commandPieces[x] = commandPieces[x].replacingOccurrences(of: "\\", with: " ") + commandPieces.remove(at: x+1)
                     x -= 1
                 }
@@ -67,8 +67,8 @@ public func cliTask( _ command: String, arguments: [String]? = nil) -> String {
 
     let data = myPipe.fileHandleForReading.readDataToEndOfFile()
     let error = myErrorPipe.fileHandleForReading.readDataToEndOfFile()
-    let outputError = NSString(data: error, encoding: String.Encoding.utf8.rawValue) as! String
-    let output = NSString(data: data, encoding: String.Encoding.utf8.rawValue) as! String
+    let outputError = NSString(data: error, encoding: String.Encoding.utf8.rawValue)! as String
+    let output = NSString(data: data, encoding: String.Encoding.utf8.rawValue)! as String
 
     return output + outputError
 }
@@ -89,7 +89,7 @@ public func cliTaskNoTerm( _ command: String) -> String {
         var x = 0
 
         for line in commandPieces {
-            if line.characters.last == "\\" {
+            if line.last == "\\" {
                 commandPieces[x] = commandPieces[x].replacingOccurrences(of: "\\", with: " ") + commandPieces.remove(at: x+1)
                 x -= 1
             }
@@ -124,7 +124,7 @@ public func cliTaskNoTerm( _ command: String) -> String {
     myTask.launch()
 
     let data = myPipe.fileHandleForReading.readDataToEndOfFile()
-    let output = NSString(data: data, encoding: String.Encoding.utf8.rawValue) as! String
+    let output = NSString(data: data, encoding: String.Encoding.utf8.rawValue)! as String
 
     return output
 }
@@ -145,17 +145,9 @@ public func getConsoleUser() -> String {
 }
 
 public func getSerial() -> String {
-
-    guard let platformExpert: io_service_t = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("IOPlatformExpertDevice")),
-        let platformSerialNumberKey: CFString = kIOPlatformSerialNumberKey as CFString? else
-    {
-        return "Unknown"
-    }
-
-    let serialNumberAsCFString = IORegistryEntryCreateCFProperty(platformExpert, platformSerialNumberKey, kCFAllocatorDefault, 0)
-    let serialNumber = serialNumberAsCFString?.takeUnretainedValue() as! String
-    return serialNumber
-
+    let platformExpert = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("IOPlatformExpertDevice"))
+    let serialNumberAsCFString = IORegistryEntryCreateCFProperty(platformExpert, kIOPlatformSerialNumberKey as CFString, kCFAllocatorDefault, 0)
+    return serialNumberAsCFString?.takeUnretainedValue() as! String
 }
 
 // get hardware MAC addresss
@@ -186,7 +178,7 @@ private func which(_ command: String) -> String {
     task.launch()
 
     let data = whichPipe.fileHandleForReading.readDataToEndOfFile()
-    let output = NSString(data: data, encoding: String.Encoding.utf8.rawValue) as! String
+    let output = NSString(data: data, encoding: String.Encoding.utf8.rawValue)! as String
     
     if output == "" {
         NSLog("Binary doesn't exist")

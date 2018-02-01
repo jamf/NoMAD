@@ -131,7 +131,7 @@ class KlistUtil {
                 let name = GSSCredentialCopyName(cred!)
                 if name != nil {
                     let displayName = GSSNameCreateDisplayString(name!)!
-                    let displayNameString = String(describing: displayName.takeRetainedValue()) as! String
+                    let displayNameString = String(describing: displayName.takeRetainedValue()) 
                     print(displayNameString)
                     let lifetime = GSSCredentialGetLifetime(cred!)
                     let expiretime = Date().addingTimeInterval(TimeInterval(lifetime))

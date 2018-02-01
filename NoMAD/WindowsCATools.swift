@@ -111,8 +111,8 @@ class WindowsCATools {
                         let myCertRef = SecCertificateCreateWithData(nil, data! as CFData)
 
                         if myCertRef == nil {
-                            myLogger.logit(.base, message: "Error getting certificate.")
-                            //return
+                            myLogger.logit(.base, message: "Error getting certificate. Check template name and other configuration settings.")
+                            return
                         }
 
                         let dictionary: [NSString: AnyObject] = [
@@ -137,14 +137,14 @@ class WindowsCATools {
                     }
 
                     if (error != nil) {
-                        print(error!)
+                        print(error as Any)
                     }
                 })
 
             }
 
             if (error != nil) {
-                print(error!)
+                print(error as Any)
             }
         })
         return self.myImportError
@@ -182,15 +182,15 @@ class WindowsCATools {
 
             for line in responseLines! {
                 if line.contains("certnew.cer?ReqID=") {
-                    myresponse = reqIDRegEx.stringByReplacingMatches(in: line, options: [], range: NSMakeRange(0, line.characters.count), withTemplate: "")
-                    myresponse = reqIDRegExEnd.stringByReplacingMatches(in: myresponse, options: [], range: NSMakeRange(0, myresponse.characters.count), withTemplate: "").replacingOccurrences(of: "\r", with: "")
-                    return Int(myresponse)!
+                    myresponse = reqIDRegEx.stringByReplacingMatches(in: line, options: [], range: NSMakeRange(0, line.count), withTemplate: "")
+                    myresponse = reqIDRegExEnd.stringByReplacingMatches(in: myresponse, options: [], range: NSMakeRange(0, myresponse.count), withTemplate: "").replacingOccurrences(of: "\r", with: "")
+                    return Int(myresponse) ?? 0
                 }
             }
         } else {
             return 0
         }
-        return Int(myresponse)!
+        return Int(myresponse) ?? 0
     }
     
     func getCert(certID: Int, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
@@ -216,6 +216,8 @@ class WindowsCATools {
             ]
 
         // first generate the keypair
+        
+        let privateKeyName = "NoMAD:" + (defaults.string(forKey: Preferences.userEmail) ?? "")
 
         var keyGenDict: [String:AnyObject] = [
 
@@ -225,10 +227,28 @@ class WindowsCATools {
             kSecAttrKeyType as String : kSecAttrKeyTypeRSA as AnyObject,
             kSecAttrKeySizeInBits as String : "2048" as CFString,
             kSecAttrIsPermanent as String : true as AnyObject,
-            kSecAttrLabel as String : "NoMAD" as AnyObject,
+            kSecAttrLabel as String : privateKeyName as AnyObject,
             kSecPrivateKeyAttrs as String : privKeyGenDict as CFDictionary,
             kSecPublicKeyAttrs as String : pubKeyGenDict as CFDictionary,
             ]
+        
+        if defaults.bool(forKey: Preferences.allowEAPOL) {
+            
+            var access : SecAccess? = nil
+            
+            var eapolSecTrust : SecTrustedApplication? = nil
+            var airportdSecTrust : SecTrustedApplication? = nil
+            var nomadSecTrust : SecTrustedApplication? = nil
+            
+            err = SecTrustedApplicationCreateFromPath("/System/Library/SystemConfiguration/EAPOLController.bundle/Contents/Resources/eapolclient", &eapolSecTrust)
+            err = SecTrustedApplicationCreateFromPath("/usr/libexec/airportd", &airportdSecTrust)
+            err = SecTrustedApplicationCreateFromPath(CommandLine.arguments[0], &nomadSecTrust)
+            err = SecAccessCreate("NoMAD Cert" as CFString, [ eapolSecTrust, airportdSecTrust, nomadSecTrust] as CFArray, &access)
+            
+            if err == 0 {
+                keyGenDict[kSecAttrAccess as String] = access as AnyObject
+            }
+        }
 
         if defaults.bool(forKey: Preferences.exportableKey) {
             keyGenDict["extr"] = true as AnyObject
@@ -255,7 +275,7 @@ class WindowsCATools {
         
         err = SecItemCopyMatching(pubKeyDict as CFDictionary, &pubKeyBits)
         
-        pubKeyData = (pubKeyDataPtr! as? Data)!
+        pubKeyData = (pubKeyDataPtr! as Data)
         
         return pubKeyDataPtr! as Data
         
@@ -276,7 +296,7 @@ class WindowsCATools {
             resultString = kCryptoExportImportManagerRequestInitialTag
         }
         var charCount = 0
-        for character in base64EncodedString.characters {
+        for character in base64EncodedString {
             charCount += 1
             currentLine.append(character)
             if charCount == kCryptoExportImportManagerPublicNumberOfCharactersInALine {
@@ -286,7 +306,7 @@ class WindowsCATools {
             }
         }
         // final line (if any)
-        if currentLine.characters.count > 0 { resultString += currentLine + "\n" }
+        if currentLine.count > 0 { resultString += currentLine + "\n" }
         // final tag
         if PEMType == "RSA" {
             resultString += kCryptoExportImportManagerPublicKeyFinalTag

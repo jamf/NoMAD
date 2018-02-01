@@ -18,8 +18,8 @@ let updateNotification = Notification(name: Notification.Name(rawValue: "menu.no
 
 class AppDelegate: NSObject, NSApplicationDelegate {
 
-    var refreshTimer: Timer?
-    var refreshActivity: NSBackgroundActivityScheduler?
+    @objc var refreshTimer: Timer?
+    @objc var refreshActivity: NSBackgroundActivityScheduler?
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         
@@ -51,7 +51,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
             if (defaults.string(forKey: Preferences.stateChangeAction) != "" ) {
                 myLogger.logit(.base, message: "Firing State Change Action")
-                cliTask(defaults.string(forKey: Preferences.stateChangeAction)! + " &")
+                let _ = cliTask(defaults.string(forKey: Preferences.stateChangeAction)! + " &")
             }
         }
 
@@ -76,13 +76,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         refreshTimer?.invalidate()
     }
 
-    func sendUpdateMessage() {
+    @objc func sendUpdateMessage() {
         myLogger.logit(.base, message: "It's been a while, checking things.")
         NotificationQueue.default.enqueue(updateNotification, postingStyle: .now)
     }
 
     /// Schedule our update notification to fire every 15 minutes or so.
-    func scheduleTimer() {
+    @objc func scheduleTimer() {
         if #available(OSX 10.12, *) {
             refreshActivity = NSBackgroundActivityScheduler(identifier: "com.trusourcelabs.updatecheck")
             refreshActivity?.repeats = true

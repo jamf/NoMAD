@@ -18,9 +18,10 @@ class Welcome: NSWindowController, NSWindowDelegate {
     
     @IBOutlet weak var webView: WebView!
     @IBOutlet weak var versionField: NSTextField!
+    @IBOutlet weak var dontShowWelcome: NSButton!
     
-    override var windowNibName: String? {
-        return "Welcome"
+    @objc override var windowNibName: NSNib.Name {
+        return NSNib.Name(rawValue: "Welcome")
     }
     
     override func windowDidLoad() {
@@ -30,6 +31,10 @@ class Welcome: NSWindowController, NSWindowDelegate {
         
         welcomeWindow.window?.title = "Welcome to " + ((Bundle.main.bundlePath.components(separatedBy: "/").last?.replacingOccurrences(of: ".app", with: "")) ?? "NoMAD" )
         
+        if defaults.bool(forKey: Preferences.dontShowWelcomeDefaultOn) {
+            dontShowWelcome.state = NSControl.StateValue(rawValue: 1)
+            defaults.set(true, forKey: Preferences.dontShowWelcome)
+        }
         
         // Setting the welcome splash screen
         do {

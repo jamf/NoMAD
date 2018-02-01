@@ -30,7 +30,7 @@ class UserInformation {
     var userPrincipalShort: String
     var userDisplayName: String
     var userPasswordSetDate = NSDate()
-    var userPasswordExpireDate = NSDate()
+    var userPasswordExpireDate = NSDate.distantPast as NSDate
     var userHome: String
 
     var userEmail: String
@@ -48,6 +48,11 @@ class UserInformation {
     let myKeychainUtil = KeychainUtil()
 
     var UserPasswordSetDates = [String : AnyObject ]()
+    
+    // timer information
+    
+    var myTimer: Timer?
+    var timerDate: Date?
 
     init() {
         // zero everything out
@@ -56,7 +61,7 @@ class UserInformation {
         userLongName = ""
         userPrincipal = ""
         userPrincipalShort = ""
-        userPasswordSetDate = NSDate()
+        userPasswordSetDate = NSDate.distantPast as NSDate
         userPasswordExpireDate = NSDate()
         userHome = ""
         userCertDate = NSDate()
@@ -108,7 +113,7 @@ class UserInformation {
         // 1. check if AD can be reached
 
         var canary = true
-        checkNetwork()
+        let _ = checkNetwork()
 
         //myLDAPServers.tickets.getDetails()
 
@@ -183,10 +188,10 @@ class UserInformation {
                 
                 if defaults.bool(forKey: Preferences.recursiveGroupLookup) {
                     let attributes = ["name"]
-                     let searchTerm = "(member:1.2.840.113556.1.4.1941:=" + dn.replacingOccurrences(of: "\\", with: "\\\\5c") + ")"
+                     let searchTerm = "(member:1.2.840.113556.1.4.1941:=" + dn.replacingOccurrences(of: "\\", with: "\\5c") + ")"
                     if let ldifResult = try? myLDAPServers.getLDAPInformation(attributes, searchTerm: searchTerm) {
-                        print(ldifResult)
-                        
+                        myLogger.logit(.debug, message: "Raw group results: " + String(describing: ldifResult))
+
                         groupsTemp = ""
                         for item in ldifResult {
                             for components in item {
@@ -242,7 +247,7 @@ class UserInformation {
                     var passwordExpirationLength: String
                     let attribute = "maxPwdAge"
                     
-                    if defaults.integer(forKey: Preferences.passwordExpirationDays) != nil {
+                    if defaults.integer(forKey: Preferences.passwordExpirationDays) != 0 {
                         passwordExpirationLength = String(describing: defaults.integer(forKey: Preferences.passwordExpirationDays))
                     } else {
 
@@ -253,7 +258,7 @@ class UserInformation {
                     }
                 }
 
-                    if ( passwordExpirationLength.characters.count > 15 ) {
+                    if ( passwordExpirationLength.count > 15 ) {
                         passwordAging = false
                     } else if ( passwordExpirationLength != "" ) && userPasswordUACFlag != "" {
                         if ~~( Int(userPasswordUACFlag)! & 0x10000 ) {
@@ -301,16 +306,28 @@ class UserInformation {
             // Check if the password was changed without NoMAD knowing.
             myLogger.logit(LogLevel.debug, message: "Password set: " + String(describing: UserPasswordSetDates[userPrincipal]))
             if (UserPasswordSetDates[userPrincipal] != nil) && ( (UserPasswordSetDates[userPrincipal] as? String) != "just set" ) {
+                
                 // user has been previously set so we can check it
+                // but first check to see that we actually connected successfully
 
                 if let passLastChangeDate = (UserPasswordSetDates[userPrincipal] as? Date ) {
-                    if ((userPasswordSetDate.timeIntervalSince(passLastChangeDate as Date)) > 1 * 60 ){
+                    if ((userPasswordSetDate.timeIntervalSince(passLastChangeDate as Date)) > 1 * 60 ) && canary && passLastChangeDate != NSDate.distantPast {
 
                     myLogger.logit(.base, message: "Password was changed underneath us.")
                         
+                        // if we are using a web method to change the password we should update more often
+                        
+                        if defaults.string(forKey: Preferences.changePasswordType) == "URL" {
+                            
+                            timerDate = Date()
+                            
+                            myTimer = Timer.init(timeInterval: 30, target: self, selector: #selector(postUpdate), userInfo: nil, repeats: true)
+                            RunLoop.main.add(myTimer!, forMode: .commonModes)
+                        }
+                        
                     if (defaults.string(forKey: Preferences.uPCAlertAction) != nil ) && (defaults.string(forKey: Preferences.uPCAlertAction) != "" ) {
                         myLogger.logit(.base, message: "Firing UPC Alert Action")
-                        cliTask(defaults.string(forKey: Preferences.uPCAlertAction)! + " &")
+                       let _ = cliTask(defaults.string(forKey: Preferences.uPCAlertAction)! + " &")
                     }
 
                     // record the new password set date
@@ -318,7 +335,7 @@ class UserInformation {
                     UserPasswordSetDates[userPrincipal] = userPasswordSetDate
                     defaults.set(UserPasswordSetDates, forKey: Preferences.userPasswordSetDates)
                     
-                    // set a flag it we should alert the user
+                    // set a flag if we should alert the user
                     if (defaults.bool(forKey: Preferences.uPCAlert ) == true) {
 
                         // fire the notification
@@ -403,6 +420,16 @@ class UserInformation {
             defaults.set(groups, forKey: Preferences.groups)
             defaults.set(UPN, forKey: Preferences.userUPN)
             defaults.set(userEmail, forKey: Preferences.userEmail)
+        }
+    }
+    
+    // for timer - post update
+    
+    @objc func postUpdate() {
+        NotificationQueue.default.enqueue(updateNotification, postingStyle: .now)
+        
+        if (timerDate?.timeIntervalSinceNow)! < ( 0 - ( 15 * 60 )) {
+            myTimer?.invalidate()
         }
     }
 }

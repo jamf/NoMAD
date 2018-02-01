@@ -118,11 +118,11 @@ public class CertificateSigningRequest:NSObject {
         self.init(commonName: nil, organizationName:nil, organizationUnitName:nil, countryName:nil, cryptoAlgorithm: cryptoAlgorithm)
     }
 
-    public func build(_ publicKeyBits:Data, privateKey: SecKey) -> Data?{
+    @objc public func build(_ publicKeyBits:Data, privateKey: SecKey) -> Data?{
 
         var certificationRequestInfo = buldCertificationRequestInfo(publicKeyBits)
         var shaBytes:[UInt8]
-        var padding:SecPadding
+        // let padding = SecPadding.PKCS1SHA1 // Not needed on macOS as there is only one choice.
         var certificationRequestInfoBytes = [UInt8](repeating: 0, count: certificationRequestInfo.count)
         certificationRequestInfo.copyBytes(to: &certificationRequestInfoBytes, count: certificationRequestInfo.count)
         var digest:[UInt8]
@@ -137,7 +137,6 @@ public class CertificateSigningRequest:NSObject {
             digest = [UInt8](repeating: 0, count: cryptoAlgorithm.digestLength)
             CC_SHA1_Final(&digest, &SHA1)
             shaBytes = SEQUENCE_OBJECT_sha1WithRSAEncryption
-            padding = SecPadding.PKCS1SHA1
 
         case .sha256:
 
@@ -148,7 +147,6 @@ public class CertificateSigningRequest:NSObject {
             digest = [UInt8](repeating: 0, count: cryptoAlgorithm.digestLength)
             CC_SHA256_Final(&digest, &SHA256)
             shaBytes = SEQUENCE_OBJECT_sha256WithRSAEncryption
-            padding = SecPadding.PKCS1SHA1
 
         case .sha512:
 
@@ -159,7 +157,6 @@ public class CertificateSigningRequest:NSObject {
             digest = [UInt8](repeating: 0, count: cryptoAlgorithm.digestLength)
             CC_SHA512_Final(&digest, &SHA512)
             shaBytes = SEQUENCE_OBJECT_sha512WithRSAEncryption
-            padding = SecPadding.PKCS1SHA1
 
         default:
 
@@ -169,7 +166,7 @@ public class CertificateSigningRequest:NSObject {
 
         // Build signature - step 2: Sign hash
         var signature = [UInt8](repeating: 0, count: 256)
-        var signatureLen = signature.count
+        let signatureLen = signature.count
 
         // this is iOS-only - converted to using SecTransform - Joel Rennich
 
@@ -204,7 +201,7 @@ public class CertificateSigningRequest:NSObject {
         return certificationRequest
     }
 
-    func buldCertificationRequestInfo(_ publicKeyBits:Data) -> Data{
+    @objc func buldCertificationRequestInfo(_ publicKeyBits:Data) -> Data{
         var certificationRequestInfo = Data(capacity: 256)
 
         //Add version
@@ -249,7 +246,7 @@ public class CertificateSigningRequest:NSObject {
     }
 
     /// Utility class methods ...
-    func buildPublicKeyInfo(_ publicKeyBits:Data)-> Data{
+    @objc func buildPublicKeyInfo(_ publicKeyBits:Data)-> Data{
 
         var publicKeyInfo = Data(capacity: 390)
 
@@ -358,7 +355,7 @@ public class CertificateSigningRequest:NSObject {
 
     // From http://stackoverflow.com/questions/3840005/how-to-find-out-the-modulus-and-exponent-of-rsa-public-key-on-iphone-objective-c
 
-    func getPublicKeyExp(_ publicKeyBits:Data)->Data{
+    @objc func getPublicKeyExp(_ publicKeyBits:Data)->Data{
 
         var iterator = 0
 
@@ -377,7 +374,7 @@ public class CertificateSigningRequest:NSObject {
         return publicKeyBits.subdata(in: range)
     }
 
-    func getPublicKeyMod(_ publicKeyBits: Data)->Data{
+    @objc func getPublicKeyMod(_ publicKeyBits: Data)->Data{
 
         var iterator = 0
 
