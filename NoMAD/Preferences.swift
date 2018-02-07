@@ -219,6 +219,7 @@ enum Preferences {
     static let hidePrefs = "HidePrefs"
     static let hideQuit = "HideQuit"
     static let hideSignOut = "HideSignOut"
+    static let homeAppendDomain = "HomeAppendDomain"
     static let iconOff = "IconOff"
     static let iconOffDark = "IconOffDark"
     static let iconOn = "IconOn"
