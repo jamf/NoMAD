@@ -52,6 +52,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     @IBOutlet weak var NoMADMenuGetHelp: NSMenuItem!
     @IBOutlet weak var NoMADMenuHiddenItem1: NSMenuItem!
     @IBOutlet weak var NoMADMenuPreferences: NSMenuItem!
+    @IBOutlet weak var NoMADMenuAbout: NSMenuItem!
     @IBOutlet weak var NoMADMenuQuit: NSMenuItem!
     @IBOutlet weak var NoMADMenuSpewLogs: NSMenuItem!
     @IBOutlet weak var NoMADMenuGetCertificateDate: NSMenuItem!
@@ -311,6 +312,16 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             configureChrome()
         }
         
+        // hide About if told to
+        
+        if defaults.bool(forKey: Preferences.hideAbout) {
+            NoMADMenuAbout.isHidden = true
+        }
+        
+        // change the About name if we need to
+        
+        NoMADMenuAbout.title = defaults.string(forKey: Preferences.menuAbout) ?? "About"
+        
         // hide the Quit button if told to
         
         if CommandLine.arguments.contains("-noquit") || defaults.bool(forKey: Preferences.hideQuit) {
@@ -351,6 +362,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     
     // Show the login window when the menu item is clicked
     @IBAction func NoMADMenuClickLogIn(_ sender: NSMenuItem) {
+        
+        DispatchQueue.main.async {
         
         if defaults.bool(forKey: Preferences.useKeychain) && (defaults.string(forKey: Preferences.lastUser) != "" ) {
             
@@ -416,6 +429,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             }
         }
         loginWindow.window!.forceToFrontAndFocus(nil)
+        }
     }
     
     // show the password change window when the menu item is clicked
@@ -542,6 +556,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     // shows the preferences window
     @IBAction func NoMADMenuClickPreferences(_ sender: NSMenuItem) {
         preferencesWindow.window!.forceToFrontAndFocus(nil)
+    }
+    
+    @IBAction func NoMADMenuClickAbout(_ sender: Any) {
+        welcome.window?.forceToFrontAndFocus(nil)
     }
     
     // quit when asked
@@ -827,7 +845,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 myLogger.logit(LogLevel.base, message: myResult)
             }
             
+            DispatchQueue.main.async {
+
             loginWindow.window!.forceToFrontAndFocus(nil)
+            }
             
         } else if notification.actionButtonTitle == "Ignore" {
             return
@@ -897,7 +918,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 myLogger.logit(.base, message: "Unable to find password in keychain for auto-login.")
                 updateUserInfo()
                 if defaults.bool(forKey: Preferences.useKeychainPrompt) {
+                    DispatchQueue.main.async {
                     loginWindow.window!.forceToFrontAndFocus(nil)
+                    }
                 }
                 return
             }
@@ -953,7 +976,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     myLogger.logit(.base, message:"Error deleting Keychain entry.")
                 }
                 // now show the window
+                DispatchQueue.main.async {
                 loginWindow.window!.forceToFrontAndFocus(nil)
+                }
             } else  {
                 myLogger.logit(.base, message:"Error attempting to automatically log in.")
                 return
@@ -978,7 +1003,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 
             } catch {
                 // no password - prompt the user to sign in
+                DispatchQueue.main.async {
                 loginWindow.window!.forceToFrontAndFocus(nil)
+                }
             }
         }
     }
@@ -1077,7 +1104,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     }
                     doTheNeedfull()
                 } else {
+                    DispatchQueue.main.async {
                     loginWindow.window!.forceToFrontAndFocus(nil)
+                    }
                 }
             }
         case "update":
