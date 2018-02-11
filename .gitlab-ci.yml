@@ -1,0 +1,8 @@
+stages:
+  - build
+
+build_project:
+  stage: build
+  script:
+    - xcodebuild clean -project NoMAD.xcodeproj -scheme NoMAD | xcpretty
+    - xcodebuild test -project NoMAD.xcodeproj -scheme NoMAD | xcpretty -s
