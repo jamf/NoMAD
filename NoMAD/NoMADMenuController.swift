@@ -71,6 +71,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     @objc var iconOnOff = NSImage()
     @objc var iconOffOff = NSImage()
     
+    @objc var iconAltOnOn = NSImage()
+    @objc var iconAltOnOff = NSImage()
+    @objc var iconAltOffOff = NSImage()
+    
     @objc var myIconOn = NSImage()
     @objc var myIconOff = NSImage()
     
@@ -192,18 +196,35 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 iconOnOn = myIconOn
                 iconOnOff = NSImage(named: NSImage.Name(rawValue: "NoMAD-statusicon-on-off"))!
                 iconOffOff = myIconOff
+                
+                // and the alternates
+                
+                iconAltOnOn = myIconOnDark
+                iconAltOnOff = myIconOffDark
+                iconAltOffOff = myIconOffDark
+                
             } else {
                 iconOnOn = NSImage(named: NSImage.Name(rawValue: "NoMAD-Caribou-on"))!
                 iconOffOff = NSImage(named: NSImage.Name(rawValue: "NoMAD-Caribou-off"))!
+                
+                iconAltOffOff = NSImage(named: NSImage.Name(rawValue: "NoMAD-Caribou-dark-off"))!
+                iconAltOnOn = NSImage(named: NSImage.Name(rawValue: "NoMAD-Caribou-dark-on"))!
             }
         } else {
             if !defaults.bool(forKey: Preferences.caribouTime) {
                 iconOnOn = myIconOnDark
                 //iconOnOff = NSImage(named: "NoMAD-statusicon-on-off")
                 iconOffOff = myIconOffDark
+                
+                iconAltOnOn = myIconOn
+                iconAltOffOff = myIconOff
+                
             } else {
                 iconOnOn = NSImage(named: NSImage.Name(rawValue: "NoMAD-Caribou-dark-on"))!
                 iconOffOff = NSImage(named: NSImage.Name(rawValue: "NoMAD-Caribou-dark-off"))!
+                
+                iconAltOffOff = NSImage(named: NSImage.Name(rawValue: "NoMAD-Caribou-off"))!
+                iconAltOnOn = NSImage(named: NSImage.Name(rawValue: "NoMAD-Caribou-on"))!
             }
         }
         
@@ -1314,6 +1335,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     // set the menu icon
                     if self.userInformation.status == "Connected" {
                         self.statusItem.image = self.iconOnOff
+                        self.statusItem.alternateImage = self.iconAltOnOff
+                        
                         // we do this twice b/c doing it only once seems to make it less than full width
                         self.statusItem.title = self.userInformation.status.translate
                         self.statusItem.title = self.userInformation.status.translate
@@ -1325,6 +1348,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         
                     } else if self.userInformation.status == "Logged In" && self.userInformation.myLDAPServers.tickets.state || defaults.bool(forKey: Preferences.persistExpiration) {
                         self.statusItem.image = self.iconOnOn
+                        self.statusItem.alternateImage = self.iconAltOnOn
                         
                         // if we're logged in we enable some options
                         
@@ -1399,6 +1423,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         }
                     } else {
                         self.statusItem.image = self.iconOffOff
+                        self.statusItem.alternateImage = self.iconAltOffOff
                         
                         self.NoMADMenuTicketLife.title = "NoMAD Version: " + String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!)
                         
