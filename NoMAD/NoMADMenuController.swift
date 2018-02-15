@@ -358,6 +358,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             })
         }
         
+        // check for a Kerberos preference file
+        
+        configureKerbPefs()
+        
         firstRun = false
         
         // set up menu titles w/translation
@@ -1192,6 +1196,45 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.statusItem.image = self.iconOnOn
         } else {
             self.statusItem.image = self.iconOffOff
+        }
+    }
+    
+    // function to ensure that the basic kerb prefs are there
+    
+    @objc func configureKerbPefs() {
+        let homePath = NSHomeDirectory() + "/Library/Preferences/com.apple.Kerberos.plist"
+        
+        let plistRaw = try? Data.init(contentsOf: URL.init(fileURLWithPath: homePath))
+        
+        if plistRaw == nil {
+            return
+        }
+        
+        guard var plistDict = try? PropertyListSerialization.propertyList(from: plistRaw!, options: .mutableContainersAndLeaves, format: nil) as? [ String : Any ] else { return }
+        
+        // check for a default realm
+        
+        if ( plistDict!["libdefaults"] ?? nil ) == nil {
+            
+            myLogger.logit(.base, message: "Writing out default Kerberos realm.")
+            
+            // no realm so build one
+            
+            let defaultBlock = [
+                "default_realm" : defaults.string(forKey: Preferences.kerberosRealm) ?? "none"
+            ]
+            plistDict!["libdefaults"] = defaultBlock
+            
+            // no make it back into a plist
+            
+            guard let plistData = try? PropertyListSerialization.data(fromPropertyList: plistDict ?? [String : Any ](), format: .binary, options: PropertyListSerialization.WriteOptions.init(0)) else { return }
+            
+            // write it out
+            
+            try? plistData.write(to: URL.init(fileURLWithPath: homePath))
+            
+        } else {
+            myLogger.logit(.base, message: "Kerberos configuration file exists")
         }
     }
     
