@@ -294,6 +294,7 @@ enum Preferences {
     static let siteIgnore = "SiteIgnore"
     static let siteForce = "SiteForce"
     static let stateChangeAction = "StateChangeAction"
+    static let switchKerberosUser = "SwitchKerberosUser"
     static let template = "Template"
     static let titleSignIn = "TitleSignIn"
     static let uPCAlert = "UPCAlert"
