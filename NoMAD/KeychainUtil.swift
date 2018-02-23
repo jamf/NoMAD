@@ -14,6 +14,7 @@ import Security
 struct certDates {
     var serial: String
     var expireDate: Date
+    var expireInt: Int
     var certRef: SecIdentity?
 }
 
@@ -240,7 +241,7 @@ class KeychainUtil {
                                 
                                 // pack the data up into a certDate
                                 
-                                let certificate = certDates( serial: serial, expireDate: expireDate, certRef: cert as! SecIdentity)
+                                let certificate = certDates( serial: serial, expireDate: expireDate, expireInt: Int(expireDate.timeIntervalSince1970), certRef: cert as! SecIdentity)
                                 
                                 // append to the list
                                 
@@ -665,7 +666,7 @@ class KeychainUtil {
         
         if certListTemp?.count ?? 0 > 0 {
             
-            _ = certListTemp?.sorted(by: {$0.expireDate.compare($1.expireDate) == .orderedAscending })
+            _ = certListTemp?.sorted(by: { $0.expireInt > $1.expireInt })
             
             for i in 0...(certListTemp!.count - 1) {
                 

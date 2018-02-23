@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="16D12b" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -97,6 +98,12 @@
                         <action selector="NoMADMenuClickSpewLogs:" target="Gp4-Xp-pEc" id="aX2-5X-Gjx"/>
                     </connections>
                 </menuItem>
+                <menuItem title="About" id="g1W-Ne-4fq">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="NoMADMenuClickAbout:" target="Gp4-Xp-pEc" id="rtL-Y6-rtm"/>
+                    </connections>
+                </menuItem>
                 <menuItem title="Quit" id="gM7-FQ-f0l">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
@@ -109,6 +116,7 @@
         <customObject id="Gp4-Xp-pEc" userLabel="NoMADMenuController" customClass="NoMADMenuController" customModule="NoMAD" customModuleProvider="target">
             <connections>
                 <outlet property="NoMADMenu" destination="eKu-sI-x3b" id="Wyg-fq-yBG"/>
+                <outlet property="NoMADMenuAbout" destination="g1W-Ne-4fq" id="zcL-gD-PGW"/>
                 <outlet property="NoMADMenuChangePassword" destination="0IM-ZO-KLA" id="iVk-Xe-XSm"/>
                 <outlet property="NoMADMenuGetCertificate" destination="AlW-9M-CK2" id="3Dc-Wx-115"/>
                 <outlet property="NoMADMenuGetCertificateDate" destination="A9U-v2-LiT" id="bJZ-l5-Dcn"/>

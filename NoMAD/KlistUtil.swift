@@ -197,6 +197,14 @@ class KlistUtil {
             state = false
         }
         
+        // check for the default being the right one
+        
+        if defaults.bool(forKey: Preferences.switchKerberosUser) {
+            
+            if defaultPrincipal != defaults.string(forKey: Preferences.userPrincipal) {
+                            }
+        }
+        
         defaults.set(state, forKey: Preferences.signedIn)
     }
     
