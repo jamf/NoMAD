@@ -58,15 +58,46 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
         setWindowToLogin()
         self.window?.center()
         
-        //if defaults.bool(forKey: Preferences.signInWindowAlert) {
-            myLogger.logit(.base, message: "Setting up timer to alert on Sign In window.")
-            var alertTime = 120
-        if defaults.integer(forKey:Preferences.signInWindowAlertTime) != 0 {
-            alertTime = defaults.integer(forKey:Preferences.signInWindowAlertTime)
+        // DEBUG testing
+        // write out when we would have fired an alert...
+        
+        let now = Date.init()
+        let nowString = now.description(with: Locale.current)
+        let logPath = "/var/tmp/NoMAD.log"
+        
+        let fs = FileManager.default
+        
+        let stamp = nowString + " \n"
+        
+        if fs.fileExists(atPath: logPath) {
+            let handle = FileHandle.init(forWritingAtPath: logPath)
+            
+            if handle != nil {
+                // we have a handle lets write
+                
+                handle?.seekToEndOfFile()
+                handle?.write(stamp.data(using: String.Encoding.utf8)!)
+                handle?.closeFile()
+            }
+        } else {
+            // no file so let's make it
+            
+            do {
+                try stamp.write(toFile: logPath, atomically: true, encoding: String.Encoding.utf8)
+            } catch {
+                print("Unable to make file")
+            }
+            
         }
+        
+        if defaults.integer(forKey: Preferences.signInWindowAlertTime) != 0 {
+            myLogger.logit(.base, message: "Setting up timer to alert on Sign In window.")
+            
+            let alertTime = defaults.integer(forKey:Preferences.signInWindowAlertTime)
+            
             alertTimer = Timer.init(timeInterval: TimeInterval(alertTime), target: self, selector: #selector(showAlert), userInfo: nil, repeats: true)
             RunLoop.main.add(alertTimer!, forMode: .commonModes)
-        //}
+        }
     }
     
     func windowShouldClose(_ sender: Any) -> Bool {
@@ -209,6 +240,8 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
             // Only used if console user is not AD.
             var doLocalPasswordSync = false
             
+            myLogger.logit(.debug, message: "Checking for local password sync")
+            
             if defaults.bool(forKey: Preferences.localPasswordSync) {
                 if !suppressPasswordChange {
                     // first we assume we'll sync all passwords until we decide that we shouldn't
@@ -216,6 +249,10 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
                     doLocalPasswordSync = true
                     
                     // 1. check if this is a network user that shouldn't sync
+                    
+                    myLogger.logit(.debug, message: "checking for user not to sync.")
+                    print(defaults.array(forKey: Preferences.localPasswordSyncDontSyncNetworkUsers))
+                    print(userNameChecked)
                     
                     if let blockList = defaults.array(forKey: Preferences.localPasswordSyncDontSyncNetworkUsers) {
                         for user in blockList {
@@ -228,6 +265,10 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
 
                     // 2. check if the local user is on a block list
                     
+                    myLogger.logit(.debug, message: "checking for user on block list.")
+                    print(defaults.array(forKey: Preferences.localPasswordSyncDontSyncLocalUsers))
+                    print(NSUserName())
+                    
                     if let blocklist = defaults.array(forKey: Preferences.localPasswordSyncDontSyncLocalUsers) {
                         for user in blocklist {
                             if user as! String == NSUserName() {
@@ -238,6 +279,10 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
                     }
                     
                     // 3. check for name matches
+                    
+                    myLogger.logit(.debug, message: "checking for name matches.")
+
+                    print(defaults.bool(forKey: Preferences.localPasswordSyncOnMatchOnly))
                     
                     if defaults.bool(forKey: Preferences.localPasswordSyncOnMatchOnly) {
                         // check to see if local name matches network name
