@@ -647,6 +647,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 certCATest = "https://" + certCATest
             }
             
+            let certCARequest = WindowsCATools(serverURL: certCATest, template: certTemplateTest)
+            //let _ = certCARequest.certEnrollment()
+            let _ = certCARequest.TCSCertEnroll()
+            
+            return
+            
             // preflight that there aren't SSL issues
             var caTestWait = true
             var caSSLTest = true
@@ -676,7 +682,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             } else {
                 
                 let certCARequest = WindowsCATools(serverURL: certCATest, template: certTemplateTest)
-                let _ = certCARequest.certEnrollment()
+                //let _ = certCARequest.certEnrollment()
+                let _ = certCARequest.TCSCertEnroll()
             }
             
         } else {

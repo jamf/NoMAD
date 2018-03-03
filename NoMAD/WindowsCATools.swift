@@ -8,6 +8,7 @@
 
 import Foundation
 import Security
+import TCSCertificateRequest
 
 class WindowsCATools {
 
@@ -16,6 +17,7 @@ class WindowsCATools {
     private var api: String
     var certCSR: String
     var certTemplate: String
+    var caServer: String
     var myImportError: OSStatus
 
     private let kCryptoExportImportManagerPublicKeyInitialTag = "-----BEGIN RSA PUBLIC KEY-----\n"
@@ -51,7 +53,7 @@ class WindowsCATools {
         // TODO: Validate the URL
 
         self.api = "\(serverURL)/certsrv/"
-
+        caServer = serverURL
         uuid = CFUUIDCreate(nil)
         uuidString = CFUUIDCreateString(nil, uuid) as String?
 
@@ -69,6 +71,48 @@ class WindowsCATools {
         kPublicKeyTag = "com.NoMAD.CSR.publickey." + now!
 
         sema = DispatchSemaphore( value: 0 )
+    }
+    
+    func TCSCertEnroll() {
+        // generate the keypair
+        
+        genKeys()
+        let myPubKeyData = getPublicKeyasData()
+        let myCSRGen = CertificateSigningRequest(commonName: "NoMAD", organizationName: "Orchard & Grove", organizationUnitName: "WorldHQ", countryName: "US", cryptoAlgorithm: CryptoAlgorithm.sha1)
+        let myCSR = myCSRGen.build(myPubKeyData, privateKey: privKey!)
+        
+        let certReq = try? TCSADCertificateRequest.init(serverName: defaults.string(forKey: Preferences.x509CA), certificateAuthorityName: "nomad-DC1-CA", certificateTemplate: defaults.string(forKey: Preferences.template), verbose: true)
+        do {
+            let signedCSR = try certReq?.submitRequestToActiveDirectory(withCSR: myCSR)
+            let myCertRef = SecCertificateCreateWithData(nil, signedCSR! as CFData)
+            
+            if myCertRef == nil {
+                myLogger.logit(.base, message: "Error getting certificate. Check template name and other configuration settings.")
+                return
+            }
+            
+            let dictionary: [NSString: AnyObject] = [
+                kSecClass: kSecClassCertificate,
+                kSecReturnRef : kCFBooleanTrue,
+                kSecValueRef: myCertRef!
+            ];
+            
+            var mySecRef : AnyObject? = nil
+            
+            self.myImportError = SecItemAdd(dictionary as CFDictionary, &mySecRef)
+            
+            var myIdentityRef : SecIdentity? = nil
+            
+            SecIdentityCreateWithCertificate(nil, myCertRef!, &myIdentityRef)
+            
+            if let networks = defaults.array(forKey: Preferences.wifiNetworks) {
+                for network in networks as! [String] {
+                    SecIdentitySetPreferred(myIdentityRef, ("com.apple.network.eap.user.identity.wlan.ssid." + network) as CFString , nil)
+                }
+            }
+        } catch {
+            print("Didn't make it")
+        }
     }
 
     func certEnrollment() -> OSStatus {
