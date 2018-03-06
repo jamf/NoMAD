@@ -647,11 +647,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 certCATest = "https://" + certCATest
             }
             
-            let certCARequest = WindowsCATools(serverURL: certCATest, template: certTemplateTest)
-            //let _ = certCARequest.certEnrollment()
-            let _ = certCARequest.TCSCertEnroll()
+            if defaults.string(forKey: Preferences.x509Name) != "" && defaults.string(forKey: Preferences.x509Name) != nil {
+                let certCARequest = WindowsCATools(serverURL: certCATest, template: certTemplateTest)
+                let _ = certCARequest.TCSCertEnroll()
             
-            return
+                return
+            }
             
             // preflight that there aren't SSL issues
             var caTestWait = true
@@ -1608,6 +1609,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     if self.userInformation.status == "Logged In" {
                         
                         self.myShareMenuItem.title = defaults.string(forKey: Preferences.menuFileServers) ?? "FileServers".translate
+                        
                         self.myShareMenuItem.submenu = shareMounterMenu.buildMenu(connected: self.userInformation.connected)
                         
                         if shareMounterMenu.sharesAvilable() {

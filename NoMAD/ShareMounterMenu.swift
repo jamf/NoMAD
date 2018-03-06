@@ -40,6 +40,18 @@ class ShareMounterMenu: NSObject {
             return NSMenu.init()
         }
         
+        // check for an actual ticket
+        
+        klistUtil.klist()
+        
+        if !klistUtil.state {
+            myLogger.logit(.debug, message: "No valid ticket, not attempting to mount shares.")
+            
+            NotificationQueue.default.enqueue(updateNotification, postingStyle: .now)
+
+            return NSMenu.init()
+        }
+        
         if myShareMounter.all_shares.count > 0 {
             // Menu Items and Menu
             

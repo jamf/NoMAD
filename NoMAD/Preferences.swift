@@ -267,6 +267,7 @@ enum Preferences {
     static let messageNotConnected = "MessageNotConnected"
     static let messageUPCAlert = "MessageUPCAlert"
     static let messagePasswordChangePolicy = "MessagePasswordChangePolicy"
+    static let mountSMBOpen = "MountSMBOpen"
     static let passwordExpirationDays = "PasswordExpirationDays"
     static let passwordExpireAlertTime = "PasswordExpireAlertTime"
     static let passwordExpireCustomAlert = "PasswordExpireCustomAlert"
@@ -317,4 +318,5 @@ enum Preferences {
     static let verbose = "Verbose"
     static let wifiNetworks = "WifiNetworks"
     static let x509CA = "X509CA"
+    static let x509Name = "X509Name"
 }

@@ -80,8 +80,9 @@ class WindowsCATools {
         let myPubKeyData = getPublicKeyasData()
         let myCSRGen = CertificateSigningRequest(commonName: "NoMAD", organizationName: "Orchard & Grove", organizationUnitName: "WorldHQ", countryName: "US", cryptoAlgorithm: CryptoAlgorithm.sha1)
         let myCSR = myCSRGen.build(myPubKeyData, privateKey: privKey!)
+        print(defaults.string(forKey: Preferences.x509Name))
         
-        let certReq = try? TCSADCertificateRequest.init(serverName: defaults.string(forKey: Preferences.x509CA), certificateAuthorityName: "nomad-DC1-CA", certificateTemplate: defaults.string(forKey: Preferences.template), verbose: true)
+        let certReq = try? TCSADCertificateRequest.init(serverName: defaults.string(forKey: Preferences.x509CA), certificateAuthorityName: defaults.string(forKey: Preferences.x509Name), certificateTemplate: defaults.string(forKey: Preferences.template), verbose: true)
         do {
             let signedCSR = try certReq?.submitRequestToActiveDirectory(withCSR: myCSR)
             let myCertRef = SecCertificateCreateWithData(nil, signedCSR! as CFData)
