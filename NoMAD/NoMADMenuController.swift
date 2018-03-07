@@ -416,6 +416,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 
                 let _ = cliTask("/usr/bin/kswitch -p " +  userPrinc)
                 
+                self.updateUserInfo()
+                
                 // fire off the SignInCommand script if there is one
                 if defaults.string(forKey: Preferences.signInCommand) != "" {
                     let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)
