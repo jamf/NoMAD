@@ -70,13 +70,16 @@ class NoMADAction : NSObject {
         var result : String = ""
         
         for command in commands! {
+            print("***")
+            print(command)
+            print("Result: \(result)")
             
-            if result == "false" && (command["Command"] as? String ?? "" ).contains("True") {
+            if (result.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines) == "false".trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)) && ((command["Command"] as? String ?? "" ).contains("True")) {
                 // result was false so don't trigger any True action
                 continue
             }
             
-            if result == "true" && (command["Command"] as? String ?? "" ).contains("False") {
+            if (result.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines) == "true") && ((command["Command"] as? String ?? "" ).contains("False")) {
                 // result was true so don't trigger any false action
                 continue
             }
@@ -87,7 +90,7 @@ class NoMADAction : NSObject {
                 if result.contains("<<menu>>") {
                     nActionMenu.menuText = result.replacingOccurrences(of: "<<menu>>", with: "")
                 }
-                return false
+                //return false
             } else if result.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines) != "true" {
                 actionResult = result
                 
@@ -98,8 +101,20 @@ class NoMADAction : NSObject {
             } else {
                 actionResult = "true"
             }
+            
+            if result == "" && (command["Command"] as? String ?? "" ).contains("True") {
+                result = "true"
+            }
+            
+            if result == "" && (command["Command"] as? String ?? "" ).contains("False") {
+                result = "false"
+            }
         }
-        return true
+        if result.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines) == "false" {
+            return false
+        } else {
+            return true
+        }
     }
     
     func getTitle() -> String {
