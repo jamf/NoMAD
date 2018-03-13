@@ -4,30 +4,23 @@ This Gitlab page is used primarily for code storage and issue tracking. For the 
 
 ***Current Version***
 
-NoMAD v. 1.1.2(797)
+NoMAD v. 1.1.3(886)
 
 ***Development Version***
 
-NoMAD v. 1.1.3(882)
+NoMAD v. 1.1.4
 
 ***New Features in Development Version***
 
-- Fewer prompts when updating keychain items - build 808
-- Match any keychain item account with `<<ANY>>` - build 808
-- Recursive group search works with "," in user names - build 808
-- When using UPCAlert and a URL to change passowrd, check for password change every 30 seconds - build 808
-- Prevent sign in window from closing when SignInAlert is set - build 809
-- Write out current AD Site to "ADSite" in preferences - build 809
-- Prevent "unknown realm" errors when changing password - build 809
-- Block known lame Domain Controllers from being used with `LDAPServerListDeny`, an array of FQDNs of servers not to be used - build 809
-- Allow for both AD password expired and local sync on a seperate password - build 813
-- Swift 4, which explains the large build number change - build 853
-- Pref key DontShowWelcomeDefaultOff which sets the default Welcome window setting to only show the window once - build 854
-- UseKeychainPrompt will now show the Sign In window whenever the user does not have a password in the keychain, even if the user has already signed in at least once - build 854
-- Better handling of current time when checking for UPCAlerts - should result in fewer spurious UPC Alerts - build 854
-- Actions menu - build 872
-- Lots of Actions menu update - build 882
-- Certs pulled via NoMAD can allow passwordless access to `airportd` and `eapolclient` when using the `AllowEAPOL` Boolean pref - build 882
+- fix for Sign In window not fully displaying
+- About menu
+- icon now alternates when clicking on the NoMAD icon in the menu bar
+- Kerberos preferences written out on first launch to further prevent the "Domain not found" error when changing passwords
+- Certificate expiration computed better, and won't crash on an already expired cert
+- Certificate cleaning will only happen if asked
+- User password in the keychain will be looked for in many ways to ensure that the user name case isn't an issue
+- better defaults printing in the logs with -prefs
+- fix for Sign In Window title not showing correctly when forced
 
 ***NoMAD***
 
