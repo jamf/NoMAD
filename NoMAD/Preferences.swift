@@ -401,7 +401,7 @@ enum Preferences {
         Preferences.messageNotConnected,
         Preferences.messageUPCAlert,
         Preferences.messagePasswordChangePolicy,
-        Preferences.mountSMBOpen,
+        //Preferences.mountSMBOpen,
         Preferences.passwordExpirationDays,
         Preferences.passwordExpireAlertTime,
         Preferences.passwordExpireCustomAlert,
@@ -445,7 +445,8 @@ enum Preferences {
         Preferences.verbose,
         Preferences.wifiNetworks,
         Preferences.x509CA,
-        Preferences.x509Name,]
+        //Preferences.x509Name,
+        ]
 }
 
 func printAllPrefs() {

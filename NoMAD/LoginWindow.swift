@@ -43,30 +43,31 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
     
     override func windowDidLoad() {
         super.windowDidLoad()
+        
+        changePasswordButton.title = "SignIn".translate
+        self.window?.title = defaults.string(forKey: Preferences.titleSignIn) ?? "NoMAD - " + "SignIn".translate
+        
+        //if defaults.bool(forKey: Preferences.signInWindowAlert) {
+        myLogger.logit(.base, message: "Setting up timer to alert on Sign In window.")
+        var alertTime = 120
+        if defaults.integer(forKey:Preferences.signInWindowAlertTime) != 0 {
+            alertTime = defaults.integer(forKey:Preferences.signInWindowAlertTime)
+        }
+        alertTimer = Timer.init(timeInterval: TimeInterval(alertTime), target: self, selector: #selector(showAlert), userInfo: nil, repeats: true)
+        RunLoop.main.add(alertTimer!, forMode: .commonModes)
+        //}
+        
         guard (( defaults.string(forKey: Preferences.lastUser) ) != "") else {
             self.window?.center()
             setWindowToLogin()
             return
         }
         
-        changePasswordButton.title = "SignIn".translate
-        self.window?.title = defaults.string(forKey: Preferences.titleSignIn) ?? "NoMAD - " + "SignIn".translate
-        
         userName.stringValue = defaults.string(forKey: Preferences.lastUser)!
         Password.becomeFirstResponder()
         
         setWindowToLogin()
         self.window?.center()
-        
-        //if defaults.bool(forKey: Preferences.signInWindowAlert) {
-            myLogger.logit(.base, message: "Setting up timer to alert on Sign In window.")
-            var alertTime = 120
-        if defaults.integer(forKey:Preferences.signInWindowAlertTime) != 0 {
-            alertTime = defaults.integer(forKey:Preferences.signInWindowAlertTime)
-        }
-            alertTimer = Timer.init(timeInterval: TimeInterval(alertTime), target: self, selector: #selector(showAlert), userInfo: nil, repeats: true)
-            RunLoop.main.add(alertTimer!, forMode: .commonModes)
-        //}
     }
     
     func windowShouldClose(_ sender: Any) -> Bool {

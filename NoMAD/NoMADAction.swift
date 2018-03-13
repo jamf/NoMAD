@@ -82,13 +82,13 @@ class NoMADAction : NSObject {
             }
             
             result = runActionCommand(action: (command["Command"] as? String ?? "none").replacingOccurrences(of: "True", with: "").replacingOccurrences(of: "False", with: "") , options: (command["CommandOptions"] as? String ?? "none").replacingOccurrences(of: "<<result>>", with: actionResult) )
-            if result == "false" {
+            if result.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines) == "false" {
                 actionResult = ""
                 if result.contains("<<menu>>") {
                     nActionMenu.menuText = result.replacingOccurrences(of: "<<menu>>", with: "")
                 }
                 return false
-            } else if result != "true" {
+            } else if result.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines) != "true" {
                 actionResult = result
                 
                 if result.contains("<<menu>>") {
