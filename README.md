@@ -52,9 +52,7 @@ Coming in future versions:
 
 - VPN connection management for built-in VPN types.
 - Getting a Kerberos ticket as a side effect of a succesful VPN connection.
-- Mounting of arbitrary shares based upon configured values.
 - DFS resolution without needing to be bound.
-- Put x509 certificate into an 802.1x profile for use with wireless networks.
 
 Sample screen shot:
 
