@@ -157,8 +157,12 @@ class UserInformation {
 
             if !defaults.bool(forKey: Preferences.lDAPOnly) {
 
-            let attributes = ["pwdLastSet", "msDS-UserPasswordExpiryTimeComputed", "userAccountControl", "homeDirectory", "displayName", "memberOf", "mail", "userPrincipalName", "dn"] // passwordSetDate, computedExpireDateRaw, userPasswordUACFlag, userHomeTemp, userDisplayName, groupTemp
+            var attributes = ["pwdLastSet", "msDS-UserPasswordExpiryTimeComputed", "userAccountControl", "homeDirectory", "displayName", "memberOf", "mail", "userPrincipalName", "dn"] // passwordSetDate, computedExpireDateRaw, userPasswordUACFlag, userHomeTemp, userDisplayName, groupTemp
             // "maxPwdAge" // passwordExpirationLength
+                
+                if let customAttrs = defaults.array(forKey: Preferences.customLDAPAttributes) as? [ String ] {
+                    attributes += customAttrs
+                }
 
             let searchTerm = "sAMAccountName=" + userPrincipalShort
 
@@ -173,6 +177,17 @@ class UserInformation {
                 userEmail = ldapResult["mail"] ?? ""
                 UPN = ldapResult["userPrincipalName"] ?? ""
                 dn = ldapResult["dn"] ?? ""
+                
+                if let customAttrs = defaults.array(forKey: Preferences.customLDAPAttributes) as? [ String ] {
+                    
+                    var attrDict = [ String : String ]()
+                    for attribute in customAttrs {
+                        attrDict[attribute] = ldapResult[attribute] ?? "NONE"
+                    }
+                    
+                    defaults.set(attrDict, forKey: Preferences.userAttributes)
+                }
+                
             } else {
                 myLogger.logit(.base, message: "Unable to find user.")
                 canary = false

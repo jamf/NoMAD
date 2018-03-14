@@ -1108,6 +1108,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         case "getsoftware" :
             NoMADMenuClickGetSoftware(NoMADMenuGetSoftware)
         case "open": break
+        case "getuser" :
+            let myResult = userInformation.myLDAPServers.returnFullRecord("sAMAccountName=" + defaults.string(forKey: Preferences.lastUser)!)
+            myLogger.logit(.base, message: myResult)
         case "passwordchange":
             if self.userInformation.connected && self.userInformation.myLDAPServers.tickets.state {
                 passwordChangeWindow.window!.forceToFrontAndFocus(nil)
