@@ -134,6 +134,15 @@ class NoMADAction : NSObject {
         } else if result == "yellow" {
             status = "yellow"
             return actionName
+        } else if result.contains("<<true>>") {
+            status = "green"
+            return result.replacingOccurrences(of: "<<true>>", with: "")
+        } else if result.contains("<<false>>") {
+            status = "red"
+            return result.replacingOccurrences(of: "<<false>>", with: "")
+        } else if result.contains("<<yellow>>") {
+            status = "yellow"
+            return result.replacingOccurrences(of: "<<yellow>>", with: "")
         } else {
             return result
         }
