@@ -61,7 +61,12 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         if defaults.bool(forKey: Preferences.lDAPoverSSL) {
             URIPrefix = "ldaps://"
             port = "636"
-            maxSSF = "-O maxssf=0 "
+            
+            // don't set maxssf if we're using anonymous auth with SSL
+            
+            if !defaults.bool(forKey: Preferences.ldapAnonymous) {
+                maxSSF = "-O maxssf=0 "
+            }
         }
 
         //myLogger.logit(.notice, message:"Looking up tickets.")
