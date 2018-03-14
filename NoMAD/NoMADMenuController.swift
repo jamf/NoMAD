@@ -161,8 +161,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         nActionMenu.load()
         nActionMenu.updateActions(self.userInformation.connected)
         
-        print(defaults.integer(forKey: Preferences.autoRenewCert))
-        
         // set up Icons - we need 2 sets of 2 for light and dark modes
         
         if defaults.string(forKey: Preferences.iconOn) != nil {
@@ -255,25 +253,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             preferencesWindow.window!.forceToFrontAndFocus(nil)
         } else {
             doTheNeedfull()
-        }
-        
-        // Add a PKINIT menu if PKINITer is in the bundle
-        
-        if findPKINITer() {
-            
-            // we have PKINITer so build the menu
-            // TODO: translate these items
-            
-            PKINITMenuItem.title = "NoMADMenuController-SmartcardSignIn".translate
-            PKINITMenuItem.toolTip = "NoMADMenuController-SignInWithSmartcard".translate
-            PKINITMenuItem.action = #selector(smartcardSignIn)
-            PKINITMenuItem.target = self
-            PKINITMenuItem.isEnabled = true
-            
-            // add the menu
-            
-            NoMADMenu.insertItem(PKINITMenuItem, at: (NoMADMenu.index(of: self.NoMADMenuSeperatorTicketLife) + 1))
-            
         }
         
         // set up some default menu items
@@ -380,6 +359,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             if showPasswordChange == "None" {
                 NoMADMenuChangePassword.isHidden = true
             }
+        }
+        
+        if CommandLine.arguments.contains("-prefs") {
+            printAllPrefs()
         }
     }
     
@@ -1052,7 +1035,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     myShareMounter.asyncMountShare(share.url, options: share.options, open: true)
                     //cliTask("open " + share.url.absoluteString.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlPathAllowed)!)
                 } else if share.mountStatus == .mounted {
-                    print(share.localMountPoints ?? "")
                     // open up the local shares
                     NSWorkspace.shared.open(URL(fileURLWithPath: share.localMountPoints!, isDirectory: true))
                 }

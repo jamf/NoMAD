@@ -37,6 +37,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     @objc var URIPrefix = "ldap://"
     @objc var port = "389"
     @objc var maxSSF = ""
+    @objc var blackoutConditions = false
 
     let tickets = KlistUtil()
 
@@ -172,7 +173,12 @@ class LDAPServers : NSObject, DNSResolverDelegate {
             getHosts(currentDomain)
             if self.currentState && tickets.state {
                 testHosts()
-                findSite()
+                if !blackoutConditions {
+                    findSite()
+                } else {
+                    // reset to check again
+                    blackoutConditions = false
+                }
             }
         }
     }
@@ -839,6 +845,18 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         
         if hosts.last!.status == "dead" {
             myLogger.logit(.base, message: "All DCs in are dead! You should really fix this.")
+            
+            // if site is not empty, fall back to global controllers, unless we have staticly set DCs
+            
+            if site != ""  && defaults.string(forKey: Preferences.lDAPServerList) != "" {
+                myLogger.logit(.base, message: "Falling back to globally avilable DCs.")
+                blackoutConditions = true
+                
+                // trigger a network change
+                
+                networkChange()
+            }
+            
             self.currentState = false
         } else {
             self.currentState = true
