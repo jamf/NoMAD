@@ -13,14 +13,20 @@ NoMAD v. 1.1.4
 ***New Features in Development Version***
 
 - fix for Sign In window not fully displaying
-- About menu
+- About menu now in menu
 - icon now alternates when clicking on the NoMAD icon in the menu bar
+- icon alternates correctly when in dark mode
 - Kerberos preferences written out on first launch to further prevent the "Domain not found" error when changing passwords
 - Certificate expiration computed better, and won't crash on an already expired cert
 - Certificate cleaning will only happen if asked
 - User password in the keychain will be looked for in many ways to ensure that the user name case isn't an issue
 - better defaults printing in the logs with -prefs
 - fix for Sign In Window title not showing correctly when forced
+- better handling of when all DCs in a site go down
+- action menu fixes to correct actionTrue and to allow for cutom titles and red/yellow/green icons
+- ability to get custom list of attributes from AD
+- better handling of shares in the Shares Menu when switching users
+- nomad://getuser will put entire AD user record into the logs
 
 ***NoMAD***
 
