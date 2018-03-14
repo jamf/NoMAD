@@ -214,8 +214,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 //iconOnOff = NSImage(named: "NoMAD-statusicon-on-off")
                 iconOffOff = myIconOffDark
                 
-                iconAltOnOn = myIconOn
-                iconAltOffOff = myIconOff
+                iconAltOnOn = myIconOnDark
+                iconAltOffOff = myIconOffDark
                 
             } else {
                 iconOnOn = NSImage(named: NSImage.Name(rawValue: "NoMAD-Caribou-dark-on"))!
@@ -1050,6 +1050,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 iconOnOn = myIconOn
                 iconOnOff = NSImage(named: NSImage.Name(rawValue: "NoMAD-statusicon-on-off"))!
                 iconOffOff = myIconOff
+                
+                iconAltOnOn = myIconOnDark
+                iconAltOffOff = myIconOffDark
+                
             } else {
                 iconOnOn = NSImage(named: NSImage.Name(rawValue: "NoMAD-Caribou-on"))!
                 iconOffOff = NSImage(named: NSImage.Name(rawValue: "NoMAD-Caribou-off"))!
@@ -1059,6 +1063,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 iconOnOn = myIconOnDark
                 //iconOnOff = NSImage(named: "NoMAD-statusicon-on-off")
                 iconOffOff = myIconOffDark
+                
+                iconAltOnOn = myIconOnDark
+                iconAltOffOff = myIconOffDark
+                
             } else {
                 iconOnOn = NSImage(named: NSImage.Name(rawValue: "NoMAD-Caribou-dark-on"))!
                 iconOffOff = NSImage(named: NSImage.Name(rawValue: "NoMAD-Caribou-dark-off"))!
