@@ -77,11 +77,11 @@ class ShareMounter: NSArrayController {
     
     @objc func getMounts() {
         
-        //knownShares = mountedShares
+        knownShares = mountedShares
         
         // clear all the known shares
         
-        //all_shares.removeAll()
+        all_shares.removeAll()
         
         // check for home mount
         
@@ -135,10 +135,10 @@ class ShareMounter: NSArrayController {
             }
             
             let mounts = mountsRaw as! [NSDictionary]
-            
+
+            let myGroups = defaults.array(forKey: Preferences.groups)
 
             for mount in mounts {
-                let myGroups = defaults.array(forKey: Preferences.groups)
 
                 // check for variable substitution
                 
