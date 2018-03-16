@@ -11,6 +11,7 @@ import Cocoa
 
 let nActionMenu = NoMADActionMenu()
 let actionMenuQueue = DispatchQueue(label: "menu.nomad.NoMAD.actions", attributes: [])
+var serial = ""
 
 
 // class to create a menu of all the actions
@@ -29,6 +30,7 @@ let actionMenuQueue = DispatchQueue(label: "menu.nomad.NoMAD.actions", attribute
     static let kPrefActions = "Actions"
     static let kPrefMenuIcon = "MenuIcon"
     static let kPrefMenuText = "MenuText"
+    static let kPrefSerial = "Serial"
     
     // menu settings
     
@@ -49,6 +51,8 @@ let actionMenuQueue = DispatchQueue(label: "menu.nomad.NoMAD.actions", attribute
             // wrong version
             return
         }
+        
+        serial = sharePrefs?.string(forKey: NoMADActionMenu.kPrefSerial) ?? ""
         
         // watch for any changes to the Actions section of the prefs
         
@@ -210,6 +214,13 @@ let actionMenuQueue = DispatchQueue(label: "menu.nomad.NoMAD.actions", attribute
             return
         }
         
+        if serial != sharePrefs?.string(forKey: NoMADActionMenu.kPrefSerial) ?? "" {
+            // Actions have changed, let's update them
+            myLogger.logit(.base, message: "Actions preferences have changed, reloading.")
+            reloadPrefs()
+            return
+        }
+        
         var menuIconColor : String? = nil
         
         for i in 0...(actionMenu.items.count - 1 ) {
@@ -265,7 +276,7 @@ let actionMenuQueue = DispatchQueue(label: "menu.nomad.NoMAD.actions", attribute
     
     /// function called when menu.nomad.actions "Actions" key is updated
     
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+    @objc func reloadPrefs() {
         
         // read in the preferences again
         
@@ -281,7 +292,7 @@ let actionMenuQueue = DispatchQueue(label: "menu.nomad.NoMAD.actions", attribute
         
         guard let rawPrefs = sharePrefs?.array(forKey: NoMADActionMenu.kPrefActions) as? [Dictionary<String, AnyObject?>] else { return }
         
-        // if no shares we bail
+        // if no actions we bail
         
         if rawPrefs.count < 1 {
             return
@@ -291,7 +302,7 @@ let actionMenuQueue = DispatchQueue(label: "menu.nomad.NoMAD.actions", attribute
         
         actions.removeAll()
         
-        // loop through the shares
+        // loop through the actions
         
         for action in rawPrefs {
             
