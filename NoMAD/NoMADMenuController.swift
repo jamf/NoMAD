@@ -161,8 +161,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         nActionMenu.load()
         nActionMenu.updateActions(self.userInformation.connected)
         
-        print(defaults.integer(forKey: Preferences.autoRenewCert))
-        
         // set up Icons - we need 2 sets of 2 for light and dark modes
         
         if defaults.string(forKey: Preferences.iconOn) != nil {
@@ -216,8 +214,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 //iconOnOff = NSImage(named: "NoMAD-statusicon-on-off")
                 iconOffOff = myIconOffDark
                 
-                iconAltOnOn = myIconOn
-                iconAltOffOff = myIconOff
+                iconAltOnOn = myIconOnDark
+                iconAltOffOff = myIconOffDark
                 
             } else {
                 iconOnOn = NSImage(named: NSImage.Name(rawValue: "NoMAD-Caribou-dark-on"))!
@@ -255,25 +253,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             preferencesWindow.window!.forceToFrontAndFocus(nil)
         } else {
             doTheNeedfull()
-        }
-        
-        // Add a PKINIT menu if PKINITer is in the bundle
-        
-        if findPKINITer() {
-            
-            // we have PKINITer so build the menu
-            // TODO: translate these items
-            
-            PKINITMenuItem.title = "NoMADMenuController-SmartcardSignIn".translate
-            PKINITMenuItem.toolTip = "NoMADMenuController-SignInWithSmartcard".translate
-            PKINITMenuItem.action = #selector(smartcardSignIn)
-            PKINITMenuItem.target = self
-            PKINITMenuItem.isEnabled = true
-            
-            // add the menu
-            
-            NoMADMenu.insertItem(PKINITMenuItem, at: (NoMADMenu.index(of: self.NoMADMenuSeperatorTicketLife) + 1))
-            
         }
         
         // set up some default menu items
@@ -380,6 +359,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             if showPasswordChange == "None" {
                 NoMADMenuChangePassword.isHidden = true
             }
+        }
+        
+        if CommandLine.arguments.contains("-prefs") {
+            printAllPrefs()
         }
     }
     
@@ -1052,7 +1035,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     myShareMounter.asyncMountShare(share.url, options: share.options, open: true)
                     //cliTask("open " + share.url.absoluteString.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlPathAllowed)!)
                 } else if share.mountStatus == .mounted {
-                    print(share.localMountPoints ?? "")
                     // open up the local shares
                     NSWorkspace.shared.open(URL(fileURLWithPath: share.localMountPoints!, isDirectory: true))
                 }
@@ -1068,6 +1050,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 iconOnOn = myIconOn
                 iconOnOff = NSImage(named: NSImage.Name(rawValue: "NoMAD-statusicon-on-off"))!
                 iconOffOff = myIconOff
+                
+                iconAltOnOn = myIconOnDark
+                iconAltOffOff = myIconOffDark
+                
             } else {
                 iconOnOn = NSImage(named: NSImage.Name(rawValue: "NoMAD-Caribou-on"))!
                 iconOffOff = NSImage(named: NSImage.Name(rawValue: "NoMAD-Caribou-off"))!
@@ -1077,6 +1063,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 iconOnOn = myIconOnDark
                 //iconOnOff = NSImage(named: "NoMAD-statusicon-on-off")
                 iconOffOff = myIconOffDark
+                
+                iconAltOnOn = myIconOnDark
+                iconAltOffOff = myIconOffDark
+                
             } else {
                 iconOnOn = NSImage(named: NSImage.Name(rawValue: "NoMAD-Caribou-dark-on"))!
                 iconOffOff = NSImage(named: NSImage.Name(rawValue: "NoMAD-Caribou-dark-off"))!

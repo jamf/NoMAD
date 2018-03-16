@@ -452,6 +452,8 @@ enum Preferences {
 }
 
 func printAllPrefs() {
+    print("--NoMAD Preferences--")
+    
     for key in Preferences.allKeys {
         
         let pref = defaults.object(forKey: key) as AnyObject
