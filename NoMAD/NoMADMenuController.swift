@@ -628,7 +628,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             
             // check for http://
             
-            if !certCATest.contains("http://") || !certCATest.contains("https://") {
+            if !certCATest.contains("http://") && !certCATest.contains("https://") {
                 certCATest = "https://" + certCATest
             }
             
