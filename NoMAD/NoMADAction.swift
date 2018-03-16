@@ -90,7 +90,7 @@ class NoMADAction : NSObject {
                 if result.contains("<<menu>>") {
                     nActionMenu.menuText = result.replacingOccurrences(of: "<<menu>>", with: "")
                 }
-                return false
+                //return false
             } else if result.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines) != "true" {
                 actionResult = result
                 
