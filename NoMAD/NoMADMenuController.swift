@@ -111,8 +111,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     
     @objc let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     
-    @objc let PKINITMenuItem = NSMenuItem()
-    
     let myKeychainutil = KeychainUtil()
     
     @objc var signInOffered = false
@@ -742,9 +740,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 self.NoMADMenuGetCertificate.isEnabled = false
             }
             
-                self.PKINITMenuItem.isEnabled = false
-
-            
             // twiddles what needs to be twiddled for connected but not logged in
             
         } else if self.userInformation.myLDAPServers.tickets.state == false {
@@ -762,8 +757,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             if (self.NoMADMenuGetCertificate != nil)  {
                 self.NoMADMenuGetCertificate.isEnabled = false
             }
-                self.PKINITMenuItem.isEnabled = true
-
         }
         else {
             if defaults.bool(forKey: Preferences.hideRenew) {
@@ -1164,6 +1157,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         default:
             break
         }
+    }
+    
+    func returnUser() -> String {
+        return userInformation.myLDAPServers.returnFullRecord("sAMAccountName=" + defaults.string(forKey: Preferences.lastUser)!)
     }
     
     // function to start the menu throbbing

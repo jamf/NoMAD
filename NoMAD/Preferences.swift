@@ -187,6 +187,7 @@ enum Preferences {
 
     static let aDDomain = "ADDomain"
     static let aDSite = "ADSite"                    // current AD site
+    static let aDDomainController = "ADDomainController"   // current DC in use
     static let allowEAPOL = "AllowEAPOL"            // allow airportd and eapolclient access to generated private keys
     static let autoConfigure = "AutoConfigure"
     static let autoRenewCert = "AutoRenewCert"
@@ -473,4 +474,31 @@ func printAllPrefs() {
             print("\t\tForced")
         }
     }
+}
+
+func returnAllPrefs() -> String {
+    
+    var prefs = ""
+    
+    for key in Preferences.allKeys {
+        
+        let pref = defaults.object(forKey: key) as AnyObject
+        
+        switch String(describing: type(of: pref)) {
+        case "__NSCFBoolean" :
+            prefs += (key + ": " + String(describing: ( defaults.bool(forKey: key))))
+        case "__NSCFArray" :
+            prefs += (key + ": " + ( String(describing: (defaults.array(forKey: key)!))))
+        case "__NSTaggedDate":
+            prefs += ( key + ": " + ( defaults.object(forKey: key) as! Date ).description(with: Locale.current))
+        default :
+            prefs += (key + ": " + ( defaults.object(forKey: key) as? String ?? "Unset"))
+        }
+        if defaults.objectIsForced(forKey: key) {
+            prefs += "<<FORCED>>"
+        }
+        prefs += "\n"
+    }
+    
+    return prefs
 }

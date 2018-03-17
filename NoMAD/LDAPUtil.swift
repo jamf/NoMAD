@@ -329,10 +329,10 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 
     @objc func returnFullRecord(_ searchTerm: String) -> String {
         // ensure we're using the right kerberos credential cache
-        swapPrincipals(false)
+        //swapPrincipals(false)
 
         let myResult = cliTaskNoTerm("/usr/bin/ldapsearch -N -Q -LLL " + maxSSF + "-H " + URIPrefix + self.currentServer + " -b " + self.defaultNamingContext + " " + searchTerm )
-        swapPrincipals(true)
+        //swapPrincipals(true)
         return myResult
     }
 
@@ -412,6 +412,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         }
         
         defaults.set(site, forKey: Preferences.aDSite)
+        defaults.set(currentServer, forKey: Preferences.aDDomainController)
         
         myLogger.logit(LogLevel.debug, message:"Resetting default naming context to: " + tempDefaultNamingContext)
         defaultNamingContext = tempDefaultNamingContext
