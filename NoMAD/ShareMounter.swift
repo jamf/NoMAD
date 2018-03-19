@@ -65,6 +65,7 @@ class ShareMounter: NSArrayController {
     @objc lazy var mountHome: Bool = false
     lazy var all_mounting_shares = [mounting_shares_info]()
     @objc var connectedState: Bool = false
+    @objc var tickets : Bool = false
     
     @objc var mountedSharePaths = [URL:String]()
     
@@ -268,6 +269,12 @@ class ShareMounter: NSArrayController {
                 continue
             }
             
+            if !tickets {
+                // skipping b/c we don't have kerb tickets
+                myLogger.logit(.debug, message: "Skipping mount because we don't have tickets")
+                continue
+            }
+            
             if all_shares[i].mountStatus != .errorOnMount {
                 
                 let open_options : CFMutableDictionary = openOptionsDict()
@@ -312,6 +319,18 @@ class ShareMounter: NSArrayController {
                 let queue = DispatchQueue.main
                 
                 myLogger.logit(.debug, message: "Attempting to mount: " + all_shares[i].url.absoluteString)
+                
+                if defaults.bool(forKey: Preferences.mountSharesWithFinder) {
+                    
+                    myLogger.logit(.base, message: "Mounting share via Finder")
+                    let _ = cliTask("/usr/bin/open \(all_shares[i].url.absoluteString)")
+                    all_shares[i].mountStatus = .mounted
+                    all_shares[i].reqID = nil
+                    all_shares[i].attemptDate = Date()
+                    
+                    // going for next share
+                    continue
+                }
 
                 let _ = NetFSMountURLAsync(all_shares[i].url as CFURL!,
                                                 nil,

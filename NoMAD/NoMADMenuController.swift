@@ -152,7 +152,13 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         // only do this if shares are available
         
-        shareMounterMenu.updateShares(connected: self.userInformation.connected)
+        var tickets = false
+        
+        if self.userInformation.status == "Logged In" {
+            tickets = true
+        }
+        
+        shareMounterMenu.updateShares(connected: self.userInformation.connected, tickets: tickets)
         
         // load up the actions
         
@@ -1361,7 +1367,13 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     
                     // check shares
                     
-                    shareMounterMenu.updateShares(connected: self.userInformation.connected)
+                    var tickets = false
+                    
+                    if self.userInformation.status == "Logged In" {
+                        tickets = true
+                    }
+                    
+                    shareMounterMenu.updateShares(connected: self.userInformation.connected, tickets: tickets)
                     
                     // build the menu
                     

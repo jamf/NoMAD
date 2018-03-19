@@ -269,6 +269,7 @@ enum Preferences {
     static let messageNotConnected = "MessageNotConnected"
     static let messageUPCAlert = "MessageUPCAlert"
     static let messagePasswordChangePolicy = "MessagePasswordChangePolicy"
+    static let mountSharesWithFinder = "MountSharesWithFinder"
     static let passwordExpirationDays = "PasswordExpirationDays"
     static let passwordExpireAlertTime = "PasswordExpireAlertTime"
     static let passwordExpireCustomAlert = "PasswordExpireCustomAlert"
@@ -404,7 +405,7 @@ enum Preferences {
         Preferences.messageNotConnected,
         Preferences.messageUPCAlert,
         Preferences.messagePasswordChangePolicy,
-        //Preferences.mountSMBOpen,
+        Preferences.mountSharesWithFinder,
         Preferences.passwordExpirationDays,
         Preferences.passwordExpireAlertTime,
         Preferences.passwordExpireCustomAlert,
