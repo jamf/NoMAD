@@ -236,6 +236,7 @@ enum Preferences {
     static let keychainMinderShowReset = "KeychainMinderShowReset"
     static let keychainPasswordMatch = "KeychainPasswordMatch"
     static let lastCertificateExpiration = "LastCertificateExpiration"
+    static let lightsOutIKnowWhatImDoing = "LightsOutIKnowWhatImDoing"
     static let loginComamnd = "LoginComamnd"
     static let loginItem = "LoginItem"
     static let ldapAnonymous = "LDAPAnonymous"

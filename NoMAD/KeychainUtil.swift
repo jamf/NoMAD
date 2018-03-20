@@ -291,7 +291,7 @@ class KeychainUtil {
                                 
                                 // pack the data up into a certDate
                                 
-                                let certificate = certDates( serial: serial, expireDate: expireDate, expireInt: Int(expireDate.timeIntervalSince1970), certRef: cert as! SecIdentity)
+                                let certificate = certDates( serial: serial, expireDate: expireDate, expireInt: Int(expireDate.timeIntervalSince1970), certRef: (cert as! SecIdentity))
                                 
                                 // append to the list
                                 

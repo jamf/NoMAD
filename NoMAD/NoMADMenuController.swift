@@ -167,6 +167,13 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         // set up Icons - we need 2 sets of 2 for light and dark modes
         
+        if defaults.bool(forKey: Preferences.lightsOutIKnowWhatImDoing) {
+            myIconOn = NSImage.init()
+            myIconOff = NSImage.init()
+            myIconOnDark = NSImage.init()
+            myIconOffDark = NSImage.init()
+        } else {
+        
         if defaults.string(forKey: Preferences.iconOn) != nil {
             myIconOn = NSImage.init(contentsOfFile: defaults.string(forKey: Preferences.iconOn)!)!
         } else {
@@ -189,6 +196,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             myIconOffDark = NSImage.init(contentsOfFile: defaults.string(forKey: Preferences.iconOffDark)!)!
         } else {
             myIconOffDark = NSImage(named: NSImage.Name(rawValue: "NoMAD-LogoAlternate-off"))!
+        }
         }
         
         // check for Dark Mode
