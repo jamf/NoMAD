@@ -316,6 +316,7 @@ enum Preferences {
     static let userAttributes = "UserAttributes"
     static let userEmail = "UserEmail"
     static let userShortName = "UserShortName"
+    static let userSwitch = "UserSwitch"
     static let userUPN = "UserUPN"
 
     /// Should verbose logging be used. This will significantly increase log spew.

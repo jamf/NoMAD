@@ -135,6 +135,15 @@ class UserInformation {
                 userPrincipalShort = userPrincipal.replacingOccurrences(of: "@" + realm, with: "")
                 status = "Logged In"
                 myLogger.logit(.base, message: "Logged in.")
+                
+                // now switch to the main user if possible
+                
+                if defaults.bool(forKey: Preferences.userSwitch) {
+                    let result = cliTask("/usr/bin/kswitch -p " + (defaults.string(forKey: Preferences.userPrincipal) ?? "") )
+                    if result != "" {
+                        myLogger.logit(.base, message: "Kswitch result: " + result)
+                    }
+                }
             } else {
                 myLogger.logit(.base, message: "No ticket for realm.")
             }
