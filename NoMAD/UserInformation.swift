@@ -137,6 +137,7 @@ class UserInformation {
                 myLogger.logit(.base, message: "Logged in.")
                 
                 // now switch to the main user if possible
+                // change more things here if we need
                 
                 if defaults.bool(forKey: Preferences.userSwitch) {
                     let result = cliTask("/usr/bin/kswitch -p " + (defaults.string(forKey: Preferences.userPrincipal) ?? "") )
