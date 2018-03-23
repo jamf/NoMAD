@@ -135,16 +135,6 @@ class UserInformation {
                 userPrincipalShort = userPrincipal.replacingOccurrences(of: "@" + realm, with: "")
                 status = "Logged In"
                 myLogger.logit(.base, message: "Logged in.")
-                
-                // now switch to the main user if possible
-                // change more things here if we need
-                
-                if defaults.bool(forKey: Preferences.userSwitch) {
-                    let result = cliTask("/usr/bin/kswitch -p " + (defaults.string(forKey: Preferences.userPrincipal) ?? "") )
-                    if result != "" {
-                        myLogger.logit(.base, message: "Kswitch result: " + result)
-                    }
-                }
             } else {
                 myLogger.logit(.base, message: "No ticket for realm.")
             }
@@ -174,7 +164,14 @@ class UserInformation {
                     attributes += customAttrs
                 }
 
-            let searchTerm = "sAMAccountName=" + userPrincipalShort
+            var searchTerm = "sAMAccountName=" + userPrincipalShort
+                
+                // now switch to the main user if possible
+                // change more things here if we need
+                
+                if defaults.bool(forKey: Preferences.userSwitch) {
+                    searchTerm = "sAMAccountName=" + NSUserName()
+                }
 
             if let ldifResult = try? myLDAPServers.getLDAPInformation(attributes, searchTerm: searchTerm) {
                 let ldapResult = myLDAPServers.getAttributesForSingleRecordFromCleanedLDIF(attributes, ldif: ldifResult)

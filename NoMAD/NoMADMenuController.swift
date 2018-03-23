@@ -1358,6 +1358,16 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.lastStatusCheck = Date()
         }
         
+        if defaults.bool(forKey: Preferences.userSwitch) {
+            myLogger.logit(.base, message: "Switching user principal to current shortname.")
+            
+            let result = cliTask("/usr/bin/kswitch -p ")
+            
+            if result != "" {
+                myLogger.logit(.base, message: "Kswitch result: \(result)")
+            }
+        }
+        
         if abs(lastStatusCheck.timeIntervalSinceNow) > 3 || firstRun {
             
             // through the magic of code blocks we'll update in the background
