@@ -1715,7 +1715,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     self.getCert(false)
                     
                     // set the date to now so we don't get a second cert
-                    defaults.set(Date(), forKey: Preferences.lastCertificateExpiration)
+                    defaults.set(Date.distantFuture, forKey: Preferences.lastCertificateExpiration)
                     
                 }
                 
@@ -1729,7 +1729,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     self.getCert(false)
                     
                     // set the date to now so we don't get a second cert
-                    defaults.set(Date(), forKey: Preferences.lastCertificateExpiration)
+                    defaults.set(Date.distantFuture, forKey: Preferences.lastCertificateExpiration)
                 }
             }
         } else {
