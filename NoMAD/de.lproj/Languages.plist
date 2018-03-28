@@ -194,7 +194,7 @@
 	<key>HomeSharepoint</key>
 	<dict>
 		<key>value</key>
-		<string>Netzwerk-Benutzerzeichnis</string>
+		<string>Netzwerk-Benutzerverzeichnis</string>
 		<key>comment</key>
 		<string>Menüpunkt um das Netzwerk-Benutzerzeichnis aus dem AD-Profil zu öffnen</string>
 	</dict>
