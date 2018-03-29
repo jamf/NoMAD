@@ -1360,10 +1360,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         if defaults.bool(forKey: Preferences.userSwitch) {
             myLogger.logit(.base, message: "Switching user principal to current shortname.")
+            
             // updating this
             
-            let result = cliTask("/usr/bin/kswitch -p ")
-            
+            let result = cliTask("/usr/bin/kswitch -p \(NSUserName())")
             if result != "" {
                 myLogger.logit(.base, message: "Kswitch result: \(result)")
             }

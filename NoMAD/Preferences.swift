@@ -447,6 +447,7 @@ enum Preferences {
         Preferences.userAging,
         Preferences.userEmail,
         Preferences.userShortName,
+        Preferences.userSwitch,
         Preferences.userUPN,
         Preferences.verbose,
         Preferences.wifiNetworks,
