@@ -164,7 +164,14 @@ class UserInformation {
                     attributes += customAttrs
                 }
 
-            let searchTerm = "sAMAccountName=" + userPrincipalShort
+            var searchTerm = "sAMAccountName=" + userPrincipalShort
+                
+                // now switch to the main user if possible
+                // change more things here if we need
+                
+                if defaults.bool(forKey: Preferences.userSwitch) {
+                    searchTerm = "sAMAccountName=" + NSUserName()
+                }
 
             if let ldifResult = try? myLDAPServers.getLDAPInformation(attributes, searchTerm: searchTerm) {
                 let ldapResult = myLDAPServers.getAttributesForSingleRecordFromCleanedLDIF(attributes, ldif: ldifResult)

@@ -236,6 +236,7 @@ enum Preferences {
     static let keychainMinderShowReset = "KeychainMinderShowReset"
     static let keychainPasswordMatch = "KeychainPasswordMatch"
     static let lastCertificateExpiration = "LastCertificateExpiration"
+    static let lightsOutIKnowWhatImDoing = "LightsOutIKnowWhatImDoing"
     static let loginComamnd = "LoginComamnd"
     static let loginItem = "LoginItem"
     static let ldapAnonymous = "LDAPAnonymous"
@@ -269,6 +270,7 @@ enum Preferences {
     static let messageNotConnected = "MessageNotConnected"
     static let messageUPCAlert = "MessageUPCAlert"
     static let messagePasswordChangePolicy = "MessagePasswordChangePolicy"
+    static let mountSharesWithFinder = "MountSharesWithFinder"
     static let passwordExpirationDays = "PasswordExpirationDays"
     static let passwordExpireAlertTime = "PasswordExpireAlertTime"
     static let passwordExpireCustomAlert = "PasswordExpireCustomAlert"
@@ -314,6 +316,7 @@ enum Preferences {
     static let userAttributes = "UserAttributes"
     static let userEmail = "UserEmail"
     static let userShortName = "UserShortName"
+    static let userSwitch = "UserSwitch"
     static let userUPN = "UserUPN"
 
     /// Should verbose logging be used. This will significantly increase log spew.
@@ -404,7 +407,7 @@ enum Preferences {
         Preferences.messageNotConnected,
         Preferences.messageUPCAlert,
         Preferences.messagePasswordChangePolicy,
-        //Preferences.mountSMBOpen,
+        Preferences.mountSharesWithFinder,
         Preferences.passwordExpirationDays,
         Preferences.passwordExpireAlertTime,
         Preferences.passwordExpireCustomAlert,
@@ -444,6 +447,7 @@ enum Preferences {
         Preferences.userAging,
         Preferences.userEmail,
         Preferences.userShortName,
+        Preferences.userSwitch,
         Preferences.userUPN,
         Preferences.verbose,
         Preferences.wifiNetworks,

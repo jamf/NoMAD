@@ -152,7 +152,13 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         // only do this if shares are available
         
-        shareMounterMenu.updateShares(connected: self.userInformation.connected)
+        var tickets = false
+        
+        if self.userInformation.status == "Logged In" {
+            tickets = true
+        }
+        
+        shareMounterMenu.updateShares(connected: self.userInformation.connected, tickets: tickets)
         
         // load up the actions
         
@@ -160,6 +166,13 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         nActionMenu.updateActions(self.userInformation.connected)
         
         // set up Icons - we need 2 sets of 2 for light and dark modes
+        
+        if defaults.bool(forKey: Preferences.lightsOutIKnowWhatImDoing) {
+            myIconOn = NSImage.init()
+            myIconOff = NSImage.init()
+            myIconOnDark = NSImage.init()
+            myIconOffDark = NSImage.init()
+        } else {
         
         if defaults.string(forKey: Preferences.iconOn) != nil {
             myIconOn = NSImage.init(contentsOfFile: defaults.string(forKey: Preferences.iconOn)!)!
@@ -183,6 +196,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             myIconOffDark = NSImage.init(contentsOfFile: defaults.string(forKey: Preferences.iconOffDark)!)!
         } else {
             myIconOffDark = NSImage(named: NSImage.Name(rawValue: "NoMAD-LogoAlternate-off"))!
+        }
         }
         
         // check for Dark Mode
@@ -1344,6 +1358,17 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.lastStatusCheck = Date()
         }
         
+        if defaults.bool(forKey: Preferences.userSwitch) {
+            myLogger.logit(.base, message: "Switching user principal to current shortname.")
+            
+            // updating this
+            
+            let result = cliTask("/usr/bin/kswitch -p \(NSUserName())")
+            if result != "" {
+                myLogger.logit(.base, message: "Kswitch result: \(result)")
+            }
+        }
+        
         if abs(lastStatusCheck.timeIntervalSinceNow) > 3 || firstRun {
             
             // through the magic of code blocks we'll update in the background
@@ -1361,7 +1386,13 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     
                     // check shares
                     
-                    shareMounterMenu.updateShares(connected: self.userInformation.connected)
+                    var tickets = false
+                    
+                    if self.userInformation.status == "Logged In" {
+                        tickets = true
+                    }
+                    
+                    shareMounterMenu.updateShares(connected: self.userInformation.connected, tickets: tickets)
                     
                     // build the menu
                     
