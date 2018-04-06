@@ -288,6 +288,7 @@ enum Preferences {
     static let showHome = "ShowHome"
     static let secondsToRenew = "SecondsToRenew"
     static let selfServicePath = "SelfServicePath"
+    static let shareReset = "ShareReset"        // clean listing of shares between runs
     static let signInCommand = "SignInCommand"
     static let signInWindowAlert = "SignInWindowAlert"
     static let signInWindowAlertTime = "SignInWindowAlertTime"

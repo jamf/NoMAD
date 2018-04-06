@@ -78,11 +78,15 @@ class ShareMounter: NSArrayController {
     
     @objc func getMounts() {
         
-        knownShares = mountedShares
+        // if users will be switching
         
-        // clear all the known shares
+        if defaults.bool(forKey: Preferences.shareReset) {
+            knownShares = mountedShares
         
-        all_shares.removeAll()
+            // clear all the known shares
+        
+            all_shares.removeAll()
+        }
         
         // check for home mount
         
