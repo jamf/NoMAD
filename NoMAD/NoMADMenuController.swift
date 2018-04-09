@@ -52,6 +52,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     @IBOutlet weak var NoMADMenuGetHelp: NSMenuItem!
     @IBOutlet weak var NoMADMenuHiddenItem1: NSMenuItem!
     @IBOutlet weak var NoMADMenuPreferences: NSMenuItem!
+    @IBOutlet weak var NoMADMenuAbout: NSMenuItem!
     @IBOutlet weak var NoMADMenuQuit: NSMenuItem!
     @IBOutlet weak var NoMADMenuSpewLogs: NSMenuItem!
     @IBOutlet weak var NoMADMenuGetCertificateDate: NSMenuItem!
@@ -69,6 +70,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     @objc var iconOnOn = NSImage()
     @objc var iconOnOff = NSImage()
     @objc var iconOffOff = NSImage()
+    
+    @objc var iconAltOnOn = NSImage()
+    @objc var iconAltOnOff = NSImage()
+    @objc var iconAltOffOff = NSImage()
     
     @objc var myIconOn = NSImage()
     @objc var myIconOff = NSImage()
@@ -105,8 +110,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     var selfService: SelfServiceType?
     
     @objc let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-    
-    @objc let PKINITMenuItem = NSMenuItem()
     
     let myKeychainutil = KeychainUtil()
     
@@ -149,16 +152,27 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         // only do this if shares are available
         
-        shareMounterMenu.updateShares(connected: self.userInformation.connected)
+        var tickets = false
+        
+        if self.userInformation.status == "Logged In" {
+            tickets = true
+        }
+        
+        shareMounterMenu.updateShares(connected: self.userInformation.connected, tickets: tickets)
         
         // load up the actions
         
         nActionMenu.load()
         nActionMenu.updateActions(self.userInformation.connected)
         
-        print(defaults.integer(forKey: Preferences.autoRenewCert))
-        
         // set up Icons - we need 2 sets of 2 for light and dark modes
+        
+        if defaults.bool(forKey: Preferences.lightsOutIKnowWhatImDoing) {
+            myIconOn = NSImage.init()
+            myIconOff = NSImage.init()
+            myIconOnDark = NSImage.init()
+            myIconOffDark = NSImage.init()
+        } else {
         
         if defaults.string(forKey: Preferences.iconOn) != nil {
             myIconOn = NSImage.init(contentsOfFile: defaults.string(forKey: Preferences.iconOn)!)!
@@ -183,6 +197,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         } else {
             myIconOffDark = NSImage(named: NSImage.Name(rawValue: "NoMAD-LogoAlternate-off"))!
         }
+        }
         
         // check for Dark Mode
         
@@ -191,18 +206,35 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 iconOnOn = myIconOn
                 iconOnOff = NSImage(named: NSImage.Name(rawValue: "NoMAD-statusicon-on-off"))!
                 iconOffOff = myIconOff
+                
+                // and the alternates
+                
+                iconAltOnOn = myIconOnDark
+                iconAltOnOff = myIconOffDark
+                iconAltOffOff = myIconOffDark
+                
             } else {
                 iconOnOn = NSImage(named: NSImage.Name(rawValue: "NoMAD-Caribou-on"))!
                 iconOffOff = NSImage(named: NSImage.Name(rawValue: "NoMAD-Caribou-off"))!
+                
+                iconAltOffOff = NSImage(named: NSImage.Name(rawValue: "NoMAD-Caribou-dark-off"))!
+                iconAltOnOn = NSImage(named: NSImage.Name(rawValue: "NoMAD-Caribou-dark-on"))!
             }
         } else {
             if !defaults.bool(forKey: Preferences.caribouTime) {
                 iconOnOn = myIconOnDark
                 //iconOnOff = NSImage(named: "NoMAD-statusicon-on-off")
                 iconOffOff = myIconOffDark
+                
+                iconAltOnOn = myIconOnDark
+                iconAltOffOff = myIconOffDark
+                
             } else {
                 iconOnOn = NSImage(named: NSImage.Name(rawValue: "NoMAD-Caribou-dark-on"))!
                 iconOffOff = NSImage(named: NSImage.Name(rawValue: "NoMAD-Caribou-dark-off"))!
+                
+                iconAltOffOff = NSImage(named: NSImage.Name(rawValue: "NoMAD-Caribou-off"))!
+                iconAltOnOn = NSImage(named: NSImage.Name(rawValue: "NoMAD-Caribou-on"))!
             }
         }
         
@@ -233,25 +265,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             preferencesWindow.window!.forceToFrontAndFocus(nil)
         } else {
             doTheNeedfull()
-        }
-        
-        // Add a PKINIT menu if PKINITer is in the bundle
-        
-        if findPKINITer() {
-            
-            // we have PKINITer so build the menu
-            // TODO: translate these items
-            
-            PKINITMenuItem.title = "NoMADMenuController-SmartcardSignIn".translate
-            PKINITMenuItem.toolTip = "NoMADMenuController-SignInWithSmartcard".translate
-            PKINITMenuItem.action = #selector(smartcardSignIn)
-            PKINITMenuItem.target = self
-            PKINITMenuItem.isEnabled = true
-            
-            // add the menu
-            
-            NoMADMenu.insertItem(PKINITMenuItem, at: (NoMADMenu.index(of: self.NoMADMenuSeperatorTicketLife) + 1))
-            
         }
         
         // set up some default menu items
@@ -311,6 +324,16 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             configureChrome()
         }
         
+        // hide About if told to
+        
+        if defaults.bool(forKey: Preferences.hideAbout) {
+            NoMADMenuAbout.isHidden = true
+        }
+        
+        // change the About name if we need to
+        
+        NoMADMenuAbout.title = defaults.string(forKey: Preferences.menuAbout) ?? "About"
+        
         // hide the Quit button if told to
         
         if CommandLine.arguments.contains("-noquit") || defaults.bool(forKey: Preferences.hideQuit) {
@@ -319,12 +342,16 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         // check if we need to clean certs
         
-        if !defaults.bool(forKey: Preferences.cleanCerts) {
+        if defaults.bool(forKey: Preferences.cleanCerts) {
             myWorkQueue.async(execute: {
                 myLogger.logit(.debug, message: "Starting Cert clean")
             KeychainUtil().cleanCerts()
             })
         }
+        
+        // check for a Kerberos preference file
+        
+        configureKerbPefs()
         
         firstRun = false
         
@@ -345,12 +372,18 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 NoMADMenuChangePassword.isHidden = true
             }
         }
+        
+        if CommandLine.arguments.contains("-prefs") {
+            printAllPrefs()
+        }
     }
     
     // MARK: IBActions
     
     // Show the login window when the menu item is clicked
     @IBAction func NoMADMenuClickLogIn(_ sender: NSMenuItem) {
+        
+        DispatchQueue.main.async {
         
         if defaults.bool(forKey: Preferences.useKeychain) && (defaults.string(forKey: Preferences.lastUser) != "" ) {
             
@@ -377,6 +410,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 myLogger.logit(.base, message:"Automatically logged in.")
                 
                 let _ = cliTask("/usr/bin/kswitch -p " +  userPrinc)
+                
+                self.updateUserInfo()
                 
                 // fire off the SignInCommand script if there is one
                 if defaults.string(forKey: Preferences.signInCommand) != "" {
@@ -416,6 +451,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             }
         }
         loginWindow.window!.forceToFrontAndFocus(nil)
+        }
     }
     
     // show the password change window when the menu item is clicked
@@ -544,6 +580,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         preferencesWindow.window!.forceToFrontAndFocus(nil)
     }
     
+    @IBAction func NoMADMenuClickAbout(_ sender: Any) {
+        welcome.window?.forceToFrontAndFocus(nil)
+    }
+    
     // quit when asked
     @IBAction func NoMADMenuClickQuit(_ sender: NSMenuItem) {
         NSApplication.shared.terminate(self)
@@ -600,7 +640,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             
             // check for http://
             
-            if !certCATest.contains("http://") || !certCATest.contains("https://") {
+            if !certCATest.contains("http://") && !certCATest.contains("https://") {
                 certCATest = "https://" + certCATest
             }
             
@@ -714,9 +754,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 self.NoMADMenuGetCertificate.isEnabled = false
             }
             
-                self.PKINITMenuItem.isEnabled = false
-
-            
             // twiddles what needs to be twiddled for connected but not logged in
             
         } else if self.userInformation.myLDAPServers.tickets.state == false {
@@ -734,8 +771,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             if (self.NoMADMenuGetCertificate != nil)  {
                 self.NoMADMenuGetCertificate.isEnabled = false
             }
-                self.PKINITMenuItem.isEnabled = true
-
         }
         else {
             if defaults.bool(forKey: Preferences.hideRenew) {
@@ -827,7 +862,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 myLogger.logit(LogLevel.base, message: myResult)
             }
             
+            DispatchQueue.main.async {
+
             loginWindow.window!.forceToFrontAndFocus(nil)
+            }
             
         } else if notification.actionButtonTitle == "Ignore" {
             return
@@ -897,7 +935,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 myLogger.logit(.base, message: "Unable to find password in keychain for auto-login.")
                 updateUserInfo()
                 if defaults.bool(forKey: Preferences.useKeychainPrompt) {
+                    DispatchQueue.main.async {
                     loginWindow.window!.forceToFrontAndFocus(nil)
+                    }
                 }
                 return
             }
@@ -953,7 +993,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     myLogger.logit(.base, message:"Error deleting Keychain entry.")
                 }
                 // now show the window
+                DispatchQueue.main.async {
                 loginWindow.window!.forceToFrontAndFocus(nil)
+                }
             } else  {
                 myLogger.logit(.base, message:"Error attempting to automatically log in.")
                 return
@@ -978,7 +1020,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 
             } catch {
                 // no password - prompt the user to sign in
+                DispatchQueue.main.async {
                 loginWindow.window!.forceToFrontAndFocus(nil)
+                }
             }
         }
     }
@@ -998,7 +1042,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     myShareMounter.asyncMountShare(share.url, options: share.options, open: true)
                     //cliTask("open " + share.url.absoluteString.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlPathAllowed)!)
                 } else if share.mountStatus == .mounted {
-                    print(share.localMountPoints ?? "")
                     // open up the local shares
                     NSWorkspace.shared.open(URL(fileURLWithPath: share.localMountPoints!, isDirectory: true))
                 }
@@ -1014,6 +1057,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 iconOnOn = myIconOn
                 iconOnOff = NSImage(named: NSImage.Name(rawValue: "NoMAD-statusicon-on-off"))!
                 iconOffOff = myIconOff
+                
+                iconAltOnOn = myIconOnDark
+                iconAltOffOff = myIconOffDark
+                
             } else {
                 iconOnOn = NSImage(named: NSImage.Name(rawValue: "NoMAD-Caribou-on"))!
                 iconOffOff = NSImage(named: NSImage.Name(rawValue: "NoMAD-Caribou-off"))!
@@ -1023,6 +1070,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 iconOnOn = myIconOnDark
                 //iconOnOff = NSImage(named: "NoMAD-statusicon-on-off")
                 iconOffOff = myIconOffDark
+                
+                iconAltOnOn = myIconOnDark
+                iconAltOffOff = myIconOffDark
+                
             } else {
                 iconOnOn = NSImage(named: NSImage.Name(rawValue: "NoMAD-Caribou-dark-on"))!
                 iconOffOff = NSImage(named: NSImage.Name(rawValue: "NoMAD-Caribou-dark-off"))!
@@ -1054,6 +1105,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         case "getsoftware" :
             NoMADMenuClickGetSoftware(NoMADMenuGetSoftware)
         case "open": break
+        case "getuser" :
+            let myResult = userInformation.myLDAPServers.returnFullRecord("sAMAccountName=" + defaults.string(forKey: Preferences.lastUser)!)
+            myLogger.logit(.base, message: myResult)
         case "passwordchange":
             if self.userInformation.connected && self.userInformation.myLDAPServers.tickets.state {
                 passwordChangeWindow.window!.forceToFrontAndFocus(nil)
@@ -1077,7 +1131,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     }
                     doTheNeedfull()
                 } else {
+                    DispatchQueue.main.async {
                     loginWindow.window!.forceToFrontAndFocus(nil)
+                    }
                 }
             }
         case "update":
@@ -1117,6 +1173,10 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         }
     }
     
+    func returnUser() -> String {
+        return userInformation.myLDAPServers.returnFullRecord("sAMAccountName=" + defaults.string(forKey: Preferences.lastUser)!)
+    }
+    
     // function to start the menu throbbing
     @objc func startMenuAnimationTimer() {
         if !menuAnimated {
@@ -1142,6 +1202,45 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.statusItem.image = self.iconOnOn
         } else {
             self.statusItem.image = self.iconOffOff
+        }
+    }
+    
+    // function to ensure that the basic kerb prefs are there
+    
+    @objc func configureKerbPefs() {
+        let homePath = NSHomeDirectory() + "/Library/Preferences/com.apple.Kerberos.plist"
+        
+        let plistRaw = try? Data.init(contentsOf: URL.init(fileURLWithPath: homePath))
+        
+        if plistRaw == nil {
+            return
+        }
+        
+        guard var plistDict = try? PropertyListSerialization.propertyList(from: plistRaw!, options: .mutableContainersAndLeaves, format: nil) as? [ String : Any ] else { return }
+        
+        // check for a default realm
+        
+        if ( plistDict!["libdefaults"] ?? nil ) == nil {
+            
+            myLogger.logit(.base, message: "Writing out default Kerberos realm.")
+            
+            // no realm so build one
+            
+            let defaultBlock = [
+                "default_realm" : defaults.string(forKey: Preferences.kerberosRealm) ?? "none"
+            ]
+            plistDict!["libdefaults"] = defaultBlock
+            
+            // no make it back into a plist
+            
+            guard let plistData = try? PropertyListSerialization.data(fromPropertyList: plistDict ?? [String : Any ](), format: .binary, options: PropertyListSerialization.WriteOptions.init(0)) else { return }
+            
+            // write it out
+            
+            try? plistData.write(to: URL.init(fileURLWithPath: homePath))
+            
+        } else {
+            myLogger.logit(.base, message: "Kerberos configuration file exists")
         }
     }
     
@@ -1259,6 +1358,17 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             self.lastStatusCheck = Date()
         }
         
+        if defaults.bool(forKey: Preferences.userSwitch) {
+            myLogger.logit(.base, message: "Switching user principal to current shortname.")
+            
+            // updating this
+            
+            let result = cliTask("/usr/bin/kswitch -p \(NSUserName())")
+            if result != "" {
+                myLogger.logit(.base, message: "Kswitch result: \(result)")
+            }
+        }
+        
         if abs(lastStatusCheck.timeIntervalSinceNow) > 3 || firstRun {
             
             // through the magic of code blocks we'll update in the background
@@ -1276,7 +1386,13 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     
                     // check shares
                     
-                    shareMounterMenu.updateShares(connected: self.userInformation.connected)
+                    var tickets = false
+                    
+                    if self.userInformation.status == "Logged In" {
+                        tickets = true
+                    }
+                    
+                    shareMounterMenu.updateShares(connected: self.userInformation.connected, tickets: tickets)
                     
                     // build the menu
                     
@@ -1285,6 +1401,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     // set the menu icon
                     if self.userInformation.status == "Connected" {
                         self.statusItem.image = self.iconOnOff
+                        self.statusItem.alternateImage = self.iconAltOnOff
+                        
                         // we do this twice b/c doing it only once seems to make it less than full width
                         self.statusItem.title = self.userInformation.status.translate
                         self.statusItem.title = self.userInformation.status.translate
@@ -1296,6 +1414,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         
                     } else if self.userInformation.status == "Logged In" && self.userInformation.myLDAPServers.tickets.state || defaults.bool(forKey: Preferences.persistExpiration) {
                         self.statusItem.image = self.iconOnOn
+                        self.statusItem.alternateImage = self.iconAltOnOn
                         
                         // if we're logged in we enable some options
                         
@@ -1370,6 +1489,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         }
                     } else {
                         self.statusItem.image = self.iconOffOff
+                        self.statusItem.alternateImage = self.iconAltOffOff
                         
                         self.NoMADMenuTicketLife.title = "NoMAD Version: " + String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!)
                         
