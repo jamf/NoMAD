@@ -130,7 +130,7 @@
               <cocoa key="currentADDomain"/>
           </property>
           <property name="currentADDomainController" code="deEl" type="text" access="r"
-              description="Current AD user's email address.">
+              description="Current AD domain controller being used by NoMAD.">
               <cocoa key="currentADDomainController"/>
           </property>
           <property name="currentADSite" code="XdEl" type="text" access="r"
