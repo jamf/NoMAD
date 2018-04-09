@@ -278,6 +278,8 @@ enum Preferences {
     static let passwordExpireCustomAlertTime = "PasswordExpireCustomAlertTime"
     static let passwordPolicy = "PasswordPolicy"
     static let persistExpiration = "PersistExpiration"
+    static let profileDone = "ProfileDone"
+    static let profileWait = "ProfileWait"
     
     static let recursiveGroupLookup = "RecursiveGroupLookup"
 
