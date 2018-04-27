@@ -270,7 +270,7 @@ enum Preferences {
     static let messageNotConnected = "MessageNotConnected"
     static let messageUPCAlert = "MessageUPCAlert"
     static let messagePasswordChangePolicy = "MessagePasswordChangePolicy"
-    static let mountSMBOpen = "MountSMBOpen"
+    static let mountSharesWithFinder = "MountSharesWithFinder"
     static let passwordExpirationDays = "PasswordExpirationDays"
     static let passwordExpireAlertTime = "PasswordExpireAlertTime"
     static let passwordExpireCustomAlert = "PasswordExpireCustomAlert"
@@ -325,4 +325,186 @@ enum Preferences {
     static let wifiNetworks = "WifiNetworks"
     static let x509CA = "X509CA"
     static let x509Name = "X509Name"
+
+    static let allKeys = [
+        Preferences.aDDomain,
+        Preferences.aDSite,
+        Preferences.allowEAPOL,
+        Preferences.autoConfigure,
+        Preferences.autoRenewCert,
+        Preferences.changePasswordCommand,
+        Preferences.changePasswordType,
+        Preferences.changePasswordOptions,
+        Preferences.caribouTime,
+        Preferences.cleanCerts,
+        Preferences.configureChrome,
+        Preferences.configureChromeDomain,
+        Preferences.deadLDAPKillTickets,
+        Preferences.displayName,
+        Preferences.dontMatchKerbPrefs,
+        Preferences.dontShowWelcome,
+        Preferences.dontShowWelcomeDefaultOn,
+        Preferences.exportableKey,
+        Preferences.firstRunDone,
+        Preferences.getCertAutomatically,
+        Preferences.getHelpType,
+        Preferences.getHelpOptions,
+        Preferences.groups,
+        Preferences.hicFix,
+        Preferences.hideAbout,
+        Preferences.hideExpiration,
+        Preferences.hideExpirationMessage,
+        Preferences.hideCertificateNumber,
+        Preferences.hideHelp,
+        Preferences.hideGetSoftware,
+        Preferences.hideLockScreen,
+        Preferences.hideRenew,
+        Preferences.hidePrefs,
+        Preferences.hideQuit,
+        Preferences.hideSignOut,
+        Preferences.homeAppendDomain,
+        Preferences.iconOff,
+        Preferences.iconOffDark,
+        Preferences.iconOn,
+        Preferences.iconOnDark,
+        Preferences.kerberosRealm,
+        Preferences.keychainItems,
+        Preferences.keychainItemsCreateSerial,
+        Preferences.keychainItemsDebug,
+        Preferences.keychainMinderWindowTitle,
+        Preferences.keychainMinderWindowMessage,
+        Preferences.keychainMinderShowReset,
+        Preferences.keychainPasswordMatch,
+        Preferences.lastCertificateExpiration,
+        Preferences.loginComamnd,
+        Preferences.loginItem,
+        Preferences.ldapAnonymous,
+        Preferences.lDAPSchema,
+        Preferences.lDAPServerList,
+        Preferences.lDAPServerListDeny,
+        Preferences.lDAPoverSSL,
+        Preferences.lDAPOnly,
+        Preferences.lDAPType,
+        Preferences.localPasswordSync,
+        Preferences.localPasswordSyncDontSyncLocalUsers,
+        Preferences.localPasswordSyncDontSyncNetworkUsers,
+        Preferences.localPasswordSyncOnMatchOnly,
+        Preferences.lockedKeychainCheck,
+        Preferences.lastUser,
+        Preferences.lastPasswordWarning,
+        Preferences.lastPasswordExpireDate,
+        Preferences.menuAbout,
+        Preferences.menuActions,
+        Preferences.menuChangePassword,
+        Preferences.menuHomeDirectory,
+        Preferences.menuGetCertificate,
+        Preferences.menuGetHelp,
+        Preferences.menuGetSoftware,
+        Preferences.menuFileServers,
+        Preferences.menuPasswordExpires,
+        Preferences.menuRenewTickets,
+        Preferences.menuUserName,
+        Preferences.menuWelcome,
+        Preferences.messageLocalSync,
+        Preferences.messageNotConnected,
+        Preferences.messageUPCAlert,
+        Preferences.messagePasswordChangePolicy,
+        Preferences.mountSharesWithFinder,
+        Preferences.passwordExpirationDays,
+        Preferences.passwordExpireAlertTime,
+        Preferences.passwordExpireCustomAlert,
+        Preferences.passwordExpireCustomWarnTime,
+        Preferences.passwordExpireCustomAlertTime,
+        Preferences.passwordPolicy,
+        Preferences.persistExpiration,
+        Preferences.recursiveGroupLookup,
+        Preferences.renewTickets,
+        Preferences.showHome,
+        Preferences.secondsToRenew,
+        Preferences.selfServicePath,
+        Preferences.signInCommand,
+        Preferences.signInWindowAlert,
+        Preferences.signInWindowAlertTime,
+        Preferences.signInWindowOnLaunch,
+        Preferences.signInWindowOnLaunchExclusions,
+        Preferences.signedIn,
+        Preferences.signOutCommand,
+        Preferences.siteIgnore,
+        Preferences.siteForce,
+        Preferences.stateChangeAction,
+        Preferences.switchKerberosUser,
+        Preferences.template,
+        Preferences.titleSignIn,
+        Preferences.uPCAlert,
+        Preferences.uPCAlertAction,
+        Preferences.userPrincipal,
+        Preferences.userHome,
+        Preferences.userPasswordExpireDate,
+        Preferences.userCommandTask1,
+        Preferences.userCommandName1,
+        Preferences.userCommandHotKey1,
+        Preferences.userPasswordSetDates,
+        Preferences.useKeychain,
+        Preferences.useKeychainPrompt,
+        Preferences.userAging,
+        Preferences.userEmail,
+        Preferences.userShortName,
+        Preferences.userSwitch,
+        Preferences.userUPN,
+        Preferences.verbose,
+        Preferences.wifiNetworks,
+        Preferences.x509CA,
+        //Preferences.x509Name,
+        ]
+}
+
+func printAllPrefs() {
+    print("--NoMAD Preferences--")
+    
+    for key in Preferences.allKeys {
+        
+        let pref = defaults.object(forKey: key) as AnyObject
+        
+        switch String(describing: type(of: pref)) {
+        case "__NSCFBoolean" :
+            print("\t" + key + ": " + String(describing: ( defaults.bool(forKey: key))))
+        case "__NSCFArray" :
+            print("\t" + key + ": " + ( String(describing: (defaults.array(forKey: key)!))))
+        case "__NSTaggedDate":
+            print("\t" + key + ": " + ( defaults.object(forKey: key) as! Date ).description(with: Locale.current))
+        default :
+            print("\t" + key + ": " + ( defaults.object(forKey: key) as? String ?? "Unset"))
+        }
+        
+        if defaults.objectIsForced(forKey: key) {
+            print("\t\tForced")
+        }
+    }
+}
+
+func returnAllPrefs() -> String {
+    
+    var prefs = ""
+    
+    for key in Preferences.allKeys {
+        
+        let pref = defaults.object(forKey: key) as AnyObject
+        
+        switch String(describing: type(of: pref)) {
+        case "__NSCFBoolean" :
+            prefs += (key + ": " + String(describing: ( defaults.bool(forKey: key))))
+        case "__NSCFArray" :
+            prefs += (key + ": " + ( String(describing: (defaults.array(forKey: key)!))))
+        case "__NSTaggedDate":
+            prefs += ( key + ": " + ( defaults.object(forKey: key) as! Date ).description(with: Locale.current))
+        default :
+            prefs += (key + ": " + ( defaults.object(forKey: key) as? String ?? "Unset"))
+        }
+        if defaults.objectIsForced(forKey: key) {
+            prefs += "<<FORCED>>"
+        }
+        prefs += "\n"
+    }
+    
+    return prefs
 }

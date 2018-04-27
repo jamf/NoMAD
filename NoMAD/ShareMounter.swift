@@ -322,7 +322,7 @@ class ShareMounter: NSArrayController {
                 var requestID: AsyncRequestID? = nil
                 let queue = DispatchQueue.main
                 
-                if defaults.bool(forKey: Preferences.mountSMBOpen) {
+                if defaults.bool(forKey: Preferences.mountSharesWithFinder) {
                     myLogger.logit(.debug, message: "Mounting old school way.")
                     _ = cliTask("open " + all_shares[i].url.absoluteString.safeURLPath()!)
                     continue

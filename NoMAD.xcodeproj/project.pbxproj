@@ -21,10 +21,10 @@
 		1A2727321F3F5E29005B7378 /* ShareMounterMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2727311F3F5E29005B7378 /* ShareMounterMenu.swift */; };
 		1A2728F91DD19B1400616778 /* PasswordChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2728F81DD19B1400616778 /* PasswordChange.swift */; };
 		1A2B5AB7204A32AD002945C8 /* TCSCertRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B5AB6204A32AD002945C8 /* TCSCertRequest.swift */; };
-		1A2B5AB8204A57C3002945C8 /* TCSCertificateRequest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2B5AB4204A322C002945C8 /* TCSCertificateRequest.framework */; };
-		1A2B5AB9204A57C3002945C8 /* TCSCertificateRequest.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2B5AB4204A322C002945C8 /* TCSCertificateRequest.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1A2EE4431FED7B0E00B6A3BF /* DFSResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0048A21FDFB4A500453A90 /* DFSResolver.swift */; };
 		1A309D431E8E0FC600CEDC45 /* menu.nomad.NoMAD.shares.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1A309D421E8E0FC600CEDC45 /* menu.nomad.NoMAD.shares.plist */; };
+		1A4303E22093BB5400EFE329 /* TCSCertificateRequest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4303E12093BB5400EFE329 /* TCSCertificateRequest.framework */; };
+		1A4303E42093BBA300EFE329 /* TCSCertificateRequest.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4303E12093BB5400EFE329 /* TCSCertificateRequest.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1A58C88C1DD9264D002C0769 /* CSRGen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A58C88B1DD9264D002C0769 /* CSRGen.swift */; };
 		1A88E8881EAF717600AC2E67 /* KeychainMinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A88E8871EAF717600AC2E67 /* KeychainMinder.swift */; };
 		1A88E88A1EAF718400AC2E67 /* KeychainMinder.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A88E8891EAF718400AC2E67 /* KeychainMinder.xib */; };
@@ -91,7 +91,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				1A2B5AB9204A57C3002945C8 /* TCSCertificateRequest.framework in Embed Frameworks */,
+				1A4303E42093BBA300EFE329 /* TCSCertificateRequest.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -116,13 +116,13 @@
 		1A26AFF61D46E4BF000776A4 /* GetHelp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetHelp.swift; sourceTree = "<group>"; };
 		1A2727311F3F5E29005B7378 /* ShareMounterMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareMounterMenu.swift; sourceTree = "<group>"; };
 		1A2728F81DD19B1400616778 /* PasswordChange.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordChange.swift; sourceTree = "<group>"; };
-		1A2B5AB4204A322C002945C8 /* TCSCertificateRequest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = TCSCertificateRequest.framework; sourceTree = "<group>"; };
 		1A2B5AB6204A32AD002945C8 /* TCSCertRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCSCertRequest.swift; sourceTree = "<group>"; };
 		1A2CFB601EF0EAA200F1D74C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/MainMenu.strings; sourceTree = "<group>"; };
 		1A2CFB611EF0EAA300F1D74C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/PreferencesWindow.strings; sourceTree = "<group>"; };
 		1A2CFB621EF0EAA300F1D74C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/PasswordChangeWindow.strings; sourceTree = "<group>"; };
 		1A2CFB681EF0EAA400F1D74C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/LoginWindow.strings; sourceTree = "<group>"; };
 		1A309D421E8E0FC600CEDC45 /* menu.nomad.NoMAD.shares.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = menu.nomad.NoMAD.shares.plist; sourceTree = "<group>"; };
+		1A4303E12093BB5400EFE329 /* TCSCertificateRequest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = TCSCertificateRequest.framework; sourceTree = "<group>"; };
 		1A4CD1AC1F8EF94B001415C2 /* hr-BA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "hr-BA"; path = "hr-BA.lproj/LoginWindow.strings"; sourceTree = "<group>"; };
 		1A4CD1AD1F8EF94C001415C2 /* hr-BA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "hr-BA"; path = "hr-BA.lproj/PreferencesWindow.strings"; sourceTree = "<group>"; };
 		1A4CD1AE1F8EF94D001415C2 /* hr-BA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "hr-BA"; path = "hr-BA.lproj/MainMenu.strings"; sourceTree = "<group>"; };
@@ -252,7 +252,7 @@
 				1A1BA5CF1F22688C00E506D0 /* libgssapi_krb5.tbd in Frameworks */,
 				34E186C21D9E405400265138 /* libresolv.tbd in Frameworks */,
 				84CC67EC1D30A1A500115C76 /* GSS.framework in Frameworks */,
-				1A2B5AB8204A57C3002945C8 /* TCSCertificateRequest.framework in Frameworks */,
+				1A4303E22093BB5400EFE329 /* TCSCertificateRequest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -266,14 +266,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1A190AF5205CBFFE008AC26D /* AppleScript */ = {
-			isa = PBXGroup;
-			children = (
-				1A190AF3205CBEDF008AC26D /* NoMAD.sdef */,
-			);
-			name = AppleScript;
-			sourceTree = "<group>";
-		};
 		1A22AEBF1E200D0A0012220D /* Share Mount */ = {
 			isa = PBXGroup;
 			children = (
@@ -289,10 +281,18 @@
 		1A2B5AB3204A321E002945C8 /* TCSCertRequest */ = {
 			isa = PBXGroup;
 			children = (
-				1A2B5AB4204A322C002945C8 /* TCSCertificateRequest.framework */,
+				1A4303E12093BB5400EFE329 /* TCSCertificateRequest.framework */,
 				1A2B5AB6204A32AD002945C8 /* TCSCertRequest.swift */,
 			);
 			path = TCSCertRequest;
+			sourceTree = "<group>";
+		};
+		1A4303E02093B8FD00EFE329 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				1A190AF3205CBEDF008AC26D /* NoMAD.sdef */,
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		1AE1DFBC1DA69CF100456E3E /* Resources */ = {
@@ -436,6 +436,7 @@
 				BF34324B1D52844300CE8F89 /* NoMADTests */,
 				84CC67DC1D30A18A00115C76 /* Products */,
 				34E186C01D9E405400265138 /* Frameworks */,
+				1A4303E02093B8FD00EFE329 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};

@@ -23,6 +23,6 @@
 +(NSData *)wrappedPublicKeyFromSecKeyRef:(SecKeyRef)inPublicKey;
 +(NSData *)generatePublicKeyFromPrivateKey:(SecKeyRef)privateKey;
 +(SecKeyRef)generatePrivateKeyWithIdentifer:(NSString *)inIdentifer;
-+(void)installCertificateToKeychain:(NSData *)inCert error:(NSError **)returnErr;
++(int)installCertificate:(NSData *)inCert keychain:(NSString *)keychainPath error:(NSError **)returnErr;
 
 @end
