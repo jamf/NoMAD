@@ -116,6 +116,10 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "-prefs"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "-shares"
             isEnabled = "NO">
          </CommandLineArgument>

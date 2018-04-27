@@ -28,50 +28,100 @@ struct KeychaItem {
 }
 
 class KeychainUtil {
-
+    
     var myErr: OSStatus
     let serviceName = "NoMAD"
     var passLength: UInt32 = 0
     var passPtr: UnsafeMutableRawPointer?
     var myKeychainItem: SecKeychainItem?
-
+    
     init() {
         myErr = 0
     }
-
+    
     // find if there is an existing account password and return it or throw
-
+    
     func findPassword(_ name: String) throws -> String {
-
+        
         // clean up anything lingering
         
         passPtr = nil
         passLength = 0
         
         myErr = SecKeychainFindGenericPassword(nil, UInt32(serviceName.count), serviceName, UInt32(name.count), name, &passLength, &passPtr, &myKeychainItem)
-
+        
         if myErr == OSStatus(errSecSuccess) {
             let password = NSString(bytes: passPtr!, length: Int(passLength), encoding: String.Encoding.utf8.rawValue)
             return password! as String
         } else {
-            throw NoADError.noStoredPassword
+            // now check for all lowercase password just in case
+            
+            if name == name.lowercased() {
+                // already lowercase, no need to check again
+                
+                throw NoADError.noStoredPassword
+            }
+            
+            myErr = SecKeychainFindGenericPassword(nil, UInt32(serviceName.count), serviceName, UInt32(name.lowercased().count), name.lowercased(), &passLength, &passPtr, &myKeychainItem)
+            
+            if myErr == OSStatus(errSecSuccess) {
+                let password = NSString(bytes: passPtr!, length: Int(passLength), encoding: String.Encoding.utf8.rawValue)
+                return password! as String
+            } else {
+                
+                // now to look for /anything/ that might match
+                
+                var searchReturn: AnyObject? = nil
+                
+                let attrs = [
+                    kSecClass : kSecClassGenericPassword,
+                    kSecAttrService : serviceName,
+                    kSecReturnRef : true,
+                    kSecReturnAttributes : true,
+                    kSecMatchLimit : kSecMatchLimitAll,
+                    ] as [CFString : Any]
+                
+                myErr = SecItemCopyMatching(attrs as CFDictionary, &searchReturn)
+                
+                if myErr != 0 || searchReturn == nil {
+                    // no results throw
+                    throw NoADError.noStoredPassword
+                }
+                
+                let returnDict = searchReturn as! CFArray as Array
+                for item in returnDict {
+                    if ((item["acct"] as? String ?? "").lowercased() == name.lowercased()) {
+                        // got a match now let's lookup the password
+                        
+                        myErr = SecKeychainFindGenericPassword(nil, UInt32(serviceName.count), serviceName, UInt32((item["acct"] as? String ?? "").count), (item["acct"] as? String ?? ""), &passLength, &passPtr, &myKeychainItem)
+                        
+                        if myErr == OSStatus(errSecSuccess) {
+                            let password = NSString(bytes: passPtr!, length: Int(passLength), encoding: String.Encoding.utf8.rawValue)
+                            return password! as String
+                        } else {
+                            throw NoADError.noStoredPassword
+                        }
+                    }
+                }
+                throw NoADError.noStoredPassword
+            }
         }
     }
-
+    
     // set the password
-
+    
     func setPassword(_ name: String, pass: String) -> OSStatus {
-
+        
         myErr = SecKeychainAddGenericPassword(nil, UInt32(serviceName.count), serviceName, UInt32(name.count), name, UInt32(pass.count), pass, nil)
-
+        
         return myErr
     }
     
     // update the password
-
+    
     func updatePassword(_ name: String, pass: String) -> Bool {
         if (try? findPassword(name)) != nil {
-           let _ = deletePassword()
+            let _ = deletePassword()
         }
         myErr = setPassword(name, pass: pass)
         if myErr == OSStatus(errSecSuccess) {
@@ -81,9 +131,9 @@ class KeychainUtil {
             return false
         }
     }
-
+    
     // delete the password from the keychain
-
+    
     func deletePassword() -> OSStatus {
         myErr = SecKeychainItemDelete(myKeychainItem!)
         return myErr
@@ -115,25 +165,25 @@ class KeychainUtil {
             return true
         }
     }
-
+    
     // convience functions
-
+    
     func findAndDelete(_ name: String) -> Bool {
         do {
-          let _ = try findPassword(name)
+            let _ = try findPassword(name)
         } catch {
             return false
         }
-
+        
         if  deletePassword() == 0 {
             return true
         } else {
             return false
         }
     }
-
+    
     // return the last expiration date for any certs that match the domain and user
-
+    
     func findCertExpiration(_ identifier: String, defaultNamingContext: String) -> Date? {
         
         var lastExpire = Date.distantPast
@@ -241,7 +291,7 @@ class KeychainUtil {
                                 
                                 // pack the data up into a certDate
                                 
-                                let certificate = certDates( serial: serial, expireDate: expireDate, expireInt: Int(expireDate.timeIntervalSince1970), certRef: cert as! SecIdentity)
+                                let certificate = certDates( serial: serial, expireDate: expireDate, expireInt: Int(expireDate.timeIntervalSince1970), certRef: (cert as! SecIdentity))
                                 
                                 // append to the list
                                 
@@ -261,54 +311,54 @@ class KeychainUtil {
         
         return matchingCerts
     }
-
+    
     func manageKeychainPasswords(newPassword: String) {
         
         var searchReturn: AnyObject? = nil
-
+        
         // get the items to update
         
         myLogger.logit(.debug, message: "Attempting to update keychain items.")
-
+        
         let myKeychainItems = defaults.dictionary(forKey: Preferences.keychainItems)
         
         // bail if there's nothing to update 
-
+        
         if myKeychainItems?.count == 0 || myKeychainItems == nil {
             myLogger.logit(.debug, message: "No keychain items to update.")
             return
         }
-
+        
         // set up the base search dictionary
-
+        
         var itemSearch: [String:AnyObject] = [
             kSecClass as String: kSecClassGenericPassword as AnyObject,
             kSecMatchLimit as String : kSecMatchLimitAll as AnyObject,
             kSecReturnAttributes as String: true as AnyObject,
             kSecReturnRef as String : true as AnyObject,
-        ]
+            ]
         
         // set up the new password dictionary
-
+        
         let attrToUpdate: [String:AnyObject] = [
             kSecValueData as String: newPassword.data(using: .utf8) as AnyObject
         ]
-
+        
         for item in myKeychainItems! {
             
             if defaults.bool(forKey: Preferences.keychainItemsDebug) {
                 print(item)
             }
-
+            
             // add in the Service name
-
+            
             itemSearch[kSecAttrService as String] = item.key as AnyObject
             
             var itemAccess: SecAccess? = nil
             var secApp: SecTrustedApplication? = nil
             var myACLs : CFArray? = nil
-
-        
+            
+            
             // add in the swapped account name
             
             let account = (item.value as! String).variableSwap()
@@ -319,7 +369,7 @@ class KeychainUtil {
                 // remove the account attribute if it's in there
                 itemSearch.removeValue(forKey: kSecAttrAccount as String)
             }
-                
+            
             if defaults.bool(forKey: Preferences.keychainItemsDebug) {
                 print(itemSearch)
             }
@@ -331,7 +381,7 @@ class KeychainUtil {
                 // no items found 
                 continue
             }
-
+            
             let items = searchReturn as! CFArray as Array
             
             // if no item, don't attempt to change
@@ -340,7 +390,7 @@ class KeychainUtil {
                 myLogger.logit(.debug, message: "Keychain item does not currently exist.")
                 continue
             }
-
+            
             for entry in items {
                 
                 // now to loop through and find out if the item is available
@@ -355,84 +405,84 @@ class KeychainUtil {
                 myErr = SecKeychainFindGenericPassword(nil, UInt32(itemName.count), itemName, UInt32(account.count), account, &passLength, &passPtr, nil)
                 
                 SecKeychainSetUserInteractionAllowed(true)
-
+                
                 passLength = 0
                 passPtr = nil
                 
-            if myErr != 0 {
-                
-                myLogger.logit(.debug, message: "Adjusting ACL of keychain item \(itemName) : \(account)")
-                
-                myErr = SecKeychainItemCopyAccess(myKeychainItem, &itemAccess)
-                
-                myErr = SecTrustedApplicationCreateFromPath( nil, &secApp)
+                if myErr != 0 {
                     
-                // Decode ACL
+                    myLogger.logit(.debug, message: "Adjusting ACL of keychain item \(itemName) : \(account)")
                     
-                SecAccessCopyACLList(itemAccess!, &myACLs)
+                    myErr = SecKeychainItemCopyAccess(myKeychainItem, &itemAccess)
                     
-                var appList: CFArray? = nil
-                var desc: CFString? = nil
-//                var newacl: AnyObject? = nil
-                var prompt = SecKeychainPromptSelector()
-                
-                for acl in myACLs as! Array<SecACL> {
-                    SecACLCopyContents(acl, &appList, &desc, &prompt)
-                    let authArray = SecACLCopyAuthorizations(acl)
+                    myErr = SecTrustedApplicationCreateFromPath( nil, &secApp)
                     
-                    if !(authArray as! [String]).contains("ACLAuthorizationPartitionID") {
-                        continue
+                    // Decode ACL
+                    
+                    SecAccessCopyACLList(itemAccess!, &myACLs)
+                    
+                    var appList: CFArray? = nil
+                    var desc: CFString? = nil
+                    //                var newacl: AnyObject? = nil
+                    var prompt = SecKeychainPromptSelector()
+                    
+                    for acl in myACLs as! Array<SecACL> {
+                        SecACLCopyContents(acl, &appList, &desc, &prompt)
+                        let authArray = SecACLCopyAuthorizations(acl)
+                        
+                        if !(authArray as! [String]).contains("ACLAuthorizationPartitionID") {
+                            continue
+                        }
+                        
+                        // pull in the description that's really a functional plist <sigh>
+                        
+                        let rawData = Data.init(fromHexEncodedString: desc! as String)
+                        var format: PropertyListSerialization.PropertyListFormat = .xml
+                        
+                        var propertyListObject = try? PropertyListSerialization.propertyList(from: rawData!, options: [], format: &format) as! [ String: [String]]
+                        
+                        // add in the team ID that NoMAD is signed with if it doesn't already exist
+                        
+                        if !(propertyListObject!["Partitions"]?.contains("teamid:AAPZK3CB24"))! {
+                            propertyListObject!["Partitions"]?.append("teamid:AAPZK3CB24")
+                        }
+                        
+                        if defaults.bool(forKey: Preferences.keychainItemsDebug) {
+                            myLogger.logit(.debug, message: String(describing: propertyListObject))
+                        }
+                        
+                        // now serialize it back into a plist
+                        
+                        let xmlObject = try? PropertyListSerialization.data(fromPropertyList: propertyListObject as Any, format: format, options: 0)
+                        
+                        // Hi Rick, how's things?
+                        
+                        myErr = SecKeychainItemSetAccessWithPassword(myKeychainItem, itemAccess!, UInt32(newPassword.count), newPassword)
+                        
+                        // now that all ACLs has been adjusted, we can update the item
+                        
+                        myErr = SecItemUpdate(itemSearch as CFDictionary, attrToUpdate as CFDictionary)
+                        
+                        // now add NoMAD and the original apps back into the property object
+                        
+                        myErr = SecACLSetContents(acl, appList, xmlObject!.hexEncodedString() as CFString, prompt)
+                        
+                        // smack it again to set the ACL
+                        
+                        myErr = SecKeychainItemSetAccessWithPassword(myKeychainItem, itemAccess!, UInt32(newPassword.count), newPassword)
                     }
-                    
-                    // pull in the description that's really a functional plist <sigh>
-                    
-                    let rawData = Data.init(fromHexEncodedString: desc! as String)
-                    var format: PropertyListSerialization.PropertyListFormat = .xml
-                    
-                    var propertyListObject = try? PropertyListSerialization.propertyList(from: rawData!, options: [], format: &format) as! [ String: [String]]
-                    
-                    // add in the team ID that NoMAD is signed with if it doesn't already exist
-                    
-                    if !(propertyListObject!["Partitions"]?.contains("teamid:AAPZK3CB24"))! {
-                        propertyListObject!["Partitions"]?.append("teamid:AAPZK3CB24")
-                    }
-
-                    if defaults.bool(forKey: Preferences.keychainItemsDebug) {
-                        myLogger.logit(.debug, message: String(describing: propertyListObject))
-                    }
-                    
-                    // now serialize it back into a plist
-                    
-                    let xmlObject = try? PropertyListSerialization.data(fromPropertyList: propertyListObject as Any, format: format, options: 0)
                     
                     // Hi Rick, how's things?
                     
                     myErr = SecKeychainItemSetAccessWithPassword(myKeychainItem, itemAccess!, UInt32(newPassword.count), newPassword)
                     
-                    // now that all ACLs has been adjusted, we can update the item
-
-                    myErr = SecItemUpdate(itemSearch as CFDictionary, attrToUpdate as CFDictionary)
+                    if myErr != 0 {
+                        myLogger.logit(.base, message: "Error setting keychain ACL.")
+                    }
                     
-                    // now add NoMAD and the original apps back into the property object
-                    
-                    myErr = SecACLSetContents(acl, appList, xmlObject!.hexEncodedString() as CFString, prompt)
-                    
-                    // smack it again to set the ACL
-                    
-                    myErr = SecKeychainItemSetAccessWithPassword(myKeychainItem, itemAccess!, UInt32(newPassword.count), newPassword)
+                } else {
+                    myLogger.logit(.debug, message: "Keychain item \(itemName) : \(account) is available via ACLs.")
                 }
-                
-                // Hi Rick, how's things?
-                
-                myErr = SecKeychainItemSetAccessWithPassword(myKeychainItem, itemAccess!, UInt32(newPassword.count), newPassword)
-                
-                if myErr != 0 {
-                    myLogger.logit(.base, message: "Error setting keychain ACL.")
-                }
-                
-            } else {
-                myLogger.logit(.debug, message: "Keychain item \(itemName) : \(account) is available via ACLs.")
-            }
             }
             
             if myErr == 0 {
@@ -514,31 +564,31 @@ class KeychainUtil {
             // check class
             
             if (item[itemPart.itemClass] as? String ?? "genp") == "genp" {
-            
+                
                 itemAttrs[kSecAttrType as String] = "genp" as AnyObject
                 
-            // 1. ensure enough parts to make the item are there
-            
-            if item[itemPart.account] == nil && item[itemPart.service] == nil {
-                // not enough to make an item
-                myLogger.logit(.debug, message: "Unable to make keychain item, not enough information.")
-                continue
-            }
-            
-            if item[itemPart.account] != nil {
-                let account = (item[itemPart.account] as? String)?.variableSwap() ?? ""
-                itemAttrs[kSecAttrAccount as String] = account as AnyObject
-            }
-            
-            if item[itemPart.service] != nil {
-                let service = (item[itemPart.service] as? String)?.variableSwap() ?? ""
-                itemAttrs[kSecAttrService as String] = service as AnyObject
-            }
-            
-            if item[itemPart.label] != nil {
-                let label = (item[itemPart.label] as? String)?.variableSwap() ?? ""
-                itemAttrs[kSecAttrLabel as String] = label as AnyObject
-            }
+                // 1. ensure enough parts to make the item are there
+                
+                if item[itemPart.account] == nil && item[itemPart.service] == nil {
+                    // not enough to make an item
+                    myLogger.logit(.debug, message: "Unable to make keychain item, not enough information.")
+                    continue
+                }
+                
+                if item[itemPart.account] != nil {
+                    let account = (item[itemPart.account] as? String)?.variableSwap() ?? ""
+                    itemAttrs[kSecAttrAccount as String] = account as AnyObject
+                }
+                
+                if item[itemPart.service] != nil {
+                    let service = (item[itemPart.service] as? String)?.variableSwap() ?? ""
+                    itemAttrs[kSecAttrService as String] = service as AnyObject
+                }
+                
+                if item[itemPart.label] != nil {
+                    let label = (item[itemPart.label] as? String)?.variableSwap() ?? ""
+                    itemAttrs[kSecAttrLabel as String] = label as AnyObject
+                }
                 
                 // add Secure Apps if listed
                 
@@ -546,7 +596,7 @@ class KeychainUtil {
             } else {
                 // create a generic iternet password "inet"
                 
-            
+                
             }
             
             // 2. now to check if the item exists
@@ -582,7 +632,7 @@ class KeychainUtil {
                 
                 var itemAccess: SecAccess? = nil
                 var myACLs : CFArray? = nil
-
+                
                 createErr = SecKeychainItemCopyAccess(result as! SecKeychainItem, &itemAccess)
                 
                 // Decode ACL
@@ -615,7 +665,7 @@ class KeychainUtil {
                             propertyListObject!["Partitions"]?.append(teamID)
                         }
                     }
-
+                    
                     if defaults.bool(forKey: Preferences.keychainItemsDebug) {
                         myLogger.logit(.debug, message: String(describing: propertyListObject))
                     }
@@ -639,14 +689,14 @@ class KeychainUtil {
                     myLogger.logit(.base, message: "Error setting keychain ACL.")
                 }
             }
-
+            
         }
     }
     
     func cleanCerts() {
         
         myLogger.logit(.debug, message: "Beginning cert clean.")
-
+        
         // CLEAN CERTS
         
         if defaults.string(forKey: Preferences.userUPN) == "" {

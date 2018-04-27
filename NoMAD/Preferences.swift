@@ -187,6 +187,7 @@ enum Preferences {
 
     static let aDDomain = "ADDomain"
     static let aDSite = "ADSite"                    // current AD site
+    static let aDDomainController = "ADDomainController"   // current DC in use
     static let allowEAPOL = "AllowEAPOL"            // allow airportd and eapolclient access to generated private keys
     static let autoConfigure = "AutoConfigure"
     static let autoRenewCert = "AutoRenewCert"
@@ -197,6 +198,7 @@ enum Preferences {
     static let cleanCerts = "CleanCerts"
     static let configureChrome = "ConfigureChrome"
     static let configureChromeDomain = "ConfigureChromeDomain"
+    static let customLDAPAttributes = "CustomLDAPAttributes"
     static let deadLDAPKillTickets = "DeadLDAPKillTickets"
     static let displayName = "DisplayName"
     static let dontMatchKerbPrefs = "DontMatchKerbPrefs"
@@ -234,6 +236,7 @@ enum Preferences {
     static let keychainMinderShowReset = "KeychainMinderShowReset"
     static let keychainPasswordMatch = "KeychainPasswordMatch"
     static let lastCertificateExpiration = "LastCertificateExpiration"
+    static let lightsOutIKnowWhatImDoing = "LightsOutIKnowWhatImDoing"
     static let loginComamnd = "LoginComamnd"
     static let loginItem = "LoginItem"
     static let ldapAnonymous = "LDAPAnonymous"
@@ -285,6 +288,7 @@ enum Preferences {
     static let showHome = "ShowHome"
     static let secondsToRenew = "SecondsToRenew"
     static let selfServicePath = "SelfServicePath"
+    static let shareReset = "ShareReset"        // clean listing of shares between runs
     static let signInCommand = "SignInCommand"
     static let signInWindowAlert = "SignInWindowAlert"
     static let signInWindowAlertTime = "SignInWindowAlertTime"
@@ -310,8 +314,10 @@ enum Preferences {
     static let useKeychain = "UseKeychain"
     static let useKeychainPrompt = "UseKeychainPrompt"
     static let userAging = "UserAging"
+    static let userAttributes = "UserAttributes"
     static let userEmail = "UserEmail"
     static let userShortName = "UserShortName"
+    static let userSwitch = "UserSwitch"
     static let userUPN = "UserUPN"
 
     /// Should verbose logging be used. This will significantly increase log spew.

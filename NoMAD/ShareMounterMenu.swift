@@ -21,11 +21,12 @@ class ShareMounterMenu: NSObject {
     
     var sharePrefs: UserDefaults? = UserDefaults.init(suiteName: "menu.nomad.shares")
     
-    @objc func updateShares(connected: Bool=false) {
+    @objc func updateShares(connected: Bool=false, tickets: Bool=false) {
         
         if (sharePrefs?.integer(forKey: "Version") ?? 0) >= 1 {
         shareMounterQueue.sync(execute: {
             self.myShareMounter.connectedState = connected
+            self.myShareMounter.tickets = tickets
             self.myShareMounter.userPrincipal = defaults.string(forKey: Preferences.userPrincipal)!
             self.myShareMounter.getMountedShares()
             self.myShareMounter.getMounts()
@@ -117,11 +118,15 @@ class ShareMounterMenu: NSObject {
                     //_ = cliTask("open " + DFSResolver.checkAndReplace(url: share.url))
                     _ = cliTask("open " + share.url.absoluteString.safeURLPath()!)
                 } else if share.mountStatus == .mounted {
-                    print(share.localMountPoints ?? "")
                     // open up the local shares
                     
                     // cliTask(“open ” + DFSResolver.checkAndReplace(url: share.url))
-                    NSWorkspace.shared.open(URL(fileURLWithPath: share.localMountPoints!, isDirectory: true))
+                    
+                    if share.localMountPoints != nil {
+                        NSWorkspace.shared.open(URL(fileURLWithPath: share.localMountPoints!, isDirectory: true))
+                    } else {
+                        _ = cliTask("open " + share.url.absoluteString.safeURLPath()!)
+                    }
                 }
             }
         }

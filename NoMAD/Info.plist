@@ -37,6 +37,8 @@
 		<key>NSAllowsArbitraryLoadsInWebContent</key>
 		<true/>
 	</dict>
+	<key>NSAppleScriptEnabled</key>
+	<true/>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2018 Orchard &amp; Grove. All rights reserved.</string>
 	<key>NSMainNibFile</key>
@@ -45,5 +47,7 @@
 	<string>NoMAD.NoMADApplication</string>
 	<key>NSUserNotificationAlertStyle</key>
 	<string>alert</string>
+	<key>OSAScriptingDefinition</key>
+	<string>NoMAD.sdef</string>
 </dict>
 </plist>
