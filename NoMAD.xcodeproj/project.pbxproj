@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		1A00489B1FDF9D5E00453A90 /* menu.nomad.keychainItems.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1A00489A1FDF9D5E00453A90 /* menu.nomad.keychainItems.plist */; };
 		1A08F1F31D36DA0900FA68C4 /* NoMADApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A08F1F21D36DA0900FA68C4 /* NoMADApplication.swift */; };
-		1A190AF4205CBEDF008AC26D /* NoMAD.sdef in Resources */ = {isa = PBXBuildFile; fileRef = 1A190AF3205CBEDF008AC26D /* NoMAD.sdef */; };
 		1A1BA5B11F1D08B000E506D0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A1BA5B31F1D08B000E506D0 /* Localizable.strings */; };
 		1A1BA5CF1F22688C00E506D0 /* libgssapi_krb5.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A1BA5CE1F22688C00E506D0 /* libgssapi_krb5.tbd */; };
 		1A1BA5D11F2268A300E506D0 /* libkrb5.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A1BA5D01F2268A300E506D0 /* libkrb5.tbd */; };
@@ -25,6 +24,7 @@
 		1A309D431E8E0FC600CEDC45 /* menu.nomad.NoMAD.shares.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1A309D421E8E0FC600CEDC45 /* menu.nomad.NoMAD.shares.plist */; };
 		1A4303E22093BB5400EFE329 /* TCSCertificateRequest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4303E12093BB5400EFE329 /* TCSCertificateRequest.framework */; };
 		1A4303E42093BBA300EFE329 /* TCSCertificateRequest.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4303E12093BB5400EFE329 /* TCSCertificateRequest.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1A4303E72093BC9100EFE329 /* NoMAD.sdef in Resources */ = {isa = PBXBuildFile; fileRef = 1A4303E62093BC9100EFE329 /* NoMAD.sdef */; };
 		1A58C88C1DD9264D002C0769 /* CSRGen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A58C88B1DD9264D002C0769 /* CSRGen.swift */; };
 		1A88E8881EAF717600AC2E67 /* KeychainMinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A88E8871EAF717600AC2E67 /* KeychainMinder.swift */; };
 		1A88E88A1EAF718400AC2E67 /* KeychainMinder.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A88E8891EAF718400AC2E67 /* KeychainMinder.xib */; };
@@ -123,6 +123,7 @@
 		1A2CFB681EF0EAA400F1D74C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/LoginWindow.strings; sourceTree = "<group>"; };
 		1A309D421E8E0FC600CEDC45 /* menu.nomad.NoMAD.shares.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = menu.nomad.NoMAD.shares.plist; sourceTree = "<group>"; };
 		1A4303E12093BB5400EFE329 /* TCSCertificateRequest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = TCSCertificateRequest.framework; sourceTree = "<group>"; };
+		1A4303E62093BC9100EFE329 /* NoMAD.sdef */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = NoMAD.sdef; sourceTree = "<group>"; };
 		1A4CD1AC1F8EF94B001415C2 /* hr-BA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "hr-BA"; path = "hr-BA.lproj/LoginWindow.strings"; sourceTree = "<group>"; };
 		1A4CD1AD1F8EF94C001415C2 /* hr-BA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "hr-BA"; path = "hr-BA.lproj/PreferencesWindow.strings"; sourceTree = "<group>"; };
 		1A4CD1AE1F8EF94D001415C2 /* hr-BA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "hr-BA"; path = "hr-BA.lproj/MainMenu.strings"; sourceTree = "<group>"; };
@@ -295,6 +296,14 @@
 			name = "Recovered References";
 			sourceTree = "<group>";
 		};
+		1A4303E52093BC5500EFE329 /* AppleScript */ = {
+			isa = PBXGroup;
+			children = (
+				1A4303E62093BC9100EFE329 /* NoMAD.sdef */,
+			);
+			name = AppleScript;
+			sourceTree = "<group>";
+		};
 		1AE1DFBC1DA69CF100456E3E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -452,6 +461,7 @@
 		84CC67DD1D30A18A00115C76 /* NoMAD */ = {
 			isa = PBXGroup;
 			children = (
+				1A4303E52093BC5500EFE329 /* AppleScript */,
 				1A2B5AB3204A321E002945C8 /* TCSCertRequest */,
 				846DDD38201919E100D94821 /* Action Menu */,
 				1A22AEBF1E200D0A0012220D /* Share Mount */,
@@ -587,9 +597,9 @@
 				FC03F3F91F5A019F0054B5F7 /* Assets in Resources */,
 				84B54B7E1F3A09980025E397 /* Welcome.xib in Resources */,
 				846DDD3E2019422E00D94821 /* menu.nomad.actions.plist in Resources */,
+				1A4303E72093BC9100EFE329 /* NoMAD.sdef in Resources */,
 				1A88E88A1EAF718400AC2E67 /* KeychainMinder.xib in Resources */,
 				841453881E3C2D940085890B /* PreferencesWindow.xib in Resources */,
-				1A190AF4205CBEDF008AC26D /* NoMAD.sdef in Resources */,
 				8414538D1E3C2DA10085890B /* LoginWindow.xib in Resources */,
 				841453831E3C2D7D0085890B /* PasswordChangeWindow.xib in Resources */,
 			);

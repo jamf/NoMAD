@@ -76,14 +76,32 @@ class WindowsCATools {
     func TCSCertEnroll() {
         // generate the keypair
         
+        print("Generating keys for RPC cert request")
+        
         genKeys()
         let myPubKeyData = getPublicKeyasData()
         let myCSRGen = CertificateSigningRequest(commonName: "NoMAD", organizationName: "Orchard & Grove", organizationUnitName: "WorldHQ", countryName: "US", cryptoAlgorithm: CryptoAlgorithm.sha1)
-        let myCSR = myCSRGen.build(myPubKeyData, privateKey: privKey!)
-        print(defaults.string(forKey: Preferences.x509Name))
         
-        let certReq = try? TCSADCertificateRequest.init(serverName: defaults.string(forKey: Preferences.x509CA), certificateAuthorityName: defaults.string(forKey: Preferences.x509Name), certificateTemplate: defaults.string(forKey: Preferences.template), verbose: true)
+        let myCSR = myCSRGen.build(myPubKeyData, privateKey: privKey!)
+        
+        print("RPC CA settings:")
+        
+        print(defaults.string(forKey: Preferences.x509Name) as Any)
+        print(defaults.string(forKey: Preferences.x509CA) as Any)
+        print(defaults.string(forKey: Preferences.template) as Any)
+        
+        var certReq : AnyObject? = nil
+        
         do {
+        certReq = try TCSADCertificateRequest.init(serverName: defaults.string(forKey: Preferences.x509CA), certificateAuthorityName: defaults.string(forKey: Preferences.x509Name), certificateTemplate: defaults.string(forKey: Preferences.template), verbose: true)
+        } catch {
+            print("Unable to init RPC cert request")
+            return
+        }
+        
+        do {
+            print("Submitting CSR to CA")
+            
             let signedCSR = try certReq?.submitRequestToActiveDirectory(withCSR: myCSR)
             let myCertRef = SecCertificateCreateWithData(nil, signedCSR! as CFData)
             
@@ -100,9 +118,13 @@ class WindowsCATools {
             
             var mySecRef : AnyObject? = nil
             
+            print("Adding signed public cert to Keychain")
+            
             self.myImportError = SecItemAdd(dictionary as CFDictionary, &mySecRef)
             
             var myIdentityRef : SecIdentity? = nil
+            
+            print("Creating identity in keychain")
             
             SecIdentityCreateWithCertificate(nil, myCertRef!, &myIdentityRef)
             
@@ -112,7 +134,7 @@ class WindowsCATools {
                 }
             }
         } catch {
-            print("Didn't make it")
+            print("RPC cert request failed")
         }
     }
 
@@ -262,7 +284,7 @@ class WindowsCATools {
 
         // first generate the keypair
         
-        let privateKeyName = "NoMAD:" + (defaults.string(forKey: Preferences.userEmail) ?? "")
+        let privateKeyName = "NoMAD:" + (defaults.string(forKey: Preferences.userEmail) ?? (defaults.string(forKey: Preferences.userShortName))!)
 
         var keyGenDict: [String:AnyObject] = [
 
