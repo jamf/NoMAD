@@ -135,7 +135,9 @@ class WindowsCATools {
             }
         } catch {
             print("RPC cert request failed")
+            return
         }
+        print("Completed RPC Cert request")
     }
 
     func certEnrollment() -> OSStatus {
