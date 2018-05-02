@@ -428,6 +428,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
                     myLogger.logit(.debug, message: "Updating Keychain via Debug flag")
                     let myKeychain = KeychainUtil.init()
                     myKeychain.manageKeychainPasswords(newPassword: Password.stringValue)
+                    myKeychain.manageKeychainPasswordsInternet(newPassword: Password.stringValue)
                 }
                 
                 self.Password.stringValue = ""

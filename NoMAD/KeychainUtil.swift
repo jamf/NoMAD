@@ -499,8 +499,6 @@ class KeychainUtil {
     
     func manageKeychainPasswordsInternet(newPassword: String) {
         
-        var searchReturn: AnyObject? = nil
-        
         // get the items to update
         
         myLogger.logit(.debug, message: "Attempting to update keychain internet items.")
@@ -548,12 +546,10 @@ class KeychainUtil {
                                                       &passData,
                                                       &myKeychainItem)
             
-            let itemSearch: [String:AnyObject] = [
+            var itemSearch: [String:AnyObject] = [
                 kSecClass as String: kSecClassInternetPassword as AnyObject,
                 kSecMatchLimit as String : kSecMatchLimitOne as AnyObject,
                 kSecValueRef as String : myKeychainItem as AnyObject,
-                //kSecReturnAttributes as String: true as AnyObject,
-                //kSecReturnData as String : true as AnyObject,
                 kSecReturnRef as String : true as AnyObject,
                 ]
             
@@ -570,13 +566,35 @@ class KeychainUtil {
                 
             } else if err == -25293 {
                 // need to update the ACL on the item
-                myLogger.logit(.debug, message: "Updating ACL for internet pass: \(account) on \(serverURL?.absoluteString)")
+                myLogger.logit(.debug, message: "Updating ACL for internet pass: \(account) on \(String(describing: serverURL?.absoluteString))")
 
                 // update ACL
                 
                 var itemAccess: SecAccess? = nil
                 var secApp: SecTrustedApplication? = nil
                 var myACLs : CFArray? = nil
+                
+                // get the keychain ref correctly
+                
+                SecKeychainFindInternetPassword(nil,
+                                                UInt32(serverURL?.host?.count ?? 0),
+                                                serverURL?.host ?? "",
+                                                0,
+                                                nil,
+                                                UInt32(account.count),
+                                                account,
+                                                UInt32(serverURL?.path.count ?? 0),
+                                                serverURL?.path,
+                                                UInt16(serverURL?.port ?? 0),
+                                                get4Code(scheme: serverURL?.scheme ?? ""),
+                                                SecAuthenticationType.any,
+                                                nil,
+                                                nil,
+                                                &myKeychainItem)
+                
+                // update itemsearch with the new keychain ref
+                
+                itemSearch[kSecValueRef as String ] = myKeychainItem as AnyObject
                 
                 myErr = SecKeychainItemCopyAccess(myKeychainItem!, &itemAccess)
                 
@@ -626,7 +644,7 @@ class KeychainUtil {
                     
                     // now that all ACLs has been adjusted, we can update the item
                     
-                    myErr = SecItemUpdate(itemSearch as CFDictionary, attrToUpdate as CFDictionary)
+                    //myErr = SecItemUpdate(itemSearch as CFDictionary, attrToUpdate as CFDictionary)
                     
                     // now add NoMAD and the original apps back into the property object
                     
@@ -656,6 +674,11 @@ class KeychainUtil {
                 myLogger.logit(.debug, message: "Error updating internet item")
             }
         }
+        
+        // make sure Keychain is back to allowing interaction
+        
+        SecKeychainSetUserInteractionAllowed(true)
+
     }
     
     fileprivate func get4Code(scheme: String) -> SecProtocolType {
@@ -667,6 +690,10 @@ class KeychainUtil {
             return SecProtocolType.HTTP
         case "https" :
             return SecProtocolType.HTTPS
+        case "cifs" :
+            return SecProtocolType.CIFS
+        case "smb" :
+            return SecProtocolType.SMB
         default :
             return SecProtocolType.any
         }

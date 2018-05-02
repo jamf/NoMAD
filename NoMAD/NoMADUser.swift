@@ -719,6 +719,7 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
 
         let myKeychainUtil = KeychainUtil()
         myKeychainUtil.manageKeychainPasswords(newPassword: newPassword1)
+        myKeychainUtil.manageKeychainPasswordsInternet(newPassword: newPassword1)
         
     } catch let error as NoMADUserError {
         myLogger.logit(LogLevel.base, message: error.description)
