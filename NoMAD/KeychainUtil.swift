@@ -497,6 +497,181 @@ class KeychainUtil {
         }
     }
     
+    func manageKeychainPasswordsInternet(newPassword: String) {
+        
+        var searchReturn: AnyObject? = nil
+        
+        // get the items to update
+        
+        myLogger.logit(.debug, message: "Attempting to update keychain internet items.")
+        
+        let myKeychainItems = defaults.dictionary(forKey: Preferences.keychainItemsInternet)
+        
+        // bail if there's nothing to update
+        
+        if myKeychainItems?.count == 0 || myKeychainItems == nil {
+            myLogger.logit(.debug, message: "No keychain internet items to update.")
+            return
+        }
+        
+        for item in myKeychainItems! {
+            
+            if defaults.bool(forKey: Preferences.keychainItemsDebug) {
+                print("Checking internet password: \(item)")
+            }
+            
+            // see if a) there is an item and b) that we can access it
+            
+            let account = (item.value as! String).variableSwap()
+            let serverURL = URL.init(string:(item.key).variableSwap())
+            
+            var passLength: UInt32 = 0
+            var passData: UnsafeMutableRawPointer? = nil
+            
+            var myKeychainItem : SecKeychainItem? = nil
+            
+            SecKeychainSetUserInteractionAllowed(false)
+            
+            var err = SecKeychainFindInternetPassword(nil,
+                                                      UInt32(serverURL?.host?.count ?? 0),
+                                                      serverURL?.host ?? "",
+                                                      0,
+                                                      nil,
+                                                      UInt32(account.count),
+                                                      account,
+                                                      UInt32(serverURL?.path.count ?? 0),
+                                                      serverURL?.path,
+                                                      UInt16(serverURL?.port ?? 0),
+                                                      get4Code(scheme: serverURL?.scheme ?? ""),
+                                                      SecAuthenticationType.any,
+                                                      &passLength,
+                                                      &passData,
+                                                      &myKeychainItem)
+            
+            let itemSearch: [String:AnyObject] = [
+                kSecClass as String: kSecClassInternetPassword as AnyObject,
+                kSecMatchLimit as String : kSecMatchLimitOne as AnyObject,
+                kSecValueRef as String : myKeychainItem as AnyObject,
+                //kSecReturnAttributes as String: true as AnyObject,
+                //kSecReturnData as String : true as AnyObject,
+                kSecReturnRef as String : true as AnyObject,
+                ]
+            
+            let attrToUpdate : [String:AnyObject] = [
+                kSecValueData as String : newPassword.data(using: .utf8) as AnyObject
+            ]
+            
+            if err == -25300 {
+                myLogger.logit(.debug, message: "No internet item in the keychain")
+                
+                // on to the next item
+                
+                continue
+                
+            } else if err == -25293 {
+                // need to update the ACL on the item
+                myLogger.logit(.debug, message: "Updating ACL for internet pass: \(account) on \(serverURL?.absoluteString)")
+
+                // update ACL
+                
+                var itemAccess: SecAccess? = nil
+                var secApp: SecTrustedApplication? = nil
+                var myACLs : CFArray? = nil
+                
+                myErr = SecKeychainItemCopyAccess(myKeychainItem!, &itemAccess)
+                
+                myErr = SecTrustedApplicationCreateFromPath( nil, &secApp)
+                
+                // Decode ACL
+                
+                SecAccessCopyACLList(itemAccess!, &myACLs)
+                
+                var appList: CFArray? = nil
+                var desc: CFString? = nil
+                //                var newacl: AnyObject? = nil
+                var prompt = SecKeychainPromptSelector()
+                
+                for acl in myACLs as! Array<SecACL> {
+                    SecACLCopyContents(acl, &appList, &desc, &prompt)
+                    let authArray = SecACLCopyAuthorizations(acl)
+                    
+                    if !(authArray as! [String]).contains("ACLAuthorizationPartitionID") {
+                        continue
+                    }
+                    
+                    // pull in the description that's really a functional plist <sigh>
+                    
+                    let rawData = Data.init(fromHexEncodedString: desc! as String)
+                    var format: PropertyListSerialization.PropertyListFormat = .xml
+                    
+                    var propertyListObject = try? PropertyListSerialization.propertyList(from: rawData!, options: [], format: &format) as! [ String: [String]]
+                    
+                    // add in the team ID that NoMAD is signed with if it doesn't already exist
+                    
+                    if !(propertyListObject!["Partitions"]?.contains("teamid:AAPZK3CB24"))! {
+                        propertyListObject!["Partitions"]?.append("teamid:AAPZK3CB24")
+                    }
+                    
+                    if defaults.bool(forKey: Preferences.keychainItemsDebug) {
+                        myLogger.logit(.debug, message: String(describing: propertyListObject))
+                    }
+                    
+                    // now serialize it back into a plist
+                    
+                    let xmlObject = try? PropertyListSerialization.data(fromPropertyList: propertyListObject as Any, format: format, options: 0)
+                    
+                    // Hi Rick, how's things?
+                    
+                    myErr = SecKeychainItemSetAccessWithPassword(myKeychainItem, itemAccess!, UInt32(newPassword.count), newPassword)
+                    
+                    // now that all ACLs has been adjusted, we can update the item
+                    
+                    myErr = SecItemUpdate(itemSearch as CFDictionary, attrToUpdate as CFDictionary)
+                    
+                    // now add NoMAD and the original apps back into the property object
+                    
+                    myErr = SecACLSetContents(acl, appList, xmlObject!.hexEncodedString() as CFString, prompt)
+                    
+                    // smack it again to set the ACL
+                    
+                    myErr = SecKeychainItemSetAccessWithPassword(myKeychainItem, itemAccess!, UInt32(newPassword.count), newPassword)
+                }
+                
+            } else if err != 0 {
+                // unknown other error
+                
+                myLogger.logit(.debug, message: "Unknown error getting internet pass: \(account) on \(String(describing: serverURL?.absoluteString))")
+                
+                continue
+
+            }
+            
+            // we have access to the password and the keychain item... update them
+            
+            err = SecItemUpdate(itemSearch as CFDictionary, attrToUpdate as CFDictionary)
+            
+            if err == 0 {
+                myLogger.logit(.debug, message: "Internet item updated successfully")
+            } else {
+                myLogger.logit(.debug, message: "Error updating internet item")
+            }
+        }
+    }
+    
+    fileprivate func get4Code(scheme: String) -> SecProtocolType {
+        
+        switch scheme {
+        case "ftp" :
+            return SecProtocolType.FTP
+        case "http" :
+            return SecProtocolType.HTTP
+        case "https" :
+            return SecProtocolType.HTTPS
+        default :
+            return SecProtocolType.any
+        }
+    }
+    
     func createItems(pass: String) {
         
         enum itemPart {
