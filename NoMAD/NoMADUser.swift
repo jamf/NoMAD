@@ -82,7 +82,7 @@ class NoMADUser {
      */
     func currentConsoleUserIsADuser() -> Bool {
         if let originalNodeName = try? String(describing: currentConsoleUserRecord.values(forAttribute: kODAttributeTypeOriginalNodeName)[0]) {
-            if ( originalNodeName.contains("/Active Directory")) {
+            if ( originalNodeName.contains("/Active Directory")) || ( originalNodeName.contains("/CentrifyDC")) {
                 myLogger.logit(LogLevel.debug, message: "Current Console User is an AD user.")
                 return originalNodeName.contains("/Active Directory")
             }

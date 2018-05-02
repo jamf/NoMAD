@@ -70,25 +70,28 @@ class NoMADAction : NSObject {
         var result : String = ""
         
         for command in commands! {
+            print("***")
+            print(command)
+            print("Result: \(result)")
             
-            if result == "false" && (command["Command"] as? String ?? "" ).contains("True") {
+            if (result.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines) == "false".trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)) && ((command["Command"] as? String ?? "" ).contains("True")) {
                 // result was false so don't trigger any True action
                 continue
             }
             
-            if result == "true" && (command["Command"] as? String ?? "" ).contains("False") {
+            if (result.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines) == "true") && ((command["Command"] as? String ?? "" ).contains("False")) {
                 // result was true so don't trigger any false action
                 continue
             }
             
             result = runActionCommand(action: (command["Command"] as? String ?? "none").replacingOccurrences(of: "True", with: "").replacingOccurrences(of: "False", with: "") , options: (command["CommandOptions"] as? String ?? "none").replacingOccurrences(of: "<<result>>", with: actionResult) )
-            if result == "false" {
+            if result.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines) == "false" {
                 actionResult = ""
                 if result.contains("<<menu>>") {
                     nActionMenu.menuText = result.replacingOccurrences(of: "<<menu>>", with: "")
                 }
-                return false
-            } else if result != "true" {
+                //return false
+            } else if result.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines) != "true" {
                 actionResult = result
                 
                 if result.contains("<<menu>>") {
@@ -98,8 +101,20 @@ class NoMADAction : NSObject {
             } else {
                 actionResult = "true"
             }
+            
+            if result == "" && (command["Command"] as? String ?? "" ).contains("True") {
+                result = "true"
+            }
+            
+            if result == "" && (command["Command"] as? String ?? "" ).contains("False") {
+                result = "false"
+            }
         }
-        return true
+        if result.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines) == "false" {
+            return false
+        } else {
+            return true
+        }
     }
     
     func getTitle() -> String {
@@ -119,6 +134,15 @@ class NoMADAction : NSObject {
         } else if result == "yellow" {
             status = "yellow"
             return actionName
+        } else if result.contains("<<true>>") {
+            status = "green"
+            return result.replacingOccurrences(of: "<<true>>", with: "")
+        } else if result.contains("<<false>>") {
+            status = "red"
+            return result.replacingOccurrences(of: "<<false>>", with: "")
+        } else if result.contains("<<yellow>>") {
+            status = "yellow"
+            return result.replacingOccurrences(of: "<<yellow>>", with: "")
         } else {
             return result
         }

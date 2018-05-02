@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NoMAD/NoMADMenuController.swift"
-            timestampString = "538679095.913172"
+            timestampString = "540250181.677528"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "467"
-            endingLineNumber = "467"
+            startingLineNumber = "499"
+            endingLineNumber = "499"
             landmarkName = "NoMADMenuClickLogOut(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -74,13 +74,29 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NoMAD/LoginWindow.swift"
-            timestampString = "523556065.078163"
+            timestampString = "539727332.85311"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "717"
             endingLineNumber = "717"
-            landmarkName = "LoginWindow"
-            landmarkType = "3">
+            landmarkName = "changeLocalPassword(_:newPassword:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "NoMAD/NoMADMenuController.swift"
+            timestampString = "540250181.6780339"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "595"
+            endingLineNumber = "595"
+            landmarkName = "smartcardSignIn()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
