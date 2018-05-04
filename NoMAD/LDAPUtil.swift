@@ -37,6 +37,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
     @objc var URIPrefix = "ldap://"
     @objc var port = "389"
     @objc var maxSSF = ""
+    @objc var blackoutConditions = false
 
     let tickets = KlistUtil()
 
@@ -61,7 +62,12 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         if defaults.bool(forKey: Preferences.lDAPoverSSL) {
             URIPrefix = "ldaps://"
             port = "636"
-            maxSSF = "-O maxssf=0 "
+            
+            // don't set maxssf if we're using anonymous auth with SSL
+            
+            if !defaults.bool(forKey: Preferences.ldapAnonymous) {
+                maxSSF = "-O maxssf=0 "
+            }
         }
 
         //myLogger.logit(.notice, message:"Looking up tickets.")
@@ -172,7 +178,12 @@ class LDAPServers : NSObject, DNSResolverDelegate {
             getHosts(currentDomain)
             if self.currentState && tickets.state {
                 testHosts()
-                findSite()
+                if !blackoutConditions {
+                    findSite()
+                } else {
+                    // reset to check again
+                    blackoutConditions = false
+                }
             }
         }
     }
@@ -318,10 +329,10 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 
     @objc func returnFullRecord(_ searchTerm: String) -> String {
         // ensure we're using the right kerberos credential cache
-        swapPrincipals(false)
+        //swapPrincipals(false)
 
         let myResult = cliTaskNoTerm("/usr/bin/ldapsearch -N -Q -LLL " + maxSSF + "-H " + URIPrefix + self.currentServer + " -b " + self.defaultNamingContext + " " + searchTerm )
-        swapPrincipals(true)
+        //swapPrincipals(true)
         return myResult
     }
 
@@ -401,6 +412,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         }
         
         defaults.set(site, forKey: Preferences.aDSite)
+        defaults.set(currentServer, forKey: Preferences.aDDomainController)
         
         myLogger.logit(LogLevel.debug, message:"Resetting default naming context to: " + tempDefaultNamingContext)
         defaultNamingContext = tempDefaultNamingContext
@@ -839,6 +851,18 @@ class LDAPServers : NSObject, DNSResolverDelegate {
         
         if hosts.last!.status == "dead" {
             myLogger.logit(.base, message: "All DCs in are dead! You should really fix this.")
+            
+            // if site is not empty, fall back to global controllers, unless we have staticly set DCs
+            
+            if site != ""  && defaults.string(forKey: Preferences.lDAPServerList) != "" {
+                myLogger.logit(.base, message: "Falling back to globally avilable DCs.")
+                blackoutConditions = true
+                
+                // trigger a network change
+                
+                networkChange()
+            }
+            
             self.currentState = false
         } else {
             self.currentState = true

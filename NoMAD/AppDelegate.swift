@@ -17,10 +17,63 @@ let updateNotification = Notification(name: Notification.Name(rawValue: "menu.no
 @NSApplicationMain
 
 class AppDelegate: NSObject, NSApplicationDelegate {
-
+    
     @objc var refreshTimer: Timer?
     @objc var refreshActivity: NSBackgroundActivityScheduler?
-
+    
+    // AppleScript things
+    
+    @objc var currentADUser : String {
+        get {
+            return defaults.string(forKey: Preferences.lastUser) ?? "NONE"
+        }
+    }
+    
+    @objc var allPrefs : String {
+        get {
+            return returnAllPrefs()
+        }
+    }
+    
+    @objc var currentADUserEmail : String {
+        get {
+            return defaults.string(forKey: Preferences.userEmail) ?? "NONE"
+        }
+    }
+    
+    @objc var currentADDomain : String {
+        get {
+            return defaults.string(forKey: Preferences.aDDomain) ?? "NONE"
+        }
+    }
+    
+    @objc var currentADDomainController : String {
+        get {
+            return defaults.string(forKey: Preferences.aDDomainController) ?? "NONE"
+        }
+    }
+    
+    @objc var currentADSite : String {
+        get {
+            return defaults.string(forKey: Preferences.aDSite) ?? "NONE"
+        }
+    }
+    
+    @objc var signedIn : Bool {
+        get {
+            return defaults.bool(forKey: Preferences.signedIn)
+        }
+    }
+    
+    @objc var currentADUserExpiration : String {
+        get {
+            if let expiredate = defaults.object(forKey: Preferences.lastPasswordExpireDate) as? Date {
+                return expiredate.description(with: Locale.current)
+            }
+            return "NONE"
+        }
+    }
+    
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         
         myLogger.logit(.base, message:"---NoMAD Initialized---")
@@ -97,6 +150,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             refreshTimer = Timer.scheduledTimer(timeInterval: 15 * 60, target: self, selector: #selector(sendUpdateMessage), userInfo: nil, repeats: true)
             refreshTimer?.tolerance = 1.5 * 60
         }
+    }
+}
+
+extension AppDelegate {
+    // 1
+    override func application(_ sender: NSApplication, delegateHandlesKey key: String) -> Bool {
+        return true
     }
 }
 
