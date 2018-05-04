@@ -4,29 +4,19 @@ This Gitlab page is used primarily for code storage and issue tracking. For the 
 
 ***Current Version***
 
-NoMAD v. 1.1.3(886)
+NoMAD v. 1.1.4(933)
 
 ***Development Version***
 
-NoMAD v. 1.1.4
+NoMAD v. 1.1.5
 
-***New Features in Development Version***
+***New Features Planned for Development Version***
 
-- fix for Sign In window not fully displaying
-- About menu now in menu
-- icon now alternates when clicking on the NoMAD icon in the menu bar
-- icon alternates correctly when in dark mode
-- Kerberos preferences written out on first launch to further prevent the "Domain not found" error when changing passwords
-- Certificate expiration computed better, and won't crash on an already expired cert
-- Certificate cleaning will only happen if asked
-- User password in the keychain will be looked for in many ways to ensure that the user name case isn't an issue
-- better defaults printing in the logs with -prefs
-- fix for Sign In Window title not showing correctly when forced
-- better handling of when all DCs in a site go down
-- action menu fixes to correct actionTrue and to allow for cutom titles and red/yellow/green icons
-- ability to get custom list of attributes from AD
-- better handling of shares in the Shares Menu when switching users
-- nomad://getuser will put entire AD user record into the logs
+- Ability to create NoMAD Pro keychain item and user settings to allow from migration to NoMAD Pro from NoMAD
+- Update Internet Passwords in addition to updating application passwords on AD password change
+- Pull certificates via RPCs instead of using the WebCA
+- Have NoMAD wait until a secondary configuration profile is installed - for situations where you have a base than an overlay profile
+- DFS resolution without being bound
 
 ***NoMAD***
 
