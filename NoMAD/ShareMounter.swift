@@ -324,6 +324,11 @@ class ShareMounter: NSArrayController {
                 
                 myLogger.logit(.debug, message: "Attempting to mount: " + all_shares[i].url.absoluteString)
                 
+                if defaults.bool(forKey: Preferences.slowMount) {
+                    usleep(250000)
+                    myLogger.logit(.debug, message: "Dalaying next Mount since SlowMount is set.")
+                }
+                
                 if defaults.bool(forKey: Preferences.mountSharesWithFinder) {
                     
                     myLogger.logit(.base, message: "Mounting share via Finder")

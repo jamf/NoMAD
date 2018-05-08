@@ -319,6 +319,7 @@ enum Preferences {
     static let userShortName = "UserShortName"
     static let userSwitch = "UserSwitch"
     static let userUPN = "UserUPN"
+    static let slowMount = "SlowMount"
 
     /// Should verbose logging be used. This will significantly increase log spew.
     static let verbose = "Verbose"
@@ -430,6 +431,7 @@ enum Preferences {
         Preferences.signOutCommand,
         Preferences.siteIgnore,
         Preferences.siteForce,
+        Preferences.slowMount,
         Preferences.stateChangeAction,
         Preferences.switchKerberosUser,
         Preferences.template,
