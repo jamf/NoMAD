@@ -514,6 +514,12 @@ class KeychainUtil {
         
         for item in myKeychainItems! {
             
+            var proxy = false
+            
+            if item.key.contains("<<proxy>>") {
+                proxy = true
+            }
+            
             if defaults.bool(forKey: Preferences.keychainItemsDebug) {
                 print("Checking internet password: \(item)")
             }
@@ -530,6 +536,19 @@ class KeychainUtil {
             
             SecKeychainSetUserInteractionAllowed(false)
             
+            if defaults.bool(forKey: Preferences.keychainItemsDebug) {
+                print("\tInternet Keychain Item sync values:")
+                print("\tServer length: \(String(describing: UInt32(serverURL?.host?.count ?? 0)))")
+                print("\tServer: \(serverURL?.host ?? "NONE")")
+                print("\tAccount length: \(String(describing: UInt32(account.count)))")
+                print("\tAccount: \(account)")
+                print("\tURL length: \(String(describing: UInt32(serverURL?.path.count ?? 0)))")
+                print("\tURL: \(serverURL?.path)")
+                print("\t4Code: \(get4Code(scheme: serverURL?.scheme ?? "NONE"))")
+                print("\tAuthType: \(SecAuthenticationType.any)")
+                print("\tChecking internet password: \(item)")
+            }
+            
             var err = SecKeychainFindInternetPassword(nil,
                                                       UInt32(serverURL?.host?.count ?? 0),
                                                       serverURL?.host ?? "",
@@ -538,13 +557,22 @@ class KeychainUtil {
                                                       UInt32(account.count),
                                                       account,
                                                       UInt32(serverURL?.path.count ?? 0),
-                                                      serverURL?.path,
+                                                      (serverURL?.path ?? nil),
                                                       UInt16(serverURL?.port ?? 0),
-                                                      get4Code(scheme: serverURL?.scheme ?? ""),
+                                                      get4Code(scheme: serverURL?.scheme ?? "", proxy: proxy),
                                                       SecAuthenticationType.any,
                                                       &passLength,
                                                       &passData,
                                                       &myKeychainItem)
+            
+            if defaults.bool(forKey: Preferences.keychainItemsDebug) {
+                if myKeychainItem != nil {
+                    print("Found a keychain reference")
+                    print(String(describing: myKeychainItem))
+                } else {
+                    print("Didn't find a keychain item")
+                }
+            }
             
             var itemSearch: [String:AnyObject] = [
                 kSecClass as String: kSecClassInternetPassword as AnyObject,
@@ -586,7 +614,7 @@ class KeychainUtil {
                                                 UInt32(serverURL?.path.count ?? 0),
                                                 serverURL?.path,
                                                 UInt16(serverURL?.port ?? 0),
-                                                get4Code(scheme: serverURL?.scheme ?? ""),
+                                                get4Code(scheme: serverURL?.scheme ?? "", proxy: proxy),
                                                 SecAuthenticationType.any,
                                                 nil,
                                                 nil,
@@ -681,7 +709,20 @@ class KeychainUtil {
 
     }
     
-    fileprivate func get4Code(scheme: String) -> SecProtocolType {
+    fileprivate func get4Code(scheme: String, proxy: Bool=false) -> SecProtocolType {
+        
+        // first see if we're a proxy
+        
+        if proxy {
+            switch scheme {
+            case "http":
+                return SecProtocolType.httpProxy
+            case "https" :
+                return SecProtocolType.httpsProxy
+            default :
+                break
+            }
+        }
         
         switch scheme {
         case "ftp" :
