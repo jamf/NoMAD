@@ -626,7 +626,16 @@ class KeychainUtil {
                 
                 myErr = SecKeychainItemCopyAccess(myKeychainItem!, &itemAccess)
                 
+                if myErr != 0 {
+                    myLogger.logit(.base, message: "Unable to get ACL on keychain item, check to see if keychain is locked or has a different password than the current user.")
+                    continue
+                }
+                
                 myErr = SecTrustedApplicationCreateFromPath( nil, &secApp)
+                
+                if myErr != 0 {
+                    myLogger.logit(.base, message: "Unable to get SecTrustedApp reference to NoMAD.")
+                }
                 
                 // Decode ACL
                 
