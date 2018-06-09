@@ -62,7 +62,7 @@ class NoMADUser {
     }
     
     func currentConsoleUserMatchesNoMADUser() -> Bool {
-        if ( userName == NoMADUser.currentConsoleUserName ) {
+        if ( userName.lowercased() == NoMADUser.currentConsoleUserName.lowercased() ) {
             if let originalAuthenticationAuthority = try? String(describing: currentConsoleUserRecord.values(forAttribute: kODAttributeTypeAuthenticationAuthority)) {
                 if ( originalAuthenticationAuthority.contains(realm) ) {
                     return true
