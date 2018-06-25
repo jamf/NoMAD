@@ -718,7 +718,9 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
         // sync any passwords that need to be synced
 
         let myKeychainUtil = KeychainUtil()
+        myLogger.logit(.debug, message: "Updating keychain items.")
         myKeychainUtil.manageKeychainPasswords(newPassword: newPassword1)
+        myLogger.logit(.debug, message: "Updating Internet keychain items.")
         myKeychainUtil.manageKeychainPasswordsInternet(newPassword: newPassword1)
         
     } catch let error as NoMADUserError {
