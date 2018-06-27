@@ -549,7 +549,7 @@ class KeychainUtil {
                     print("\tKeychain Item account: \(itemAccount as? String ?? "NONE")")
                     print("\tPref item account: \(account)")
                     
-                    if (itemAccount as? String ?? "ANY").lowercased() == account.lowercased() {
+                    if ((itemAccount as? String ?? "ANY").lowercased() == account.lowercased()) || account == "<<ANY>>" {
                         print("\t\tAccount matches")
                     } else {
                         fullMatch = false
@@ -608,6 +608,13 @@ class KeychainUtil {
                 kSecReturnRef as String : true as AnyObject,
                 ]
             
+            
+            if #available(OSX 10.11, *) {
+                itemSearch[kSecUseAuthenticationUI as String] = kSecUseAuthenticationUIFail as AnyObject
+            } else {
+                itemSearch[kSecUseNoAuthenticationUI as String ] = false as AnyObject
+            }
+
             let attrToUpdate : [String:AnyObject] = [
                 kSecValueData as String : newPassword.data(using: .utf8) as AnyObject
             ]
