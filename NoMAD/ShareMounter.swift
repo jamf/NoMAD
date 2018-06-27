@@ -338,7 +338,7 @@ class ShareMounter: NSArrayController {
 
                 let _ = NetFSMountURLAsync(all_shares[i].url as CFURL!,
                                                 nil,
-                                                userPrincipal as CFString!,
+                                                userPrincipal as CFString?,
                                                 nil,
                                                 open_options,
                                                 mount_options,

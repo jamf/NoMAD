@@ -497,6 +497,531 @@ class KeychainUtil {
         }
     }
     
+    func manageKeychainPasswordsInternet(newPassword: String) {
+        // get the items to update
+        
+        myLogger.logit(.debug, message: "Attempting to update keychain internet items.")
+        
+        let changeItems = defaults.dictionary(forKey: Preferences.keychainItemsInternet)
+        var changes = 0
+        var changeSecItems = [SecKeychainItem]()
+        
+        // bail if there's nothing to update
+        
+        if changeItems?.count == 0 || changeItems == nil {
+            myLogger.logit(.debug, message: "No keychain internet items to update.")
+            return
+        }
+        
+        let allItems = findAllItems(internetPassword: true)  as! CFArray as Array
+        
+        if allItems == nil {
+            myLogger.logit(.debug, message: "No keychain internet items found.")
+            return
+        }
+
+        for prefItem in changeItems! {
+            
+            let account = (prefItem.value as! String).variableSwap()
+            let serverURL = URL.init(string:(prefItem.key).variableSwap())
+            
+            print("***Item to look for***")
+            print(account)
+            print(serverURL?.absoluteString)
+            
+            for item in allItems {
+                let itemAccount = (item["acct"] ?? "None")
+                let itemService = (item["svce"] ?? "None")
+                let itemLabel = (item["labl"] ?? "None")
+                let itemRef = (item["v_Ref"] ?? "None")
+                let itemPort = (item["port"] ?? "None")
+                let itemProtocol = (item["ptcl"] ?? "None")
+                let itemServer = (item["srvr"] ?? "None")
+                
+                if itemServer as? String == serverURL?.host {
+                    
+                    print("Found potential match...")
+                    
+                    var fullMatch = true
+                    
+                    print("\tChecking for full match...")
+                    print("")
+                    print("\tKeychain Item account: \(itemAccount as? String ?? "NONE")")
+                    print("\tPref item account: \(account)")
+                    
+                    if (itemAccount as? String ?? "ANY").lowercased() == account.lowercased() {
+                        print("\t\tAccount matches")
+                    } else {
+                        fullMatch = false
+                    }
+                    
+                    print("")
+                    print("\tKeychain Item protocol: \(String(describing: itemProtocol))")
+                    print("\tPref item protocol: \(String(describing: serverURL?.scheme))")
+                    
+                    if let proto = itemProtocol as? String {
+                        if !(proto == getSchemeNumber(scheme: serverURL?.scheme ?? "NONE", proxy: prefItem.key.contains("<<proxy>>"))) {
+                            fullMatch = false
+                        } else {
+                            print("\t\tProtocols match")
+                        }
+                    } else {
+                        print("No protocol set for Keychain item.")
+                    }
+                    
+                    print("")
+                    print("\tKeychain Item port: \(String(describing: itemPort))")
+                    print("\tPref Item Port: \(String(describing: serverURL?.port))")
+                    
+                    if itemPort as! Int != 0 {
+                        if itemPort as? Int ?? 0 == serverURL?.port {
+                            print("\t\tPort matches")
+                        } else {
+                            fullMatch = false
+                        }
+                    } else {
+                        print("No port set, so matching")
+                    }
+                    
+                    if fullMatch {
+                        changes += 1
+                        print("***")
+                        print("Found a full match")
+                        print("***")
+                        changeSecItems.append(itemRef as! SecKeychainItem)
+                    }
+                }
+            }
+        }
+        print("***")
+        print("Total matches: \(String(describing: changes))")
+
+        if changes > 0 {
+            
+            SecKeychainSetUserInteractionAllowed(false)
+            
+            
+            var itemSearch: [String:AnyObject] = [
+                kSecClass as String: kSecClassInternetPassword as AnyObject,
+                kSecMatchLimit as String : kSecMatchLimitOne as AnyObject,
+                //kSecValueRef as String : myKeychainItem as AnyObject,
+                kSecReturnRef as String : true as AnyObject,
+                ]
+            
+            let attrToUpdate : [String:AnyObject] = [
+                kSecValueData as String : newPassword.data(using: .utf8) as AnyObject
+            ]
+            
+            for item in changeSecItems {
+                // add the item to the searchDict
+                
+                itemSearch[kSecValueRef as String] = item as AnyObject
+                
+                let err = SecItemUpdate(itemSearch as CFDictionary, attrToUpdate as CFDictionary)
+                
+                if err == 0 {
+                    // changed item
+                    myLogger.logit(.base, message: "Keychain item updated.")
+                    continue
+                } else if err == -128 {
+                    
+                    var myErr: OSStatus
+                    
+                    // update ACL
+                    
+                    var itemAccess: SecAccess? = nil
+                    var secApp: SecTrustedApplication? = nil
+                    var myACLs : CFArray? = nil
+                    
+                    
+                    myErr = SecKeychainItemCopyAccess(item, &itemAccess)
+                    
+                    if myErr != 0 {
+                        print("Unable to get ACL on keychain item, check to see if keychain is locked or has a different password than the current user.")
+                        continue
+                    }
+                    
+                    myErr = SecTrustedApplicationCreateFromPath( nil, &secApp)
+                    
+                    if myErr != 0 {
+                        print("Unable to get SecTrustedApp reference to NoMAD.")
+                    }
+                    
+                    // Decode ACL
+                    
+                    SecAccessCopyACLList(itemAccess!, &myACLs)
+                    
+                    var appList: CFArray? = nil
+                    var desc: CFString? = nil
+                    //                var newacl: AnyObject? = nil
+                    var prompt = SecKeychainPromptSelector()
+                    
+                    for acl in myACLs as! Array<SecACL> {
+                        SecACLCopyContents(acl, &appList, &desc, &prompt)
+                        let authArray = SecACLCopyAuthorizations(acl)
+                        
+                        if !(authArray as! [String]).contains("ACLAuthorizationPartitionID") {
+                            continue
+                        }
+                        
+                        // pull in the description that's really a functional plist <sigh>
+                        
+                        let rawData = Data.init(fromHexEncodedString: desc! as String)
+                        var format: PropertyListSerialization.PropertyListFormat = .xml
+                        
+                        var propertyListObject = try? PropertyListSerialization.propertyList(from: rawData!, options: [], format: &format) as! [ String: [String]]
+                        
+                        // add in the team ID that NoMAD is signed with if it doesn't already exist
+                        
+                        if !(propertyListObject!["Partitions"]?.contains("teamid:AAPZK3CB24"))! {
+                            propertyListObject!["Partitions"]?.append("teamid:AAPZK3CB24")
+                        }
+                        
+                        // now serialize it back into a plist
+                        
+                        let xmlObject = try? PropertyListSerialization.data(fromPropertyList: propertyListObject as Any, format: format, options: 0)
+                        
+                        // Hi Rick, how's things?
+                        
+                        myErr = SecKeychainItemSetAccessWithPassword(item, itemAccess!, UInt32(newPassword.count), newPassword)
+                        
+                        myErr = SecACLSetContents(acl, appList, xmlObject!.hexEncodedString() as CFString, prompt)
+                        
+                        // smack it again to set the ACL
+                        
+                        myErr = SecKeychainItemSetAccessWithPassword(item, itemAccess!, UInt32(newPassword.count), newPassword)
+                    }
+                    
+                } else if err != 0 {
+                    // unknown other error
+                    
+                    print("Unknown error getting internet pass")
+                    continue
+                }
+            }
+            SecKeychainSetUserInteractionAllowed(true)
+        }
+    }
+    
+    func manageKeychainPasswordsInternetOld(newPassword: String) {
+        
+        // get the items to update
+        
+        myLogger.logit(.debug, message: "Attempting to update keychain internet items.")
+        
+        let myKeychainItems = defaults.dictionary(forKey: Preferences.keychainItemsInternet)
+        
+        // bail if there's nothing to update
+        
+        if myKeychainItems?.count == 0 || myKeychainItems == nil {
+            myLogger.logit(.debug, message: "No keychain internet items to update.")
+            return
+        }
+        
+        // get all of the keychain items
+        
+        let allItems = findAllItems(internetPassword: true)
+        
+        
+        
+        for item in myKeychainItems! {
+            
+            var proxy = false
+            
+            if item.key.contains("<<proxy>>") {
+                proxy = true
+            }
+            
+            if defaults.bool(forKey: Preferences.keychainItemsDebug) {
+                print("Checking internet password: \(item)")
+            }
+            
+            // see if a) there is an item and b) that we can access it
+            
+            let account = (item.value as! String).variableSwap()
+            let serverURL = URL.init(string:(item.key).variableSwap())
+            
+            var passLength: UInt32 = 0
+            var passData: UnsafeMutableRawPointer? = nil
+            
+            var myKeychainItem : SecKeychainItem? = nil
+            
+            SecKeychainSetUserInteractionAllowed(false)
+            
+            if defaults.bool(forKey: Preferences.keychainItemsDebug) {
+                print("\tInternet Keychain Item sync values:")
+                print("\tServer length: \(String(describing: UInt32(serverURL?.host?.count ?? 0)))")
+                print("\tServer: \(serverURL?.host ?? "NONE")")
+                print("\tAccount length: \(String(describing: UInt32(account.count)))")
+                print("\tAccount: \(account)")
+                print("\tURL length: \(String(describing: UInt32(serverURL?.path.count ?? 0)))")
+                print("\tURL: \(serverURL?.path)")
+                print("\t4Code: \(get4Code(scheme: serverURL?.scheme ?? "NONE"))")
+                print("\tAuthType: \(SecAuthenticationType.any)")
+                print("\tChecking internet password: \(item)")
+            }
+            
+            var err = SecKeychainFindInternetPassword(nil,
+                                                      UInt32(serverURL?.host?.count ?? 0),
+                                                      serverURL?.host ?? "",
+                                                      0,
+                                                      nil,
+                                                      UInt32(account.count),
+                                                      account,
+                                                      UInt32(serverURL?.path.count ?? 0),
+                                                      (serverURL?.path ?? nil),
+                                                      UInt16(serverURL?.port ?? 0),
+                                                      get4Code(scheme: serverURL?.scheme ?? "", proxy: proxy),
+                                                      SecAuthenticationType.any,
+                                                      &passLength,
+                                                      &passData,
+                                                      &myKeychainItem)
+            
+            if defaults.bool(forKey: Preferences.keychainItemsDebug) {
+                if myKeychainItem != nil {
+                    print("Found a keychain reference")
+                    print(String(describing: myKeychainItem))
+                } else {
+                    print("Didn't find a keychain item")
+                }
+            }
+            
+            var itemSearch: [String:AnyObject] = [
+                kSecClass as String: kSecClassInternetPassword as AnyObject,
+                kSecMatchLimit as String : kSecMatchLimitOne as AnyObject,
+                kSecValueRef as String : myKeychainItem as AnyObject,
+                kSecReturnRef as String : true as AnyObject,
+                ]
+            
+            let attrToUpdate : [String:AnyObject] = [
+                kSecValueData as String : newPassword.data(using: .utf8) as AnyObject
+            ]
+            
+            if err == -25300 {
+                myLogger.logit(.debug, message: "No internet item in the keychain")
+                
+                // on to the next item
+                
+                continue
+                
+            } else if err == -25293 {
+                // need to update the ACL on the item
+                myLogger.logit(.debug, message: "Updating ACL for internet pass: \(account) on \(String(describing: serverURL?.absoluteString))")
+
+                // update ACL
+                
+                var itemAccess: SecAccess? = nil
+                var secApp: SecTrustedApplication? = nil
+                var myACLs : CFArray? = nil
+                
+                // get the keychain ref correctly
+                
+                SecKeychainFindInternetPassword(nil,
+                                                UInt32(serverURL?.host?.count ?? 0),
+                                                serverURL?.host ?? "",
+                                                0,
+                                                nil,
+                                                UInt32(account.count),
+                                                account,
+                                                UInt32(serverURL?.path.count ?? 0),
+                                                serverURL?.path,
+                                                UInt16(serverURL?.port ?? 0),
+                                                get4Code(scheme: serverURL?.scheme ?? "", proxy: proxy),
+                                                SecAuthenticationType.any,
+                                                nil,
+                                                nil,
+                                                &myKeychainItem)
+                
+                // update itemsearch with the new keychain ref
+                
+                itemSearch[kSecValueRef as String ] = myKeychainItem as AnyObject
+                
+                myErr = SecKeychainItemCopyAccess(myKeychainItem!, &itemAccess)
+                
+                if myErr != 0 {
+                    myLogger.logit(.base, message: "Unable to get ACL on keychain item, check to see if keychain is locked or has a different password than the current user.")
+                    continue
+                }
+                
+                myErr = SecTrustedApplicationCreateFromPath( nil, &secApp)
+                
+                if myErr != 0 {
+                    myLogger.logit(.base, message: "Unable to get SecTrustedApp reference to NoMAD.")
+                }
+                
+                // Decode ACL
+                
+                SecAccessCopyACLList(itemAccess!, &myACLs)
+                
+                var appList: CFArray? = nil
+                var desc: CFString? = nil
+                //                var newacl: AnyObject? = nil
+                var prompt = SecKeychainPromptSelector()
+                
+                for acl in myACLs as! Array<SecACL> {
+                    SecACLCopyContents(acl, &appList, &desc, &prompt)
+                    let authArray = SecACLCopyAuthorizations(acl)
+                    
+                    if !(authArray as! [String]).contains("ACLAuthorizationPartitionID") {
+                        continue
+                    }
+                    
+                    // pull in the description that's really a functional plist <sigh>
+                    
+                    let rawData = Data.init(fromHexEncodedString: desc! as String)
+                    var format: PropertyListSerialization.PropertyListFormat = .xml
+                    
+                    var propertyListObject = try? PropertyListSerialization.propertyList(from: rawData!, options: [], format: &format) as! [ String: [String]]
+                    
+                    // add in the team ID that NoMAD is signed with if it doesn't already exist
+                    
+                    if !(propertyListObject!["Partitions"]?.contains("teamid:AAPZK3CB24"))! {
+                        propertyListObject!["Partitions"]?.append("teamid:AAPZK3CB24")
+                    }
+                    
+                    if defaults.bool(forKey: Preferences.keychainItemsDebug) {
+                        myLogger.logit(.debug, message: String(describing: propertyListObject))
+                    }
+                    
+                    // now serialize it back into a plist
+                    
+                    let xmlObject = try? PropertyListSerialization.data(fromPropertyList: propertyListObject as Any, format: format, options: 0)
+                    
+                    // Hi Rick, how's things?
+                    
+                    myErr = SecKeychainItemSetAccessWithPassword(myKeychainItem, itemAccess!, UInt32(newPassword.count), newPassword)
+                    
+                    // now that all ACLs has been adjusted, we can update the item
+                    
+                    //myErr = SecItemUpdate(itemSearch as CFDictionary, attrToUpdate as CFDictionary)
+                    
+                    // now add NoMAD and the original apps back into the property object
+                    
+                    myErr = SecACLSetContents(acl, appList, xmlObject!.hexEncodedString() as CFString, prompt)
+                    
+                    // smack it again to set the ACL
+                    
+                    myErr = SecKeychainItemSetAccessWithPassword(myKeychainItem, itemAccess!, UInt32(newPassword.count), newPassword)
+                }
+                
+            } else if err != 0 {
+                // unknown other error
+                
+                myLogger.logit(.debug, message: "Unknown error getting internet pass: \(account) on \(String(describing: serverURL?.absoluteString))")
+                
+                continue
+
+            }
+            
+            // we have access to the password and the keychain item... update them
+            
+            err = SecItemUpdate(itemSearch as CFDictionary, attrToUpdate as CFDictionary)
+            
+            if err == 0 {
+                myLogger.logit(.debug, message: "Internet item updated successfully")
+            } else {
+                myLogger.logit(.debug, message: "Error updating internet item")
+            }
+        }
+        
+        // make sure Keychain is back to allowing interaction
+        
+        SecKeychainSetUserInteractionAllowed(true)
+    }
+    
+    func findAllItems(internetPassword: Bool) -> [AnyObject]? {
+        
+        var searchReturn: AnyObject? = nil
+        var myErr = OSStatus()
+        
+        var searchTerms : [ String : AnyObject ] = [
+            kSecReturnAttributes as String: true as AnyObject,          // return attributes for things we find
+            kSecReturnRef as String : true as AnyObject,                // return the SecKeychain reference
+            kSecMatchLimit as String : kSecMatchLimitAll as AnyObject   // return all matches
+        ]
+        
+        if internetPassword {
+            searchTerms[kSecClass as String] = kSecClassInternetPassword as AnyObject
+        } else {
+            searchTerms[kSecClass as String] = kSecClassGenericPassword as AnyObject
+        }
+        
+        // Now search for the items
+        
+        myErr = SecItemCopyMatching(searchTerms as CFDictionary, &searchReturn)
+        
+        if myErr != 0 {
+            print("Error while searching, try different terms.")
+            exit(0)
+        }
+        
+        let items = searchReturn as! CFArray as Array
+        
+        return items
+    }
+    
+    func get4Code(scheme: String, proxy: Bool=false) -> SecProtocolType {
+        
+        // first see if we're a proxy
+        
+        if proxy {
+            switch scheme {
+            case "http":
+                return SecProtocolType.httpProxy
+            case "https" :
+                return SecProtocolType.httpsProxy
+            default :
+                break
+            }
+        }
+        
+        switch scheme {
+        case "ftp" :
+            return SecProtocolType.FTP
+        case "http" :
+            return SecProtocolType.HTTP
+        case "https" :
+            return SecProtocolType.HTTPS
+        case "cifs" :
+            return SecProtocolType.CIFS
+        case "smb" :
+            return SecProtocolType.SMB
+        default :
+            return SecProtocolType.any
+        }
+    }
+    
+    func getSchemeNumber(scheme: String, proxy: Bool=false) -> String {
+        
+        // first see if we're a proxy
+        
+        if proxy {
+            switch scheme {
+            case "http":
+                return "htpx"
+            case "https" :
+                return "htsx"
+            default :
+                break
+            }
+        }
+        
+        switch scheme {
+        case "ftp" :
+            return "ftp"
+        case "http" :
+            return "http"
+        case "https" :
+            return "htps"
+        case "cifs" :
+            return "cifs"
+        case "smb" :
+            return "smb"
+        default :
+            return scheme
+        }
+    }
+    
     func createItems(pass: String) {
         
         enum itemPart {

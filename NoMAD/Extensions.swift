@@ -88,6 +88,10 @@ extension String {
         cleanString = cleanString.replacingOccurrences(of: "<<upn>>", with: upn)
         cleanString = cleanString.replacingOccurrences(of: "<<email>>", with: email)
         
+        // now to remove any proxy settings
+        
+        cleanString = cleanString.replacingOccurrences(of: "<<proxy>>", with: "")
+        
         return cleanString //.addingPercentEncoding(withAllowedCharacters: .alphanumerics)
         
     }
