@@ -527,7 +527,7 @@ class KeychainUtil {
             
             print("***Item to look for***")
             print(account)
-            print(serverURL?.absoluteString)
+            print(serverURL?.absoluteString as Any)
             
             for item in allItems {
                 let itemAccount = (item["acct"] ?? "None")
@@ -624,14 +624,8 @@ class KeychainUtil {
                 
                 itemSearch[kSecValueRef as String] = item as AnyObject
                 
-                let err = SecItemUpdate(itemSearch as CFDictionary, attrToUpdate as CFDictionary)
+                // update the ACLs before attempting to change the item
                 
-                if err == 0 {
-                    // changed item
-                    myLogger.logit(.base, message: "Keychain item updated.")
-                    continue
-                } else if err == -128 {
-                    
                     var myErr: OSStatus
                     
                     // update ACL
@@ -699,11 +693,14 @@ class KeychainUtil {
                         myErr = SecKeychainItemSetAccessWithPassword(item, itemAccess!, UInt32(newPassword.count), newPassword)
                     }
                     
-                } else if err != 0 {
-                    // unknown other error
-                    
-                    print("Unknown error getting internet pass")
-                    continue
+                // now to change the password
+                
+                let err = SecItemUpdate(itemSearch as CFDictionary, attrToUpdate as CFDictionary)
+                
+                if err == 0 {
+                    myLogger.logit(.base, message: "Changed keychain item.")
+                } else {
+                    myLogger.logit(.base, message: "Unable to change keychain item.")
                 }
             }
             SecKeychainSetUserInteractionAllowed(true)
@@ -762,7 +759,7 @@ class KeychainUtil {
                 print("\tAccount length: \(String(describing: UInt32(account.count)))")
                 print("\tAccount: \(account)")
                 print("\tURL length: \(String(describing: UInt32(serverURL?.path.count ?? 0)))")
-                print("\tURL: \(serverURL?.path)")
+                print("\tURL: \(String(describing: serverURL?.path))")
                 print("\t4Code: \(get4Code(scheme: serverURL?.scheme ?? "NONE"))")
                 print("\tAuthType: \(SecAuthenticationType.any)")
                 print("\tChecking internet password: \(item)")
@@ -1023,7 +1020,8 @@ class KeychainUtil {
         case "cifs" :
             return "cifs"
         case "smb" :
-            return "smb"
+            // this needs a trailing space to be a 4Char code <sigh>
+            return "smb "
         default :
             return scheme
         }

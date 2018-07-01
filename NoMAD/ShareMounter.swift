@@ -94,7 +94,7 @@ class ShareMounter: NSArrayController {
         
         if CommandLine.arguments.contains("-shares") {
             print("***Raw Home Share Prefs***")
-            print(homeDict)
+            print(homeDict as Any)
         }
         
         if homeDict != nil {
@@ -336,7 +336,7 @@ class ShareMounter: NSArrayController {
                     continue
                 }
 
-                let _ = NetFSMountURLAsync(all_shares[i].url as CFURL!,
+                let _ = NetFSMountURLAsync(all_shares[i].url as CFURL?,
                                                 nil,
                                                 userPrincipal as CFString?,
                                                 nil,
