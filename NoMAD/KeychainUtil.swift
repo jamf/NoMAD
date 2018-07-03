@@ -684,20 +684,30 @@ class KeychainUtil {
                         
                         // Hi Rick, how's things?
                         
-                        myErr = SecKeychainItemSetAccessWithPassword(item, itemAccess!, UInt32(newPassword.count), newPassword)
+                        myErr = SecKeychainItemSetAccessWithPassword(myKeychainItem, itemAccess!, UInt32(newPassword.count), newPassword)
+                        
+                        // now that all ACLs has been adjusted, we can update the item
+                        
+                        myErr = SecItemUpdate(itemSearch as CFDictionary, attrToUpdate as CFDictionary)
+                        
+                        // now add NoMAD and the original apps back into the property object
                         
                         myErr = SecACLSetContents(acl, appList, xmlObject!.hexEncodedString() as CFString, prompt)
                         
                         // smack it again to set the ACL
                         
-                        myErr = SecKeychainItemSetAccessWithPassword(item, itemAccess!, UInt32(newPassword.count), newPassword)
+                        myErr = SecKeychainItemSetAccessWithPassword(myKeychainItem, itemAccess!, UInt32(newPassword.count), newPassword)
                     }
                     
                 // now to change the password
                 
-                let err = SecItemUpdate(itemSearch as CFDictionary, attrToUpdate as CFDictionary)
+                myErr = SecKeychainItemSetAccessWithPassword(myKeychainItem, itemAccess!, UInt32(newPassword.count), newPassword)
                 
-                if err == 0 {
+                if myErr != 0 {
+                    myLogger.logit(.base, message: "Error setting keychain ACL.")
+                }
+                
+                if myErr == 0 {
                     myLogger.logit(.base, message: "Changed keychain item.")
                 } else {
                     myLogger.logit(.base, message: "Unable to change keychain item.")
