@@ -597,124 +597,100 @@ class KeychainUtil {
         print("Total matches: \(String(describing: changes))")
 
         if changes > 0 {
-            
-            SecKeychainSetUserInteractionAllowed(false)
-            
-            
-            var itemSearch: [String:AnyObject] = [
-                kSecClass as String: kSecClassInternetPassword as AnyObject,
-                kSecMatchLimit as String : kSecMatchLimitOne as AnyObject,
-                //kSecValueRef as String : myKeychainItem as AnyObject,
-                kSecReturnRef as String : true as AnyObject,
-                ]
-            
-            
-            if #available(OSX 10.11, *) {
-                itemSearch[kSecUseAuthenticationUI as String] = kSecUseAuthenticationUIFail as AnyObject
-            } else {
-                itemSearch[kSecUseNoAuthenticationUI as String ] = false as AnyObject
-            }
+            changePasswords(items: changeSecItems, newPassword: newPassword)
+        }
+    }
+    
+    fileprivate func changePasswords(items: [SecKeychainItem], newPassword: String ) {
+        
+        SecKeychainSetUserInteractionAllowed(false)
 
-            let attrToUpdate : [String:AnyObject] = [
-                kSecValueData as String : newPassword.data(using: .utf8) as AnyObject
+        let attrToUpdate: [String:AnyObject] = [
+            kSecValueData as String: newPassword.data(using: .utf8) as AnyObject
+        ]
+        
+        var itemSearch: [String:AnyObject] = [
+            kSecClass as String: kSecClassInternetPassword as AnyObject,
+            kSecMatchLimit as String : kSecMatchLimitAll as AnyObject,
             ]
+        
+        
+        var itemAccess: SecAccess? = nil
+        var secApp: SecTrustedApplication? = nil
+        var myACLs : CFArray? = nil
+        
+        for item in items {
             
-            for item in changeSecItems {
-                // add the item to the searchDict
+            itemSearch[kSecValueRef as String ] = item as AnyObject
+            
+            myErr = SecKeychainItemCopyAccess(item, &itemAccess)
+            
+            myErr = SecTrustedApplicationCreateFromPath( nil, &secApp)
+            
+            // Decode ACL
+            
+            SecAccessCopyACLList(itemAccess!, &myACLs)
+            
+            var appList: CFArray? = nil
+            var desc: CFString? = nil
+            
+            var prompt = SecKeychainPromptSelector()
+            
+            for acl in myACLs as! Array<SecACL> {
+                SecACLCopyContents(acl, &appList, &desc, &prompt)
+                let authArray = SecACLCopyAuthorizations(acl)
                 
-                itemSearch[kSecValueRef as String] = item as AnyObject
+                if !(authArray as! [String]).contains("ACLAuthorizationPartitionID") {
+                    continue
+                }
                 
-                // update the ACLs before attempting to change the item
+                // pull in the description that's really a functional plist <sigh>
                 
-                    var myErr: OSStatus
-                    
-                    // update ACL
-                    
-                    var itemAccess: SecAccess? = nil
-                    var secApp: SecTrustedApplication? = nil
-                    var myACLs : CFArray? = nil
-                    
-                    
-                    myErr = SecKeychainItemCopyAccess(item, &itemAccess)
-                    
-                    if myErr != 0 {
-                        print("Unable to get ACL on keychain item, check to see if keychain is locked or has a different password than the current user.")
-                        continue
-                    }
-                    
-                    myErr = SecTrustedApplicationCreateFromPath( nil, &secApp)
-                    
-                    if myErr != 0 {
-                        print("Unable to get SecTrustedApp reference to NoMAD.")
-                    }
-                    
-                    // Decode ACL
-                    
-                    SecAccessCopyACLList(itemAccess!, &myACLs)
-                    
-                    var appList: CFArray? = nil
-                    var desc: CFString? = nil
-                    //                var newacl: AnyObject? = nil
-                    var prompt = SecKeychainPromptSelector()
-                    
-                    for acl in myACLs as! Array<SecACL> {
-                        SecACLCopyContents(acl, &appList, &desc, &prompt)
-                        let authArray = SecACLCopyAuthorizations(acl)
-                        
-                        if !(authArray as! [String]).contains("ACLAuthorizationPartitionID") {
-                            continue
-                        }
-                        
-                        // pull in the description that's really a functional plist <sigh>
-                        
-                        let rawData = Data.init(fromHexEncodedString: desc! as String)
-                        var format: PropertyListSerialization.PropertyListFormat = .xml
-                        
-                        var propertyListObject = try? PropertyListSerialization.propertyList(from: rawData!, options: [], format: &format) as! [ String: [String]]
-                        
-                        // add in the team ID that NoMAD is signed with if it doesn't already exist
-                        
-                        if !(propertyListObject!["Partitions"]?.contains("teamid:AAPZK3CB24"))! {
-                            propertyListObject!["Partitions"]?.append("teamid:AAPZK3CB24")
-                        }
-                        
-                        // now serialize it back into a plist
-                        
-                        let xmlObject = try? PropertyListSerialization.data(fromPropertyList: propertyListObject as Any, format: format, options: 0)
-                        
-                        // Hi Rick, how's things?
-                        
-                        myErr = SecKeychainItemSetAccessWithPassword(myKeychainItem, itemAccess!, UInt32(newPassword.count), newPassword)
-                        
-                        // now that all ACLs has been adjusted, we can update the item
-                        
-                        myErr = SecItemUpdate(itemSearch as CFDictionary, attrToUpdate as CFDictionary)
-                        
-                        // now add NoMAD and the original apps back into the property object
-                        
-                        myErr = SecACLSetContents(acl, appList, xmlObject!.hexEncodedString() as CFString, prompt)
-                        
-                        // smack it again to set the ACL
-                        
-                        myErr = SecKeychainItemSetAccessWithPassword(myKeychainItem, itemAccess!, UInt32(newPassword.count), newPassword)
-                    }
-                    
-                // now to change the password
+                let rawData = Data.init(fromHexEncodedString: desc! as String)
+                var format: PropertyListSerialization.PropertyListFormat = .xml
+                
+                var propertyListObject = try? PropertyListSerialization.propertyList(from: rawData!, options: [], format: &format) as! [ String: [String]]
+                
+                // add in the team ID that NoMAD is signed with if it doesn't already exist
+                
+                if !(propertyListObject!["Partitions"]?.contains("teamid:AAPZK3CB24"))! {
+                    propertyListObject!["Partitions"]?.append("teamid:AAPZK3CB24")
+                }
+                
+                if defaults.bool(forKey: Preferences.keychainItemsDebug) {
+                    myLogger.logit(.debug, message: String(describing: propertyListObject))
+                }
+                
+                // now serialize it back into a plist
+                
+                let xmlObject = try? PropertyListSerialization.data(fromPropertyList: propertyListObject as Any, format: format, options: 0)
+                
+                // Hi Rick, how's things?
                 
                 myErr = SecKeychainItemSetAccessWithPassword(myKeychainItem, itemAccess!, UInt32(newPassword.count), newPassword)
                 
-                if myErr != 0 {
-                    myLogger.logit(.base, message: "Error setting keychain ACL.")
-                }
+                // now that all ACLs has been adjusted, we can update the item
                 
-                if myErr == 0 {
-                    myLogger.logit(.base, message: "Changed keychain item.")
-                } else {
-                    myLogger.logit(.base, message: "Unable to change keychain item.")
-                }
+                myErr = SecItemUpdate(itemSearch as CFDictionary, attrToUpdate as CFDictionary)
+                
+                // now add NoMAD and the original apps back into the property object
+                
+                myErr = SecACLSetContents(acl, appList, xmlObject!.hexEncodedString() as CFString, prompt)
+                
+                // smack it again to set the ACL
+                
+                myErr = SecKeychainItemSetAccessWithPassword(myKeychainItem, itemAccess!, UInt32(newPassword.count), newPassword)
             }
-            SecKeychainSetUserInteractionAllowed(true)
+            
+            myErr = SecKeychainItemSetAccessWithPassword(myKeychainItem, itemAccess!, UInt32(newPassword.count), newPassword)
+            
+            if myErr != 0 {
+                myLogger.logit(.base, message: "Error setting keychain ACL.")
+            }
         }
+        
+        SecKeychainSetUserInteractionAllowed(true)
+
     }
     
     func manageKeychainPasswordsInternetOld(newPassword: String) {
