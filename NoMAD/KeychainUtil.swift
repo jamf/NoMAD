@@ -667,7 +667,7 @@ class KeychainUtil {
                 
                 // Hi Rick, how's things?
                 
-                myErr = SecKeychainItemSetAccessWithPassword(myKeychainItem, itemAccess!, UInt32(newPassword.count), newPassword)
+                myErr = SecKeychainItemSetAccessWithPassword(item, itemAccess!, UInt32(newPassword.count), newPassword)
                 
                 // now that all ACLs has been adjusted, we can update the item
                 
@@ -679,10 +679,10 @@ class KeychainUtil {
                 
                 // smack it again to set the ACL
                 
-                myErr = SecKeychainItemSetAccessWithPassword(myKeychainItem, itemAccess!, UInt32(newPassword.count), newPassword)
+                myErr = SecKeychainItemSetAccessWithPassword(item, itemAccess!, UInt32(newPassword.count), newPassword)
             }
             
-            myErr = SecKeychainItemSetAccessWithPassword(myKeychainItem, itemAccess!, UInt32(newPassword.count), newPassword)
+            //myErr = SecKeychainItemSetAccessWithPassword(item, itemAccess!, UInt32(newPassword.count), newPassword)
             
             if myErr != 0 {
                 myLogger.logit(.base, message: "Error setting keychain ACL.")
