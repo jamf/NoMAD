@@ -325,8 +325,15 @@ class ShareMounter: NSArrayController {
                 myLogger.logit(.debug, message: "Attempting to mount: " + all_shares[i].url.absoluteString)
                 
                 if defaults.bool(forKey: Preferences.slowMount) {
-                    usleep(250000)
-                    myLogger.logit(.debug, message: "Dalaying next Mount since SlowMount is set.")
+                    let delay : useconds_t
+                    if defaults.integer(forKey: Preferences.slowMountDelay) == 0 {
+                        delay = 250000
+                    }
+                    else {
+                        delay = useconds_t(1000 * defaults.integer(forKey: Preferences.slowMountDelay))
+                    }
+                    usleep(delay)
+                    myLogger.logit(.debug, message: "Dalaying next Mount by " + String(delay/1000) + " milliseconds since SlowMount is set.")
                     
                 }
                 
