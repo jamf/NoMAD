@@ -505,6 +505,7 @@ class KeychainUtil {
         let changeItems = defaults.dictionary(forKey: Preferences.keychainItemsInternet)
         var changes = 0
         var changeSecItems = [SecKeychainItem]()
+        var changeACLItems = [SecKeychainItem]()
         
         // bail if there's nothing to update
         
@@ -522,12 +523,21 @@ class KeychainUtil {
 
         for prefItem in changeItems! {
             
+            var noACL = false
+            
             let account = (prefItem.value as! String).variableSwap()
+            
+            if prefItem.key.contains("<<noACL>>") {
+                noACL = true
+            }
+            
             let serverURL = URL.init(string:(prefItem.key).variableSwap())
             
-            print("***Item to look for***")
-            print(account)
-            print(serverURL?.absoluteString as Any)
+            if defaults.bool(forKey: Preferences.keychainItemsDebug) {
+                print("***Item to look for***")
+                print(account)
+                print(serverURL?.absoluteString as Any)
+            }
             
             for item in allItems {
                 let itemAccount = (item["acct"] ?? "None")
@@ -540,14 +550,16 @@ class KeychainUtil {
                 
                 if itemServer as? String == serverURL?.host {
                     
-                    print("Found potential match...")
-                    
                     var fullMatch = true
-                    
+
+                    if defaults.bool(forKey: Preferences.keychainItemsDebug) {
+
+                    print("Found potential match...")
                     print("\tChecking for full match...")
                     print("")
                     print("\tKeychain Item account: \(itemAccount as? String ?? "NONE")")
                     print("\tPref item account: \(account)")
+                    }
                     
                     if ((itemAccount as? String ?? "ANY").lowercased() == account.lowercased()) || account == "<<ANY>>" {
                         print("\t\tAccount matches")
@@ -555,9 +567,11 @@ class KeychainUtil {
                         fullMatch = false
                     }
                     
+                    if defaults.bool(forKey: Preferences.keychainItemsDebug) {
                     print("")
                     print("\tKeychain Item protocol: \(String(describing: itemProtocol))")
                     print("\tPref item protocol: \(String(describing: serverURL?.scheme))")
+                    }
                     
                     if let proto = itemProtocol as? String {
                         if !(proto == getSchemeNumber(scheme: serverURL?.scheme ?? "NONE", proxy: prefItem.key.contains("<<proxy>>"))) {
@@ -569,9 +583,11 @@ class KeychainUtil {
                         print("No protocol set for Keychain item.")
                     }
                     
-                    print("")
-                    print("\tKeychain Item port: \(String(describing: itemPort))")
-                    print("\tPref Item Port: \(String(describing: serverURL?.port))")
+                    if defaults.bool(forKey: Preferences.keychainItemsDebug) {
+                        print("")
+                        print("\tKeychain Item port: \(String(describing: itemPort))")
+                        print("\tPref Item Port: \(String(describing: serverURL?.port))")
+                    }
                     
                     if itemPort as! Int != 0 {
                         if itemPort as? Int ?? 0 == serverURL?.port {
@@ -585,23 +601,33 @@ class KeychainUtil {
                     
                     if fullMatch {
                         changes += 1
-                        print("***")
-                        print("Found a full match")
-                        print("***")
+                        if defaults.bool(forKey: Preferences.keychainItemsDebug) {
+                            print("***")
+                            print("Found a full match")
+                            print("***")
+                        }
                         changeSecItems.append(itemRef as! SecKeychainItem)
+                        
+                        if noACL {
+                            changeACLItems.append(itemRef as! SecKeychainItem)
+                        }
+
                     }
                 }
             }
         }
-        print("***")
-        print("Total matches: \(String(describing: changes))")
-
+        
+        if defaults.bool(forKey: Preferences.keychainItemsDebug) {
+            print("***")
+            print("Total matches: \(String(describing: changes))")
+        }
+        
         if changes > 0 {
-            changePasswords(items: changeSecItems, newPassword: newPassword)
+            changePasswords(items: changeSecItems, newPassword: newPassword, aclChanges: changeACLItems)
         }
     }
     
-    fileprivate func changePasswords(items: [SecKeychainItem], newPassword: String ) {
+    fileprivate func changePasswords(items: [SecKeychainItem], newPassword: String, aclChanges: [SecKeychainItem]? ) {
         
         SecKeychainSetUserInteractionAllowed(false)
 
@@ -621,6 +647,12 @@ class KeychainUtil {
         
         for item in items {
             
+            var noACL = false
+            
+            if aclChanges?.contains(item) ?? false {
+                noACL = true
+            }
+            
             itemSearch[kSecValueRef as String ] = item as AnyObject
             
             myErr = SecKeychainItemCopyAccess(item, &itemAccess)
@@ -639,8 +671,21 @@ class KeychainUtil {
             for acl in myACLs as! Array<SecACL> {
                 SecACLCopyContents(acl, &appList, &desc, &prompt)
                 let authArray = SecACLCopyAuthorizations(acl)
+                var newACL : SecACL?
                 
-                if !(authArray as! [String]).contains("ACLAuthorizationPartitionID") {
+                if !(authArray as! [String]).contains("ACLAuthorizationPartitionID") && !(authArray as! [String]).contains("ACLAuthorizationExportClear") {
+                    continue
+                }
+                
+                if (authArray as! [String]).contains("ACLAuthorizationExportClear") {
+                    
+                    if noACL {
+                        myErr = SecACLSetContents(acl, nil, desc!, prompt)
+                    
+                        // smack it again to set the ACL
+                    
+                        myErr = SecKeychainItemSetAccessWithPassword(item, itemAccess!, UInt32(newPassword.count), newPassword)
+                    }
                     continue
                 }
                 
@@ -665,7 +710,6 @@ class KeychainUtil {
                 
                 let xmlObject = try? PropertyListSerialization.data(fromPropertyList: propertyListObject as Any, format: format, options: 0)
                 
-                // Hi Rick, how's things?
                 
                 myErr = SecKeychainItemSetAccessWithPassword(item, itemAccess!, UInt32(newPassword.count), newPassword)
                 

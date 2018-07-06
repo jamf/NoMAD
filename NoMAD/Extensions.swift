@@ -87,6 +87,7 @@ extension String {
         cleanString = cleanString.replacingOccurrences(of: "<<shortname>>", with: shortName)
         cleanString = cleanString.replacingOccurrences(of: "<<upn>>", with: upn)
         cleanString = cleanString.replacingOccurrences(of: "<<email>>", with: email)
+        cleanString = cleanString.replacingOccurrences(of: "<<noACL>>", with: "")
         
         // now to remove any proxy settings
         
