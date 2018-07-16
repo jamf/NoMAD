@@ -152,6 +152,8 @@ enum Preferences {
     // siteIgnore - r/w - bool - determines if NoMAD ignores the site that comes back from AD. Generally this will mean NoMAD will use the globally advertised DCs instead of a particular site's.
 
     // siteForce - r/w - bool - forces NoMAD to use a particular site
+    
+    // siteForce - r/w - bool - adds a .25 second delay between mounting Shares
 
     // stateChangeAction - r/w - string - the shell script, or other binary, to be triggered whenever the network changes
 
@@ -298,6 +300,8 @@ enum Preferences {
     static let signOutCommand = "SignOutCommand"
     static let siteIgnore = "SiteIgnore"
     static let siteForce = "SiteForce"
+    static let slowMount = "SlowMount"
+    static let slowMountDelay = "SlowMountDelay"
     static let stateChangeAction = "StateChangeAction"
     static let switchKerberosUser = "SwitchKerberosUser"
     static let template = "Template"
@@ -430,6 +434,8 @@ enum Preferences {
         Preferences.signOutCommand,
         Preferences.siteIgnore,
         Preferences.siteForce,
+        Preferences.slowMount,
+        Preferences.slowMountDelay,
         Preferences.stateChangeAction,
         Preferences.switchKerberosUser,
         Preferences.template,
