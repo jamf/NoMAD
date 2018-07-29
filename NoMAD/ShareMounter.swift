@@ -145,9 +145,12 @@ class ShareMounter: NSArrayController {
 
             for mount in mounts {
 
-                // check for variable substitution
+                // check for variable substitution and that UserShortName has been written out before continuing
                 
-               // let cleanURL = subVariables(mount["URL"] as! String)
+                while defaults.string(forKey: Preferences.userShortName) == "" {
+                    myLogger.logit(.debug, message: "Waiting for user record lookup to complete.")
+                    RunLoop.main.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
+                }
                 
                 // check for groups
                 
