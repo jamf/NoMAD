@@ -229,6 +229,7 @@ enum Preferences {
     static let iconOnDark = "IconOnDark"
     static let kerberosRealm = "KerberosRealm"
     static let keychainItems = "KeychainItems"
+    static let keychainItemsInternet = "KeychainItemsInternet"
     static let keychainItemsCreateSerial = "KeychainItemsCreateSerial"
     static let keychainItemsDebug = "KeychainItemsDebug"
     static let keychainMinderWindowTitle = "KeychainMinderWindowTitle"
@@ -368,7 +369,7 @@ enum Preferences {
         Preferences.iconOnDark,
         Preferences.kerberosRealm,
         Preferences.keychainItems,
-        Preferences.keychainItemsCreateSerial,
+        Preferences.keychainItemsInternet,
         Preferences.keychainItemsDebug,
         Preferences.keychainMinderWindowTitle,
         Preferences.keychainMinderWindowMessage,
@@ -491,18 +492,22 @@ func returnAllPrefs() -> String {
         
         switch String(describing: type(of: pref)) {
         case "__NSCFBoolean" :
-            prefs += (key + ": " + String(describing: ( defaults.bool(forKey: key))))
+            print("\t" + key + ": " + String(describing: ( defaults.bool(forKey: key))))
         case "__NSCFArray" :
-            prefs += (key + ": " + ( String(describing: (defaults.array(forKey: key)!))))
+            print("\t" + key + ": " + ( String(describing: (defaults.array(forKey: key)!))))
         case "__NSTaggedDate":
-            prefs += ( key + ": " + ( defaults.object(forKey: key) as! Date ).description(with: Locale.current))
+            print("\t" + key + ": " + ( defaults.object(forKey: key) as! Date ).description(with: Locale.current))
+        case "__NSCFDictionary":
+            print("\t" + key + ": " + String(describing: defaults.dictionary(forKey: key)!))
+        case "__NSCFData" :
+            print("\t" + key + ": " + (defaults.data(forKey: key)?.base64EncodedString() ?? "ERROR"))
         default :
-            prefs += (key + ": " + ( defaults.object(forKey: key) as? String ?? "Unset"))
+            print("\t" + key + ": " + ( defaults.object(forKey: key) as? String ?? "Unset"))
         }
+        
         if defaults.objectIsForced(forKey: key) {
-            prefs += "<<FORCED>>"
+            print("\t\tForced")
         }
-        prefs += "\n"
     }
     
     return prefs

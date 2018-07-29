@@ -428,6 +428,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
                     myLogger.logit(.debug, message: "Updating Keychain via Debug flag")
                     let myKeychain = KeychainUtil.init()
                     myKeychain.manageKeychainPasswords(newPassword: Password.stringValue)
+                    myKeychain.manageKeychainPasswordsInternet(newPassword: Password.stringValue)
                 }
                 
                 self.Password.stringValue = ""
@@ -720,7 +721,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
         let query = try ODQuery.init(node: node, forRecordTypes: kODRecordTypeUsers, attribute: kODAttributeTypeRecordName, matchType: UInt32(kODMatchEqualTo), queryValues: myUser, returnAttributes: kODAttributeTypeNativeOnly, maximumResults: 0)
         let result = try query.resultsAllowingPartial(false)
         let recordRef: ODRecordRef = result[0] as! ODRecordRef
-        if ODRecordChangePassword(recordRef, oldPassword as CFString!, newPassword as CFString!, nil) {
+        if ODRecordChangePassword(recordRef, oldPassword as CFString!, newPassword as CFString?, nil) {
             return true
         } else {
             return false
