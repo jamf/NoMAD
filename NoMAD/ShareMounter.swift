@@ -55,7 +55,7 @@ struct mounting_shares_info {
 class ShareMounter: NSArrayController {
     @objc var sharePrefs: UserDefaults? = UserDefaults.init(suiteName: "menu.nomad.shares")
     var all_shares = [share_info]()
-    @objc let ws = NSWorkspace.init()
+    @objc let ws = NSWorkspace.shared
     //var prefs: [String]
     @objc lazy var userPrincipal: String = ""
     @objc var mountedShares = [URL]()
@@ -325,6 +325,12 @@ class ShareMounter: NSArrayController {
                 var requestID: AsyncRequestID? = nil
                 let queue = DispatchQueue.main
                 
+                if defaults.bool(forKey: Preferences.mountSharesWithFinder) {
+                    myLogger.logit(.debug, message: "Mounting old school way.")
+                    _ = cliTask("open " + all_shares[i].url.absoluteString.safeURLPath()!)
+                    continue
+                }
+                
                 myLogger.logit(.debug, message: "Attempting to mount: " + all_shares[i].url.absoluteString)
                 
                 if defaults.bool(forKey: Preferences.mountSharesWithFinder) {
@@ -478,6 +484,10 @@ class ShareMounter: NSArrayController {
         let queue = DispatchQueue.main
         
         myLogger.logit(.debug, message: "Attempting to mount: " + String(describing: serverAddress))
+        
+            myLogger.logit(.debug, message: "Mounting old school way.")
+            _ = cliTask("open " + serverAddress.absoluteString.safeURLPath()!)
+            return
 
         let _ = NetFSMountURLAsync(serverAddress as CFURL!,
                                         nil,
