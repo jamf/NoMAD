@@ -147,9 +147,8 @@ class ShareMounter: NSArrayController {
 
                 // check for variable substitution and that UserShortName has been written out before continuing
                 
-                while defaults.string(forKey: Preferences.userShortName) == "" {
-                    myLogger.logit(.debug, message: "Waiting for user record lookup to complete.")
-                    RunLoop.main.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
+                if defaults.string(forKey: Preferences.userShortName) == "" {
+                    return
                 }
                 
                 // check for groups

@@ -603,12 +603,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         NSApplication.shared.terminate(self)
     }
     
-    // show PKINITer when asked
-    
-    @objc func smartcardSignIn() {
-        launchPKINITer()
-    }
-    
     @objc func getCert(_ alerts: Bool) {
         
         var myResponse: Int?
