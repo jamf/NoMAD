@@ -120,6 +120,20 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         
         myLogger.logit(.base, message:"---Starting NoMAD---")
         
+        // check to see if we need to wait for another profile
+        
+        if defaults.bool(forKey: Preferences.profileWait) {
+            myLogger.logit(.base, message: "Waiting for Profile Done.")
+            // set get the time
+            
+            let now = Date.init()
+            
+            while !defaults.bool(forKey: Preferences.profileDone) && abs(now.timeIntervalSinceNow) < 30 {
+                myLogger.logit(.debug, message: "Looping")
+                RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
+            }
+        }
+        
         // check for locked keychains
         
         if self.myKeychainutil.checkLockedKeychain() && defaults.bool(forKey: Preferences.lockedKeychainCheck) {
