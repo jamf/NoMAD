@@ -803,7 +803,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             if (self.NoMADMenuChangePassword != nil) {
                 self.NoMADMenuChangePassword.isEnabled = true
             }
-            if (self.NoMADMenuGetCertificate != nil)  {
+            if (self.NoMADMenuGetCertificate != nil) && defaults.object(forKey: Preferences.hideCertificateNumber) != nil  {
                 
                 // Getting list of Certificates
                 let keychainUtilInstance = KeychainUtil()
