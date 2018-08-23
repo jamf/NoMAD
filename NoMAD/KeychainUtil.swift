@@ -547,8 +547,8 @@ class KeychainUtil {
                 let itemPort = (item["port"] ?? "None")
                 let itemProtocol = (item["ptcl"] ?? "None")
                 let itemServer = (item["srvr"] ?? "None")
-                
-                if itemServer as? String == serverURL?.host {
+                                
+                if itemServer as? String == serverURL?.host || itemServer as? String == serverURL?.absoluteString {
                     
                     var fullMatch = true
 
