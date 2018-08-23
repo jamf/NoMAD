@@ -668,6 +668,8 @@ class KeychainUtil {
             
             var prompt = SecKeychainPromptSelector()
             
+            var partID = false
+            
             for acl in myACLs as! Array<SecACL> {
                 SecACLCopyContents(acl, &appList, &desc, &prompt)
                 let authArray = SecACLCopyAuthorizations(acl)
@@ -688,6 +690,10 @@ class KeychainUtil {
                     }
                     continue
                 }
+                
+                // we found a parition ID
+                
+                partID = true
                 
                 // pull in the description that's really a functional plist <sigh>
                 
@@ -726,7 +732,11 @@ class KeychainUtil {
                 myErr = SecKeychainItemSetAccessWithPassword(item, itemAccess!, UInt32(newPassword.count), newPassword)
             }
             
-            //myErr = SecKeychainItemSetAccessWithPassword(item, itemAccess!, UInt32(newPassword.count), newPassword)
+            if !partID {
+                // no Partition ID ACL, so we havne't changed the password yet, fix that now
+                myErr = SecItemUpdate(itemSearch as CFDictionary, attrToUpdate as CFDictionary)
+
+            }
             
             if myErr != 0 {
                 myLogger.logit(.base, message: "Error setting keychain ACL.")
