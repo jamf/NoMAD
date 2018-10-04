@@ -58,10 +58,10 @@ class Welcome: NSWindowController, NSWindowDelegate {
                 
                 myLogger.logit(.debug, message: "loading: " + customSplash)
                 
-                customSplashPath =  URL.init(string: customSplash + "index.html")!
-                customSplashDir = URL.init(string: customSplash)!
+                customSplashPath =  URL.init(fileURLWithPath: customSplash + "index.html")
+                customSplashDir = URL.init(fileURLWithPath: customSplash)
                 
-                customSplashFile = try String.init(contentsOfFile: customSplashPath.absoluteString)
+                customSplashFile = try String(contentsOf: customSplashPath, encoding: String.Encoding.utf8)
                 
             } else {
                 
