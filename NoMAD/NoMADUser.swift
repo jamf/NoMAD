@@ -574,8 +574,9 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
                 // check to see if local name matches network name
 
                 myLogger.logit(.debug, message: "Checking to see if user names match before syncing password.")
-
-                if NSUserName() == username {
+                
+                //the variable username contains @REALM, need to use the NoMADUser object
+                if NSUserName() == noMADUser.userName {
                     // names match let's set the sync and preflight
                     myLogger.logit(.debug, message: "User names match, syncing password.")
 
