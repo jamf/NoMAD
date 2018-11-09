@@ -274,6 +274,28 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             defaults.set(defaults.string(forKey: Preferences.aDDomain)?.uppercased(), forKey: Preferences.kerberosRealm)
         }
         
+        // sign in with kerberos here
+        
+        myLogger.logit(.info, message: "Attempting to do a first login")
+        
+        // check if there's a last user
+        var myPass = ""
+        var myErr: String?
+        let userPrinc = defaults.string(forKey: Preferences.lastUser)! + "@" + defaults.string(forKey: Preferences.kerberosRealm)!
+        
+        do {
+            myPass = try myKeychainutil.findPassword(userPrinc)
+        } catch {
+            myLogger.logit(.base, message: "Unable to find password in keychain for auto-login.")
+        }
+        
+        let myKerbUtil = KerbUtil()
+        myErr = myKerbUtil.getKerbCredentials(myPass, userPrinc)
+        
+        while ( !myKerbUtil.finished ) {
+            RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
+        }
+        
         // if no preferences are set, we show the preferences pane
         if (defaults.string(forKey: Preferences.aDDomain) == "" ) {
             preferencesWindow.window!.forceToFrontAndFocus(nil)
