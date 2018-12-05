@@ -215,14 +215,14 @@
 	<key>LoginWindow-OldPasswordLabel</key>
 	<dict>
 		<key>value</key>
-		<string>Old Password</string>
+		<string>Altes Passwort</string>
 		<key>comment</key>
 		<string>Label for old password</string>
 	</dict>
 	<key>LoginWindow-PasswordLabel</key>
 	<dict>
 		<key>value</key>
-		<string>Password</string>
+		<string>Passwort</string>
 		<key>comment</key>
 		<string>Label for password</string>
 	</dict>
@@ -264,7 +264,7 @@
 	<key>UserInformation-PasswordChanged</key>
 	<dict>
 		<key>value</key>
-		<string>Password Changed</string>
+		<string>Passwort geändert</string>
 		<key>comment</key>
 		<string>Notification title when password changed</string>
 	</dict>
@@ -278,7 +278,7 @@
 	<key>UserInformation-Ignore</key>
 	<dict>
 		<key>value</key>
-		<string>Ignore</string>
+		<string>Ignorieren</string>
 		<key>comment</key>
 		<string>Password change notification ignore button</string>
 	</dict>
