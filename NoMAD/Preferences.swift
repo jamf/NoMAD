@@ -479,6 +479,8 @@ func printAllPrefs() {
             print("\t" + key + ": " + String(describing: ( defaults.bool(forKey: key))))
         case "__NSCFArray" :
             print("\t" + key + ": " + ( String(describing: (defaults.array(forKey: key)!))))
+        case "__NSCFDictionary" :
+            print("\t" + key + ": " + ( String(describing: (defaults.dictionary(forKey: key)!))))
         case "__NSTaggedDate":
             print("\t" + key + ": " + ( defaults.object(forKey: key) as! Date ).description(with: Locale.current))
         default :
