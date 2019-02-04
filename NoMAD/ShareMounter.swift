@@ -96,12 +96,13 @@ class ShareMounter: NSArrayController {
             print("***Raw Home Share Prefs***")
             print(homeDict as Any)
         }
-        
-        if homeDict != nil {
+                
+        if homeDict != nil && (defaults.string(forKey: Preferences.userHome) != "" ) {
             // adding the home mount to the shares
             myLogger.logit(.debug, message: "Evaluating home share for automounts.")
             
             var homePath = URL(string: "smb:" + (defaults.string(forKey: Preferences.userHome))!)!
+            
             
             if defaults.bool(forKey: Preferences.homeAppendDomain) {
                 
