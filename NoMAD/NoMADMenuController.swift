@@ -187,30 +187,30 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             myIconOnDark = NSImage.init()
             myIconOffDark = NSImage.init()
         } else {
-        
-        if defaults.string(forKey: Preferences.iconOn) != nil {
-            myIconOn = NSImage.init(contentsOfFile: defaults.string(forKey: Preferences.iconOn)!)!
-        } else {
-            myIconOn = NSImage(named: NSImage.Name(rawValue: "NoMAD-statusicon-on-on"))!
-        }
-        
-        if defaults.string(forKey: Preferences.iconOff) != nil {
-            myIconOff = NSImage.init(contentsOfFile: defaults.string(forKey: Preferences.iconOff)!)!
-        } else {
-            myIconOff = NSImage(named: NSImage.Name(rawValue: "NoMAD-statusicon-off-off"))!
-        }
-        
-        if defaults.string(forKey: Preferences.iconOnDark) != nil {
-            myIconOnDark = NSImage.init(contentsOfFile: defaults.string(forKey: Preferences.iconOnDark)!)!
-        } else {
-            myIconOnDark = NSImage(named: NSImage.Name(rawValue: "NoMAD-LogoAlternate-on"))!
-        }
-        
-        if defaults.string(forKey: Preferences.iconOffDark) != nil {
-            myIconOffDark = NSImage.init(contentsOfFile: defaults.string(forKey: Preferences.iconOffDark)!)!
-        } else {
-            myIconOffDark = NSImage(named: NSImage.Name(rawValue: "NoMAD-LogoAlternate-off"))!
-        }
+            
+            if defaults.string(forKey: Preferences.iconOn) != nil {
+                myIconOn = NSImage.init(contentsOfFile: defaults.string(forKey: Preferences.iconOn)!)!
+            } else {
+                myIconOn = NSImage(named: NSImage.Name(rawValue: "NoMAD-statusicon-on-on"))!
+            }
+            
+            if defaults.string(forKey: Preferences.iconOff) != nil {
+                myIconOff = NSImage.init(contentsOfFile: defaults.string(forKey: Preferences.iconOff)!)!
+            } else {
+                myIconOff = NSImage(named: NSImage.Name(rawValue: "NoMAD-statusicon-off-off"))!
+            }
+            
+            if defaults.string(forKey: Preferences.iconOnDark) != nil {
+                myIconOnDark = NSImage.init(contentsOfFile: defaults.string(forKey: Preferences.iconOnDark)!)!
+            } else {
+                myIconOnDark = NSImage(named: NSImage.Name(rawValue: "NoMAD-LogoAlternate-on"))!
+            }
+            
+            if defaults.string(forKey: Preferences.iconOffDark) != nil {
+                myIconOffDark = NSImage.init(contentsOfFile: defaults.string(forKey: Preferences.iconOffDark)!)!
+            } else {
+                myIconOffDark = NSImage(named: NSImage.Name(rawValue: "NoMAD-LogoAlternate-off"))!
+            }
         }
         
         // check for Dark Mode
@@ -359,7 +359,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         if defaults.bool(forKey: Preferences.cleanCerts) {
             myWorkQueue.async(execute: {
                 myLogger.logit(.debug, message: "Starting Cert clean")
-            KeychainUtil().cleanCerts()
+                KeychainUtil().cleanCerts()
             })
         }
         
@@ -398,73 +398,73 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     @IBAction func NoMADMenuClickLogIn(_ sender: NSMenuItem) {
         
         DispatchQueue.main.async {
-        
-        if defaults.bool(forKey: Preferences.useKeychain) && (defaults.string(forKey: Preferences.lastUser) != "" ) {
             
-            // check if there's a last user
-            var myPass = ""
-            var myErr: String?
-            let userPrinc = defaults.string(forKey: Preferences.lastUser)! + "@" + defaults.string(forKey: Preferences.kerberosRealm)!
-            
-            do {
-                myPass = try KeychainUtil().findPassword(userPrinc)
-            } catch {
-                loginWindow.window!.forceToFrontAndFocus(nil)
-                return
-            }
-            
-            let myKerbUtil = KerbUtil()
-            myErr = myKerbUtil.getKerbCredentials(myPass, userPrinc)
-            
-            while ( !myKerbUtil.finished ) {
-                RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
-            }
-            
-            if myErr == nil {
-                myLogger.logit(.base, message:"Automatically logged in.")
+            if defaults.bool(forKey: Preferences.useKeychain) && (defaults.string(forKey: Preferences.lastUser) != "" ) {
                 
-                let _ = cliTask("/usr/bin/kswitch -p " +  userPrinc)
+                // check if there's a last user
+                var myPass = ""
+                var myErr: String?
+                let userPrinc = defaults.string(forKey: Preferences.lastUser)! + "@" + defaults.string(forKey: Preferences.kerberosRealm)!
                 
-                self.updateUserInfo()
-                
-                // fire off the SignInCommand script if there is one
-                if defaults.string(forKey: Preferences.signInCommand) != "" {
-                    let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)
-                    myLogger.logit(.base, message: myResult)
+                do {
+                    myPass = try KeychainUtil().findPassword(userPrinc)
+                } catch {
+                    loginWindow.window!.forceToFrontAndFocus(nil)
+                    return
                 }
-                return
-            } else if (myErr?.contains("Preauthentication failed"))! {
-                myLogger.logit(.base, message:"Autologin password error.")
-                // password failed, let's delete it so as to not fail again
-                var myKeychainItem: SecKeychainItem?
-                var myErr: OSStatus
-                let serviceName = "NoMAD"
-                var passLength: UInt32 = 0
-                var passPtr: UnsafeMutableRawPointer? = nil
-                let name = defaults.string(forKey: Preferences.lastUser)! + "@" + defaults.string(forKey: Preferences.kerberosRealm)!
                 
-                myErr = SecKeychainFindGenericPassword(nil,
-                                                       UInt32(serviceName.count),
-                                                       serviceName,
-                                                       UInt32(name.count),
-                                                       name,
-                                                       &passLength,
-                                                       &passPtr, &myKeychainItem)
-                if (myErr == 0) {
-                    SecKeychainItemDelete(myKeychainItem!)
-                } else {
-                    myLogger.logit(.base, message:"Error deleting Keychain entry.")
+                let myKerbUtil = KerbUtil()
+                myErr = myKerbUtil.getKerbCredentials(myPass, userPrinc)
+                
+                while ( !myKerbUtil.finished ) {
+                    RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
                 }
-                // now show the window
-                loginWindow.window!.forceToFrontAndFocus(nil)
-                return
-            } else  {
-                myLogger.logit(.base, message:"Error attempting to automatically log in.")
-                loginWindow.window!.forceToFrontAndFocus(nil)
-                return
+                
+                if myErr == nil {
+                    myLogger.logit(.base, message:"Automatically logged in.")
+                    
+                    let _ = cliTask("/usr/bin/kswitch -p " +  userPrinc)
+                    
+                    self.updateUserInfo()
+                    
+                    // fire off the SignInCommand script if there is one
+                    if defaults.string(forKey: Preferences.signInCommand) != "" {
+                        let myResult = cliTask(defaults.string(forKey: Preferences.signInCommand)!)
+                        myLogger.logit(.base, message: myResult)
+                    }
+                    return
+                } else if (myErr?.contains("Preauthentication failed"))! {
+                    myLogger.logit(.base, message:"Autologin password error.")
+                    // password failed, let's delete it so as to not fail again
+                    var myKeychainItem: SecKeychainItem?
+                    var myErr: OSStatus
+                    let serviceName = "NoMAD"
+                    var passLength: UInt32 = 0
+                    var passPtr: UnsafeMutableRawPointer? = nil
+                    let name = defaults.string(forKey: Preferences.lastUser)! + "@" + defaults.string(forKey: Preferences.kerberosRealm)!
+                    
+                    myErr = SecKeychainFindGenericPassword(nil,
+                                                           UInt32(serviceName.count),
+                                                           serviceName,
+                                                           UInt32(name.count),
+                                                           name,
+                                                           &passLength,
+                                                           &passPtr, &myKeychainItem)
+                    if (myErr == 0) {
+                        SecKeychainItemDelete(myKeychainItem!)
+                    } else {
+                        myLogger.logit(.base, message:"Error deleting Keychain entry.")
+                    }
+                    // now show the window
+                    loginWindow.window!.forceToFrontAndFocus(nil)
+                    return
+                } else  {
+                    myLogger.logit(.base, message:"Error attempting to automatically log in.")
+                    loginWindow.window!.forceToFrontAndFocus(nil)
+                    return
+                }
             }
-        }
-        loginWindow.window!.forceToFrontAndFocus(nil)
+            loginWindow.window!.forceToFrontAndFocus(nil)
         }
     }
     
@@ -525,12 +525,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         lockScreenImmediate()
         
         return
-
+        
         // Commented out unreachable code
-//        let registry: io_registry_entry_t = IORegistryEntryFromPath(kIOMasterPortDefault, "IOService:/IOResources/IODisplayWrangler")
-//        let _ = IORegistryEntrySetCFProperty(registry, "IORequestIdle" as CFString!, true as CFTypeRef!)
-//        IOObjectRelease(registry)
-
+        //        let registry: io_registry_entry_t = IORegistryEntryFromPath(kIOMasterPortDefault, "IOService:/IOResources/IODisplayWrangler")
+        //        let _ = IORegistryEntrySetCFProperty(registry, "IORequestIdle" as CFString!, true as CFTypeRef!)
+        //        IOObjectRelease(registry)
+        
     }
     
     @objc func lockScreenImmediate() -> Void {
@@ -655,26 +655,31 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             if defaults.string(forKey: Preferences.x509Name) != "" && defaults.string(forKey: Preferences.x509Name) != nil {
                 let certCARequest = WindowsCATools(serverURL: certCATest, template: certTemplateTest)
                 let _ = certCARequest.TCSCertEnroll()
-            
+                
                 return
             }
             
-            // preflight that there aren't SSL issues
-            var caTestWait = true
             var caSSLTest = true
-            myWorkQueue.async(execute: {
-                self.testSite(caURL: certCATest, completionHandler: { (data, response, error) in
-                    
-                    if (error != nil) {
-                        caSSLTest = false
-                    }
-                    caTestWait = false
-                }
-                )})
             
-            while caTestWait {
-                RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
-                myLogger.logit(.debug, message: "Waiting for CA test to complete.")
+            if !defaults.bool(forKey: Preferences.x509CAIgnoreNetworkTest) {
+                // preflight that there aren't SSL issues
+                var caTestWait = true
+                myWorkQueue.async(execute: {
+                    self.testSite(caURL: certCATest, completionHandler: { (data, response, error) in
+                        
+                        if (error != nil) {
+                            caSSLTest = false
+                        }
+                        caTestWait = false
+                    }
+                    )})
+                
+                while caTestWait {
+                    RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
+                    myLogger.logit(.debug, message: "Waiting for CA test to complete.")
+                }
+            } else {
+                caSSLTest = true
             }
             
             if !caSSLTest {
@@ -869,7 +874,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         } else if notification.actionButtonTitle == "SignIn".translate {
             myLogger.logit(.base, message: "Initiating unannounced password change recovery.")
             // kill the tickets and show the loginwindow
-           let _ =  cliTask("/usr/bin/kdestroy")
+            let _ =  cliTask("/usr/bin/kdestroy")
             
             // fire off the SignOutCommand script if there is one
             
@@ -879,8 +884,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             }
             
             DispatchQueue.main.async {
-
-            loginWindow.window!.forceToFrontAndFocus(nil)
+                
+                loginWindow.window!.forceToFrontAndFocus(nil)
             }
             
         } else if notification.actionButtonTitle == "Ignore" {
@@ -907,7 +912,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     
     // simple function to renew tickets
     @objc func renewTickets(){
-       let _ =  cliTask("/usr/bin/kinit -R")
+        let _ =  cliTask("/usr/bin/kinit -R")
         userInformation.myLDAPServers.tickets.klist()
         if defaults.bool(forKey: Preferences.verbose) == true {
             myLogger.logit(.base, message:"Renewing tickets.")
@@ -952,7 +957,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 updateUserInfo()
                 if defaults.bool(forKey: Preferences.useKeychainPrompt) {
                     DispatchQueue.main.async {
-                    loginWindow.window!.forceToFrontAndFocus(nil)
+                        loginWindow.window!.forceToFrontAndFocus(nil)
                     }
                 }
                 return
@@ -1010,7 +1015,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 }
                 // now show the window
                 DispatchQueue.main.async {
-                loginWindow.window!.forceToFrontAndFocus(nil)
+                    loginWindow.window!.forceToFrontAndFocus(nil)
                 }
             } else  {
                 myLogger.logit(.base, message:"Error attempting to automatically log in.")
@@ -1032,12 +1037,12 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 
                 let userPrinc = defaults.string(forKey: Preferences.lastUser)! + "@" + defaults.string(forKey: Preferences.kerberosRealm)!
                 
-               let _ = try myKeychainutil.findPassword(userPrinc)
+                let _ = try myKeychainutil.findPassword(userPrinc)
                 
             } catch {
                 // no password - prompt the user to sign in
                 DispatchQueue.main.async {
-                loginWindow.window!.forceToFrontAndFocus(nil)
+                    loginWindow.window!.forceToFrontAndFocus(nil)
                 }
             }
         }
@@ -1050,7 +1055,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     }
     
     func openShareFromMenu(_ sender: AnyObject) {
-                
+        
         for share in myShareMounter.all_shares {
             if share.name == sender.title {
                 if share.mountStatus != .mounted && share.mountStatus != .mounting {
@@ -1148,7 +1153,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     doTheNeedfull()
                 } else {
                     DispatchQueue.main.async {
-                    loginWindow.window!.forceToFrontAndFocus(nil)
+                        loginWindow.window!.forceToFrontAndFocus(nil)
                     }
                 }
             }
@@ -1535,11 +1540,11 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         self.NoMADMenuUserName.title = defaults.string(forKey: Preferences.lastUser) ?? "NoMADMenuController-NoUser".translate
                         self.NoMADMenuPasswordExpires.title = ""
                     }
-
+                    
                     // Commented out dead code
-//                    let futureDate = Date()
-//                    futureDate.addingTimeInterval(300)
-
+                    //                    let futureDate = Date()
+                    //                    futureDate.addingTimeInterval(300)
+                    
                     // add shortname into the defaults
                     
                     defaults.set(self.userInformation.userPrincipalShort, forKey: Preferences.userShortName)
@@ -1614,7 +1619,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                             
                             let lockIndex = self.NoMADMenu.index(of: self.NoMADMenuLockScreen)
                             self.NoMADMenu.insertItem(self.myActionsMenu, at: (lockIndex + 1 ))
-
+                            
                         }
                         
                     } else {

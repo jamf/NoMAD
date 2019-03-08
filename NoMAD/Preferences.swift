@@ -331,6 +331,7 @@ enum Preferences {
     static let verbose = "Verbose"
     static let wifiNetworks = "WifiNetworks"
     static let x509CA = "X509CA"
+    static let x509CAIgnoreNetworkTest = "X509IgnoreNetworkTest"
     static let x509Name = "X509Name"
 
     static let allKeys = [
