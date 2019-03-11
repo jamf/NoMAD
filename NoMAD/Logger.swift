@@ -58,6 +58,11 @@ class Logger {
     ///   - level: A value from `LogLevel` enum
     ///   - message: A `String` that describes the information to be logged
     func logit(_ level: LogLevel, message: String) {
+        
+        if !(CommandLine.arguments.contains("-v")) {
+            return
+        }
+        
         if (level.rawValue <= loglevel.rawValue) && !CommandLine.arguments.contains("-v") {
             
             // sanitize the message

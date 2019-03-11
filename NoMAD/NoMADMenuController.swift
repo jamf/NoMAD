@@ -653,9 +653,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             }
             
             if defaults.string(forKey: Preferences.x509Name) != "" && defaults.string(forKey: Preferences.x509Name) != nil {
-                let certCARequest = WindowsCATools(serverURL: certCATest, template: certTemplateTest)
-                let _ = certCARequest.TCSCertEnroll()
-            
+
                 return
             }
             
@@ -686,10 +684,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     myLogger.logit(.base, message: "Automatic cert error: " + "CertConnectionError".translate)
                 }
             } else {
-                
-                let certCARequest = WindowsCATools(serverURL: certCATest, template: certTemplateTest)
-                //let _ = certCARequest.certEnrollment()
-                let _ = certCARequest.TCSCertEnroll()
+                return
             }
             
         } else {
