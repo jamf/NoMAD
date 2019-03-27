@@ -558,6 +558,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 				fr,
@@ -567,6 +568,9 @@
 				nl,
 				es,
 				ru,
+				"hr-BA",
+				nn,
+				de,
 			);
 			mainGroup = 84CC67D21D30A18A00115C76;
 			productRefGroup = 84CC67DC1D30A18A00115C76 /* Products */;

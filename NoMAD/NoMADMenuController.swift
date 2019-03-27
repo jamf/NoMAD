@@ -424,8 +424,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 myLogger.logit(.base, message:"Automatically logged in.")
                 
                 let _ = cliTask("/usr/bin/kswitch -p " +  userPrinc)
-                
                 self.updateUserInfo()
+                
+                self.delayTimer = Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(self.updateUserInfo), userInfo: nil, repeats: false)
                 
                 // fire off the SignInCommand script if there is one
                 if defaults.string(forKey: Preferences.signInCommand) != "" {
@@ -971,8 +972,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 let _ = cliTask("/usr/bin/kswitch -p " +  userPrinc)
                 
                 // update the UI
-                
                 updateUserInfo()
+                
+                delayTimer = Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(updateUserInfo), userInfo: nil, repeats: false)
                 
                 // fire off the SignInCommand script if there is one
                 if defaults.string(forKey: Preferences.signInCommand) != "" {
@@ -1326,9 +1328,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     @objc func updateUserInfo() {
         
         myLogger.logit(.base, message:"Updating User Info")
-        updateRunning = true
-        
-        //startMenuAnimationTimer()
+        delayTimer.invalidate()
         
         // make sure the domain we're using is the domain we should be using
         
@@ -1731,10 +1731,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         }
                     }
                 }
-                
-                
-                self.updateRunning = false
-            })
+        })
             
             // check for locked keychains
             
@@ -1747,7 +1744,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             // mark the time and clear the update scheduled flag
             
             lastStatusCheck = Date()
-            updateScheduled = false
             
             if let expireDate = defaults.object(forKey: Preferences.lastCertificateExpiration) as? Date {
                 if expireDate != Date.distantPast {
@@ -1783,13 +1779,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         } else {
             myLogger.logit(.info, message:"Time between system checks is too short, delaying")
             
-            // clear the menu animation
-            self.updateRunning = false
-            
-            if ( !updateScheduled ) {
-                Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(updateUserInfo), userInfo: nil, repeats: false)
-                
-                updateScheduled = true
+            if !delayTimer.isValid {
+                delayTimer = Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(updateUserInfo), userInfo: nil, repeats: false)
             }
         }
         //stopMenuAnimationTimer()
