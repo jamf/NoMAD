@@ -281,13 +281,19 @@ class KeychainUtil {
                                 
                                 // we have a match now gather the expire date and the serial
                                 
-                                let expireOID : NSDictionary = myOIDs["2.5.29.24"]! as! NSDictionary
-                                let expireDate = expireOID["value"]! as! Date
+                                var expireDate = Date.init(timeIntervalSince1970: 0)
+                                
+                                if let expireOID : NSDictionary = myOIDs["2.5.29.24"]! as! NSDictionary {
+                                    expireDate = expireOID["value"]! as! Date
+                                }
                                 
                                 // this finds the serial
                                 
-                                let serialDict : NSDictionary = myOIDs["2.16.840.1.113741.2.1.1.1.3"]! as! NSDictionary
-                                let serial = serialDict["value"]! as! String
+                                var serial = "000000"
+                                
+                                if let serialDict : NSDictionary = myOIDs["2.16.840.1.113741.2.1.1.1.3"]! as! NSDictionary {
+                                    serial = serialDict["value"]! as! String
+                                }
                                 
                                 // pack the data up into a certDate
                                 
