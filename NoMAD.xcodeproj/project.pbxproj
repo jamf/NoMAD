@@ -25,6 +25,7 @@
 		1A4303E42093BBA300EFE329 /* TCSCertificateRequest.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4303E12093BB5400EFE329 /* TCSCertificateRequest.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1A4303E72093BC9100EFE329 /* NoMAD.sdef in Resources */ = {isa = PBXBuildFile; fileRef = 1A4303E62093BC9100EFE329 /* NoMAD.sdef */; };
 		1A58C88C1DD9264D002C0769 /* CSRGen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A58C88B1DD9264D002C0769 /* CSRGen.swift */; };
+		1A5F31D0225E452E00F9A4CE /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A5F31CF225E452D00F9A4CE /* WebKit.framework */; };
 		1A88E8881EAF717600AC2E67 /* KeychainMinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A88E8871EAF717600AC2E67 /* KeychainMinder.swift */; };
 		1A88E88A1EAF718400AC2E67 /* KeychainMinder.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A88E8891EAF718400AC2E67 /* KeychainMinder.xib */; };
 		1ADCEC621D75476D005D33F5 /* ShareMounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ADCEC611D75476D005D33F5 /* ShareMounter.swift */; };
@@ -144,6 +145,7 @@
 		1A55D3571F68C92F0077D99D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1A55D3581F68C9FA0077D99D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = ru; path = ru.lproj/Languages.plist; sourceTree = "<group>"; };
 		1A58C88B1DD9264D002C0769 /* CSRGen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CSRGen.swift; sourceTree = "<group>"; };
+		1A5F31CF225E452D00F9A4CE /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		1A88E8871EAF717600AC2E67 /* KeychainMinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainMinder.swift; sourceTree = "<group>"; };
 		1A88E8891EAF718400AC2E67 /* KeychainMinder.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = KeychainMinder.xib; sourceTree = "<group>"; };
 		1A88E88C1EAF83EB00AC2E67 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/LoginWindow.strings; sourceTree = "<group>"; };
@@ -247,6 +249,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A5F31D0225E452E00F9A4CE /* WebKit.framework in Frameworks */,
 				1A1BA5D31F2268AA00E506D0 /* libkrb5support.tbd in Frameworks */,
 				1A1BA5D11F2268A300E506D0 /* libkrb5.tbd in Frameworks */,
 				1A1BA5CF1F22688C00E506D0 /* libgssapi_krb5.tbd in Frameworks */,
@@ -417,6 +420,7 @@
 		34E186C01D9E405400265138 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1A5F31CF225E452D00F9A4CE /* WebKit.framework */,
 				1A1BA5D21F2268AA00E506D0 /* libkrb5support.tbd */,
 				1A1BA5D01F2268A300E506D0 /* libkrb5.tbd */,
 				1A1BA5CE1F22688C00E506D0 /* libgssapi_krb5.tbd */,
@@ -541,6 +545,9 @@
 						LastSwiftMigration = 0910;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
+							com.apple.HardenedRuntime = {
+								enabled = 1;
+							};
 							com.apple.Sandbox = {
 								enabled = 0;
 							};
@@ -921,10 +928,12 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/NoMAD/TCSCertRequest",
@@ -950,10 +959,12 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/NoMAD/TCSCertRequest",
