@@ -498,7 +498,7 @@ class NoMADUser {
                 // build a dictionary and add the KDC into it then write it back to defaults
                 let realm = NSMutableDictionary()
                 //realm.setValue(myLDAPServers.currentServer, forKey: "kdc")
-                realm.setValue(myLDAPServers.currentServer, forKey: "kpasswd")
+                realm.setValue(myLDAPServers.currentServer, forKey: "kpasswd_server")
                 kerbRealms[defaults.string(forKey: Preferences.kerberosRealm)!] = realm
                 kerbPrefs?.set(kerbRealms, forKey: "realms")
                 
