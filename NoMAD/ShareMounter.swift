@@ -616,6 +616,10 @@ class ShareMounter: NSArrayController {
         createdURL = createdURL.replacingOccurrences(of: "<<fullname>>", with: fullName)
         createdURL = createdURL.replacingOccurrences(of: "<<serial>>", with: serial)
         createdURL = createdURL.replacingOccurrences(of: "<<shortname>>", with: shortName)
+        
+        let currentDC = defaults.string(forKey: Preferences.aDDomainController) ?? "NONE"
+        createdURL = createdURL.replacingOccurrences(of: "<<domaincontroller>>", with: currentDC)
+
         return createdURL.addingPercentEncoding(withAllowedCharacters: .alphanumerics)
     }
 }
