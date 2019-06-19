@@ -19,7 +19,6 @@
 		1A26AFF71D46E4BF000776A4 /* GetHelp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A26AFF61D46E4BF000776A4 /* GetHelp.swift */; };
 		1A2727321F3F5E29005B7378 /* ShareMounterMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2727311F3F5E29005B7378 /* ShareMounterMenu.swift */; };
 		1A2728F91DD19B1400616778 /* PasswordChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2728F81DD19B1400616778 /* PasswordChange.swift */; };
-		1A2EE4431FED7B0E00B6A3BF /* DFSResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0048A21FDFB4A500453A90 /* DFSResolver.swift */; };
 		1A309D431E8E0FC600CEDC45 /* menu.nomad.NoMAD.shares.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1A309D421E8E0FC600CEDC45 /* menu.nomad.NoMAD.shares.plist */; };
 		1A4303E22093BB5400EFE329 /* TCSCertificateRequest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4303E12093BB5400EFE329 /* TCSCertificateRequest.framework */; };
 		1A4303E42093BBA300EFE329 /* TCSCertificateRequest.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4303E12093BB5400EFE329 /* TCSCertificateRequest.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -28,6 +27,13 @@
 		1A5F31D0225E452E00F9A4CE /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A5F31CF225E452D00F9A4CE /* WebKit.framework */; };
 		1A88E8881EAF717600AC2E67 /* KeychainMinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A88E8871EAF717600AC2E67 /* KeychainMinder.swift */; };
 		1A88E88A1EAF718400AC2E67 /* KeychainMinder.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A88E8891EAF718400AC2E67 /* KeychainMinder.xib */; };
+		1A8E2A3B22B8852B00A8D43D /* AuthenticationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A8E2A3A22B8852B00A8D43D /* AuthenticationServices.framework */; };
+		1A8E2A3E22B8852B00A8D43D /* AuthenticationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A8E2A3D22B8852B00A8D43D /* AuthenticationViewController.swift */; };
+		1A8E2A4122B8852B00A8D43D /* AuthenticationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A8E2A3F22B8852B00A8D43D /* AuthenticationViewController.xib */; };
+		1A8E2A4622B8852B00A8D43D /* ssohelper.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 1A8E2A3922B8852B00A8D43D /* ssohelper.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1A8E2A4D22B885B500A8D43D /* NoMAD_ADAuth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A8E2A4B22B885B000A8D43D /* NoMAD_ADAuth.framework */; };
+		1A8E2A4E22B885B500A8D43D /* NoMAD_ADAuth.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1A8E2A4B22B885B000A8D43D /* NoMAD_ADAuth.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1A8E2A5222B8947D00A8D43D /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A8E2A5122B8947D00A8D43D /* Media.xcassets */; };
 		1ADCEC621D75476D005D33F5 /* ShareMounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ADCEC611D75476D005D33F5 /* ShareMounter.swift */; };
 		1AE1DFC11DA6B1E100456E3E /* Languages.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1AE1DFC31DA6B1E100456E3E /* Languages.plist */; };
 		1AFBDC651DE675B000C19AE1 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AFBDC641DE675B000C19AE1 /* Preferences.swift */; };
@@ -74,6 +80,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		1A8E2A4422B8852B00A8D43D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84CC67D31D30A18A00115C76 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1A8E2A3822B8852B00A8D43D;
+			remoteInfo = ssohelper;
+		};
 		BF34324F1D52844300CE8F89 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 84CC67D31D30A18A00115C76 /* Project object */;
@@ -91,6 +104,28 @@
 			dstSubfolderSpec = 10;
 			files = (
 				1A4303E42093BBA300EFE329 /* TCSCertificateRequest.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1A8E2A4722B8852B00A8D43D /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				1A8E2A4622B8852B00A8D43D /* ssohelper.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1A8E2A4F22B885B500A8D43D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				1A8E2A4E22B885B500A8D43D /* NoMAD_ADAuth.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -154,6 +189,14 @@
 		1A88E88F1EAF83EB00AC2E67 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/PreferencesWindow.strings; sourceTree = "<group>"; };
 		1A88E8901EAF83EC00AC2E67 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1A88E8911EAF83EC00AC2E67 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = nl; path = nl.lproj/Languages.plist; sourceTree = "<group>"; };
+		1A8E2A3922B8852B00A8D43D /* ssohelper.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ssohelper.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A8E2A3A22B8852B00A8D43D /* AuthenticationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AuthenticationServices.framework; path = System/Library/Frameworks/AuthenticationServices.framework; sourceTree = SDKROOT; };
+		1A8E2A3D22B8852B00A8D43D /* AuthenticationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationViewController.swift; sourceTree = "<group>"; };
+		1A8E2A4022B8852B00A8D43D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/AuthenticationViewController.xib; sourceTree = "<group>"; };
+		1A8E2A4222B8852B00A8D43D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1A8E2A4322B8852B00A8D43D /* ssohelper.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ssohelper.entitlements; sourceTree = "<group>"; };
+		1A8E2A4B22B885B000A8D43D /* NoMAD_ADAuth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = NoMAD_ADAuth.framework; sourceTree = "<group>"; };
+		1A8E2A5122B8947D00A8D43D /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		1A9FBD5C1F9520B400399996 /* krb5.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = krb5.h; sourceTree = "<group>"; };
 		1AA2B6341E4DECE70088DF03 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1AA2B6361E4DEE420088DF03 /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/PreferencesWindow.strings; sourceTree = "<group>"; };
@@ -245,6 +288,15 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		1A8E2A3622B8852B00A8D43D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A8E2A3B22B8852B00A8D43D /* AuthenticationServices.framework in Frameworks */,
+				1A8E2A4D22B885B500A8D43D /* NoMAD_ADAuth.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		84CC67D81D30A18A00115C76 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -304,6 +356,18 @@
 				1A4303E62093BC9100EFE329 /* NoMAD.sdef */,
 			);
 			name = AppleScript;
+			sourceTree = "<group>";
+		};
+		1A8E2A3C22B8852B00A8D43D /* ssohelper */ = {
+			isa = PBXGroup;
+			children = (
+				1A8E2A3D22B8852B00A8D43D /* AuthenticationViewController.swift */,
+				1A8E2A3F22B8852B00A8D43D /* AuthenticationViewController.xib */,
+				1A8E2A4222B8852B00A8D43D /* Info.plist */,
+				1A8E2A4322B8852B00A8D43D /* ssohelper.entitlements */,
+				1A8E2A5122B8947D00A8D43D /* Media.xcassets */,
+			);
+			path = ssohelper;
 			sourceTree = "<group>";
 		};
 		1AE1DFBC1DA69CF100456E3E /* Resources */ = {
@@ -420,12 +484,14 @@
 		34E186C01D9E405400265138 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1A8E2A4B22B885B000A8D43D /* NoMAD_ADAuth.framework */,
 				1A5F31CF225E452D00F9A4CE /* WebKit.framework */,
 				1A1BA5D21F2268AA00E506D0 /* libkrb5support.tbd */,
 				1A1BA5D01F2268A300E506D0 /* libkrb5.tbd */,
 				1A1BA5CE1F22688C00E506D0 /* libgssapi_krb5.tbd */,
 				84CC67EB1D30A1A500115C76 /* GSS.framework */,
 				34E186C11D9E405400265138 /* libresolv.tbd */,
+				1A8E2A3A22B8852B00A8D43D /* AuthenticationServices.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -447,6 +513,7 @@
 			children = (
 				84CC67DD1D30A18A00115C76 /* NoMAD */,
 				BF34324B1D52844300CE8F89 /* NoMADTests */,
+				1A8E2A3C22B8852B00A8D43D /* ssohelper */,
 				84CC67DC1D30A18A00115C76 /* Products */,
 				34E186C01D9E405400265138 /* Frameworks */,
 				1A4303E02093B8FD00EFE329 /* Recovered References */,
@@ -458,6 +525,7 @@
 			children = (
 				84CC67DB1D30A18A00115C76 /* NoMAD.app */,
 				BF34324A1D52844300CE8F89 /* NoMADTests.xctest */,
+				1A8E2A3922B8852B00A8D43D /* ssohelper.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -494,6 +562,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		1A8E2A3822B8852B00A8D43D /* ssohelper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1A8E2A4A22B8852B00A8D43D /* Build configuration list for PBXNativeTarget "ssohelper" */;
+			buildPhases = (
+				1A8E2A3522B8852B00A8D43D /* Sources */,
+				1A8E2A3622B8852B00A8D43D /* Frameworks */,
+				1A8E2A3722B8852B00A8D43D /* Resources */,
+				1A8E2A4F22B885B500A8D43D /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ssohelper;
+			productName = ssohelper;
+			productReference = 1A8E2A3922B8852B00A8D43D /* ssohelper.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		84CC67DA1D30A18A00115C76 /* NoMAD */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 84CC67E81D30A18A00115C76 /* Build configuration list for PBXNativeTarget "NoMAD" */;
@@ -502,10 +588,12 @@
 				84CC67D81D30A18A00115C76 /* Frameworks */,
 				84CC67D91D30A18A00115C76 /* Resources */,
 				1A2B5ABA204A57C3002945C8 /* Embed Frameworks */,
+				1A8E2A4722B8852B00A8D43D /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				1A8E2A4522B8852B00A8D43D /* PBXTargetDependency */,
 			);
 			name = NoMAD;
 			productName = NoMAD;
@@ -536,15 +624,20 @@
 		84CC67D31D30A18A00115C76 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0910;
+				LastSwiftUpdateCheck = 1100;
+				LastUpgradeCheck = 1100;
 				ORGANIZATIONNAME = "Trusource Labs";
 				TargetAttributes = {
+					1A8E2A3822B8852B00A8D43D = {
+						CreatedOnToolsVersion = 11.0;
+						DevelopmentTeam = AAPZK3CB24;
+						ProvisioningStyle = Automatic;
+					};
 					84CC67DA1D30A18A00115C76 = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = AAPZK3CB24;
 						LastSwiftMigration = 0910;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
 								enabled = 1;
@@ -587,11 +680,21 @@
 			targets = (
 				84CC67DA1D30A18A00115C76 /* NoMAD */,
 				BF3432491D52844300CE8F89 /* NoMADTests */,
+				1A8E2A3822B8852B00A8D43D /* ssohelper */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		1A8E2A3722B8852B00A8D43D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A8E2A5222B8947D00A8D43D /* Media.xcassets in Resources */,
+				1A8E2A4122B8852B00A8D43D /* AuthenticationViewController.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		84CC67D91D30A18A00115C76 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -628,6 +731,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		1A8E2A3522B8852B00A8D43D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A8E2A3E22B8852B00A8D43D /* AuthenticationViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		84CC67D71D30A18A00115C76 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -655,7 +766,6 @@
 				84996CA81D503F8400793747 /* LDAPUtil.swift in Sources */,
 				346CD27F1DA4776600255F66 /* Extensions.swift in Sources */,
 				84B54B7F1F3A09980025E397 /* Welcome.swift in Sources */,
-				1A2EE4431FED7B0E00B6A3BF /* DFSResolver.swift in Sources */,
 				846DDD3A201919F800D94821 /* NoMADAction.swift in Sources */,
 				1A2727321F3F5E29005B7378 /* ShareMounterMenu.swift in Sources */,
 				1A58C88C1DD9264D002C0769 /* CSRGen.swift in Sources */,
@@ -682,6 +792,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		1A8E2A4522B8852B00A8D43D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1A8E2A3822B8852B00A8D43D /* ssohelper */;
+			targetProxy = 1A8E2A4422B8852B00A8D43D /* PBXContainerItemProxy */;
+		};
 		BF3432501D52844300CE8F89 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 84CC67DA1D30A18A00115C76 /* NoMAD */;
@@ -699,6 +814,14 @@
 				1A4CD1B61F8EF977001415C2 /* nn */,
 			);
 			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		1A8E2A3F22B8852B00A8D43D /* AuthenticationViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1A8E2A4022B8852B00A8D43D /* Base */,
+			);
+			name = AuthenticationViewController.xib;
 			sourceTree = "<group>";
 		};
 		1AE1DFC31DA6B1E100456E3E /* Languages.plist */ = {
@@ -821,6 +944,72 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		1A8E2A4822B8852B00A8D43D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = ssohelper/ssohelper.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = AAPZK3CB24;
+				ENABLE_HARDENED_RUNTIME = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = ssohelper/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @executable_path/../../../../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.trusourcelabs.NoMAD.ssohelper;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		1A8E2A4922B8852B00A8D43D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = ssohelper/ssohelper.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = AAPZK3CB24;
+				ENABLE_HARDENED_RUNTIME = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = ssohelper/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @executable_path/../../../../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.trusourcelabs.NoMAD.ssohelper;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 		84CC67E61D30A18A00115C76 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -835,12 +1024,14 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -848,7 +1039,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -889,12 +1080,14 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -902,7 +1095,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -925,15 +1118,16 @@
 		84CC67E91D30A18A00115C76 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = AAPZK3CB24;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -956,15 +1150,16 @@
 		84CC67EA1D30A18A00115C76 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = AAPZK3CB24;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1014,6 +1209,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		1A8E2A4A22B8852B00A8D43D /* Build configuration list for PBXNativeTarget "ssohelper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1A8E2A4822B8852B00A8D43D /* Debug */,
+				1A8E2A4922B8852B00A8D43D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		84CC67D61D30A18A00115C76 /* Build configuration list for PBXProject "NoMAD" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

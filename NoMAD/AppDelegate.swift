@@ -77,7 +77,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         
         myLogger.logit(.base, message:"---NoMAD Initialized---")
-        let version = String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!)
+        let version = String(describing: Bundle.main.infoDictionary!["CFBundleVersionString"]) ?? "NONE"
         let build = String(describing: Bundle.main.infoDictionary!["CFBundleVersion"]!)
         myLogger.logit(.base, message:"NoMAD version: " + version)
         myLogger.logit(.base, message:"NoMAD build: " + build)
@@ -152,11 +152,3 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 }
-
-extension AppDelegate {
-    // 1
-    override func application(_ sender: NSApplication, delegateHandlesKey key: String) -> Bool {
-        return true
-    }
-}
-

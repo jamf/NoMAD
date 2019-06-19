@@ -1499,7 +1499,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                             // we do this twice b/c doing it only once seems to make it less than full width
                             self.statusItem.title = ""
                             self.statusItem.title = ""
-                            self.NoMADMenuTicketLife.title = dateFormatter.string(from: self.userInformation.myLDAPServers.tickets.defaultExpires ?? Date.distantPast) + " " + self.userInformation.myLDAPServers.currentServer + " NoMAD Version: " + String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!)
+                            self.NoMADMenuTicketLife.title = dateFormatter.string(from: self.userInformation.myLDAPServers.tickets.defaultExpires ?? Date.distantPast) + " " + self.userInformation.myLDAPServers.currentServer + " NoMAD Version: " + String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"] ?? "NONE")
                             self.statusItem.toolTip = defaults.string(forKey: Preferences.hideExpirationMessage) ?? "PasswordDoesNotExpire".translate
                             self.NoMADMenuPasswordExpires.title = defaults.string(forKey: Preferences.hideExpirationMessage) ?? "PasswordDoesNotExpire".translate
                         }
@@ -1507,7 +1507,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         self.statusItem.image = self.iconOffOff
                         self.statusItem.alternateImage = self.iconAltOffOff
                         
-                        self.NoMADMenuTicketLife.title = "NoMAD Version: " + String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"]!)
+                        self.NoMADMenuTicketLife.title = "NoMAD Version: " + String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"] ?? "NONE")
                         
                         // if online we don't set a status message
                         

@@ -309,9 +309,9 @@ class WindowsCATools {
             var airportdSecTrust : SecTrustedApplication? = nil
             var nomadSecTrust : SecTrustedApplication? = nil
             
-            err = SecTrustedApplicationCreateFromPath("/System/Library/SystemConfiguration/EAPOLController.bundle/Contents/Resources/eapolclient", &eapolSecTrust)
-            err = SecTrustedApplicationCreateFromPath("/usr/libexec/airportd", &airportdSecTrust)
-            err = SecTrustedApplicationCreateFromPath(CommandLine.arguments[0], &nomadSecTrust)
+            //err = SecTrustedApplicationCreateFromPath("/System/Library/SystemConfiguration/EAPOLController.bundle/Contents/Resources/eapolclient", &eapolSecTrust)
+            //err = SecTrustedApplicationCreateFromPath("/usr/libexec/airportd", &airportdSecTrust)
+            //err = SecTrustedApplicationCreateFromPath(CommandLine.arguments[0], &nomadSecTrust)
             err = SecAccessCreate("NoMAD Cert" as CFString, [ eapolSecTrust, airportdSecTrust, nomadSecTrust] as CFArray, &access)
             
             if err == 0 {

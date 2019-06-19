@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14810.12" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14810.12"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="AuthenticationViewController" customModule="ssohelper" customModuleProvider="target">
+            <connections>
+                <outlet property="passField" destination="Ibg-6H-ELl" id="bPd-Qa-Lwe"/>
+                <outlet property="spinner" destination="stf-7J-ofT" id="p2w-br-scH"/>
+                <outlet property="status" destination="3gH-wi-Vz3" id="JSS-aJ-urx"/>
+                <outlet property="userField" destination="69Q-9g-akF" id="jAn-1Z-UDe"/>
+                <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="Hz6-mo-xeY">
+            <rect key="frame" x="0.0" y="0.0" width="450" height="424"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="XwM-xr-Ek0">
+                    <rect key="frame" x="184" y="20" width="82" height="32"/>
+                    <buttonCell key="cell" type="push" title="Sign In" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="9Y3-Cb-EBB">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                        <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                    </buttonCell>
+                    <connections>
+                        <action selector="clickDone:" target="-2" id="HKG-NX-GDp"/>
+                    </connections>
+                </button>
+                <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="69Q-9g-akF">
+                    <rect key="frame" x="20" y="87" width="410" height="21"/>
+                    <constraints>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="410" id="cKK-US-Ogi"/>
+                    </constraints>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="username" drawsBackground="YES" id="oDb-Co-KNO">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <secureTextField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ibg-6H-ELl">
+                    <rect key="frame" x="20" y="56" width="410" height="21"/>
+                    <secureTextFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="password" drawsBackground="YES" usesSingleLineMode="YES" id="GNZ-mB-3yz">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        <allowedInputSourceLocales>
+                            <string>NSAllRomanInputSourcesLocaleIdentifier</string>
+                        </allowedInputSourceLocales>
+                    </secureTextFieldCell>
+                </secureTextField>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3gH-wi-Vz3">
+                    <rect key="frame" x="18" y="116" width="414" height="16"/>
+                    <constraints>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="410" id="KAK-T5-CmF"/>
+                    </constraints>
+                    <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Label" id="wTT-p5-xhu">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <progressIndicator wantsLayer="YES" maxValue="100" displayedWhenStopped="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="stf-7J-ofT">
+                    <rect key="frame" x="20" y="29" width="16" height="16"/>
+                </progressIndicator>
+                <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="6WI-On-s0c">
+                    <rect key="frame" x="20" y="140" width="410" height="264"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="264" id="49I-tp-Mep"/>
+                        <constraint firstAttribute="width" constant="410" id="AOK-qH-zdx"/>
+                    </constraints>
+                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NoMAD banner" id="nJA-Np-yVi"/>
+                </imageView>
+            </subviews>
+            <constraints>
+                <constraint firstItem="stf-7J-ofT" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" id="3R6-1G-Dzf"/>
+                <constraint firstItem="XwM-xr-Ek0" firstAttribute="centerX" secondItem="Hz6-mo-xeY" secondAttribute="centerX" id="4FD-jM-9TE"/>
+                <constraint firstItem="69Q-9g-akF" firstAttribute="top" secondItem="3gH-wi-Vz3" secondAttribute="bottom" constant="8" id="4PE-LB-qJQ"/>
+                <constraint firstItem="69Q-9g-akF" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Ibg-6H-ELl" secondAttribute="trailing" id="8pI-7b-N2j"/>
+                <constraint firstItem="69Q-9g-akF" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Ibg-6H-ELl" secondAttribute="leading" id="JGN-pJ-I4d"/>
+                <constraint firstItem="XwM-xr-Ek0" firstAttribute="top" secondItem="Ibg-6H-ELl" secondAttribute="bottom" constant="8" id="OJW-0m-0yJ"/>
+                <constraint firstAttribute="trailing" secondItem="6WI-On-s0c" secondAttribute="trailing" constant="20" id="ZAc-pq-kqj"/>
+                <constraint firstItem="6WI-On-s0c" firstAttribute="centerX" secondItem="Hz6-mo-xeY" secondAttribute="centerX" id="bBL-DE-rQ3"/>
+                <constraint firstItem="69Q-9g-akF" firstAttribute="leading" secondItem="stf-7J-ofT" secondAttribute="leading" id="fPS-Z6-1Tn"/>
+                <constraint firstAttribute="bottom" secondItem="stf-7J-ofT" secondAttribute="bottom" constant="29" id="lzu-6b-CyZ"/>
+                <constraint firstItem="Ibg-6H-ELl" firstAttribute="centerX" secondItem="Hz6-mo-xeY" secondAttribute="centerX" id="njj-oh-E3H"/>
+                <constraint firstItem="69Q-9g-akF" firstAttribute="leading" secondItem="3gH-wi-Vz3" secondAttribute="leading" id="oGw-2L-gJ7"/>
+                <constraint firstItem="69Q-9g-akF" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" id="qrZ-bQ-xia"/>
+                <constraint firstAttribute="trailing" secondItem="69Q-9g-akF" secondAttribute="trailing" constant="20" id="quW-Us-RD3"/>
+                <constraint firstAttribute="bottom" secondItem="XwM-xr-Ek0" secondAttribute="bottom" constant="27" id="qvv-Fc-C7c"/>
+                <constraint firstItem="6WI-On-s0c" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" id="tSH-1O-FmB"/>
+                <constraint firstItem="6WI-On-s0c" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="20" id="vF3-va-IuI"/>
+                <constraint firstItem="Ibg-6H-ELl" firstAttribute="top" secondItem="69Q-9g-akF" secondAttribute="bottom" constant="10" id="vax-uL-inx"/>
+                <constraint firstItem="3gH-wi-Vz3" firstAttribute="top" secondItem="6WI-On-s0c" secondAttribute="bottom" constant="8" id="z7i-FP-e0t"/>
+                <constraint firstAttribute="bottom" secondItem="3gH-wi-Vz3" secondAttribute="bottom" constant="116" id="z9a-ZY-2SU"/>
+            </constraints>
+            <point key="canvasLocation" x="128" y="270"/>
+        </customView>
+    </objects>
+    <resources>
+        <image name="NoMAD banner" width="1002" height="173"/>
+    </resources>
+</document>
