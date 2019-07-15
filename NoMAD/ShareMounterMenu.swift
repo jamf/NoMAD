@@ -15,7 +15,7 @@ let shareMounterQueue = DispatchQueue(label: "menu.nomad.NoMAD.shareMounting", a
 
 class ShareMounterMenu: NSObject {
     
-    @objc let myShareMounter = ShareMounter()
+    let myShareMounter = ShareMounter()
     @objc var worksWhenModal = true
     @objc let myShareMenu = NSMenu()
     

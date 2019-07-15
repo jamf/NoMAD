@@ -94,7 +94,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     @objc var updateRunning = false
     @objc var menuAnimated = false
     
-    @objc let myShareMounter = ShareMounter()
+    let myShareMounter = ShareMounter()
     
     @objc var PKINIT = false
     

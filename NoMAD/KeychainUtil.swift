@@ -421,7 +421,7 @@ class KeychainUtil {
                     
                     myErr = SecKeychainItemCopyAccess(myKeychainItem, &itemAccess)
                     
-                    myErr = SecTrustedApplicationCreateFromPath( nil, &secApp)
+                    //myErr = SecTrustedApplicationCreateFromPath( nil, &secApp)
                     
                     // Decode ACL
                     
@@ -663,7 +663,7 @@ class KeychainUtil {
             
             myErr = SecKeychainItemCopyAccess(item, &itemAccess)
             
-            myErr = SecTrustedApplicationCreateFromPath( nil, &secApp)
+            //myErr = SecTrustedApplicationCreateFromPath( nil, &secApp)
             
             // Decode ACL
             

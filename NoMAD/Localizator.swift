@@ -21,8 +21,8 @@ class Localizator : NSObject {
 
     @objc func translate(_ string: String) -> String {
         guard let localizedString = localizableDictionary[string]?["value"] else {
-            assertionFailure("Missing translation for: \(string)")
-            return ""
+            //assertionFailure("Missing translation for: \(string)")
+            return string
         }
         return localizedString as! String
     }

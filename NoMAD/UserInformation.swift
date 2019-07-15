@@ -128,6 +128,10 @@ class UserInformation {
 
         // 2. check for tickets
 
+        myLDAPServers.tickets.klist()
+        myLogger.logit(.debug, message: "Default Ticket: \(myLDAPServers.tickets.defaultPrincipal ?? "NONE")")
+        myLogger.logit(.debug, message: "Ticket State: \(myLDAPServers.tickets.state)")
+
         if myLDAPServers.tickets.state {
             userPrincipal = myLDAPServers.tickets.returnDefaultPrincipal()
             realm = defaults.string(forKey: Preferences.kerberosRealm)!

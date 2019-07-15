@@ -152,11 +152,3 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 }
-
-extension AppDelegate {
-    // 1
-    override func application(_ sender: NSApplication, delegateHandlesKey key: String) -> Bool {
-        return true
-    }
-}
-
