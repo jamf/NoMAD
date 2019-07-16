@@ -293,12 +293,6 @@ class ShareMounter {
                 var requestID: AsyncRequestID?
                 let queue = DispatchQueue.main
                 
-                if sharePrefs?.bool(forKey: ShareKeys.finderMount) ?? false {
-                    myLogger.logit(.debug, message: "Mounting old school way.")
-                    _ = cliTask("open " + all_shares[index].url.absoluteString.safeURLPath()!)
-                    continue
-                }
-                
                 myLogger.logit(.debug, message: "Attempting to mount: " + all_shares[index].url.absoluteString)
                 
                 if sharePrefs?.bool(forKey: ShareKeys.slowMount) ?? false {
