@@ -114,7 +114,7 @@ class ShareMounter {
                     }
                     
                     if let shareGroups = homeDict["Groups"] as! [String]?,
-                        let shareAutoMount = homeDict["AutoMount"] as? Bool,
+                        let shareAutoMount = homeDict["Mount"] as? Bool,
                         let shareOptions = homeDict["Options"] as! [String]? {
                         
                         var currentShare = share_info(groups: shareGroups, originalURL: homePathRaw, url: homePath, name: defaults.string(forKey: Preferences.menuHomeDirectory) ?? "Network Home", options: shareOptions, connectedOnly: true, mountStatus: .unmounted, localMount: nil, autoMount: shareAutoMount, reqID: nil, attemptDate: nil, localMountPoints: nil)
