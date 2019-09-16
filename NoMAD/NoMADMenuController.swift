@@ -689,8 +689,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             } else {
                 
                 let certCARequest = WindowsCATools(serverURL: certCATest, template: certTemplateTest)
-                //let _ = certCARequest.certEnrollment()
-                let _ = certCARequest.TCSCertEnroll()
+                let _ = certCARequest.certEnrollment()
             }
             
         } else {
