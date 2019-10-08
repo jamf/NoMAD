@@ -94,7 +94,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     @objc var updateRunning = false
     @objc var menuAnimated = false
     
-    @objc let myShareMounter = ShareMounter()
+    let myShareMounter = ShareMounter()
     
     @objc var PKINIT = false
     
@@ -119,6 +119,20 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     override func awakeFromNib() {
         
         myLogger.logit(.base, message:"---Starting NoMAD---")
+        
+        // check to see if we need to wait for another profile
+        
+        if defaults.bool(forKey: Preferences.profileWait) {
+            myLogger.logit(.base, message: "Waiting for Profile Done.")
+            // set get the time
+            
+            let now = Date.init()
+            
+            while !defaults.bool(forKey: Preferences.profileDone) && abs(now.timeIntervalSinceNow) < 30 {
+                myLogger.logit(.debug, message: "Looping")
+                RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date.distantFuture)
+            }
+        }
         
         // check for locked keychains
         
@@ -410,8 +424,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 myLogger.logit(.base, message:"Automatically logged in.")
                 
                 let _ = cliTask("/usr/bin/kswitch -p " +  userPrinc)
-                
                 self.updateUserInfo()
+                
+                self.delayTimer = Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(self.updateUserInfo), userInfo: nil, repeats: false)
                 
                 // fire off the SignInCommand script if there is one
                 if defaults.string(forKey: Preferences.signInCommand) != "" {
@@ -589,12 +604,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         NSApplication.shared.terminate(self)
     }
     
-    // show PKINITer when asked
-    
-    @objc func smartcardSignIn() {
-        launchPKINITer()
-    }
-    
     @objc func getCert(_ alerts: Bool) {
         
         var myResponse: Int?
@@ -642,6 +651,13 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             
             if !certCATest.contains("http://") && !certCATest.contains("https://") {
                 certCATest = "https://" + certCATest
+            }
+            
+            if defaults.string(forKey: Preferences.x509Name) != "" && defaults.string(forKey: Preferences.x509Name) != nil {
+                let certCARequest = WindowsCATools(serverURL: certCATest, template: certTemplateTest)
+                let _ = certCARequest.TCSCertEnroll()
+            
+                return
             }
             
             // preflight that there aren't SSL issues
@@ -787,7 +803,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             if (self.NoMADMenuChangePassword != nil) {
                 self.NoMADMenuChangePassword.isEnabled = true
             }
-            if (self.NoMADMenuGetCertificate != nil)  {
+            if (self.NoMADMenuGetCertificate != nil) && defaults.object(forKey: Preferences.hideCertificateNumber) != nil  {
                 
                 // Getting list of Certificates
                 let keychainUtilInstance = KeychainUtil()
@@ -955,8 +971,9 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                 let _ = cliTask("/usr/bin/kswitch -p " +  userPrinc)
                 
                 // update the UI
-                
                 updateUserInfo()
+                
+                delayTimer = Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(updateUserInfo), userInfo: nil, repeats: false)
                 
                 // fire off the SignInCommand script if there is one
                 if defaults.string(forKey: Preferences.signInCommand) != "" {
@@ -1310,9 +1327,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
     @objc func updateUserInfo() {
         
         myLogger.logit(.base, message:"Updating User Info")
-        updateRunning = true
-        
-        //startMenuAnimationTimer()
+        delayTimer.invalidate()
         
         // make sure the domain we're using is the domain we should be using
         
@@ -1624,6 +1639,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                     if self.userInformation.status == "Logged In" {
                         
                         self.myShareMenuItem.title = defaults.string(forKey: Preferences.menuFileServers) ?? "FileServers".translate
+                        
                         self.myShareMenuItem.submenu = shareMounterMenu.buildMenu(connected: self.userInformation.connected)
                         
                         if shareMounterMenu.sharesAvilable() {
@@ -1714,10 +1730,7 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
                         }
                     }
                 }
-                
-                
-                self.updateRunning = false
-            })
+        })
             
             // check for locked keychains
             
@@ -1730,7 +1743,6 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             // mark the time and clear the update scheduled flag
             
             lastStatusCheck = Date()
-            updateScheduled = false
             
             if let expireDate = defaults.object(forKey: Preferences.lastCertificateExpiration) as? Date {
                 if expireDate != Date.distantPast {
@@ -1766,13 +1778,8 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
         } else {
             myLogger.logit(.info, message:"Time between system checks is too short, delaying")
             
-            // clear the menu animation
-            self.updateRunning = false
-            
-            if ( !updateScheduled ) {
-                Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(updateUserInfo), userInfo: nil, repeats: false)
-                
-                updateScheduled = true
+            if !delayTimer.isValid {
+                delayTimer = Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(updateUserInfo), userInfo: nil, repeats: false)
             }
         }
         //stopMenuAnimationTimer()

@@ -70,6 +70,7 @@ class HistoryAndThanks {
         esotericBits.append("NoMAD was officially launched at the University of Utah Mac Managers meeting on Dec. 21, 2016.\n")
         esotericBits.append("Version 1.1 took waaay longer than it was supposed to.")
         esotericBits.append("MacSysAdmin 2017 is where we'll show off NoMAD 2.0 for the first time in public. Note to self... better get working on that.")
+        esotericBits.append("July 28, 2018 : the day Charles finally mentioned this file to me.")
         
         return esotericBits
     }

@@ -76,6 +76,7 @@ extension String {
         let shortName = defaults.string(forKey: Preferences.userShortName) ?? ""
         let upn = defaults.string(forKey: Preferences.userUPN) ?? ""
         let email = defaults.string(forKey: Preferences.userEmail) ?? ""
+        let currentDC = defaults.string(forKey: Preferences.aDDomainController) ?? "NONE"
         
         if encoding {
             cleanString = cleanString.replacingOccurrences(of: " ", with: "%20") //cleanString.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlHostAllowed) ?? cleanString
@@ -87,6 +88,13 @@ extension String {
         cleanString = cleanString.replacingOccurrences(of: "<<shortname>>", with: shortName)
         cleanString = cleanString.replacingOccurrences(of: "<<upn>>", with: upn)
         cleanString = cleanString.replacingOccurrences(of: "<<email>>", with: email)
+        cleanString = cleanString.replacingOccurrences(of: "<<noACL>>", with: "")
+        cleanString = cleanString.replacingOccurrences(of: "<<domaincontroller>>", with: currentDC)
+
+        
+        // now to remove any proxy settings
+        
+        cleanString = cleanString.replacingOccurrences(of: "<<proxy>>", with: "")
         
         return cleanString //.addingPercentEncoding(withAllowedCharacters: .alphanumerics)
         

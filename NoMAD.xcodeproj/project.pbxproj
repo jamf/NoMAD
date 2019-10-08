@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		1A00489B1FDF9D5E00453A90 /* menu.nomad.keychainItems.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1A00489A1FDF9D5E00453A90 /* menu.nomad.keychainItems.plist */; };
 		1A08F1F31D36DA0900FA68C4 /* NoMADApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A08F1F21D36DA0900FA68C4 /* NoMADApplication.swift */; };
-		1A190AF4205CBEDF008AC26D /* NoMAD.sdef in Resources */ = {isa = PBXBuildFile; fileRef = 1A190AF3205CBEDF008AC26D /* NoMAD.sdef */; };
 		1A1BA5B11F1D08B000E506D0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A1BA5B31F1D08B000E506D0 /* Localizable.strings */; };
 		1A1BA5CF1F22688C00E506D0 /* libgssapi_krb5.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A1BA5CE1F22688C00E506D0 /* libgssapi_krb5.tbd */; };
 		1A1BA5D11F2268A300E506D0 /* libkrb5.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A1BA5D01F2268A300E506D0 /* libkrb5.tbd */; };
@@ -22,10 +21,13 @@
 		1A2728F91DD19B1400616778 /* PasswordChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2728F81DD19B1400616778 /* PasswordChange.swift */; };
 		1A2EE4431FED7B0E00B6A3BF /* DFSResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0048A21FDFB4A500453A90 /* DFSResolver.swift */; };
 		1A309D431E8E0FC600CEDC45 /* menu.nomad.NoMAD.shares.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1A309D421E8E0FC600CEDC45 /* menu.nomad.NoMAD.shares.plist */; };
+		1A4303E22093BB5400EFE329 /* TCSCertificateRequest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4303E12093BB5400EFE329 /* TCSCertificateRequest.framework */; };
+		1A4303E42093BBA300EFE329 /* TCSCertificateRequest.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4303E12093BB5400EFE329 /* TCSCertificateRequest.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1A4303E72093BC9100EFE329 /* NoMAD.sdef in Resources */ = {isa = PBXBuildFile; fileRef = 1A4303E62093BC9100EFE329 /* NoMAD.sdef */; };
 		1A58C88C1DD9264D002C0769 /* CSRGen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A58C88B1DD9264D002C0769 /* CSRGen.swift */; };
+		1A5F31D0225E452E00F9A4CE /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A5F31CF225E452D00F9A4CE /* WebKit.framework */; };
 		1A88E8881EAF717600AC2E67 /* KeychainMinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A88E8871EAF717600AC2E67 /* KeychainMinder.swift */; };
 		1A88E88A1EAF718400AC2E67 /* KeychainMinder.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A88E8891EAF718400AC2E67 /* KeychainMinder.xib */; };
-		1AA2B64A1E4FBDD60088DF03 /* PKINITER.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AA2B6491E4FBDD60088DF03 /* PKINITER.swift */; };
 		1ADCEC621D75476D005D33F5 /* ShareMounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ADCEC611D75476D005D33F5 /* ShareMounter.swift */; };
 		1AE1DFC11DA6B1E100456E3E /* Languages.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1AE1DFC31DA6B1E100456E3E /* Languages.plist */; };
 		1AFBDC651DE675B000C19AE1 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AFBDC641DE675B000C19AE1 /* Preferences.swift */; };
@@ -81,6 +83,20 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		1A2B5ABA204A57C3002945C8 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				1A4303E42093BBA300EFE329 /* TCSCertificateRequest.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		1A00489A1FDF9D5E00453A90 /* menu.nomad.keychainItems.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = menu.nomad.keychainItems.plist; sourceTree = "<group>"; };
 		1A0048A21FDFB4A500453A90 /* DFSResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DFSResolver.swift; sourceTree = "<group>"; };
@@ -95,15 +111,19 @@
 		1A206B2C1D58312800539FA6 /* KeychainUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = KeychainUtil.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		1A22AEC01E200D600012220D /* ShareEditWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ShareEditWindow.xib; sourceTree = "<group>"; };
 		1A24EF471D7F01B3006A1866 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
-		1A26AFF41D3BE620000776A4 /* WindowsCATools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = WindowsCATools.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		1A26AFF41D3BE620000776A4 /* WindowsCATools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = WindowsCATools.swift; sourceTree = "<group>"; };
 		1A26AFF61D46E4BF000776A4 /* GetHelp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetHelp.swift; sourceTree = "<group>"; };
 		1A2727311F3F5E29005B7378 /* ShareMounterMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareMounterMenu.swift; sourceTree = "<group>"; };
 		1A2728F81DD19B1400616778 /* PasswordChange.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordChange.swift; sourceTree = "<group>"; };
+		1A2B5AB6204A32AD002945C8 /* TCSCertRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCSCertRequest.swift; sourceTree = "<group>"; };
 		1A2CFB601EF0EAA200F1D74C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/MainMenu.strings; sourceTree = "<group>"; };
 		1A2CFB611EF0EAA300F1D74C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/PreferencesWindow.strings; sourceTree = "<group>"; };
 		1A2CFB621EF0EAA300F1D74C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/PasswordChangeWindow.strings; sourceTree = "<group>"; };
 		1A2CFB681EF0EAA400F1D74C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/LoginWindow.strings; sourceTree = "<group>"; };
 		1A309D421E8E0FC600CEDC45 /* menu.nomad.NoMAD.shares.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = menu.nomad.NoMAD.shares.plist; sourceTree = "<group>"; };
+		1A3E2598210D49400057E9DB /* Acknowledgements.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Acknowledgements.md; sourceTree = "<group>"; };
+		1A4303E12093BB5400EFE329 /* TCSCertificateRequest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = TCSCertificateRequest.framework; sourceTree = "<group>"; };
+		1A4303E62093BC9100EFE329 /* NoMAD.sdef */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = NoMAD.sdef; sourceTree = "<group>"; };
 		1A4CD1AC1F8EF94B001415C2 /* hr-BA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "hr-BA"; path = "hr-BA.lproj/LoginWindow.strings"; sourceTree = "<group>"; };
 		1A4CD1AD1F8EF94C001415C2 /* hr-BA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "hr-BA"; path = "hr-BA.lproj/PreferencesWindow.strings"; sourceTree = "<group>"; };
 		1A4CD1AE1F8EF94D001415C2 /* hr-BA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "hr-BA"; path = "hr-BA.lproj/MainMenu.strings"; sourceTree = "<group>"; };
@@ -125,6 +145,7 @@
 		1A55D3571F68C92F0077D99D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1A55D3581F68C9FA0077D99D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = ru; path = ru.lproj/Languages.plist; sourceTree = "<group>"; };
 		1A58C88B1DD9264D002C0769 /* CSRGen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CSRGen.swift; sourceTree = "<group>"; };
+		1A5F31CF225E452D00F9A4CE /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		1A88E8871EAF717600AC2E67 /* KeychainMinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainMinder.swift; sourceTree = "<group>"; };
 		1A88E8891EAF718400AC2E67 /* KeychainMinder.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = KeychainMinder.xib; sourceTree = "<group>"; };
 		1A88E88C1EAF83EB00AC2E67 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/LoginWindow.strings; sourceTree = "<group>"; };
@@ -228,11 +249,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A5F31D0225E452E00F9A4CE /* WebKit.framework in Frameworks */,
 				1A1BA5D31F2268AA00E506D0 /* libkrb5support.tbd in Frameworks */,
 				1A1BA5D11F2268A300E506D0 /* libkrb5.tbd in Frameworks */,
 				1A1BA5CF1F22688C00E506D0 /* libgssapi_krb5.tbd in Frameworks */,
 				34E186C21D9E405400265138 /* libresolv.tbd in Frameworks */,
 				84CC67EC1D30A1A500115C76 /* GSS.framework in Frameworks */,
+				1A4303E22093BB5400EFE329 /* TCSCertificateRequest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -246,14 +269,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1A190AF5205CBFFE008AC26D /* AppleScript */ = {
-			isa = PBXGroup;
-			children = (
-				1A190AF3205CBEDF008AC26D /* NoMAD.sdef */,
-			);
-			name = AppleScript;
-			sourceTree = "<group>";
-		};
 		1A22AEBF1E200D0A0012220D /* Share Mount */ = {
 			isa = PBXGroup;
 			children = (
@@ -264,6 +279,31 @@
 				1A0048A21FDFB4A500453A90 /* DFSResolver.swift */,
 			);
 			name = "Share Mount";
+			sourceTree = "<group>";
+		};
+		1A2B5AB3204A321E002945C8 /* TCSCertRequest */ = {
+			isa = PBXGroup;
+			children = (
+				1A4303E12093BB5400EFE329 /* TCSCertificateRequest.framework */,
+				1A2B5AB6204A32AD002945C8 /* TCSCertRequest.swift */,
+			);
+			path = TCSCertRequest;
+			sourceTree = "<group>";
+		};
+		1A4303E02093B8FD00EFE329 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				1A190AF3205CBEDF008AC26D /* NoMAD.sdef */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
+		1A4303E52093BC5500EFE329 /* AppleScript */ = {
+			isa = PBXGroup;
+			children = (
+				1A4303E62093BC9100EFE329 /* NoMAD.sdef */,
+			);
+			name = AppleScript;
 			sourceTree = "<group>";
 		};
 		1AE1DFBC1DA69CF100456E3E /* Resources */ = {
@@ -372,6 +412,7 @@
 				84CC67EE1D30A24000115C76 /* NoMAD-Bridging-Header.h */,
 				84CC67ED1D30A1B100115C76 /* NoMAD.entitlements */,
 				84D77F0F1E9C6B47001B6BDB /* HistoryAndThanks.swift */,
+				1A3E2598210D49400057E9DB /* Acknowledgements.md */,
 			);
 			name = CoreBits;
 			sourceTree = "<group>";
@@ -379,6 +420,7 @@
 		34E186C01D9E405400265138 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1A5F31CF225E452D00F9A4CE /* WebKit.framework */,
 				1A1BA5D21F2268AA00E506D0 /* libkrb5support.tbd */,
 				1A1BA5D01F2268A300E506D0 /* libkrb5.tbd */,
 				1A1BA5CE1F22688C00E506D0 /* libgssapi_krb5.tbd */,
@@ -407,6 +449,7 @@
 				BF34324B1D52844300CE8F89 /* NoMADTests */,
 				84CC67DC1D30A18A00115C76 /* Products */,
 				34E186C01D9E405400265138 /* Frameworks */,
+				1A4303E02093B8FD00EFE329 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -422,7 +465,8 @@
 		84CC67DD1D30A18A00115C76 /* NoMAD */ = {
 			isa = PBXGroup;
 			children = (
-				1A190AF5205CBFFE008AC26D /* AppleScript */,
+				1A4303E52093BC5500EFE329 /* AppleScript */,
+				1A2B5AB3204A321E002945C8 /* TCSCertRequest */,
 				846DDD38201919E100D94821 /* Action Menu */,
 				1A22AEBF1E200D0A0012220D /* Share Mount */,
 				1AFBDC681DEE4C0800C19AE1 /* Networking */,
@@ -457,6 +501,7 @@
 				84CC67D71D30A18A00115C76 /* Sources */,
 				84CC67D81D30A18A00115C76 /* Frameworks */,
 				84CC67D91D30A18A00115C76 /* Resources */,
+				1A2B5ABA204A57C3002945C8 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -492,16 +537,20 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0910;
+				LastUpgradeCheck = 1030;
 				ORGANIZATIONNAME = "Trusource Labs";
 				TargetAttributes = {
 					84CC67DA1D30A18A00115C76 = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = AAPZK3CB24;
 						LastSwiftMigration = 0910;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
+							com.apple.HardenedRuntime = {
+								enabled = 1;
+							};
 							com.apple.Sandbox = {
-								enabled = 0;
+								enabled = 1;
 							};
 						};
 					};
@@ -517,6 +566,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 				fr,
@@ -526,6 +576,9 @@
 				nl,
 				es,
 				ru,
+				"hr-BA",
+				nn,
+				de,
 			);
 			mainGroup = 84CC67D21D30A18A00115C76;
 			productRefGroup = 84CC67DC1D30A18A00115C76 /* Products */;
@@ -556,9 +609,9 @@
 				FC03F3F91F5A019F0054B5F7 /* Assets in Resources */,
 				84B54B7E1F3A09980025E397 /* Welcome.xib in Resources */,
 				846DDD3E2019422E00D94821 /* menu.nomad.actions.plist in Resources */,
+				1A4303E72093BC9100EFE329 /* NoMAD.sdef in Resources */,
 				1A88E88A1EAF718400AC2E67 /* KeychainMinder.xib in Resources */,
 				841453881E3C2D940085890B /* PreferencesWindow.xib in Resources */,
-				1A190AF4205CBEDF008AC26D /* NoMAD.sdef in Resources */,
 				8414538D1E3C2DA10085890B /* LoginWindow.xib in Resources */,
 				841453831E3C2D7D0085890B /* PasswordChangeWindow.xib in Resources */,
 			);
@@ -604,7 +657,6 @@
 				84B54B7F1F3A09980025E397 /* Welcome.swift in Sources */,
 				1A2EE4431FED7B0E00B6A3BF /* DFSResolver.swift in Sources */,
 				846DDD3A201919F800D94821 /* NoMADAction.swift in Sources */,
-				1AA2B64A1E4FBDD60088DF03 /* PKINITER.swift in Sources */,
 				1A2727321F3F5E29005B7378 /* ShareMounterMenu.swift in Sources */,
 				1A58C88C1DD9264D002C0769 /* CSRGen.swift in Sources */,
 				1A88E8881EAF717600AC2E67 /* KeychainMinder.swift in Sources */,
@@ -783,12 +835,14 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -837,12 +891,14 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -875,15 +931,23 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = NoMAD/NoMAD.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = AAPZK3CB24;
+				ENABLE_HARDENED_RUNTIME = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/NoMAD/TCSCertRequest",
+				);
 				INFOPLIST_FILE = NoMAD/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MARKETING_VERSION = 1.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.trusourcelabs.NoMAD;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -900,15 +964,23 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = NoMAD/NoMAD.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = AAPZK3CB24;
+				ENABLE_HARDENED_RUNTIME = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/NoMAD/TCSCertRequest",
+				);
 				INFOPLIST_FILE = NoMAD/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MARKETING_VERSION = 1.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.trusourcelabs.NoMAD;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";

@@ -135,7 +135,7 @@ class KlistUtil {
                     print(displayNameString)
                     let lifetime = GSSCredentialGetLifetime(cred!)
                     let expiretime = Date().addingTimeInterval(TimeInterval(lifetime))
-                    print(self.tickets[displayNameString])
+                    print(self.tickets[displayNameString] as Any)
                     self.tickets[displayNameString]?.expired = false
                     self.tickets[displayNameString]?.expires = expiretime
                     self.tickets[displayNameString]?.GSSItem = cred
@@ -175,8 +175,10 @@ class KlistUtil {
         if tickets.count > 0 {
             let realm = defaults.string(forKey: "KerberosRealm") ?? ""
             myLogger.logit(.debug, message:"Looking for tickets using realm: " + realm )
+            
+            var tempState = false
+
             for ticket in tickets {
-                
                 let name = ticket.key
                 if name.contains("@" + realm ) {
                     
@@ -187,12 +189,12 @@ class KlistUtil {
                         state = false
                         continue
                     }
-                    state = true
+                    tempState = true
                     continue
-                } else {
-                    state = false
                 }
             }
+            
+            state = tempState
         } else {
             state = false
         }

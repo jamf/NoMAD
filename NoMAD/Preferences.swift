@@ -152,6 +152,8 @@ enum Preferences {
     // siteIgnore - r/w - bool - determines if NoMAD ignores the site that comes back from AD. Generally this will mean NoMAD will use the globally advertised DCs instead of a particular site's.
 
     // siteForce - r/w - bool - forces NoMAD to use a particular site
+    
+    // siteForce - r/w - bool - adds a .25 second delay between mounting Shares
 
     // stateChangeAction - r/w - string - the shell script, or other binary, to be triggered whenever the network changes
 
@@ -229,6 +231,7 @@ enum Preferences {
     static let iconOnDark = "IconOnDark"
     static let kerberosRealm = "KerberosRealm"
     static let keychainItems = "KeychainItems"
+    static let keychainItemsInternet = "KeychainItemsInternet"
     static let keychainItemsCreateSerial = "KeychainItemsCreateSerial"
     static let keychainItemsDebug = "KeychainItemsDebug"
     static let keychainMinderWindowTitle = "KeychainMinderWindowTitle"
@@ -278,6 +281,8 @@ enum Preferences {
     static let passwordExpireCustomAlertTime = "PasswordExpireCustomAlertTime"
     static let passwordPolicy = "PasswordPolicy"
     static let persistExpiration = "PersistExpiration"
+    static let profileDone = "ProfileDone"
+    static let profileWait = "ProfileWait"
     
     static let recursiveGroupLookup = "RecursiveGroupLookup"
 
@@ -298,6 +303,8 @@ enum Preferences {
     static let signOutCommand = "SignOutCommand"
     static let siteIgnore = "SiteIgnore"
     static let siteForce = "SiteForce"
+    static let slowMount = "SlowMount"
+    static let slowMountDelay = "SlowMountDelay"
     static let stateChangeAction = "StateChangeAction"
     static let switchKerberosUser = "SwitchKerberosUser"
     static let template = "Template"
@@ -324,6 +331,7 @@ enum Preferences {
     static let verbose = "Verbose"
     static let wifiNetworks = "WifiNetworks"
     static let x509CA = "X509CA"
+    static let x509Name = "X509Name"
 
     static let allKeys = [
         Preferences.aDDomain,
@@ -368,7 +376,7 @@ enum Preferences {
         Preferences.iconOnDark,
         Preferences.kerberosRealm,
         Preferences.keychainItems,
-        Preferences.keychainItemsCreateSerial,
+        Preferences.keychainItemsInternet,
         Preferences.keychainItemsDebug,
         Preferences.keychainMinderWindowTitle,
         Preferences.keychainMinderWindowMessage,
@@ -430,6 +438,8 @@ enum Preferences {
         Preferences.signOutCommand,
         Preferences.siteIgnore,
         Preferences.siteForce,
+        Preferences.slowMount,
+        Preferences.slowMountDelay,
         Preferences.stateChangeAction,
         Preferences.switchKerberosUser,
         Preferences.template,
@@ -469,6 +479,8 @@ func printAllPrefs() {
             print("\t" + key + ": " + String(describing: ( defaults.bool(forKey: key))))
         case "__NSCFArray" :
             print("\t" + key + ": " + ( String(describing: (defaults.array(forKey: key)!))))
+        case "__NSCFDictionary" :
+            print("\t" + key + ": " + ( String(describing: (defaults.dictionary(forKey: key)!))))
         case "__NSTaggedDate":
             print("\t" + key + ": " + ( defaults.object(forKey: key) as! Date ).description(with: Locale.current))
         default :
@@ -491,18 +503,22 @@ func returnAllPrefs() -> String {
         
         switch String(describing: type(of: pref)) {
         case "__NSCFBoolean" :
-            prefs += (key + ": " + String(describing: ( defaults.bool(forKey: key))))
+            print("\t" + key + ": " + String(describing: ( defaults.bool(forKey: key))))
         case "__NSCFArray" :
-            prefs += (key + ": " + ( String(describing: (defaults.array(forKey: key)!))))
+            print("\t" + key + ": " + ( String(describing: (defaults.array(forKey: key)!))))
         case "__NSTaggedDate":
-            prefs += ( key + ": " + ( defaults.object(forKey: key) as! Date ).description(with: Locale.current))
+            print("\t" + key + ": " + ( defaults.object(forKey: key) as! Date ).description(with: Locale.current))
+        case "__NSCFDictionary":
+            print("\t" + key + ": " + String(describing: defaults.dictionary(forKey: key)!))
+        case "__NSCFData" :
+            print("\t" + key + ": " + (defaults.data(forKey: key)?.base64EncodedString() ?? "ERROR"))
         default :
-            prefs += (key + ": " + ( defaults.object(forKey: key) as? String ?? "Unset"))
+            print("\t" + key + ": " + ( defaults.object(forKey: key) as? String ?? "Unset"))
         }
+        
         if defaults.objectIsForced(forKey: key) {
-            prefs += "<<FORCED>>"
+            print("\t\tForced")
         }
-        prefs += "\n"
     }
     
     return prefs

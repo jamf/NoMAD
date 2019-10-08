@@ -15,7 +15,7 @@ let shareMounterQueue = DispatchQueue(label: "menu.nomad.NoMAD.shareMounting", a
 
 class ShareMounterMenu: NSObject {
     
-    @objc let myShareMounter = ShareMounter()
+    let myShareMounter = ShareMounter()
     @objc var worksWhenModal = true
     @objc let myShareMenu = NSMenu()
     
@@ -38,6 +38,18 @@ class ShareMounterMenu: NSObject {
     @objc func buildMenu(connected: Bool=false) -> NSMenu {
         
         if sharePrefs?.integer(forKey: "Version") != 1 {
+            return NSMenu.init()
+        }
+        
+        // check for an actual ticket
+        
+        klistUtil.klist()
+        
+        if !klistUtil.state {
+            myLogger.logit(.debug, message: "No valid ticket, not attempting to mount shares.")
+            
+            NotificationQueue.default.enqueue(updateNotification, postingStyle: .now)
+
             return NSMenu.init()
         }
         

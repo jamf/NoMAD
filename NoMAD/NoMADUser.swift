@@ -62,7 +62,7 @@ class NoMADUser {
     }
     
     func currentConsoleUserMatchesNoMADUser() -> Bool {
-        if ( userName == NoMADUser.currentConsoleUserName ) {
+        if ( userName.lowercased() == NoMADUser.currentConsoleUserName.lowercased() ) {
             if let originalAuthenticationAuthority = try? String(describing: currentConsoleUserRecord.values(forAttribute: kODAttributeTypeAuthenticationAuthority)) {
                 if ( originalAuthenticationAuthority.contains(realm) ) {
                     return true
@@ -498,7 +498,7 @@ class NoMADUser {
                 // build a dictionary and add the KDC into it then write it back to defaults
                 let realm = NSMutableDictionary()
                 //realm.setValue(myLDAPServers.currentServer, forKey: "kdc")
-                realm.setValue(myLDAPServers.currentServer, forKey: "kpasswd")
+                realm.setValue(myLDAPServers.currentServer, forKey: "kpasswd_server")
                 kerbRealms[defaults.string(forKey: Preferences.kerberosRealm)!] = realm
                 kerbPrefs?.set(kerbRealms, forKey: "realms")
                 
@@ -719,7 +719,10 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
         // sync any passwords that need to be synced
 
         let myKeychainUtil = KeychainUtil()
+        myLogger.logit(.debug, message: "Updating keychain items.")
         myKeychainUtil.manageKeychainPasswords(newPassword: newPassword1)
+        myLogger.logit(.debug, message: "Updating Internet keychain items.")
+        myKeychainUtil.manageKeychainPasswordsInternet(newPassword: newPassword1)
         
     } catch let error as NoMADUserError {
         myLogger.logit(LogLevel.base, message: error.description)

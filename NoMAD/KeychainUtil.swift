@@ -281,13 +281,19 @@ class KeychainUtil {
                                 
                                 // we have a match now gather the expire date and the serial
                                 
-                                let expireOID : NSDictionary = myOIDs["2.5.29.24"]! as! NSDictionary
-                                let expireDate = expireOID["value"]! as! Date
+                                var expireDate = Date.init(timeIntervalSince1970: 0)
+                                
+                                if let expireOID : NSDictionary = myOIDs["2.5.29.24"] as? NSDictionary {
+                                    expireDate = expireOID["value"] as? Date ?? Date.init(timeIntervalSince1970: 0)
+                                }
                                 
                                 // this finds the serial
                                 
-                                let serialDict : NSDictionary = myOIDs["2.16.840.1.113741.2.1.1.1.3"]! as! NSDictionary
-                                let serial = serialDict["value"]! as! String
+                                var serial = "000000"
+                                
+                                if let serialDict : NSDictionary = myOIDs["2.16.840.1.113741.2.1.1.1.3"] as? NSDictionary {
+                                    serial = serialDict["value"] as? String ?? "000000"
+                                }
                                 
                                 // pack the data up into a certDate
                                 
@@ -494,6 +500,340 @@ class KeychainUtil {
             // For internet passwords - we'll have to loop through this all again
             
             //itemSearch[kSecClass as String ] = kSecClassInternetPassword
+        }
+    }
+    
+    func manageKeychainPasswordsInternet(newPassword: String) {
+        // get the items to update
+        
+        myLogger.logit(.debug, message: "Attempting to update keychain internet items.")
+        
+        let changeItems = defaults.dictionary(forKey: Preferences.keychainItemsInternet)
+        var changes = 0
+        var changeSecItems = [SecKeychainItem]()
+        var changeACLItems = [SecKeychainItem]()
+        
+        // bail if there's nothing to update
+        
+        if changeItems?.count == 0 || changeItems == nil {
+            myLogger.logit(.debug, message: "No keychain internet items to update.")
+            return
+        }
+        
+        let allItems = findAllItems(internetPassword: true)  as! CFArray as Array
+        
+        if allItems == nil {
+            myLogger.logit(.debug, message: "No keychain internet items found.")
+            return
+        }
+
+        for prefItem in changeItems! {
+            
+            var noACL = false
+            
+            let account = (prefItem.value as! String).variableSwap()
+            
+            if prefItem.key.contains("<<noACL>>") {
+                noACL = true
+            }
+            
+            let serverURL = URL.init(string:(prefItem.key).variableSwap())
+            
+            if defaults.bool(forKey: Preferences.keychainItemsDebug) {
+                print("***Item to look for***")
+                print(account)
+                print(serverURL?.absoluteString as Any)
+            }
+            
+            for item in allItems {
+                let itemAccount = (item["acct"] ?? "None")
+                let itemService = (item["svce"] ?? "None")
+                let itemLabel = (item["labl"] ?? "None")
+                let itemRef = (item["v_Ref"] ?? "None")
+                let itemPort = (item["port"] ?? "None")
+                let itemProtocol = (item["ptcl"] ?? "None")
+                let itemServer = (item["srvr"] ?? "None")
+                
+                if itemServer as? String == serverURL?.host {
+                    
+                    var fullMatch = true
+
+                    if defaults.bool(forKey: Preferences.keychainItemsDebug) {
+
+                    print("Found potential match...")
+                    print("\tChecking for full match...")
+                    print("")
+                    print("\tKeychain Item account: \(itemAccount as? String ?? "NONE")")
+                    print("\tPref item account: \(account)")
+                    }
+                    
+                    if ((itemAccount as? String ?? "ANY").lowercased() == account.lowercased()) || account == "<<ANY>>" {
+                        print("\t\tAccount matches")
+                    } else {
+                        fullMatch = false
+                    }
+                    
+                    if defaults.bool(forKey: Preferences.keychainItemsDebug) {
+                    print("")
+                    print("\tKeychain Item protocol: \(String(describing: itemProtocol))")
+                    print("\tPref item protocol: \(String(describing: serverURL?.scheme))")
+                    }
+                    
+                    if let proto = itemProtocol as? String {
+                        if !(proto == getSchemeNumber(scheme: serverURL?.scheme ?? "NONE", proxy: prefItem.key.contains("<<proxy>>"))) {
+                            fullMatch = false
+                        } else {
+                            print("\t\tProtocols match")
+                        }
+                    } else {
+                        print("No protocol set for Keychain item.")
+                    }
+                    
+                    if defaults.bool(forKey: Preferences.keychainItemsDebug) {
+                        print("")
+                        print("\tKeychain Item port: \(String(describing: itemPort))")
+                        print("\tPref Item Port: \(String(describing: serverURL?.port))")
+                    }
+                    
+                    if itemPort as! Int != 0 {
+                        if itemPort as? Int ?? 0 == serverURL?.port {
+                            print("\t\tPort matches")
+                        } else {
+                            fullMatch = false
+                        }
+                    } else {
+                        print("No port set, so matching")
+                    }
+                    
+                    if fullMatch {
+                        changes += 1
+                        if defaults.bool(forKey: Preferences.keychainItemsDebug) {
+                            print("***")
+                            print("Found a full match")
+                            print("***")
+                        }
+                        changeSecItems.append(itemRef as! SecKeychainItem)
+                        
+                        if noACL {
+                            changeACLItems.append(itemRef as! SecKeychainItem)
+                        }
+
+                    }
+                }
+            }
+        }
+        
+        if defaults.bool(forKey: Preferences.keychainItemsDebug) {
+            print("***")
+            print("Total matches: \(String(describing: changes))")
+        }
+        
+        if changes > 0 {
+            changePasswords(items: changeSecItems, newPassword: newPassword, aclChanges: changeACLItems)
+        }
+    }
+    
+    fileprivate func changePasswords(items: [SecKeychainItem], newPassword: String, aclChanges: [SecKeychainItem]? ) {
+        
+        SecKeychainSetUserInteractionAllowed(false)
+
+        let attrToUpdate: [String:AnyObject] = [
+            kSecValueData as String: newPassword.data(using: .utf8) as AnyObject
+        ]
+        
+        var itemSearch: [String:AnyObject] = [
+            kSecClass as String: kSecClassInternetPassword as AnyObject,
+            kSecMatchLimit as String : kSecMatchLimitAll as AnyObject,
+            ]
+        
+        
+        var itemAccess: SecAccess? = nil
+        var secApp: SecTrustedApplication? = nil
+        var myACLs : CFArray? = nil
+        
+        for item in items {
+            
+            var noACL = false
+            
+            if aclChanges?.contains(item) ?? false {
+                noACL = true
+            }
+            
+            itemSearch[kSecValueRef as String ] = item as AnyObject
+            
+            myErr = SecKeychainItemCopyAccess(item, &itemAccess)
+            
+            myErr = SecTrustedApplicationCreateFromPath( nil, &secApp)
+            
+            // Decode ACL
+            
+            SecAccessCopyACLList(itemAccess!, &myACLs)
+            
+            var appList: CFArray? = nil
+            var desc: CFString? = nil
+            
+            var prompt = SecKeychainPromptSelector()
+            
+            for acl in myACLs as! Array<SecACL> {
+                SecACLCopyContents(acl, &appList, &desc, &prompt)
+                let authArray = SecACLCopyAuthorizations(acl)
+                var newACL : SecACL?
+                
+                if !(authArray as! [String]).contains("ACLAuthorizationPartitionID") && !(authArray as! [String]).contains("ACLAuthorizationExportClear") {
+                    continue
+                }
+                
+                if (authArray as! [String]).contains("ACLAuthorizationExportClear") {
+                    
+                    if noACL {
+                        myErr = SecACLSetContents(acl, nil, desc!, prompt)
+                    
+                        // smack it again to set the ACL
+                    
+                        myErr = SecKeychainItemSetAccessWithPassword(item, itemAccess!, UInt32(newPassword.count), newPassword)
+                    }
+                    continue
+                }
+                
+                // pull in the description that's really a functional plist <sigh>
+                
+                let rawData = Data.init(fromHexEncodedString: desc! as String)
+                var format: PropertyListSerialization.PropertyListFormat = .xml
+                
+                var propertyListObject = try? PropertyListSerialization.propertyList(from: rawData!, options: [], format: &format) as! [ String: [String]]
+                
+                // add in the team ID that NoMAD is signed with if it doesn't already exist
+                
+                if !(propertyListObject!["Partitions"]?.contains("teamid:AAPZK3CB24"))! {
+                    propertyListObject!["Partitions"]?.append("teamid:AAPZK3CB24")
+                }
+                
+                if defaults.bool(forKey: Preferences.keychainItemsDebug) {
+                    myLogger.logit(.debug, message: String(describing: propertyListObject))
+                }
+                
+                // now serialize it back into a plist
+                
+                let xmlObject = try? PropertyListSerialization.data(fromPropertyList: propertyListObject as Any, format: format, options: 0)
+                
+                
+                myErr = SecKeychainItemSetAccessWithPassword(item, itemAccess!, UInt32(newPassword.count), newPassword)
+                
+                // now that all ACLs has been adjusted, we can update the item
+                
+                myErr = SecItemUpdate(itemSearch as CFDictionary, attrToUpdate as CFDictionary)
+                
+                // now add NoMAD and the original apps back into the property object
+                
+                myErr = SecACLSetContents(acl, appList, xmlObject!.hexEncodedString() as CFString, prompt)
+                
+                // smack it again to set the ACL
+                
+                myErr = SecKeychainItemSetAccessWithPassword(item, itemAccess!, UInt32(newPassword.count), newPassword)
+            }
+            
+            //myErr = SecKeychainItemSetAccessWithPassword(item, itemAccess!, UInt32(newPassword.count), newPassword)
+            
+            if myErr != 0 {
+                myLogger.logit(.base, message: "Error setting keychain ACL.")
+            }
+        }
+        
+        SecKeychainSetUserInteractionAllowed(true)
+
+    }
+    
+    func findAllItems(internetPassword: Bool) -> [AnyObject]? {
+        
+        var searchReturn: AnyObject? = nil
+        var myErr = OSStatus()
+        
+        var searchTerms : [ String : AnyObject ] = [
+            kSecReturnAttributes as String: true as AnyObject,          // return attributes for things we find
+            kSecReturnRef as String : true as AnyObject,                // return the SecKeychain reference
+            kSecMatchLimit as String : kSecMatchLimitAll as AnyObject   // return all matches
+        ]
+        
+        if internetPassword {
+            searchTerms[kSecClass as String] = kSecClassInternetPassword as AnyObject
+        } else {
+            searchTerms[kSecClass as String] = kSecClassGenericPassword as AnyObject
+        }
+        
+        // Now search for the items
+        
+        myErr = SecItemCopyMatching(searchTerms as CFDictionary, &searchReturn)
+        
+        if myErr != 0 {
+            print("Error while searching, try different terms.")
+            exit(0)
+        }
+        
+        let items = searchReturn as! CFArray as Array
+        
+        return items
+    }
+    
+    func get4Code(scheme: String, proxy: Bool=false) -> SecProtocolType {
+        
+        // first see if we're a proxy
+        
+        if proxy {
+            switch scheme {
+            case "http":
+                return SecProtocolType.httpProxy
+            case "https" :
+                return SecProtocolType.httpsProxy
+            default :
+                break
+            }
+        }
+        
+        switch scheme {
+        case "ftp" :
+            return SecProtocolType.FTP
+        case "http" :
+            return SecProtocolType.HTTP
+        case "https" :
+            return SecProtocolType.HTTPS
+        case "cifs" :
+            return SecProtocolType.CIFS
+        case "smb" :
+            return SecProtocolType.SMB
+        default :
+            return SecProtocolType.any
+        }
+    }
+    
+    func getSchemeNumber(scheme: String, proxy: Bool=false) -> String {
+        
+        // first see if we're a proxy
+        
+        if proxy {
+            switch scheme {
+            case "http":
+                return "htpx"
+            case "https" :
+                return "htsx"
+            default :
+                break
+            }
+        }
+        
+        switch scheme {
+        case "ftp" :
+            return "ftp"
+        case "http" :
+            return "http"
+        case "https" :
+            return "htps"
+        case "cifs" :
+            return "cifs"
+        case "smb" :
+            // this needs a trailing space to be a 4Char code <sigh>
+            return "smb "
+        default :
+            return scheme
         }
     }
     
