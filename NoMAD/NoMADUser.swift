@@ -724,6 +724,15 @@ func performPasswordChange(username: String, currentPassword: String, newPasswor
         myLogger.logit(.debug, message: "Updating Internet keychain items.")
         myKeychainUtil.manageKeychainPasswordsInternet(newPassword: newPassword1)
         
+        // Finally, set the preference for the last password change.
+        var UserPasswordSetDates = [String : AnyObject ]()
+        if defaults.dictionary(forKey: Preferences.userPasswordSetDates) != nil {
+            UserPasswordSetDates = defaults.dictionary(forKey: Preferences.userPasswordSetDates)! as [String : AnyObject]
+        }
+        var userPasswordSetDate = NSDate()
+        UserPasswordSetDates[username] = userPasswordSetDate
+        defaults.set(UserPasswordSetDates, forKey: Preferences.userPasswordSetDates)
+        
     } catch let error as NoMADUserError {
         myLogger.logit(LogLevel.base, message: error.description)
         return error.description
