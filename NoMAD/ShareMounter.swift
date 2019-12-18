@@ -242,7 +242,7 @@ class ShareMounter {
             
             // loop through all the reasons to not mount this share
             
-            if all_shares[index].mountStatus == .mounted || all_shares[index].mountStatus == .mounting || mountedShares.contains(all_shares[index].url) {
+            if all_shares[index].mountStatus == .mounted || mountedShares.contains(all_shares[index].url) {
                 // already mounted
                 
                 if  mountedShares.contains(all_shares[index].url) {
@@ -256,6 +256,9 @@ class ShareMounter {
                 all_shares[index].mountStatus = .mounted
                 
                 myLogger.logit(.debug, message: "Skipping mount because share is still mounted from a previous variable substitution.")
+                continue
+            } else if all_shares[index].mountStatus == .mounting {
+                myLogger.logit(.debug, message: "Skipping mount because share is still in the process of being mounted - kick back on a natural for a bit.")
                 continue
             } else {
                 all_shares[index].mountStatus = .unmounted
@@ -279,7 +282,7 @@ class ShareMounter {
                 continue
             }
             
-            if all_shares[index].mountStatus != .errorOnMount {
+            if (all_shares[index].mountStatus != .errorOnMount) && (all_shares[index].mountStatus != .mounting) {
                 
                 let openOptions = openOptionsDict
                 var mountOptions = mountOptionsDict
