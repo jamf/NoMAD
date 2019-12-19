@@ -168,11 +168,22 @@ class ShareMounter {
                     
                     var currentShare = share_info(groups: shareGroups, originalURL: shareURL, url: url, name: shareName, options: shareOptions, connectedOnly: shareConnectedOnly, mountStatus: .unmounted, localMount: shareLocalMount, autoMount: shareAutoMount, reqID: nil, attemptDate: nil, localMountPoints: nil)
                     
+                    if CommandLine.arguments.contains("-shares") {
+                        print("Evaluating share: \(currentShare.originalURL)")
+                    }
+                    
                     for share in tempShares {
                         if share.originalURL == currentShare.originalURL && share.mountStatus == .mounting {
                             // share is still  mounting, so copy the share
                             if CommandLine.arguments.contains("-shares") {
                                 print("Share is still mounting, using existing information")
+                                print(share)
+                            }
+                            currentShare = share
+                        } else if share.originalURL == currentShare.originalURL && share.mountStatus == .mounted {
+                            // share is mounted, so copy the share
+                            if CommandLine.arguments.contains("-shares") {
+                                print("Share is already mounted, using existing information")
                                 print(share)
                             }
                             currentShare = share
