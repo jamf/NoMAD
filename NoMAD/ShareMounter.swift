@@ -181,12 +181,17 @@ class ShareMounter {
                             }
                             currentShare = share
                         } else if share.originalURL == currentShare.originalURL && share.mountStatus == .mounted {
+                            currentShare = share
+
                             // share is mounted, so copy the share
                             if CommandLine.arguments.contains("-shares") {
                                 print("Share is already mounted, using existing information")
                                 print(share)
                             }
-                            currentShare = share
+                        } else {
+                            if CommandLine.arguments.contains("-shares") {
+                                print("Share: \(share.originalURL) doesn't match current share being evaluated: \(currentShare.originalURL), skipping ")
+                            }
                         }
                     }
                     tempShares.append(currentShare)
