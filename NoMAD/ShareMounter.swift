@@ -118,7 +118,7 @@ class ShareMounter {
                         
                         var currentShare = share_info(groups: shareGroups, originalURL: homePathRaw, url: homePath, name: defaults.string(forKey: Preferences.menuHomeDirectory) ?? "Network Home", options: shareOptions, connectedOnly: true, mountStatus: .unmounted, localMount: nil, autoMount: shareAutoMount, reqID: nil, attemptDate: nil, localMountPoints: nil)
                         
-                        for share in tempShares {
+                        for share in all_shares {
                             if share.originalURL == currentShare.originalURL && share.mountStatus == .mounting {
                                 // share is still  mounting, so copy the share
                                 if CommandLine.arguments.contains("-shares") {
@@ -172,7 +172,7 @@ class ShareMounter {
                         print("Evaluating share: \(currentShare.originalURL)")
                     }
                     
-                    for share in tempShares {
+                    for share in all_shares {
                         if share.originalURL == currentShare.originalURL && share.mountStatus == .mounting {
                             // share is still  mounting, so copy the share
                             if CommandLine.arguments.contains("-shares") {
