@@ -74,6 +74,7 @@ class ShareMounter {
     
     var all_shares = [share_info]()
     var resolvedShares = [URL:String]()
+    var now = Date()
     
     var tickets = false
     var userPrincipal = ""
@@ -217,7 +218,7 @@ class ShareMounter {
     }
     
     func getMountedShares() {
-        
+
         // zero out the currently mounted shares
         mountedShares.removeAll()
         mountedSharePaths.removeAll()
@@ -337,6 +338,8 @@ class ShareMounter {
                     
                 }
                 
+                sleep(1)
+                
                 if sharePrefs?.bool(forKey: ShareKeys.finderMount) ?? false {
                     
                     myLogger.logit(.debug, message: "Mounting share via Finder")
@@ -366,7 +369,7 @@ class ShareMounter {
                                                     self.all_shares[index].reqID = nil
                                                     let mounts = mountpoints as! Array<String>
                                                     self.all_shares[index].localMountPoints = mounts[0]
-                                                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "menu.nomad.NoMAD.updateNow"), object: self)
+                                                    //NotificationCenter.default.post(name: NSNotification.Name(rawValue: "menu.nomad.NoMAD.updateNow"), object: self)
                                                 } else {
                                                     myLogger.logit(.debug, message: "Error on mounting share: " + self.all_shares[index].name)
                                                     self.all_shares[index].mountStatus = .errorOnMount
