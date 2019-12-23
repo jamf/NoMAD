@@ -186,14 +186,6 @@ class ShareMounter {
                                 print(share)
                             }
                             currentShare = share
-                        } else if share.originalURL == currentShare.originalURL && share.mountStatus == .mounted {
-                            currentShare = share
-
-                            // share is mounted, so copy the share
-                            if CommandLine.arguments.contains("-shares") {
-                                print("Share is already mounted, using existing information")
-                                print(share)
-                            }
                         } else {
                             if CommandLine.arguments.contains("-shares") {
                                 print("Share: \(share.originalURL) doesn't match current share being evaluated: \(currentShare.originalURL), skipping ")
@@ -369,7 +361,7 @@ class ShareMounter {
                                                     self.all_shares[index].reqID = nil
                                                     let mounts = mountpoints as! Array<String>
                                                     self.all_shares[index].localMountPoints = mounts[0]
-                                                    //NotificationCenter.default.post(name: NSNotification.Name(rawValue: "menu.nomad.NoMAD.updateNow"), object: self)
+                                                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "menu.nomad.NoMAD.updateNow"), object: self)
                                                 } else {
                                                     myLogger.logit(.debug, message: "Error on mounting share: " + self.all_shares[index].name)
                                                     self.all_shares[index].mountStatus = .errorOnMount
@@ -378,6 +370,7 @@ class ShareMounter {
                                             }
                                         }
                 }
+                
                 all_shares[index].mountStatus = .mounting
                 all_shares[index].reqID = requestID
                 all_shares[index].attemptDate = Date()
