@@ -245,7 +245,7 @@ class LoginWindow: NSWindowController, NSWindowDelegate, NSUserNotificationCente
                         
                         myLogger.logit(.debug, message: "Checking to see if user names match before syncing password.")
                         
-                        if NSUserName() != userName.stringValue {
+                        if NSUserName().lowercased() != userName.stringValue.lowercased() {
                             // names match let's set the sync and preflight
                             myLogger.logit(.debug, message: "User names don't match, not syncing password.")
                             doLocalPasswordSync = false
