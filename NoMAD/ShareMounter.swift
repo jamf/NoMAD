@@ -329,9 +329,7 @@ class ShareMounter {
                     myLogger.logit(.debug, message: "Delaying next Mount by " + String(delay/1000) + " milliseconds since SlowMount is set.")
                     
                 }
-                
-                sleep(1)
-                
+                                
                 if sharePrefs?.bool(forKey: ShareKeys.finderMount) ?? false {
                     
                     myLogger.logit(.debug, message: "Mounting share via Finder")
@@ -361,7 +359,6 @@ class ShareMounter {
                                                     self.all_shares[index].reqID = nil
                                                     let mounts = mountpoints as! Array<String>
                                                     self.all_shares[index].localMountPoints = mounts[0]
-                                                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "menu.nomad.NoMAD.updateNow"), object: self)
                                                 } else {
                                                     myLogger.logit(.debug, message: "Error on mounting share: " + self.all_shares[index].name)
                                                     self.all_shares[index].mountStatus = .errorOnMount
@@ -369,6 +366,9 @@ class ShareMounter {
                                                 }
                                             }
                                         }
+                                        //NotificationCenter.default.post(name: NSNotification.Name(rawValue: "menu.nomad.NoMAD.updateNow"), object: self)
+                                        self.mountShares()
+
                 }
                 
                 all_shares[index].mountStatus = .mounting
@@ -382,6 +382,7 @@ class ShareMounter {
                     all_shares[index].mountStatus = .toBeMounted
                 }
             }
+            return
         }
     }
     
