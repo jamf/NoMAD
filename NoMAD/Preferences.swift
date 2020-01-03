@@ -10,6 +10,8 @@
 /// A convenience name for `UserDefaults.standard`
 let defaults = UserDefaults.standard
 
+let kNoMADVersion = "1.2.0-DEV"
+
 /// The preference keys for the NoMAD defaults domain.
 ///
 /// Use these keys, rather than raw strings.

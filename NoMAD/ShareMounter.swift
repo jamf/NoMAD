@@ -35,6 +35,7 @@ enum ShareKeys {
     static let finderMount = "FinderMount"
     static let slowMount = "SlowMount"
     static let slowMountDelay = "SlowMountDelay"
+    static let ignoreShareNames = "IgnoreShareNames"
 }
 
 enum mountStatus {
@@ -220,12 +221,23 @@ class ShareMounter {
         
         myLogger.logit(.debug, message: "Currently mounted shares: \n" + String(describing: myShares))
         
+        // we hardcode .timemachine in here b/c that will always fail on the getFileSystemInfo call
+        var ignoreShares = [".timemachine", "/private/", "System/Volumes"]
+        
+        if let ignoreShareNamesTemp = sharePrefs?.array(forKey: ShareKeys.ignoreShareNames) as? [String] {
+            ignoreShares.append(contentsOf: ignoreShareNamesTemp)
+        }
+        
         for share in myShares {
             
             var myDes: NSString? = nil
             var myType: NSString? = nil
             
-            // need to watch out for funky VM shares
+            // need to watch out for funky VM and TimeMachine shares
+                      
+            if ignoreShare(ignoreList: ignoreShares, share: share) {
+                continue
+            }
             
             guard ws.getFileSystemInfo(forPath: share.path, isRemovable: nil, isWritable: nil, isUnmountable: nil, description: &myDes, type: &myType) else {
                 myLogger.logit(.debug, message: "Get File info failed. Probably a synthetic Shared Folder.")
@@ -514,5 +526,16 @@ class ShareMounter {
             }
         }
         return mountFlagValue
+    }
+    
+    fileprivate func ignoreShare(ignoreList: [String], share: URL) -> Bool {
+    
+        for ignoreName in ignoreList {
+            if share.path.containsIgnoringCase(ignoreName) {
+                myLogger.logit(.info, message: "Ignoring share: \(share.path) because of share name")
+                return true
+            }
+        }
+        return false
     }
 }
