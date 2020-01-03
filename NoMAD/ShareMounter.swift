@@ -74,8 +74,8 @@ class ShareMounter {
     var mountedSharePaths = [URL:String]()
     
     var all_shares = [share_info]()
-    var shareScratch = [String:share_info]()
     var resolvedShares = [URL:String]()
+    var now = Date()
     
     var tickets = false
     var userPrincipal = ""
@@ -119,14 +119,23 @@ class ShareMounter {
                         let shareOptions = homeDict["Options"] as! [String]? {
                         
                         var currentShare = share_info(groups: shareGroups, originalURL: homePathRaw, url: homePath, name: defaults.string(forKey: Preferences.menuHomeDirectory) ?? "Network Home", options: shareOptions, connectedOnly: true, mountStatus: .unmounted, localMount: nil, autoMount: shareAutoMount, reqID: nil, attemptDate: nil, localMountPoints: nil)
+                       print("ALLSHARES")
+                        print(all_shares)
                         
-                        if shareScratch[homePathRaw] != nil {
-                            // keep attempt information alive
-                            currentShare.attemptDate = shareScratch[homePathRaw]?.attemptDate
-                            currentShare.mountStatus = shareScratch[homePathRaw]?.mountStatus
-                            currentShare.reqID =  shareScratch[homePathRaw]?.reqID
+                        print("TEMPSHARES")
+                        print(tempShares)
+                        
+                        for share in all_shares {
+                            if share.originalURL == currentShare.originalURL && share.mountStatus == .mounting {
+                                // share is still  mounting, so copy the share
+                                if CommandLine.arguments.contains("-shares") {
+                                    print("Share is still mounting, using existing information")
+                                    print(share)
+                                }
+                                currentShare = share
+                            }
                         }
-                        shareScratch[homePathRaw] = currentShare
+                        
                         tempShares.append(currentShare)
                         resolvedShares[currentShare.url] = homePathRaw
                     }
@@ -166,13 +175,24 @@ class ShareMounter {
                     
                     var currentShare = share_info(groups: shareGroups, originalURL: shareURL, url: url, name: shareName, options: shareOptions, connectedOnly: shareConnectedOnly, mountStatus: .unmounted, localMount: shareLocalMount, autoMount: shareAutoMount, reqID: nil, attemptDate: nil, localMountPoints: nil)
                     
-                    if shareScratch[shareURL] != nil {
-                        // keep attempt information alive
-                        currentShare.attemptDate = shareScratch[shareURL]?.attemptDate
-                        currentShare.mountStatus = shareScratch[shareURL]?.mountStatus
-                        currentShare.reqID =  shareScratch[shareURL]?.reqID
+                    if CommandLine.arguments.contains("-shares") {
+                        print("Evaluating share: \(currentShare.originalURL)")
                     }
-                    shareScratch[shareURL] = currentShare
+                    
+                    for share in all_shares {
+                        if share.originalURL == currentShare.originalURL && share.mountStatus == .mounting {
+                            // share is still  mounting, so copy the share
+                            if CommandLine.arguments.contains("-shares") {
+                                print("Share is still mounting, using existing information")
+                                print(share)
+                            }
+                            currentShare = share
+                        } else {
+                            if CommandLine.arguments.contains("-shares") {
+                                print("Share: \(share.originalURL) doesn't match current share being evaluated: \(currentShare.originalURL), skipping ")
+                            }
+                        }
+                    }
                     tempShares.append(currentShare)
                     resolvedShares[currentShare.url] = shareURL
                 }
@@ -181,13 +201,17 @@ class ShareMounter {
             myLogger.logit(.debug, message: "No mount dictionary")
         }
         
+        if CommandLine.arguments.contains("-shares") {
+            print("***all_shares***")
+            print(all_shares)
+        }
+        
         // do this atomically since other serivces depend on this list
         all_shares = tempShares
-        
     }
     
     func getMountedShares() {
-        
+
         // zero out the currently mounted shares
         mountedShares.removeAll()
         mountedSharePaths.removeAll()
@@ -254,7 +278,7 @@ class ShareMounter {
             
             // loop through all the reasons to not mount this share
             
-            if all_shares[index].mountStatus == .mounted || all_shares[index].mountStatus == .mounting || mountedShares.contains(all_shares[index].url) {
+            if all_shares[index].mountStatus == .mounted || mountedShares.contains(all_shares[index].url) {
                 // already mounted
                 
                 if  mountedShares.contains(all_shares[index].url) {
@@ -268,6 +292,9 @@ class ShareMounter {
                 all_shares[index].mountStatus = .mounted
                 
                 myLogger.logit(.debug, message: "Skipping mount because share is still mounted from a previous variable substitution.")
+                continue
+            } else if all_shares[index].mountStatus == .mounting {
+                myLogger.logit(.debug, message: "Skipping mount because share is still in the process of being mounted - kick back on a natural for a bit.")
                 continue
             } else {
                 all_shares[index].mountStatus = .unmounted
@@ -291,7 +318,7 @@ class ShareMounter {
                 continue
             }
             
-            if all_shares[index].mountStatus != .errorOnMount {
+            if (all_shares[index].mountStatus != .errorOnMount) && (all_shares[index].mountStatus != .mounting) {
                 
                 let openOptions = openOptionsDict
                 var mountOptions = mountOptionsDict
@@ -314,7 +341,7 @@ class ShareMounter {
                     myLogger.logit(.debug, message: "Delaying next Mount by " + String(delay/1000) + " milliseconds since SlowMount is set.")
                     
                 }
-                
+                                
                 if sharePrefs?.bool(forKey: ShareKeys.finderMount) ?? false {
                     
                     myLogger.logit(.debug, message: "Mounting share via Finder")
@@ -344,7 +371,6 @@ class ShareMounter {
                                                     self.all_shares[index].reqID = nil
                                                     let mounts = mountpoints as! Array<String>
                                                     self.all_shares[index].localMountPoints = mounts[0]
-                                                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "menu.nomad.NoMAD.updateNow"), object: self)
                                                 } else {
                                                     myLogger.logit(.debug, message: "Error on mounting share: " + self.all_shares[index].name)
                                                     self.all_shares[index].mountStatus = .errorOnMount
@@ -352,7 +378,11 @@ class ShareMounter {
                                                 }
                                             }
                                         }
+                                        //NotificationCenter.default.post(name: NSNotification.Name(rawValue: "menu.nomad.NoMAD.updateNow"), object: self)
+                                        self.mountShares()
+
                 }
+                
                 all_shares[index].mountStatus = .mounting
                 all_shares[index].reqID = requestID
                 all_shares[index].attemptDate = Date()
@@ -364,6 +394,7 @@ class ShareMounter {
                     all_shares[index].mountStatus = .toBeMounted
                 }
             }
+            return
         }
     }
     
