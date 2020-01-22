@@ -214,7 +214,7 @@ class UserInformation {
                 
                 if defaults.bool(forKey: Preferences.recursiveGroupLookup) {
                     let attributes = ["name"]
-                     let searchTerm = "(member:1.2.840.113556.1.4.1941:=" + dn.replacingOccurrences(of: "\\", with: "\\5c") + ")"
+                    let searchTerm = "(member:1.2.840.113556.1.4.1941:=" + dn.replacingOccurrences(of: "\\", with: "\\5c").replacingOccurrences(of: "\\5c,", with: "\\2c") + ")"
                     if let ldifResult = try? myLDAPServers.getLDAPInformation(attributes, searchTerm: searchTerm) {
                         myLogger.logit(.debug, message: "Raw group results: " + String(describing: ldifResult))
 
