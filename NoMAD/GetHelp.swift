@@ -31,6 +31,8 @@ class GetHelp {
                             let _ = cliTask("/usr/bin/open /tmp/Bomgar/Double-Click\\ To\\ Start\\ Support\\ Session.app")
                             } else if FileManager.default.fileExists(atPath: "/private/tmp/BeyondTrust Remote Support/Double-Click To Start Support Session.app") {
                                 let _ = cliTask("/usr/bin/open /private/tmp/BeyondTrust\\ Remote\\ Support/Double-Click\\ To\\ Start\\ Support\\ Session.app")
+                            } else if FileManager.default.fileExists(atPath: "/private/tmp/Open To Start Support Session.app") {
+                                let _ = cliTask("/usr/bin/open /private/tmp/Open\\ To\\ Start\\ Support\\ Session.app")
                             }
                         }
                     }
