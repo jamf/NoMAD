@@ -24,8 +24,8 @@ class GetHelp {
                 case "Bomgar":
                     if let myURL = subVariables(getHelpOptions) {
                         OperationQueue.main.addOperation() {
-                            let _ = cliTask("curl -o /tmp/BomgarClient " + myURL )
-                            let _ = cliTaskNoTerm("/usr/bin/unzip -o -d /tmp /tmp/BomgarClient")
+                            let _ = cliTask("curl -o /tmp/BomgarClient.zip" + myURL )
+                            let _ = cliTaskNoTerm("/usr/bin/ditto -kx /tmp/BomgarClient.zip /tmp/")
                             
                             if FileManager.default.fileExists(atPath: "/tmp/Bomgar/Double-Click To Start Support Session.app") {
                             let _ = cliTask("/usr/bin/open /tmp/Bomgar/Double-Click\\ To\\ Start\\ Support\\ Session.app")
