@@ -121,7 +121,7 @@ class ShareMounter {
                         var currentShare = share_info(groups: shareGroups, originalURL: homePathRaw, url: homePath, name: defaults.string(forKey: Preferences.menuHomeDirectory) ?? "Network Home", options: shareOptions, connectedOnly: true, mountStatus: .unmounted, localMount: nil, autoMount: shareAutoMount, reqID: nil, attemptDate: nil, localMountPoints: nil)
                         
                         for share in all_shares {
-                            if share.originalURL == currentShare.originalURL && share.mountStatus == .mounting {
+                            if share.originalURL == currentShare.originalURL {
                                 // share is still  mounting, so copy the share
                                 if CommandLine.arguments.contains("-shares") {
                                     print("Share is still mounting, using existing information")
@@ -175,7 +175,7 @@ class ShareMounter {
                     }
                     
                     for share in all_shares {
-                        if share.originalURL == currentShare.originalURL && share.mountStatus == .mounting {
+                        if share.originalURL == currentShare.originalURL && (mountedOriginalShares.contains(share.originalURL) || share.mountStatus == .mounting) {
                             // share is still  mounting, so copy the share
                             if CommandLine.arguments.contains("-shares") {
                                 print("Share is still mounting, using existing information")
@@ -290,6 +290,11 @@ class ShareMounter {
                 continue
             } else if all_shares[index].mountStatus == .mounting {
                 myLogger.logit(.debug, message: "Skipping mount because share is still in the process of being mounted - kick back on a natural for a bit.")
+                if let mountInterval = (all_shares[index].attemptDate?.timeIntervalSinceNow) {
+                    if abs(mountInterval) > 5 * 60 {
+                        all_shares[index].mountStatus = .toBeMounted
+                    }
+                }
                 continue
             } else {
                 all_shares[index].mountStatus = .unmounted
