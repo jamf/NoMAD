@@ -112,9 +112,15 @@ class KeychainUtil {
     
     func setPassword(_ name: String, pass: String) -> OSStatus {
         
-        myErr = SecKeychainAddGenericPassword(nil, UInt32(serviceName.count), serviceName, UInt32(name.count), name, UInt32(pass.count), pass, nil)
+        let accessGroup = "AAPZK3CB24.menu.nomad.keychain"
+        let attributes = [kSecClass: kSecClassGenericPassword,
+                          kSecAttrService: serviceName,
+                          kSecAttrAccount: name,
+                          kSecAttrAccessGroup: accessGroup,
+                          kSecValueData: pass] as [String: Any]
+        let addStatus = SecItemAdd(attributes as CFDictionary, nil)
         
-        return myErr
+        return addStatus
     }
     
     // update the password
@@ -271,7 +277,7 @@ class KeychainUtil {
                 let SANValues = SAN["value"]! as! NSArray
                 for values in SANValues {
                     let value = values as! NSDictionary
-                    if String(_cocoaString: value["label"]! as AnyObject) == "1.3.6.1.4.1.311.20.2.3" {
+                    if value["label"] as? String == "1.3.6.1.4.1.311.20.2.3" {
                         if let myNTPrincipal = value["value"] {
                             // we have an NT Principal, let's see if it's Kerberos Principal we're looking for
                             myLogger.logit(.debug, message: "Certificate NT Principal: " + String(describing: myNTPrincipal) )
