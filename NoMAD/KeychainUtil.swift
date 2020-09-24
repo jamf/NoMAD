@@ -271,7 +271,7 @@ class KeychainUtil {
                 let SANValues = SAN["value"]! as! NSArray
                 for values in SANValues {
                     let value = values as! NSDictionary
-                    if String(_cocoaString: value["label"]! as AnyObject) == "1.3.6.1.4.1.311.20.2.3" {
+                    if value["label"] as? String == "1.3.6.1.4.1.311.20.2.3" {
                         if let myNTPrincipal = value["value"] {
                             // we have an NT Principal, let's see if it's Kerberos Principal we're looking for
                             myLogger.logit(.debug, message: "Certificate NT Principal: " + String(describing: myNTPrincipal) )
