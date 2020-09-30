@@ -188,28 +188,45 @@ class NoMADMenuController: NSObject, LoginWindowDelegate, PasswordChangeDelegate
             myIconOffDark = NSImage.init()
         } else {
         
+            let os = ProcessInfo().operatingSystemVersion
         if defaults.string(forKey: Preferences.iconOn) != nil {
             myIconOn = NSImage.init(contentsOfFile: defaults.string(forKey: Preferences.iconOn)!)!
         } else {
-            myIconOn = NSImage(named: NSImage.Name(rawValue: "NoMAD-statusicon-on-on"))!
+            if os.majorVersion > 15 {
+                myIconOn = NSImage(named: NSImage.Name(rawValue: "NoMAD-statusicon-on-on-BS"))!
+            } else {
+                myIconOn = NSImage(named: NSImage.Name(rawValue: "NoMAD-statusicon-on-on"))!
+            }
         }
         
         if defaults.string(forKey: Preferences.iconOff) != nil {
             myIconOff = NSImage.init(contentsOfFile: defaults.string(forKey: Preferences.iconOff)!)!
         } else {
-            myIconOff = NSImage(named: NSImage.Name(rawValue: "NoMAD-statusicon-off-off"))!
+            if os.majorVersion > 15 {
+                myIconOn = NSImage(named: NSImage.Name(rawValue: "NoMAD-statusicon-off-off-BS"))!
+            } else {
+                myIconOff = NSImage(named: NSImage.Name(rawValue: "NoMAD-statusicon-off-off"))!
+            }
         }
         
         if defaults.string(forKey: Preferences.iconOnDark) != nil {
             myIconOnDark = NSImage.init(contentsOfFile: defaults.string(forKey: Preferences.iconOnDark)!)!
         } else {
-            myIconOnDark = NSImage(named: NSImage.Name(rawValue: "NoMAD-LogoAlternate-on"))!
+            if os.majorVersion > 15 {
+                myIconOn = NSImage(named: NSImage.Name(rawValue: "NoMAD-statusicon-on-on-BS"))!
+            } else {
+                myIconOnDark = NSImage(named: NSImage.Name(rawValue: "NoMAD-LogoAlternate-on"))!
+            }
         }
         
         if defaults.string(forKey: Preferences.iconOffDark) != nil {
             myIconOffDark = NSImage.init(contentsOfFile: defaults.string(forKey: Preferences.iconOffDark)!)!
         } else {
-            myIconOffDark = NSImage(named: NSImage.Name(rawValue: "NoMAD-LogoAlternate-off"))!
+            if os.majorVersion > 15 {
+                myIconOn = NSImage(named: NSImage.Name(rawValue: "NoMAD-statusicon-off-off-BS"))!
+            } else {
+                myIconOffDark = NSImage(named: NSImage.Name(rawValue: "NoMAD-LogoAlternate-off"))!
+            }
         }
         }
         
