@@ -451,11 +451,11 @@ class NoMADUser {
         myLDAPServers.setDomain(adDomain)
         clearLibDefaults = false
 
-        let myKpasswdServers = myLDAPServers.getSRVRecords(adDomain, srv_type: "_kpasswd._tcp.")
+        let myKpasswdServers = myLDAPServers.getSRVRecords(adDomain, srv_type: "_kpasswd._tcp.").map {$0.lowercased()}
         myLogger.logit(LogLevel.debug, message: "Current Server is: " + myLDAPServers.currentServer)
         myLogger.logit(LogLevel.debug, message: "Kpasswd Servers are: " + myKpasswdServers.description)
 
-        if myKpasswdServers.contains(myLDAPServers.currentServer) {
+        if myKpasswdServers.contains(myLDAPServers.currentServer.lowercased()) {
             myLogger.logit(LogLevel.debug, message: "Found kpasswd server that matches current LDAP server.")
             myLogger.logit(LogLevel.debug, message: "Attempting to set kpasswd server to ensure Kerberos and LDAP are in sync.")
 
