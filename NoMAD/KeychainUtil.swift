@@ -112,9 +112,15 @@ class KeychainUtil {
     
     func setPassword(_ name: String, pass: String) -> OSStatus {
         
-        myErr = SecKeychainAddGenericPassword(nil, UInt32(serviceName.count), serviceName, UInt32(name.count), name, UInt32(pass.count), pass, nil)
+        let accessGroup = "AAPZK3CB24.menu.nomad.keychain"
+        let attributes = [kSecClass: kSecClassGenericPassword,
+                          kSecAttrService: serviceName,
+                          kSecAttrAccount: name,
+                          kSecAttrAccessGroup: accessGroup,
+                          kSecValueData: pass] as [String: Any]
+        let addStatus = SecItemAdd(attributes as CFDictionary, nil)
         
-        return myErr
+        return addStatus
     }
     
     // update the password
