@@ -313,7 +313,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 
         }
 
-        let myResult = cleanLDIF(ldapResult)
+        let myResult = cleanLDIF(ldapResult, true)
 
         swapPrincipals(true)
 
@@ -420,7 +420,7 @@ class LDAPServers : NSObject, DNSResolverDelegate {
 
 
 
-    fileprivate func cleanLDIF(_ ldif: String) -> [[String:String]] {
+    fileprivate func cleanLDIF(_ ldif: String, _ decodeBase64: Bool = false) -> [[String:String]] {
         //var myResult = [[String:String]]()
 
         var ldifLines: [String] = ldif.components(separatedBy: CharacterSet.newlines)
@@ -483,7 +483,16 @@ class LDAPServers : NSObject, DNSResolverDelegate {
                     // base64
                     let tempAttributeValue = attributeValue.substring(from: attributeValue.index(after: attributeValue.startIndex)).trim()
                     if (Data(base64Encoded: tempAttributeValue, options: NSData.Base64DecodingOptions.init(rawValue: 0)) != nil) {
-                        attributeValue = tempAttributeValue
+                        if decodeBase64 {
+                            if let data = Data(base64Encoded: tempAttributeValue),
+                               let final = String(data: data, encoding: .utf8) {
+                                attributeValue = final
+                            } else {
+                                attributeValue = tempAttributeValue
+                            }
+                        } else {
+                            attributeValue = tempAttributeValue
+                        }
                     } else {
                         attributeValue = ""
                     }

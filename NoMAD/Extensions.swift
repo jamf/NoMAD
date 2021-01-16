@@ -59,11 +59,11 @@ extension String {
         let allowedCharacters = CharacterSet(bitmapRepresentation: CharacterSet.urlQueryAllowed.bitmapRepresentation)
         return addingPercentEncoding(withAllowedCharacters: allowedCharacters)
     }
-
+    
     func safeAddingPercentEncoding(withAllowedCharacters allowedCharacters: CharacterSet) -> String? {
-            // using a copy to workaround magic: https://stackoverflow.com/q/44754996/1033581
-            let allowedCharacters = CharacterSet(bitmapRepresentation: allowedCharacters.bitmapRepresentation)
-            return addingPercentEncoding(withAllowedCharacters: allowedCharacters)
+        // using a copy to workaround magic: https://stackoverflow.com/q/44754996/1033581
+        let allowedCharacters = CharacterSet(bitmapRepresentation: allowedCharacters.bitmapRepresentation)
+        return addingPercentEncoding(withAllowedCharacters: allowedCharacters)
     }
     
     func variableSwap(_ encoding: Bool=true) -> String {
@@ -90,7 +90,7 @@ extension String {
         cleanString = cleanString.replacingOccurrences(of: "<<email>>", with: email)
         cleanString = cleanString.replacingOccurrences(of: "<<noACL>>", with: "")
         cleanString = cleanString.replacingOccurrences(of: "<<domaincontroller>>", with: currentDC)
-
+        
         
         // now to remove any proxy settings
         
@@ -98,6 +98,55 @@ extension String {
         
         return cleanString //.addingPercentEncoding(withAllowedCharacters: .alphanumerics)
         
+    }
+    
+    func isBase64() -> Bool {
+        if let data = Data(base64Encoded: self),
+           let _ = String(data: data, encoding: .utf8) {
+            return true
+        }
+        return false
+    }
+    
+    func base64String() -> String? {
+        if self.isBase64() {
+            return self
+        } else {
+            return self.data(using: .utf8)?.base64EncodedString()
+        }
+    }
+    
+    func ldapFilterEscaped() -> String {
+        self.replacingOccurrences(of: "\\", with: "\\5c").replacingOccurrences(of: "*", with: "\\2a").replacingOccurrences(of: "(", with: "\\28").replacingOccurrences(of: ")", with: "\\29").replacingOccurrences(of: "/", with: "\\2f")
+    }
+    
+    func encodeNonASCIIAsUTF8Hex() -> String {
+        var result = ""
+        var startingString = self
+        
+        if self.isBase64() {
+            if let data = Data(base64Encoded: self),
+               let decodedString = String(data: data, encoding: .utf8) {
+                startingString = decodedString
+            }
+        }
+        
+        for character in startingString.ldapFilterEscaped() {
+            if character.asciiValue != nil {
+                result.append(character)
+            } else {
+                for byte in String(character).utf8 {
+                    result.append("\\" + (NSString(format:"%2X", byte) as String))
+                }
+            }
+        }
+        return result
+    }
+}
+
+extension Character {
+    var asciiValue: UInt32? {
+        return String(self).unicodeScalars.filter{$0.isASCII}.first?.value
     }
 }
 
