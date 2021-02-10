@@ -104,12 +104,19 @@ class KlistUtil {
         
         while ((krb5_cccol_cursor_next(context, cursor, &oCache) == 0 ) && oCache != nil)  {
             let name = (String(cString: (krb5_cc_get_name(context, oCache))))
-            var princ : krb5_principal? = nil
-            ret = krb5_cc_get_principal(context, oCache, &princ)
-            //print(princ.debugDescription)
-            var princName : UnsafeMutablePointer<Int8>? = nil
-            krb5_unparse_name(context, princ!, &princName)
-            let princNameString = String(cString: princName!)
+            var krb5Principal : krb5_principal? = nil
+            ret = krb5_cc_get_principal(context, oCache, &krb5Principal)
+            var krb5PrincName : UnsafeMutablePointer<Int8>? = nil
+            guard let principal = krb5Principal else {
+                print("Principal is nil, unable to get principal name")
+                continue
+            }
+            krb5_unparse_name(context, principal, &krb5PrincName)
+            guard let princName = krb5PrincName else {
+                print("Principal Name is nil, unable to get tickets")
+                continue
+            }
+            let princNameString = String(cString: princName)
             tickets[princNameString] = Ticket(expired: true, expires: Date.distantPast, defaultCache: false, principal: princNameString, krb5Cache: oCache, GSSItem: nil)
             if name == defaultName {
                 //print("Default principal: " + princNameString )

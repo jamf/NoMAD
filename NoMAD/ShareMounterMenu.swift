@@ -53,6 +53,11 @@ class ShareMounterMenu: NSObject {
             return NSMenu.init()
         }
         
+        if defaults.object(forKey: Preferences.userShortName) == nil {
+            myLogger.logit(.debug, message: "No user name, not attempting to mount shares.")
+            return NSMenu.init()
+        }
+        
         if myShareMounter.all_shares.count > 0 {
             // Menu Items and Menu
             
@@ -91,12 +96,6 @@ class ShareMounterMenu: NSObject {
 
                 myShareMenu.addItem(myItem)
             }
-            
-            // Edit menu item to come later
-            
-            //myShareMenu.addItem(NSMenuItem.separator())
-            //myShareMenu.addItem(withTitle: "Edit...".translate, action: nil, keyEquivalent: "")
-            
         }
         
         if CommandLine.arguments.contains("-shares") {
@@ -111,7 +110,7 @@ class ShareMounterMenu: NSObject {
                 
         for share in myShareMounter.all_shares {
             if share.name == sender.title {
-                if share.mountStatus != .mounted && share.mountStatus != .mounting {
+                if share.mountStatus != .mounted {
                     myLogger.logit(.debug, message: "Mounting share: " + String(describing: share.url))
                     
                     //myShareMounter.asyncMountShare(share.url, options: share.options, open: true)
