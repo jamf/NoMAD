@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @interface TCSADCertificateRequest : NSObject
+@property (assign) BOOL verbose;
 @property (nonatomic, readonly, strong) NSData *certificate;
 - (instancetype)initWithServerName:(NSString *)serverName certificateAuthorityName:(NSString *)certificateAuthorityName certificateTemplate:(NSString *)certificateTemplate verbose:(BOOL)isVerbose error:(NSError **)error;
 

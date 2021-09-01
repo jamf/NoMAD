@@ -14,5 +14,5 @@
 
 - (instancetype)initWithPublicKey:(NSData *)inPublicKey commonName:(NSString *)inCommonName;
 -(NSData *)messageToSign;
--(NSData *)certificateSigningRequest;
+-(NSData *)certificateSigningRequestWithAlgorithm:(SecKeyAlgorithm)algorithm;
 @end

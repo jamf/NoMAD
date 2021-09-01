@@ -21,8 +21,6 @@
 		1A2728F91DD19B1400616778 /* PasswordChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2728F81DD19B1400616778 /* PasswordChange.swift */; };
 		1A2EE4431FED7B0E00B6A3BF /* DFSResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0048A21FDFB4A500453A90 /* DFSResolver.swift */; };
 		1A309D431E8E0FC600CEDC45 /* menu.nomad.NoMAD.shares.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1A309D421E8E0FC600CEDC45 /* menu.nomad.NoMAD.shares.plist */; };
-		1A4303E22093BB5400EFE329 /* TCSCertificateRequest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4303E12093BB5400EFE329 /* TCSCertificateRequest.framework */; };
-		1A4303E42093BBA300EFE329 /* TCSCertificateRequest.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4303E12093BB5400EFE329 /* TCSCertificateRequest.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1A4303E72093BC9100EFE329 /* NoMAD.sdef in Resources */ = {isa = PBXBuildFile; fileRef = 1A4303E62093BC9100EFE329 /* NoMAD.sdef */; };
 		1A58C88C1DD9264D002C0769 /* CSRGen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A58C88B1DD9264D002C0769 /* CSRGen.swift */; };
 		1A5F31D0225E452E00F9A4CE /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A5F31CF225E452D00F9A4CE /* WebKit.framework */; };
@@ -30,6 +28,8 @@
 		1A88E88A1EAF718400AC2E67 /* KeychainMinder.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A88E8891EAF718400AC2E67 /* KeychainMinder.xib */; };
 		1ADCEC621D75476D005D33F5 /* ShareMounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ADCEC611D75476D005D33F5 /* ShareMounter.swift */; };
 		1AE1DFC11DA6B1E100456E3E /* Languages.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1AE1DFC31DA6B1E100456E3E /* Languages.plist */; };
+		1AF58CC426DFD5E8000BEB77 /* TCSCertificateRequest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AF58CC226DFD5E2000BEB77 /* TCSCertificateRequest.framework */; };
+		1AF58CC526DFD5E8000BEB77 /* TCSCertificateRequest.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1AF58CC226DFD5E2000BEB77 /* TCSCertificateRequest.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1AFBDC651DE675B000C19AE1 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AFBDC641DE675B000C19AE1 /* Preferences.swift */; };
 		1AFBDC671DE675C000C19AE1 /* DefaultPreferences.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1AFBDC661DE675C000C19AE1 /* DefaultPreferences.plist */; };
 		1AFBDC701DEE4F4800C19AE1 /* SelfServiceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AFBDC6F1DEE4F4800C19AE1 /* SelfServiceManager.swift */; };
@@ -90,7 +90,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				1A4303E42093BBA300EFE329 /* TCSCertificateRequest.framework in Embed Frameworks */,
+				1AF58CC526DFD5E8000BEB77 /* TCSCertificateRequest.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -115,14 +115,12 @@
 		1A26AFF61D46E4BF000776A4 /* GetHelp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetHelp.swift; sourceTree = "<group>"; };
 		1A2727311F3F5E29005B7378 /* ShareMounterMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareMounterMenu.swift; sourceTree = "<group>"; };
 		1A2728F81DD19B1400616778 /* PasswordChange.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordChange.swift; sourceTree = "<group>"; };
-		1A2B5AB6204A32AD002945C8 /* TCSCertRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCSCertRequest.swift; sourceTree = "<group>"; };
 		1A2CFB601EF0EAA200F1D74C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/MainMenu.strings; sourceTree = "<group>"; };
 		1A2CFB611EF0EAA300F1D74C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/PreferencesWindow.strings; sourceTree = "<group>"; };
 		1A2CFB621EF0EAA300F1D74C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/PasswordChangeWindow.strings; sourceTree = "<group>"; };
 		1A2CFB681EF0EAA400F1D74C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/LoginWindow.strings; sourceTree = "<group>"; };
 		1A309D421E8E0FC600CEDC45 /* menu.nomad.NoMAD.shares.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = menu.nomad.NoMAD.shares.plist; sourceTree = "<group>"; };
 		1A3E2598210D49400057E9DB /* Acknowledgements.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Acknowledgements.md; sourceTree = "<group>"; };
-		1A4303E12093BB5400EFE329 /* TCSCertificateRequest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = TCSCertificateRequest.framework; sourceTree = "<group>"; };
 		1A4303E62093BC9100EFE329 /* NoMAD.sdef */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = NoMAD.sdef; sourceTree = "<group>"; };
 		1A4CD1AC1F8EF94B001415C2 /* hr-BA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "hr-BA"; path = "hr-BA.lproj/LoginWindow.strings"; sourceTree = "<group>"; };
 		1A4CD1AD1F8EF94C001415C2 /* hr-BA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "hr-BA"; path = "hr-BA.lproj/PreferencesWindow.strings"; sourceTree = "<group>"; };
@@ -181,6 +179,7 @@
 		1AF30E611EB7DEFC00542ABB /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/MainMenu.strings; sourceTree = "<group>"; };
 		1AF30E631EB7DF0100542ABB /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/LoginWindow.strings; sourceTree = "<group>"; };
 		1AF30E651EB7DF0700542ABB /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/PreferencesWindow.strings; sourceTree = "<group>"; };
+		1AF58CC226DFD5E2000BEB77 /* TCSCertificateRequest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = TCSCertificateRequest.framework; sourceTree = "<group>"; };
 		1AFBDC641DE675B000C19AE1 /* Preferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
 		1AFBDC661DE675C000C19AE1 /* DefaultPreferences.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DefaultPreferences.plist; sourceTree = "<group>"; };
 		1AFBDC6F1DEE4F4800C19AE1 /* SelfServiceManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelfServiceManager.swift; sourceTree = "<group>"; };
@@ -255,7 +254,7 @@
 				1A1BA5CF1F22688C00E506D0 /* libgssapi_krb5.tbd in Frameworks */,
 				34E186C21D9E405400265138 /* libresolv.tbd in Frameworks */,
 				84CC67EC1D30A1A500115C76 /* GSS.framework in Frameworks */,
-				1A4303E22093BB5400EFE329 /* TCSCertificateRequest.framework in Frameworks */,
+				1AF58CC426DFD5E8000BEB77 /* TCSCertificateRequest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -284,8 +283,7 @@
 		1A2B5AB3204A321E002945C8 /* TCSCertRequest */ = {
 			isa = PBXGroup;
 			children = (
-				1A4303E12093BB5400EFE329 /* TCSCertificateRequest.framework */,
-				1A2B5AB6204A32AD002945C8 /* TCSCertRequest.swift */,
+				1AF58CC226DFD5E2000BEB77 /* TCSCertificateRequest.framework */,
 			);
 			path = TCSCertRequest;
 			sourceTree = "<group>";
@@ -929,7 +927,7 @@
 		84CC67E91D30A18A00115C76 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = NoMAD/NoMAD.entitlements;
@@ -963,7 +961,7 @@
 		84CC67EA1D30A18A00115C76 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = NoMAD/NoMAD.entitlements;

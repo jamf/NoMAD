@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>BuildMachineOSBuild</key>
-	<string>17F45c</string>
+	<string>20G95</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>
@@ -27,17 +27,21 @@
 	<key>DTCompiler</key>
 	<string>com.apple.compilers.llvm.clang.1_0</string>
 	<key>DTPlatformBuild</key>
-	<string>9E145</string>
+	<string>12E507</string>
+	<key>DTPlatformName</key>
+	<string>macosx</string>
 	<key>DTPlatformVersion</key>
-	<string>GM</string>
+	<string>11.3</string>
 	<key>DTSDKBuild</key>
-	<string>17E189</string>
+	<string>20E214</string>
 	<key>DTSDKName</key>
-	<string>macosx10.13</string>
+	<string>macosx11.3</string>
 	<key>DTXcode</key>
-	<string>0930</string>
+	<string>1251</string>
 	<key>DTXcodeBuild</key>
-	<string>9E145</string>
+	<string>12E507</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>10.12</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2018 Twocanoes Software. All rights reserved.</string>
 </dict>
