@@ -1,6 +1,12 @@
-***Main Web Site***
+# NoMAD 1.x
 
-This gitlab page is used primarily for code storage and issue tracking. For the most up to ddate information on NoMAD, and installer donwloads, please see [nomad.menu](http://www.nomad.menu)
+The NoMAD 1.x releases have come to a close now with NoMAD 2 closing in on release. You can find the most current release (1.3.0) of NoMAD here in the releases section.
+
+Please take a look at the [NoMAD 2](https://github.com/jamf/NoMAD-2) repo for current and ongoing work and discussions.
+
+Thanks for all the support!
+
+--
 
 ***NoMAD***
 
