@@ -1,7 +1,0 @@
-.9 - Public Beta Release
-
-- local password sync
-- certificate enrollment
-- better handling of LDAP servers
-- better menu management
-- better error checking

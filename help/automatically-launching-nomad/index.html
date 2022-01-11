@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<!-- Mirrored from nomad.menu/help/automatically-launching-nomad/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 11 Jan 2022 19:09:57 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+<head>
+	<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<link rel="pingback" href="../../xmlrpc.php" />
+
+	<script type="text/javascript">
+		document.documentElement.className = 'js';
+	</script>
+
+	<script>var et_site_url='../../index.html';var et_post_id='165';function et_core_page_resource_fallback(a,b){"undefined"===typeof b&&(b=a.sheet.cssRules&&0===a.sheet.cssRules.length);b&&(a.onerror=null,a.onload=null,a.href?a.href=et_site_url+"/?et_core_page_resource="+a.id+et_post_id:a.src&&(a.src=et_site_url+"/?et_core_page_resource="+a.id+et_post_id))}
+</script><title>Automatically launching NoMAD | NoMAD</title>
+<meta name='robots' content='max-image-preview:large' />
+<link rel='dns-prefetch' href='http://www.google.com/' />
+<link rel='dns-prefetch' href='http://fonts.googleapis.com/' />
+<link rel='dns-prefetch' href='http://s.w.org/' />
+<link rel="alternate" type="application/rss+xml" title="NoMAD &raquo; Feed" href="../../feed/index.html" />
+<link rel="alternate" type="application/rss+xml" title="NoMAD &raquo; Comments Feed" href="../../comments/feed/index.html" />
+		<!-- This site uses the Google Analytics by ExactMetrics plugin v7.2.1 - Using Analytics tracking - https://www.exactmetrics.com/ -->
+							<script src="http://www.googletagmanager.com/gtag/js?id=UA-89293190-1"  type="text/javascript" data-cfasync="false" async></script>
+			<script type="text/javascript" data-cfasync="false">
+				var em_version = '7.2.1';
+				var em_track_user = true;
+				var em_no_track_reason = '';
+				
+								var disableStrs = [
+															'ga-disable-UA-89293190-1',
+									];
+
+				/* Function to detect opted out users */
+				function __gtagTrackerIsOptedOut() {
+					for ( var index = 0; index < disableStrs.length; index++ ) {
+						if ( document.cookie.indexOf( disableStrs[ index ] + '=true' ) > -1 ) {
+							return true;
+						}
+					}
+
+					return false;
+				}
+
+				/* Disable tracking if the opt-out cookie exists. */
+				if ( __gtagTrackerIsOptedOut() ) {
+					for ( var index = 0; index < disableStrs.length; index++ ) {
+						window[ disableStrs[ index ] ] = true;
+					}
+				}
+
+				/* Opt-out function */
+				function __gtagTrackerOptout() {
+					for ( var index = 0; index < disableStrs.length; index++ ) {
+						document.cookie = disableStrs[ index ] + '=true; expires=Thu, 31 Dec 2099 23:59:59 UTC; path=/';
+						window[ disableStrs[ index ] ] = true;
+					}
+				}
+
+				if ( 'undefined' === typeof gaOptout ) {
+					function gaOptout() {
+						__gtagTrackerOptout();
+					}
+				}
+								window.dataLayer = window.dataLayer || [];
+
+				window.ExactMetricsDualTracker = {
+					helpers: {},
+					trackers: {},
+				};
+				if ( em_track_user ) {
+					function __gtagDataLayer() {
+						dataLayer.push( arguments );
+					}
+
+					function __gtagTracker( type, name, parameters ) {
+						if (!parameters) {
+							parameters = {};
+						}
+
+						if (parameters.send_to) {
+							__gtagDataLayer.apply( null, arguments );
+							return;
+						}
+
+						if ( type === 'event' ) {
+							
+															parameters.send_to = exactmetrics_frontend.ua;
+								__gtagDataLayer( type, name, parameters );
+													} else {
+							__gtagDataLayer.apply( null, arguments );
+						}
+					}
+					__gtagTracker( 'js', new Date() );
+					__gtagTracker( 'set', {
+						'developer_id.dNDMyYj' : true,
+											} );
+															__gtagTracker( 'config', 'UA-89293190-1', {"forceSSL":"true"} );
+										window.gtag = __gtagTracker;										(
+						function () {
+							/* https://developers.google.com/analytics/devguides/collection/analyticsjs/ */
+							/* ga and __gaTracker compatibility shim. */
+							var noopfn = function () {
+								return null;
+							};
+							var newtracker = function () {
+								return new Tracker();
+							};
+							var Tracker = function () {
+								return null;
+							};
+							var p = Tracker.prototype;
+							p.get = noopfn;
+							p.set = noopfn;
+							p.send = function (){
+								var args = Array.prototype.slice.call(arguments);
+								args.unshift( 'send' );
+								__gaTracker.apply(null, args);
+							};
+							var __gaTracker = function () {
+								var len = arguments.length;
+								if ( len === 0 ) {
+									return;
+								}
+								var f = arguments[len - 1];
+								if ( typeof f !== 'object' || f === null || typeof f.hitCallback !== 'function' ) {
+									if ( 'send' === arguments[0] ) {
+										var hitConverted, hitObject = false, action;
+										if ( 'event' === arguments[1] ) {
+											if ( 'undefined' !== typeof arguments[3] ) {
+												hitObject = {
+													'eventAction': arguments[3],
+													'eventCategory': arguments[2],
+													'eventLabel': arguments[4],
+													'value': arguments[5] ? arguments[5] : 1,
+												}
+											}
+										}
+										if ( 'pageview' === arguments[1] ) {
+											if ( 'undefined' !== typeof arguments[2] ) {
+												hitObject = {
+													'eventAction': 'page_view',
+													'page_path' : arguments[2],
+												}
+											}
+										}
+										if ( typeof arguments[2] === 'object' ) {
+											hitObject = arguments[2];
+										}
+										if ( typeof arguments[5] === 'object' ) {
+											Object.assign( hitObject, arguments[5] );
+										}
+										if ( 'undefined' !== typeof arguments[1].hitType ) {
+											hitObject = arguments[1];
+											if ( 'pageview' === hitObject.hitType ) {
+												hitObject.eventAction = 'page_view';
+											}
+										}
+										if ( hitObject ) {
+											action = 'timing' === arguments[1].hitType ? 'timing_complete' : hitObject.eventAction;
+											hitConverted = mapArgs( hitObject );
+											__gtagTracker( 'event', action, hitConverted );
+										}
+									}
+									return;
+								}
+
+								function mapArgs( args ) {
+									var arg, hit = {};
+									var gaMap = {
+										'eventCategory': 'event_category',
+										'eventAction': 'event_action',
+										'eventLabel': 'event_label',
+										'eventValue': 'event_value',
+										'nonInteraction': 'non_interaction',
+										'timingCategory': 'event_category',
+										'timingVar': 'name',
+										'timingValue': 'value',
+										'timingLabel': 'event_label',
+										'page' : 'page_path',
+										'location' : 'page_location',
+										'title' : 'page_title',
+									};
+									for ( arg in args ) {
+																				if ( ! ( ! args.hasOwnProperty(arg) || ! gaMap.hasOwnProperty(arg) ) ) {
+											hit[gaMap[arg]] = args[arg];
+										} else {
+											hit[arg] = args[arg];
+										}
+									}
+									return hit;
+								}
+
+								try {
+									f.hitCallback();
+								} catch ( ex ) {
+								}
+							};
+							__gaTracker.create = newtracker;
+							__gaTracker.getByName = newtracker;
+							__gaTracker.getAll = function () {
+								return [];
+							};
+							__gaTracker.remove = noopfn;
+							__gaTracker.loaded = true;
+							window['__gaTracker'] = __gaTracker;
+						}
+					)();
+									} else {
+										console.log( "" );
+					( function () {
+							function __gtagTracker() {
+								return null;
+							}
+							window['__gtagTracker'] = __gtagTracker;
+							window['gtag'] = __gtagTracker;
+					} )();
+									}
+			</script>
+				<!-- / Google Analytics by ExactMetrics -->
+				<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/13.1.0\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/13.1.0\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/nomad.menu\/wp-includes\/js\/wp-emoji-release.min.js?ver=5.8.2"}};
+			!function(e,a,t){var n,r,o,i=a.createElement("canvas"),p=i.getContext&&i.getContext("2d");function s(e,t){var a=String.fromCharCode;p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,e),0,0);e=i.toDataURL();return p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,t),0,0),e===i.toDataURL()}function c(e){var t=a.createElement("script");t.src=e,t.defer=t.type="text/javascript",a.getElementsByTagName("head")[0].appendChild(t)}for(o=Array("flag","emoji"),t.supports={everything:!0,everythingExceptFlag:!0},r=0;r<o.length;r++)t.supports[o[r]]=function(e){if(!p||!p.fillText)return!1;switch(p.textBaseline="top",p.font="600 32px Arial",e){case"flag":return s([127987,65039,8205,9895,65039],[127987,65039,8203,9895,65039])?!1:!s([55356,56826,55356,56819],[55356,56826,8203,55356,56819])&&!s([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]);case"emoji":return!s([10084,65039,8205,55357,56613],[10084,65039,8203,55357,56613])}return!1}(o[r]),t.supports.everything=t.supports.everything&&t.supports[o[r]],"flag"!==o[r]&&(t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&t.supports[o[r]]);t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&!t.supports.flag,t.DOMReady=!1,t.readyCallback=function(){t.DOMReady=!0},t.supports.everything||(n=function(){t.readyCallback()},a.addEventListener?(a.addEventListener("DOMContentLoaded",n,!1),e.addEventListener("load",n,!1)):(e.attachEvent("onload",n),a.attachEvent("onreadystatechange",function(){"complete"===a.readyState&&t.readyCallback()})),(n=t.source||{}).concatemoji?c(n.concatemoji):n.wpemoji&&n.twemoji&&(c(n.twemoji),c(n.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<meta content="NoMAD (O&amp;G) v.3.1.1" name="generator"/><style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+	<link rel='stylesheet' id='wp-block-library-css'  href='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-includes/css/dist/block-library/style.min.css?ver=5.8.2' type='text/css' media='all' />
+<link rel='stylesheet' id='wpzoom-social-icons-block-style-css'  href='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/plugins/social-icons-widget-by-wpzoom/block/dist/style-wpzoom-social-icons.css?ver=4.2.2' type='text/css' media='all' />
+<link rel='stylesheet' id='ctct_form_styles-css'  href='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/plugins/constant-contact-forms/assets/css/style.css?ver=1.12.0' type='text/css' media='all' />
+<link rel='stylesheet' id='kbe_theme_style-css'  href='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/plugins/wp-knowledgebase/template-legacy/kbe_style.css?ver=1.3.4' type='text/css' media='all' />
+<link rel='stylesheet' id='orbisius_ct_nomad_og_parent_style-css'  href='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/themes/Divi/style.css?ver=3.12.2' type='text/css' media='all' />
+<link rel='stylesheet' id='orbisius_ct_nomad_og_parent_style_child_style-css'  href='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/themes/nomad-og/style.css?ver=3.1.1' type='text/css' media='all' />
+<link rel='stylesheet' id='divi-fonts-css'  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&amp;subset=latin,latin-ext' type='text/css' media='all' />
+<link rel='stylesheet' id='divi-style-css'  href='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/themes/nomad-og/style.css?ver=3.12.2' type='text/css' media='all' />
+<link rel='stylesheet' id='et-builder-googlefonts-cached-css'  href='https://fonts.googleapis.com/css?family=Work+Sans%3A100%2C200%2C300%2Cregular%2C500%2C600%2C700%2C800%2C900&amp;ver=5.8.2#038;subset=latin,latin-ext' type='text/css' media='all' />
+<link rel='stylesheet' id='wpzoom-social-icons-socicon-css'  href='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/plugins/social-icons-widget-by-wpzoom/assets/css/wpzoom-socicon.css?ver=1638200807' type='text/css' media='all' />
+<link rel='stylesheet' id='wpzoom-social-icons-genericons-css'  href='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/plugins/social-icons-widget-by-wpzoom/assets/css/genericons.css?ver=1638200807' type='text/css' media='all' />
+<link rel='stylesheet' id='wpzoom-social-icons-academicons-css'  href='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/plugins/social-icons-widget-by-wpzoom/assets/css/academicons.min.css?ver=1638200807' type='text/css' media='all' />
+<link rel='stylesheet' id='wpzoom-social-icons-font-awesome-3-css'  href='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/plugins/social-icons-widget-by-wpzoom/assets/css/font-awesome-3.min.css?ver=1638200807' type='text/css' media='all' />
+<link rel='stylesheet' id='dashicons-css'  href='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-includes/css/dashicons.min.css?ver=5.8.2' type='text/css' media='all' />
+<link rel='stylesheet' id='wpzoom-social-icons-styles-css'  href='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/plugins/social-icons-widget-by-wpzoom/assets/css/wpzoom-social-icons-styles.css?ver=1638200807' type='text/css' media='all' />
+<link rel='preload' as='font'  id='wpzoom-social-icons-font-academicons-ttf-css'  href='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/plugins/social-icons-widget-by-wpzoom/assets/font/academicons.ttf?v=1.8.6'  type='font/ttf' crossorigin />
+<link rel='preload' as='font'  id='wpzoom-social-icons-font-academicons-woff-css'  href='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/plugins/social-icons-widget-by-wpzoom/assets/font/academicons.woff?v=1.8.6'  type='font/woff' crossorigin />
+<link rel='preload' as='font'  id='wpzoom-social-icons-font-fontawesome-3-ttf-css'  href='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/plugins/social-icons-widget-by-wpzoom/assets/font/fontawesome-webfont.ttf?v=4.7.0'  type='font/ttf' crossorigin />
+<link rel='preload' as='font'  id='wpzoom-social-icons-font-fontawesome-3-woff-css'  href='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/plugins/social-icons-widget-by-wpzoom/assets/font/fontawesome-webfont.woff?v=4.7.0'  type='font/woff' crossorigin />
+<link rel='preload' as='font'  id='wpzoom-social-icons-font-fontawesome-3-woff2-css'  href='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/plugins/social-icons-widget-by-wpzoom/assets/font/fontawesome-webfont.woff2?v=4.7.0'  type='font/woff2' crossorigin />
+<link rel='preload' as='font'  id='wpzoom-social-icons-font-genericons-ttf-css'  href='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/plugins/social-icons-widget-by-wpzoom/assets/font/Genericons.ttf'  type='font/ttf' crossorigin />
+<link rel='preload' as='font'  id='wpzoom-social-icons-font-genericons-woff-css'  href='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/plugins/social-icons-widget-by-wpzoom/assets/font/Genericons.woff'  type='font/woff' crossorigin />
+<link rel='preload' as='font'  id='wpzoom-social-icons-font-socicon-ttf-css'  href='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/plugins/social-icons-widget-by-wpzoom/assets/font/socicon.ttf?v=4.2.2'  type='font/ttf' crossorigin />
+<link rel='preload' as='font'  id='wpzoom-social-icons-font-socicon-woff-css'  href='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/plugins/social-icons-widget-by-wpzoom/assets/font/socicon.woff?v=4.2.2'  type='font/woff' crossorigin />
+<script type='text/javascript' id='exactmetrics-frontend-script-js-extra'>
+/* <![CDATA[ */
+var exactmetrics_frontend = {"js_events_tracking":"true","download_extensions":"zip,mp3,mpeg,pdf,docx,pptx,xlsx,rar","inbound_paths":"[{\"path\":\"\\\/go\\\/\",\"label\":\"affiliate\"},{\"path\":\"\\\/recommend\\\/\",\"label\":\"affiliate\"}]","home_url":"https:\/\/nomad.menu","hash_tracking":"false","ua":"UA-89293190-1","v4_id":""};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/plugins/google-analytics-dashboard-for-wp/assets/js/frontend-gtag.min.js?ver=7.2.1' id='exactmetrics-frontend-script-js'></script>
+<script type='text/javascript' src='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-includes/js/jquery/jquery.min.js?ver=3.6.0' id='jquery-core-js'></script>
+<script type='text/javascript' src='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.3.2' id='jquery-migrate-js'></script>
+<link rel="https://api.w.org/" href="../../wp-json/index.html" /><link rel="alternate" type="application/json" href="../../wp-json/wp/v2/kbe_knowledgebase/165.json" /><link rel="EditURI" type="application/rsd+xml" title="RSD" href="../../xmlrpc0db0.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="../../wp-includes/wlwmanifest.xml" /> 
+<link rel="canonical" href="index.html" />
+<link rel='shortlink' href='../../index17d5.html?p=165' />
+<link rel="alternate" type="application/json+oembed" href="../../wp-json/oembed/1.0/embed2dcc.json?url=https%3A%2F%2Fnomad.menu%2Fhelp%2Fautomatically-launching-nomad%2F" />
+<link rel="alternate" type="text/xml+oembed" href="../../wp-json/oembed/1.0/embed048b?url=https%3A%2F%2Fnomad.menu%2Fhelp%2Fautomatically-launching-nomad%2F&amp;format=xml" />
+<script id="kbe-global-js-var">var wp_knowledgebase = {"ajax_url":"https:\/\/nomad.menu\/wp-admin\/admin-ajax.php","nonce":"381420eb6a"};</script><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" /><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://web.archive.org/web/20180107173320/https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-89293190-1', 'auto');
+  ga('send', 'pageview');
+
+</script><link rel="icon" href="https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/uploads/2018/05/cropped-NoMAD-Logomark-32x32.png" sizes="32x32" />
+<link rel="icon" href="https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/uploads/2018/05/cropped-NoMAD-Logomark-192x192.png" sizes="192x192" />
+<link rel="apple-touch-icon" href="https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/uploads/2018/05/cropped-NoMAD-Logomark-180x180.png" />
+<meta name="msapplication-TileImage" content="https://nomad.menu/wp-content/uploads/2018/05/cropped-NoMAD-Logomark-270x270.png" />
+<link rel="stylesheet" id="et-divi-customizer-global-cached-inline-styles" href="../../wp-content/cache/et/global/et-divi-customizer-global-164192072042.min.css" onerror="et_core_page_resource_fallback(this, true)" onload="et_core_page_resource_fallback(this)" /></head>
+<body class="kbe_knowledgebase-template-default single single-kbe_knowledgebase postid-165 wp-knowledgebase kbe-template-wide ctct-Divi et_color_scheme_orange et_pb_button_helper_class et_non_fixed_nav et_show_nav et_cover_background et_pb_gutter osx et_pb_gutters3 et_primary_nav_dropdown_animation_fade et_secondary_nav_dropdown_animation_fade et_pb_footer_columns4 et_header_style_left et_right_sidebar et_divi_theme et-db et_minified_js et_minified_css">
+	<div id="page-container">
+
+	
+	
+			<header id="main-header" data-height-onload="66">
+			<div class="container clearfix et_menu_container">
+							<div class="logo_container">
+					<span class="logo_helper"></span>
+					<a href="../../index.html">
+						<img src="https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/uploads/2018/04/NoMAD-Logo-Wide.png" alt="NoMAD" id="logo" data-height-percentage="54" />
+					</a>
+				</div>
+							<div id="et-top-navigation" data-height="66" data-fixed-height="40">
+											<nav id="top-menu-nav">
+						<ul id="top-menu" class="nav"><li id="menu-item-29" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home menu-item-29"><a href="../../index.html">Home</a></li>
+<li id="menu-item-49" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-49"><a href="../../products/index.html">Products</a></li>
+<li id="menu-item-494" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-494"><a href="../../support/index.html">Support</a>
+<ul class="sub-menu">
+	<li id="menu-item-610" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-610"><a href="../../support/index.html">All Products</a></li>
+	<li id="menu-item-22" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-22"><a href="../../nomad-help/index.html">NoMAD Open Source KBase</a></li>
+</ul>
+</li>
+<li id="menu-item-23" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-23"><a href="#">About</a>
+<ul class="sub-menu">
+	<li id="menu-item-37" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-37"><a href="../../about-nomad/index.html">About NoMAD</a></li>
+</ul>
+</li>
+<li id="menu-item-472" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-472"><a href="../../contact/index.html">Contact</a></li>
+</ul>						</nav>
+					
+					
+					
+										<div id="et_top_search">
+						<span id="et_search_icon"></span>
+					</div>
+					
+					<div id="et_mobile_nav_menu">
+				<div class="mobile_nav closed">
+					<span class="select_page">Select Page</span>
+					<span class="mobile_menu_bar mobile_menu_bar_toggle"></span>
+				</div>
+			</div>				</div> <!-- #et-top-navigation -->
+			</div> <!-- .container -->
+			<div class="et_search_outer">
+				<div class="container et_search_form_container">
+					<form role="search" method="get" class="et-search-form" action="https://nomad.menu/">
+					<input type="search" class="et-search-field" placeholder="Search &hellip;" value="" name="s" title="Search for:" />					</form>
+					<span class="et_close_search_field"></span>
+				</div>
+			</div>
+		</header> <!-- #main-header -->
+			<div id="et-main-area">
+	<div id="kbe_container"><div id="kbe_content" class="kbe_content_full">
+        <!--Content Body-->
+        <div class="kbe_leftcol" ><h1>Automatically launching NoMAD</h1><p>You may want to have NoMAD automatically launch whenever a user logs in to their Mac. There are a few ways to do this.</p>
+<h2><strong>System LaunchAgent</strong></h2>
+<p>The most robust method for launching NoMAD on login is to create a System LaunchAgent, which will launch NoMAD whenever any user logs into the macOS GUI and can be set to ensure that the application will re-launch if it ever crashes or is quit by the user.</p>
+<p>A LaunchAgent consists of a plist file in <em>/Library/LaunchAgents</em> owned by root that references the path the application and a few other keys:<br />
+<code><br />
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;<br />
+&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;<br />
+&lt;plist version="1.0"&gt;<br />
+&lt;dict&gt;<br />
+&lt;key&gt;KeepAlive&lt;/key&gt;<br />
+&lt;true/&gt;<br />
+&lt;key&gt;Label&lt;/key&gt;<br />
+&lt;string&gt;com.trusourcelabs.NoMAD&lt;/string&gt;<br />
+&lt;key&gt;LimitLoadToSessionType&lt;/key&gt;<br />
+&lt;array&gt;<br />
+&lt;string&gt;Aqua&lt;/string&gt;<br />
+&lt;/array&gt;<br />
+&lt;key&gt;ProgramArguments&lt;/key&gt;<br />
+&lt;array&gt;<br />
+&lt;string&gt;/Applications/NoMAD.app/Contents/MacOS/NoMAD&lt;/string&gt;<br />
+&lt;/array&gt;<br />
+&lt;key&gt;RunAtLoad&lt;/key&gt;<br />
+&lt;true/&gt;<br />
+&lt;/dict&gt;<br />
+&lt;/plist&gt;</code></p>
+<p>You can find an installer for a NoMAD System LaunchAgent <a href="http://orchardgrove.wpengine.com/download/NoMAD-LaunchAgent.pkg">here</a>.</p>
+<h2><strong>User LaunchAgent</strong></h2>
+<p>A User LaunchAgent is similar to a System LaunchAgent, but the plist is placed in the user&#8217;s home folder, <em>~/Library/LaunchAgents</em>, instead of in <em>/Library/LaunchAgents</em>. The file needs to be owned by the user; it will then launch NoMAD whenever that user logs in. Note that the user will be able to remove or otherwise modify this agent.</p>
+<h2><strong>Login Item</strong></h2>
+<p>A more casual method for automatic launching is to use a Login Item. This is done through the Users &amp; Groups pane of the System Preferences. You can specify a Login Item for your user account here. Unlike the LaunchAgents, there is no method for re-launching the application in the case of a crash. However, this method can be done entirely in the GUI by non-admin users.</p>
+</div>
+        <!--/Content Body-->
+
+    </div>
+
+    <!--aside-->
+    <div class="kbe_aside kbe_aside_none"></div>
+
+</div>
+			<footer id="main-footer">
+				
+
+		
+				<div id="et-footer-nav">
+					<div class="container">
+						<ul id="menu-bottom-menu" class="bottom-nav"><li id="menu-item-88" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-88"><a href="../../support/index.html">Support</a></li>
+<li id="menu-item-89" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-89"><a href="../../about-nomad/index.html">About</a></li>
+<li id="menu-item-90" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-90"><a href="../../contact/index.html">Contact</a></li>
+<li id="menu-item-619" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-619"><a href="../../privacy-policy/index.html">Privacy Policy</a></li>
+</ul>					</div>
+				</div> <!-- #et-footer-nav -->
+
+			
+				<div id="footer-bottom">
+					<div class="container clearfix">
+				<p id="footer-info">Copyright &copy;2022 <a href="http://www.orchardandgrove.com/" target="_blank">Orchard & Grove Inc.</a></p>									<div id="footer-social-icons" role="complementary">
+						<div id="social-icons">
+		
+<ul class="zoom-social-icons-list zoom-social-icons-list--without-canvas zoom-social-icons-list--round zoom-social-icons-list--no-labels">
+
+		
+				<li class="zoom-social_icons-list__item">
+		<a class="zoom-social_icons-list__link" href="https://www.facebook.com/OrchardandGrove" target="_blank" >
+									
+						<span class="screen-reader-text">facebook</span>
+			
+						<span class="zoom-social_icons-list-span social-icon socicon socicon-facebook" data-hover-rule="color" data-hover-color="#ffffff" style="color : #ffffff; font-size: 16px; padding:5px" ></span>
+			
+					</a>
+	</li>
+
+	
+				<li class="zoom-social_icons-list__item">
+		<a class="zoom-social_icons-list__link" href="https://twitter.com/NoMADdotMenu" target="_blank" >
+									
+						<span class="screen-reader-text">twitter</span>
+			
+						<span class="zoom-social_icons-list-span social-icon socicon socicon-twitter" data-hover-rule="color" data-hover-color="#55acee" style="color : #55acee; font-size: 16px; padding:5px" ></span>
+			
+					</a>
+	</li>
+
+	
+				<li class="zoom-social_icons-list__item">
+		<a class="zoom-social_icons-list__link" href="https://www.linkedin.com/company-beta/22349418/" target="_blank" >
+									
+						<span class="screen-reader-text">linkedin</span>
+			
+						<span class="zoom-social_icons-list-span social-icon socicon socicon-linkedin" data-hover-rule="color" data-hover-color="#3371b7" style="color : #3371b7; font-size: 16px; padding:5px" ></span>
+			
+					</a>
+	</li>
+
+	
+				<li class="zoom-social_icons-list__item">
+		<a class="zoom-social_icons-list__link" href="https://www.youtube.com/channel/UCyfnr3IA_npBXJKmbJEUizw" target="_blank" >
+									
+						<span class="screen-reader-text">youtube</span>
+			
+						<span class="zoom-social_icons-list-span social-icon socicon socicon-youtube" data-hover-rule="color" data-hover-color="#e02a20" style="color : #e02a20; font-size: 16px; padding:5px" ></span>
+			
+					</a>
+	</li>
+
+	
+				<li class="zoom-social_icons-list__item">
+		<a class="zoom-social_icons-list__link" href="https://macadmins.slack.com/" target="_blank" >
+									
+						<span class="screen-reader-text">slack</span>
+			
+						<span class="zoom-social_icons-list-span social-icon fa fa-slack" data-hover-rule="color" data-hover-color="#ffffff" style="color : #ffffff; font-size: 16px; padding:5px" ></span>
+			
+					</a>
+	</li>
+
+	
+</ul>
+
+		</div>					</div><!-- #primary-sidebar -->
+									</div>	<!-- .container -->
+				</div>
+			</footer> <!-- #main-footer -->
+		</div> <!-- #et-main-area -->
+
+
+	</div> <!-- #page-container -->
+
+		<script type="text/javascript">
+		var et_animation_data = [];
+	</script>
+	<script type='text/javascript' src='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/plugins/constant-contact-forms/assets/js/ctct-plugin-recaptcha-v2.min.js?ver=1.12.0' id='recaptcha-v2-js'></script>
+<script async="async" defer type='text/javascript' src='http://www.google.com/recaptcha/api.js?onload=renderReCaptcha&amp;render=explicit&amp;ver=1.12.0' id='recaptcha-lib-v2-js'></script>
+<script type='text/javascript' src='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/plugins/constant-contact-forms/assets/js/ctct-plugin-frontend.min.js?ver=1.12.0' id='ctct_frontend_forms-js'></script>
+<script type='text/javascript' src='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/plugins/wp-knowledgebase//assets/js/jquery.livesearch.js?ver=1.3.4' id='kbe_live_search-js'></script>
+<script type='text/javascript' id='divi-custom-script-js-extra'>
+/* <![CDATA[ */
+var DIVI = {"item_count":"%d Item","items_count":"%d Items"};
+var et_shortcodes_strings = {"previous":"Previous","next":"Next"};
+var et_pb_custom = {"ajaxurl":"https:\/\/nomad.menu\/wp-admin\/admin-ajax.php","images_uri":"https:\/\/nomad.menu\/wp-content\/themes\/Divi\/images","builder_images_uri":"https:\/\/nomad.menu\/wp-content\/themes\/Divi\/includes\/builder\/images","et_frontend_nonce":"1e7e5e383a","subscription_failed":"Please, check the fields below to make sure you entered the correct information.","et_ab_log_nonce":"300480cc9d","fill_message":"Please, fill in the following fields:","contact_error_message":"Please, fix the following errors:","invalid":"Invalid email","captcha":"Captcha","prev":"Prev","previous":"Previous","next":"Next","wrong_captcha":"You entered the wrong number in captcha.","is_builder_plugin_used":"","ignore_waypoints":"no","is_divi_theme_used":"1","widget_search_selector":".widget_search","is_ab_testing_active":"","page_id":"165","unique_test_id":"","ab_bounce_rate":"5","is_cache_plugin_active":"no","is_shortcode_tracking":""};
+var et_pb_box_shadow_elements = [];
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/themes/Divi/js/custom.min.js?ver=3.12.2' id='divi-custom-script-js'></script>
+<script type='text/javascript' src='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/plugins/social-icons-widget-by-wpzoom/assets/js/social-icons-widget-frontend.js?ver=1638200807' id='zoom-social-icons-widget-frontend-js'></script>
+<script type='text/javascript' src='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/themes/Divi/includes/builder/scripts/cpt-modules-wrapper.js?ver=3.12.2' id='et-builder-cpt-modules-wrapper-js'></script>
+<script type='text/javascript' src='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-content/themes/Divi/core/admin/js/common.js?ver=3.12.2' id='et-core-common-js'></script>
+<script type='text/javascript' src='https://1lzh7r3yns9k1qj1aq41rn20-wpengine.netdna-ssl.com/wp-includes/js/wp-embed.min.js?ver=5.8.2' id='wp-embed-js'></script>
+</body>
+
+<!-- Mirrored from nomad.menu/help/automatically-launching-nomad/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 11 Jan 2022 19:10:00 GMT -->
+</html>
